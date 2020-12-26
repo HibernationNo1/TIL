@@ -1,0 +1,29 @@
+#include <iostream>
+using namespace std;
+int main(void)
+{
+	int N;
+	int sum1 =1 , sum2 = 1, sum3 = 0;
+	cin >> N;
+	if (N == 1)
+	{
+		cout << "1" << endl;
+	}
+	else if (N == 2)
+	{
+		cout << "1" << endl;
+	}
+	else
+	{
+		for (int i = 3; i <= N; i++)
+		{
+			sum3 = sum1 + sum2;
+			sum1 = sum2;
+			sum2 = sum3;
+		}
+		cout << sum3 << endl;
+	}
+	
+
+	return 0;
+}
