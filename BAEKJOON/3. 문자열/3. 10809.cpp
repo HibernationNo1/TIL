@@ -1,5 +1,5 @@
 #include <iostream>
-#include <cstring>
+#include <cstring>  // string 하면 백준에선 컴파일에러 뜸
 using namespace std;
 
 int main(void)

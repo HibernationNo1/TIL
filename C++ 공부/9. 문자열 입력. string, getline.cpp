@@ -25,9 +25,12 @@ int main(void)
 	
 	//char배열, cin으로 입력받기
 	char a[10];
-	cout << "입력2: ";
-	cin >> a;             
+	cout << "입력2: ";   // 입력된 문자열의 크기가 10보다 작으면 나머지 공간은 NULL
+	cin >> a;            // 문자열의 마지막은 \0으로 자동 저장됨 
 	cout << "출력2: " << a << endl;   // 띄어쓰기는 입력 안됨
+
+    sizeof(a);   //sizeof(배열이름) 실제로 차지하고 있는 메모리dml 크기를 구한다.
+	strlen(a);   //  strlen(배열이름) 문자열의 길이
 
 	//char배열, getline으로 입력받기
 	char c[10];
