@@ -23,7 +23,7 @@
 
 - `git clone github_repository주소`:  git으로 버전관리 되는 디렉토리에서 명령 실행 시 gib hub와 연동
   - ex) `git clone https://github.com/HibernationNo1/TIL.git`
-  - 로걸에서의 git init에 해당되는 명령어
+  - 로컬에서의 git init에 해당되는 명령어
   
 - `git status`: Working Directory 버전관리 상태 확인하기
 
