@@ -1,0 +1,45 @@
+# 동적 할당
+
+### 1. new와 delete 사용
+
+**형태** >> `포인터 변수명 = new 타입;`
+
+```c++
+int* num = new num(10);   // 10으로 num을 초기화
+delete arr;
+    
+char* arr = new char[10];     // 10개의 배열
+delete [] arr;  // 1차원 배열의 delete
+
+auto tmp = new char[10][5];   // 2차원 배열
+for(int i = i; i <10; i++)     // 2차원 배열 delete 방법
+{
+    delete [] tmp[i];
+}
+delete [] tmp;
+```
+
+- `new`: HEAP에 메모리를 만들고 주소를 리턴
+
+- `delete`: new가 가리키는 주소의 메모리를 해제
+
+- new를 사용해서 할당된 배열은 동적으로 할당된 배열일 뿐 동적 배열이 아님
+
+
+
+### 2. vector 사용
+
+**형태** : vector<타입> 변수명 = {};
+
+```c++
+#include <vector>     // 헤더파일 추가 필수
+
+vector<char> vec(5); //  vec이라는 cahr형 배열에 5개의 원소를 0으로 초기화
+vector<int> vec(5,3); // 5개의 원소를 3으로 초기화
+vector<char> vec = {'a','b','c'};  // 3개의 원소를 각 문자로 초기화
+
+int arr[3] = {1, 2, 3};
+vector<int> vec(arr);     // arr을 그대로 vec배열로 복사
+```
+
+- 메모리 HEAP에 동적할당.
