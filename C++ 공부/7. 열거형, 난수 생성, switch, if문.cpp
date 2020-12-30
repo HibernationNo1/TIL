@@ -1,7 +1,7 @@
 #include <iostream>
 #include <ctime>  // 시간을 사용
 #include <cstdlib> // C표준 유틸리티 함수 포함 https://modoocode.com/121
-
+ 
 using namespace std;
 
 // 열거형  https://blog.naver.com/gnqo7598/221331932542 ,   https://blog.naver.com/dhdnjswnd/222015088838
