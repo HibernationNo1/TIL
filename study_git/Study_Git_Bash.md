@@ -58,7 +58,7 @@
     >
     >즉,  `git pull origin master`  로 받아서 내가 push 하려 했던 정보와 합친 다음에 push해야한다.
     >
-    >추가 정보 : [Study_branch](TIL/Study_branch)
+    >추가 정보 : [Study_branch](https://github.com/HibernationNo1/TIL/blob/master/study_git/Study_branch.md)
 
 - `git fetch`: Remote Repository에서 Local Repository로 파일 정보 전달
 
