@@ -64,8 +64,73 @@ vector<vector<int>> vec(2, vector<int>(4, 0)); //  2행 4열이며 각 열의 in
   // 초기화는 for문 활용
   ```
 
+- 입력
+
+  ```c++
+  vector<int> vec(10);
+  for (int i = 0; i<10; i++)  //for문 활용
+  {
+      cin >> vec[i];
+  }
+  ```
+
+  > - `cin>>arr;` 또는 `getline`은 사용 불가. 
+  >
+  > 위 처럼 반복문을 사용해서 하나의 index마다 값을 할당해야 한다.
+
+
+
+
 - 관련 함수
-  - 
+
+  - `vec.assign(n, m)`: m의 값으로 n개의 index할당
+
+    > 배열값이 하나도 할당이 안 된 상태에서  n을 index갯수와 다르게 입력시 오류 
+
+  - `vec.push_back(m)`: 마지막 index 뒤에 m의 값을 할당
+
+    > index 갯수가 늘어나는 것임
+
+  - `vec.resize(n)`: 크기를(index 갯수를) n으로 변경한다
+
+    > 더 커졌을 경우 index값을 default값인 0으로 초기화
+
+  - `vec.resize(n,m)`: 크기를 n으로 변경한다.
+
+    > 더 커졌을 경우 index값을 m으로 초기화한다. 나머지 index값은 그대로
+
+  - `vec.size()`: 원소의 갯수 리턴
+
+  - `vec.insert(vec.bigin()+n,m)`: 1+n번째 자리에 m의 index를 삽입
+
+    >- `vec.insert(vec.bigin()+n, m, s)`: 1+n번째 자리에 m의 값을 가진 index를 s개 삽입
+    >
+    >- 기존 1+n 자리의 index를 새롭게 할당하는 것이 아님. 즉, index갯수 늘어남
+    >
+    >- `vec.insert(2, m, s)` 처럼 `vec.bigin()+n` 자리에 int형 값을 넣으면 에러.  m, s자리에는 int형 값 가능
+
+  - `vec.erase(vec.begin()+n)`: 1+n번째 자리 index삭제
+
+    > - `vec.degin()` 대신 int형 정수를 넣으면 에러
+    >
+    > - index값만 삭제하는 것이 아니라 1+n번째 자리를 삭제하는 것이기 때문에 index갯수가 줄어듦
+    > - `vec.erase(vec.begin()+n, vec.begin()+m)`: 1+n, 1+m번째 자리 삭제
+
+  - `vec.clear()`: 전체 index 삭제
+  
+  - `vec.empty()`: 배열 vec의 모든 index가 비어있으면 1을, 아니면 0을 반환.
 
 
+
+
+
+- 추가 내용
+
+  - 고정된 사이즈의 배열을 사용할 것이라면 C++ array 배열을 사용하자.
+
+    > 관련 내용
+    >
+    > [array함수에 관하여](https://github.com/HibernationNo1/TIL/blob/master/study_C%2B%2B/array%ED%95%A8%EC%88%98%EC%97%90%20%EA%B4%80%ED%95%98%EC%97%AC.md)
+
+  - 사이즈가 변하는 배열읠 사용해야 한다면 C++ vector 배열을 사용하자.
 
