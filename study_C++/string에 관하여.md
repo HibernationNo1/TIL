@@ -55,6 +55,10 @@
   > > `word.find("n", 6)` == 10
   > >
   > > `word.find("haa")` == 쓰레기값
+  >
+  > - algorithm 라이브러리 내의 find 함수화는 다른 함수임
+  >
+  >   > 관련 내용: 
 
 - `word.push_back('m')`: 문자열 맨 뒤에 문자m을 추가
 
