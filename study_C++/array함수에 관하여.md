@@ -1,6 +1,6 @@
 # array 배열에 대해서
 
-### 1. 선언
+### 1. 선언 및 입력
 
 - **형태** :  array<자료형, 배열의 크기> 배열이름;
 
@@ -9,13 +9,27 @@
   
   array<int, 4> arr1 = {};      // 각 index값이 0 4개의 index를 가진 int형 배열 
   array<int, 4> arr1 = {1, 2, 3};  // 4번째 index값은 0
+  array<char, 10> arr= {'a', 'b' ,'c'}; // 4번째부터 indexr값은 공백(띄어쓰기)
   ```
 
   >- 배열의 크기가 고정형이면 array함수를, 배열의 크기가 가변이면 vector함수를 활용하자.
   >
   >관련 내용: [vector함수에 관하여](https://github.com/HibernationNo1/TIL/blob/master/study_C%2B%2B/new%2C%20vector%EC%97%90%20%EA%B4%80%ED%95%98%EC%97%AC.md)
+
+- 입력
+
+  ```c++
+  array<char, 10> arr= {};
+  
+  	for (int i = 0; i < 10; i++)
+  	{
+  		cin >> arr[i];
+  	}
+  ```
+
+  > - `cin>>arr;` 또는 `getline`은 사용 불가. 
   >
-  >- cin으로 index값을  받을 수 없다.
+  > 위 처럼 반복문을 사용해서 하나의 index마다 값을 할당해야 한다.
 
 
 
