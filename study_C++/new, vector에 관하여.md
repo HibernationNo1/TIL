@@ -2,9 +2,9 @@
 
 ### 1. new와 delete 사용
 
-**형태** >> `포인터 변수명 = new 타입;`
+#### 1. 선언
 
-#### 선언
+**형태** >> `포인터 변수명 = new 타입;`
 
 ```c++
 int* num = new num(10);   // 10으로 num을 초기화
@@ -21,11 +21,23 @@ for(int i = i; i <10; i++)     // 2차원 배열 delete 방법
 delete [] tmp;
 ```
 
-- `new`: HEAP에 메모리를 만들고 주소를 리턴
+> - `new`: HEAP에 메모리를 만들고 주소를 리턴
+> - `delete`: new가 가리키는 주소의 메모리를 해제
+> - new를 사용해서 할당된 배열은 동적으로 할당된 배열일 뿐 동적 배열이 아님
 
-- `delete`: new가 가리키는 주소의 메모리를 해제
+#### 2. 입력
 
-- new를 사용해서 할당된 배열은 동적으로 할당된 배열일 뿐 동적 배열이 아님
+```c++
+char* arr = new char[10];     // 10개의 배열
+cin >> arr;        // 단어 단위로 입력
+delete [] arr;  
+
+char* arr = new char[10];      // 입력되는 문장(띄어쓰기 포함) 단위로 받기
+cin.getline(arr, 10);
+delete [] arr; 
+```
+
+> - 선언 후 따로 index를 초기화 해야함
 
 
 
@@ -85,7 +97,7 @@ vector<vector<int>> vec(2, vector<int>(4, 0)); //  2행 4열이며 각 열의 in
 
   - `vec.assign(n, m)`: m의 값으로 n개의 index할당
 
-    > 배열값이 하나도 할당이 안 된 상태에서  n을 index갯수와 다르게 입력시 오류 
+    > index값이 할당이 안 된 상태에서  n을 index갯수와 다르게 입력시 오류 
 
   - `vec.push_back(m)`: 마지막 index 뒤에 m의 값을 할당
 
@@ -99,7 +111,7 @@ vector<vector<int>> vec(2, vector<int>(4, 0)); //  2행 4열이며 각 열의 in
 
     > 더 커졌을 경우 index값을 m으로 초기화한다. 나머지 index값은 그대로
 
-  - `vec.size()`: 원소의 갯수 리턴
+  - `vec.size()`: index의 갯수 리턴
 
   - `vec.insert(vec.bigin()+n,m)`: 1+n번째 자리에 m의 index를 삽입
 
@@ -119,8 +131,18 @@ vector<vector<int>> vec(2, vector<int>(4, 0)); //  2행 4열이며 각 열의 in
   - `vec.clear()`: 전체 index 삭제
   
   - `vec.empty()`: 배열 vec의 모든 index가 비어있으면 1을, 아니면 0을 반환.
-
-
+  
+  - `swap(vec1, vec2)`: 두 배열 vec1, vec2을 스왑(교환)
+  
+    > ```c++
+    > vector<char> vec1 = { 'a' ,'b' ,'c' ,'d' };
+    > vector<char> vec2 = { 'e' ,'f' ,'g' ,'h' , 'i' };
+    > 
+    > swap(vec1, vec2);
+    > 
+    > vec1 == { 'e' ,'f' ,'g' ,'h' , 'i' };
+    > vec2 == { 'a' ,'b' ,'c' ,'d' };
+    > ```
 
 
 
