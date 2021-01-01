@@ -2,7 +2,7 @@
 
 ### 1. new와 delete 사용
 
-#### 1. 선언
+#### -  선언
 
 **형태** >> `포인터 변수명 = new 타입;`
 
@@ -25,7 +25,7 @@ delete [] tmp;
 > - `delete`: new가 가리키는 주소의 메모리를 해제
 > - new를 사용해서 할당된 배열은 동적으로 할당된 배열일 뿐 동적 배열이 아님
 
-#### 2. 입력
+#### -  입력
 
 ```c++
 char* arr = new char[10];     // 10개의 배열
@@ -113,9 +113,9 @@ vector<vector<int>> vec(2, vector<int>(4, 0)); //  2행 4열이며 각 열의 in
 
   - `vec.size()`: index의 갯수 리턴
 
-  - `vec.insert(vec.bigin()+n,m)`: 1+n번째 자리에 m의 index를 삽입
+  - `vec.insert(vec.begin()+n,m)`: 1+n번째 자리에 m의 값을 가진 index를 삽입
 
-    >- `vec.insert(vec.bigin()+n, m, s)`: 1+n번째 자리에 m의 값을 가진 index를 s개 삽입
+    >- `vec.insert(vec.begin()+n, m, s)`: 1+n번째 자리에 m의 값을 가진 index를 s개 삽입
     >
     >- 기존 1+n 자리의 index를 새롭게 할당하는 것이 아님. 즉, index갯수 늘어남
     >
