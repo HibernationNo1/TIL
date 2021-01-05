@@ -87,21 +87,13 @@ cout << count(arr.begin(), arr.end(), 5) << endl;  // 4 출력
 
 ## 원소를 수정하는 작업들
 
-
-
-
-
-
-
-
-
-### 1. Sort함수에 관하여
+### 1. Sort함수
 
 **형태**:  `sort(배열의 시작 주소, 배열의 마지막 주소, 올림내림 구분<자료형>());`
 
 > - 인자로 넣는 함수의 index들을 오름차순(또는 내림차순)으로 재정렬한다.
 > - sort함수의 1, 2번째 인자는 배열의 포인터나 반복자 객체를 인수로 줘야함
-> - 배열의 시작주소 부터 마지막-1번째 주소까지 정렬 // [start, end)범위
+> - 배열의 시작주소 부터 마지막-1번째 주소까지 정렬 // [begin, end)범위
 
 ```c++
 #include <algorithm>     //헤더파일 포함 필수
@@ -112,4 +104,24 @@ sort(arr.begin(),arr.end(), less<int>()); // 위와 동일
 sort(arr.begin(),arr.end(), greater<int>()); // arr배열을 내림차순으로 정렬 {8, 5, 3, 2, 1}
 
 sort(arr.begin(), arr.begin()+4); // arr배열의 첫 번째 index부터 4번째 인덱스까지 오름차순으로 정렬
+```
+
+
+
+### 2. reverse 함수
+
+**형태**: `reverse(배열의 시작 주소, 배열의 마지막 주소)`
+
+>- begin 부터 end 전 까지의 원소들의 순서를 역순으로 뒤집는다.  [begin, end)범위
+>- 인자는 배열의 포인터나 반복자 객체를 인수로 줘야함
+
+```c++
+#include <algorithm>     //헤더파일 포함 필수
+
+string alphabet;
+cin >> alphabet;    // abcd라고 가정
+
+reverse(alphabet.begin(), alphabet.end())
+
+cout << alphabet;      // dcba 출력
 ```
