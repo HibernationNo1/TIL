@@ -23,23 +23,32 @@
   string word;
   getline(cin, word);  // 띄어쓰기 포함, 문장 단위로 입력
   
-  string word = to_string(1234); // int형을 문자형으로 변환 후 입력
-  //word[0] = 1, word[1] = 2...
+  
   ```
 
 
 
 ### 2. 관련 함수
 
+- ```c++
+  #include <string>
+  
+  string word = to_string(12); // int형을 문자형으로 변환 후 입력
+  //word[0] = 1, word[1] = 2
+  int num1 = 10
+  x += to_string(num1)      // string은 덧셈 연산자로 뒤에 원소 붙이기 가능
+  //word[0] = 1, word[1] = 2, word[2] = 10
+  ```
+
 - `word.siez()`: word라는 문자열의 길이를 반환한다.
 
 - `word.resize(n)`: 크기를(index 갯수를) n으로 변경한다
 
-  > 더 커졌을 경우 index값을 default값인 ' '(띄어쓰기)로 초기화
+  > 더 커졌을 경우 추가된 index의 원소를 default값인 ' '(띄어쓰기)로 초기화
 
 - `word.resize(n,'m')`: 크기를 n으로 변경한다.
 
-  > 더 커졌을 경우 index값을 'm'으로 초기화한다. 나머지 index값은 그대로
+  > 더 커졌을 경우 추가된 index의 원소를 'm'으로 초기화한다. 나머지 index값은 그대로
 
 - `word.clear()`: 문자열 안의 index를 삭제 (size = 0)
 - `word.empty()`: 문자열 index가 없으면 1을 반환(비어있는지 확인)
