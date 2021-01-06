@@ -33,7 +33,7 @@
 
 
 
-### 2. 관련 함수
+### 2. 관련 메서드
 
 ```c++
 #include<array>   //헤더파일 포함 필수
@@ -45,13 +45,13 @@ array<int, 10> arr = {}; 일 때
 
 - `arr.end()`: 배열 마지막의 "다음" index를 가리킨다.
 
-- `arr.fill(m)`: 배열의 모든 index값을 m으로 바꾼다.
+- `arr.fill(m)`: 배열의 모든 index 원소값을 m으로 바꾼다.
 
 - `arr.swap(tmp)`: 배열 tmp의 index를 arr배열과 스왑(교환)합니다.
 
   > arr배열과 tmp배열의 길이와 타입이 같아야 함.
 
-- `arr.at(n)`: n번째 index값을 반환 (`arr[n]`) 과 같음
+- `arr.at(n)`: n번째 index의 원소값을 반환 (`arr[n]`) 과 같음
 
 - `arr.empty()`: 배열 arr의 모든 index가 비어있으면 1을, 아니면 0을 반환.
 
