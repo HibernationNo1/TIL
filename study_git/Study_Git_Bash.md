@@ -77,7 +77,7 @@
 
 
 
-#####  git init 이전에 `git touch .gitignore` 을 통해 내 프로젝트의 최 상단 repository에 gitignore 파일을 만든다.  (사실 순서는 크게 상관없음)
+#####  git init 이전에 `touch .gitignore` 을 통해 내 프로젝트의 최 상단 repository에 gitignore 파일을 만든다.  (사실 순서는 크게 상관없음)
 
 > 이 파일 안에 '파일이름.확장자' 또는  '폴더명/'를 입력하면 git add 에서 제외돼서 git 버전관리에서 제외된다.
 >
