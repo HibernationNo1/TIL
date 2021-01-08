@@ -28,13 +28,28 @@ delete [] tmp;
 #### -  입력
 
 ```c++
-char* arr = new char[10];     // 10개의 배열
-cin >> arr;        // 단어 단위로 입력
-delete [] arr;  
+// int 형 입력
+int int* num = new num(10);
+cout << *num <<endl;      // 10 출력
+num = &a;   
+cout << *num << endl;     // a 값 출력
 
-char* arr = new char[10];      // 입력되는 문장(띄어쓰기 포함) 단위로 받기
-cin.getline(arr, 10);
-delete [] arr; 
+
+int* arr = new int[10];
+for(int i =0; i<10; i++)
+{
+    arr[i] = n;       // for문으로 하나씩 할당
+}
+arr = &arr2;       // 다른 배열로 입력도 가능 (arr길이가 arr2보다 크거나 같아야함 )
+
+// 문자열 입력
+char* str = new char[10];     // 10개의 배열
+cin >> str;        // 단어 단위로 입력
+delete [] str;  
+
+char* str = new char[10];      // 입력되는 문장(띄어쓰기 포함) 단위로 받기
+cin.getline(str, 10);
+delete [] str; 
 ```
 
 > - 선언 후 따로 index를 초기화 해야함
