@@ -50,13 +50,16 @@ int value = 10;
 >   ```c++
 >   int *tmp = &value;     //*tmp 초기화
 >   *tmp = 3;              //  value에 3이라는 값 할당
->
+>   //*tmp에 이미 포인터가 담겨 있으므로 값으로 취급 
+>   
 >   int (*ptrary)[n] = &arr; // ptrary라는 이름의 포인터, 길이가 n인 arr이라는 배열의 주소 할당 
->
+>   arr[2] = 22;  	 // arr배열의 index 2에 해당하는 지점에 값을 할당
+>   *(arr+3) = 33; 	 // 포인터 연산자 사용. arr[3] =33; 과 같다.
+>   
 >   int *ptrary[3];	// ptrary라는 이름의 포인터형 배열
 >   int* ptrary[3] = {&a, &b, &c};  // a,b,c 각각의 주소 할당 (ptrary 한 번에 초기화)
 >    ptrary[1] = &value1; // 배열 하나씩 주소 할당
->
+>   
 >   int (*arr)[n]; // 길이가 n인 arr의 배열의 주소 할당 
 >   ```
 >
