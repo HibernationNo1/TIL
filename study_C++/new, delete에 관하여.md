@@ -15,7 +15,7 @@ prt = new int;		// ptr변수는 포인터 변수가 됨.
 
 delete ptr; 		// 메모리 해제
 ptr = nullptr;
-// 메모리를 해제한 포인터는 nullptr로 초기화. 다시 사용하는 실수를 방지하기 위해.
+// 메모리를 해제한 포인터는 nullptr로 초기화. 
 
 // 위 코드의 원 라이너 형태
 int* num = new num(10);   	// 10으로 num을 초기화
@@ -41,8 +41,10 @@ num = nullptr;
 > - new의 리턴값을 무시하거나 그 포인터를 담았던 변수가 스코프를 벗어나면 할당했던 메모리에 접근할 수 없다.  **메모리 누수(메모리 릭)**
 >
 >   >  ex) 변수 없이 선언:  `new int;`     
->   
-> - 항상 포인터 변수를 선언하자마자 nullptr나 적절한 포인터로 초기화해야 한다. 절대로 초기화 하지 않은 상태로 내버려두지 않는다.
+>
+> - 항상 포인터 변수를 선언하자마자 nullptr나 적절한 포인터로 초기화해야 한다. 
+>
+>   > 초기화를 하지 않으면 쓰레기값이 들어가게 되고, 나중에 실수로 사용해버리면 예측할 수 없는 동작이 발생해서 메모리를 손상시킬 수 있다.
 >
 > 
 >
@@ -70,6 +72,8 @@ delete ptr;
 ```c++
 int* arr = new int[5];     
 // heap에 int 값 다섯 개를 담는 배열에 메모리를 할당해서 그 공간을 가리키는 포인터를 arr변수에 저장한다.
+arr[2] = 22;  	 // arr배열의 index 2에 해당하는 지점에 값을 할당
+*(arr+3) = 33; 	 // 포인터 연산자 사용. arr[3] =33; 과 같다.
 
 delete [] arr;   // arr을 호출한 횟수만큼 delete를 호출해서 메모리를 해체한다.
 arr = nullptr;
@@ -122,8 +126,9 @@ for (int i = 0; i < n; i++)
 >`new`는 단순히 메모리를 할당하는데 그치지 않고 객체까지 만들 수 있다.
 
 ```c++
-Foo* myFoo = new Foo();
-// Foo라는 클래스의 객체 myFOO를 동적 할당
+Foo* myFoo = new Foo();		// Foo라는 클래스의 객체 myFOO를 동적 할당
+myFoo -> go();    // Foo클래스의 멤버함수 go(); 실행
+// 포인터로 객체를 선언하면 myFoo.go(); 가 아닌 myFoo -> go(); 형태로 메서드 실행 
 delete myFoo;
 ```
 
@@ -163,8 +168,10 @@ delete myFoo;
 ```c++
 Foo* tmp()			// Foo라는 클래스
 {
-    Foo* arr = new Foo[4];   //4의 크기를 가진 Foo 객체 배열 생성
+    Foo* arr = new Foo[4];   //4의 크기를 가진 Foo 객체 배열 arr 생성
     return arr;
+    
+    delete arr;			// 함수 안에서 new를 했으니 delete도 함수 한에서
 }
 ```
 
