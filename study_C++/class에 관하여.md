@@ -72,7 +72,12 @@ class Foo 					// class 클래스이름
             cout<<"sum의 값: "sum<<endl;  // 값을 변경하는 동작이 없음
         }
      
-    
+    	void FOO::PrintAll() const
+		{
+  			cout << "sum의 값: "<<sum <<endl;
+    		cout << "Value1의 값: "<< Value1 endl;
+    		cout << "Value2의 값: "<< Value2 <<endl; 
+		}
 };	// C++에서 클래스는 '문장'이므로 반드시 세미콜론(;)으로 끝나야 한다.
  ```
 
@@ -152,15 +157,17 @@ class Foo 					// class 클래스이름
 >             cout<<"sum의 값: "<<sum<<endl;  
 >         }
 > 
-> void FOO::PrintAll() const
-> {
->     cout << "sum의 값: "<<sum <<endl;
->     cout << "Value1의 값: "<< Value1 endl;
->     cout << "Value2의 값: "<< Value2 <<endl; 
-> }
+> 		void FOO::PrintAll() const
+> 		{
+>     		cout << "sum의 값: "<<sum <<endl;
+>     		cout << "Value1의 값: "<< Value1 endl;
+>     		cout << "Value2의 값: "<< Value2 <<endl; 
+> 		}
 > ```
 >
 > - 클래스 정의 코드 다음에 메서드 정의 코드가 나와야 한다.
+
+---
 
 
 
@@ -182,6 +189,8 @@ class Foo 					// class 클래스이름
 
 > class에서 접근제어 지시자를 따로 선언하지 않는다면 모든 변수화 함수는 private로 선언됨
 
+---
+
 
 
 #### 3. 메서드
@@ -190,7 +199,7 @@ class Foo 					// class 클래스이름
 
 ```c++
 #include "Foo.h"
-void Foo::setValue(int inValue)   
+void Foo::setValue1(int inValue)   
 {
     mValue1 = inValue;
     return PrintValue();   
@@ -210,7 +219,7 @@ void Foo::setValue(int inValue)
   >> }	
   >> //------------------또는------------------
   >> // Foo class의 생성자
-  >> Foo(int sum, int Value1, int Value2)		
+  >> Foo::Foo(int sum, int Value1, int Value2)		
   >> {
   >> this->sum = sum;
   >> this->Value1 = Value1;
@@ -239,14 +248,14 @@ void Foo::setValue(int inValue)
   >> }	
   >> ```
 
+---
 
 
-#### 3. 객체
+
+#### 4. 객체
 
 > - 객체가 생성되면, 그 객체는 자신만의 class타입의 데이터 멤버에 접근할 수 있다. 
 > - 메서드는 클래스에 정의된 데이터 멤버 중 객체에 속한 멤버에 대해 접근한다.
-
-
 
 - **객체 선언**
 
@@ -307,7 +316,7 @@ void Foo::setValue(int inValue)
 > myBar = nullptr;
 > ```
 >
-> - 힙에 할당한 객체 메모리도 반드시 delete로 해제해야 한다.
+> - 힙에 할당한 객체 메모리는 반드시 delete로 해제해야 한다.
 >
 > - 메모리 관련 문제가 발생하지 않게 하려면 반드시 **스마트 포인터**를 사용한다.
 >
@@ -356,9 +365,11 @@ void Foo::setValue(int inValue)
 > - 스택에 생성되는 객체는 선언하는 시점에 class의 멤버 변수도 생성된다.
 > - 스마트 포인터나 `new`를 사용해서 힙에 생성한 객체는 직접 공간을 할당해야 class의 멤버 변수도 생성된다.
 
+---
 
 
-#### 4. 생성자
+
+#### 5. 생성자
 
 > - 생성자는 스스로 자기 자신의 객체를 초기화 하는 방법을 정의하는 것으로써, 생성자의 이름은 항상 클래스명과 동일해야 한다. 
 >  - 오버로딩을 통해서 인자값을 받을 수 있으나, 리턴값을 가질 수 없다.
@@ -403,7 +414,7 @@ void Foo::setValue(int inValue)
 >    >스택 메모리를 사용하는 생성자는 객체가 선언될 때 바로 호출한다. 
 >
 >    ```c++
->    Foo myFoo;  	// 인수가 있을 때: Foo myFoo(3); 
+>    Foo myFoo;  	// 객체 선언됐으니 바로 생성자 호출
 >    ```
 >
 >   2. 힙 객체 생성자
@@ -412,8 +423,9 @@ void Foo::setValue(int inValue)
 >
 >      ```c++
 >      Foo myFoo = make_unique<Foo>();  
->      ```
->
+>      // 객체가 선언되고 나서, 스마트포인터로 메모리 공간이 할당되면 생성자 호출
+> ```
+>      
 >      > 힙 객체 생성자를 이해하기 위해 꼭 봐야 할 참고내용
 >      >
 >      > [스마트 포인터](https://github.com/HibernationNo1/TIL/blob/master/study_C%2B%2B/smart%20pointer%EC%97%90%20%EA%B4%80%ED%95%98%EC%97%AC.md)
@@ -514,8 +526,6 @@ class Foo
 >- 생성자 안에서 원본 객체에 있는 데이터 멤버를 모두 복사한다. 새로 만들 객체의 데이터 멤버를 모두 기존 객체의 데이터 멤버로 초기화한다. 
 > - C++에서 함수에 인수를 객체로 전달할 때 컴파일러는 그 객체의 복제 생성자를 호출하는 방식으로 초기화한다. (명시적으로 호출할때 아니면 다 이럴 때 사용됨)
 
-
-
 - 복제 생성자 명시적으로 호출하기
 
 > 주로 다른 객체를 똑같이 복사하는 방식으로 객체를 만들 때 사용한다.
@@ -527,7 +537,98 @@ class Foo
 
 
 
-##### 6. 레퍼선스로 객체 전달하기
+##### 6. 복제 대입 연산자
+
+> 복제 대입 연산자는 객체에 객체를 대입하기 위해서 사용 (복제가 아닌 대입)
+>
+> 객체에서 객체로 대입을 하기 위해서는 클래스마다 대입을 수행하는 메서드를 따로 제공해야 한다. 이를 복제 대입 연산자라고 한다.
+>
+> 복제 대입 연산자는 생략해도 컴파일러가 알아서 생성해주고, 대부분 그것만으로 충분하다.
+>
+> - 인터페이스에서 객에의 값을 다른 객체에 대입하는 예제
+>
+> ```c++
+> Foo myFoo(5), myBar;      //객체 두개 생성
+> myFoo = myBar;            // myFoo 객체에 myBar객체 대입
+> ```
+
+- 복제 대입 연산자 선언
+
+```c++
+Foo& operator=(const Foo rhs)   //하나의 메서드임
+{
+       if (this == &rhs)
+       {
+            
+           //클래스 이름& 대입 연산자(클래스 이름& 소스 객체)
+            return *this;
+       }
+       mValue =rhs.mValue1;
+       mValue =rhs.mValue2;
+       return *this;
+}
+```
+
+>- 복제 대입 연산자는 원본 객체에 대한 const 레퍼런스를 받을때가 많다.
+>
+>- `if (this == &rhs)`: 객체는 자기 자신을 본인에게 대입을 할 수 있기 때문에  복제 대입 연산자를 선언할 때 자기 자신을 대입하는 경우도 고려해야 한다.
+>
+>  > 대입하려는 두 객체가 서로 똑같은 메모리 공간에 있다면(두 객체에 대한 포인터가 똑같다면) 서로가 자기 자신이라는걸 의마하며, this포인터를 활용한다.
+>
+>  ```c++
+>  Foo myFoo(4);   // 객체 선언
+>  myFoo = myFoo;  //자기 자신을 대입
+>  ```
+>
+>  > 복제 대입 연산자가 호출되는 객체는 등호의 좌변에 있는 객체(`myFoo`)다.
+>
+>- `Foo& operator=(const Foo& rhs);`: 대입 연산자는 여러 개의 대입 연산이 연달아 가능하기 때문에 Foo 객체에 대한 레퍼런스를 리턴한다. 
+>
+>  > `return *this;`: 리턴 타입이 `Foo&`이기 때문에 값을 정확히 리턴해야 한다. 즉, 대입 연산자는 항상 `*this`를 리턴한다. (자기 자신을 대입할 때도)
+>
+>  ```c++
+>  //연달아 여러 개의 대입 연산 
+>  myFoo = myBar = myBaz;
+>  ```
+>
+>- ```c++
+>         mValue =rhs.mValue1;
+>         mValue =rhs.mValue2;
+>         return *this;
+>  ```
+>
+>  > 객체에 자기 자신이 아닌 객체를 대입할 때는 모든 멤버에 대입 연산을 수행해야 한다.
+
+- 복제 대입 연산자와 복제 생성자의 차이점
+
+  > 1. 복제 생성자는 초기화할 때 단 한 번만 호출된다.  그 시점에는 타깃 객체가 유효한 값을 가지고 있지 않다.
+  > 2. 복제 대입 연산자는 타깃 객체에 유효한 값이 할당된 상태에서 값을 덮어쓴다.
+  > 3. 복제 대입 연산자는 객체에 자기 자신을 대입하는게 가능하다. 
+  > 4. 복제 생성자는 코드 형태가 객체 선언이고, 복제 대입 연산자는 코드 형태가 연산이다.
+
+- 복제생성자, 복제 대입 연산자 자동 생성 기능 사용
+
+  > 복제 대입 연산자나 소멸자가 있으면 복제 생성자를 자동으로 생성해주는 기능을 명시적으로 디폴트로 지정하는 방법
+  >
+  > ```c++
+  > Foo(const Foo& src = default);
+  > ```
+  >
+  > > 복제 대입 연산자를 사용할때 선언
+  >
+  > 
+  >
+  > 복제 생성자나 소멸자가 있으면 대입 연산자를 생성해주는 기능흘 명시적으로 디폴트로 지정하는 방법 
+  >
+  > ```c++
+  > Foo operator(const Foo& src) = default;
+  > ```
+  >
+  > > 복제 생성자를 사용할때 선언
+
+  
+
+##### 8. 레퍼선스로 객체 전달하기
 
 > 함수나 메서드에 객체를 레퍼런스로 전달하면 복제 연산으로 인한 오버헤드를 줄일 수 있다. 객체에 있는 주소만 복사하기 때문이다.
 >
@@ -542,6 +643,19 @@ Foo(const Foo& stc);  //위의 코드에서 생성자 매개변수를 보면
 
 
 
+##### 9. 객체 소멸
+
+> 객체가 제거되는 과정
+>
+> 객체가 제거될때는 객체의 소멸자를 호출한 다음 할당받은 메모리를 반환한다.
+>
+> 소멸자에서 객체를 정리하는 작업을 구체적으로 지정할 수 있다.
+>
+> 소멸자를 선언하지 않으면 컴파일러가 만들어주는데, 이를 이용해 멤버를 따라 재귀적으로 소멸자를 호출하면서 객체를 삭제할 수 있다.
+>
+> 스택 객체는 스코프를 벗어날 때 자동으로 삭제된다.
+>
+> 스마트 포인터를 사용하지 않은 힙 객체는 객체 포인터에 대해 delete를 명시적으로 호출해서 그 객체의 소멸자를 호출하고 메모리를 해제해야 한다.
 
 
 
@@ -549,241 +663,149 @@ Foo(const Foo& stc);  //위의 코드에서 생성자 매개변수를 보면
 
 
 
+#### 6. 전체 코드
 
-
-
-
-
-
-
-- 전체 코드
-
-  ```c++
-  #include <iostram>
-  using namespace std;
-  
-  class Hibernation      		// class 클래스이름
-  {
-  	private:				// 접근제어지시자1:
-  	
-      int sum;				// 멤버변수
-      int x;					
-      int y;	
+```c++
+class Foo 					// class 클래스이름
+{
+	private:				// 접근제어지시자:
+	
+    	int mValue1;		// Foo 클래스의 데이터 멤버
+    	int mValue2;
+    	int sum;
     
-      
-      void num1()				// 멤버함수
-      {						// private 이므로 main함수에서 접근 불가능
-          sum = x + y;
-      }
-      
-      public: 				// 접근제어지시자2:
-      
-         Hibernation() 		// 기본 생성자 
-      {
-          sum = 0;			// 변수 값 초기화
-          x = 1;
-          y = 0;      
-      }
-      
-      Hibernation(int s, int x1, int y1)			// 매개 변수를 사용하는 생성자
-      {
-          sum = s;
-          x = x1;
-          y = y1;
-      }
-      
-      void num2() 			// 멤버함수
-      {						// public 이므로 main함수에서 접근 가능
-         sum = x + y;		
-       cout << "두 수의 합: " << sum <<endl; 
-      }
-      
-      void num3(int a, int b) 	// 인자를 받는 멤버함수
-      {		
-         sum = a + b;		
-         cout << "두 수의 합: " << sum <<endl; 
-      }
-      
-      void new(int x, int y); 	
-      {		
-         this-> x = x;          // class의 맴버변수 x = 인자의 그릇인 변수 x
-         this-> y = y;	
-      }
-      
-      
-  };				// ; 필수
-  
-  int main(void)
-  {
-      Hibernaion tmp1, tmp2; 		// tmp1, tmp2라는 객체 선언										// == 입력 인수가 없는 기본 생성자 호출
-      
-      tmp1.num2();				// class 안의 num2라는 맴버 함수 호출
-      tmp2.num3(2, 5);
-      tmp1.num2();				
-      tmp2.num3(5, 5);
+    public: 				// 접근제어지시자:
+    
+// --------------- 메서드  --------------- == 클래스 멤버 함수	
+    
+// -- 생성자 -- 
+    	Foo()				// 생성자(디폴트)
+        {					// 생성자는 프로토타입(반환타입)이 없다(void도 작성 안함)
+           mValue = 0; 
+        }
+    	
+    	Foo(int a, int b)	// 생성자 (매개 변수를 사용함)
+        {
+            mValue1 = a;
+            mValue2 = b;
+            sum = 0;
+        }
+        
+    	//this 포인터를 활용한 생성자
+    	Foo(int sum, int Value1, int Value2)		
+		{
+			this->sum = sum;
+			this->Value1 = Value1;
+			this->Value2 = Value2;
+		}
+
+        // 생성자 이니셜라이저
+   		// 매개변수가 없는 생성자 이니셜라이저
+    	Foo() : mNum1(1),mNum2(2) { }
+    	// 멤버변수 mNum1의 초깃값 = 1, 멤버변수 mNum2의 초깃값 = 2
+    
+    	// 매개변수가 있는 생성자 이니셜라이저
+    	Foo(int a, b) : mvalue1(a),mvalue2(b)  
+    	// 생성자(타입 매개변수) : 멤버변수(매개변수)
+    	{
+        // 멤버변수 mvalue1의 초깃값 = a, 멤버변수 mvalue2 초깃값 = b
+    	}
+    	
+    	
+    
+    
+// -- 그 외 -- 
+    	void SumValue() 		
+    	{
+         sum = mValue1 + mValue2;  // 값을 변경하는 동작이 있음
+    	}	
+    
+    	void SumValue(int a, int b)  // 인자를 받는 멤버함수
+    	{
+         sum = a + b; 
+    	}	
+    	// 같은 이름을 가진 메서드가 두 개 이상: 오버로딩 적용
+    
+    	void PrintValue() const; 
+        {
+            cout<<"sum의 값: "sum<<endl;  // 값을 변경하는 동작이 없음
+        }
+    
+    	void printVlaue(const Foo& tmp)  const  //인수로 객체의 포인터를 받아옴
+		{
+  			cout<<tmp.SumValue()<<endl;  //SumValue()함수 호출
+		} 
+    
+    	void PrintAll() const
+		{
+    		cout << "sum의 값: "<<sum <<endl;
+    		cout << "Value1의 값: "<< Value1 endl;
+    		cout << "Value2의 값: "<< Value2 <<endl; 
+		}
+    
+   		void Foo setValue1(int inValue)   
+		{
+   		mValue1 = inValue;
+    	return PrintValue();   
+		}
+    	//같은 클래스에 정의된 다른 메서드 호출
      
-      cout << endl;
-      tmp1.new(2, 2);
-      tmp1.num2();	
-     
-      cout << endl;
-      Hibernaion tmp1(1, 2, 3)	// == 입력 인수가 있는 생성자 호출
-      tmp1.num2();
-          
-      return 0;
-  }
-  /*
-  ---출력---  
-  두 수의 합: 1
-  두 수의 합: 7
-  두 수의 합: 1
-  두 수의 합: 10
-  
-  두 수의 합: 4
-  
-  두 수의 합: 5
-  
-  */
-  ```
-  
-  
+};	// C++에서 클래스는 '문장'이므로 반드시 세미콜론(;)으로 끝나야 한다.
 
 
+class Bar
+{
+ public: 
+     Bar();
+ private:
+ 	Foo mValue1;      //다른 클래스의 데이터 멤버로 정의된 객체
+    //Foo class의 데이터 멤버를 Bar class의 객체 데이터 멤버로 정의  
+};
+ 	
 
-### 3.  클래스 상속  
+int main(void)
+{
+// 스택에 생성한 객체
+    Foo myFoo1, myBar1; 		// myFoo, myBar라는 객체 선언									// 입력 인수가 없는 기본 생성자 호출
+    Foo myBaz1(1, 2, 3)		//입력 인수가 있는 생성자 호출
+       
+    // 객체를 통한 메서드(멤버함수)의 호출    
+    myFoo1.SumValue();  //  myFoo객체를 사용해서 Foo class 안의 SumValue라는 멤버 함수 호출
+    myBar1.SumValue(2, 5);  //  myBar객체를 사용해서 Foo class 안의 SumValue(int a, int b)라는 멤버 함수 호출
+    myBaz1.SumValue();
+    
+// 힙에 생성한 객체        
+Foo* myFoo2 = new Foo();
+Foo* myBar2 = new Foo();
 
-- **정의**
+myFoo2->PrintAll();				
+myFoo2->SumValue(2, 5); // 매개변수가 있는 SumValue() 메서드 호출
 
-  >클래스 상속(Class Inheritance)이란 기초 클래스의 모든 특성을 물려받아 새롭게 작성된 클래스를 가리킨다.
+myBar2->PrintAll();				
+myBar2->SumValue();		// 매개변수가 없는 SumValue() 메서드 호출
 
-- 특징
+delete myFoo2;   
+myFoo2 = nullptr;
+delete myBar2;   
+myBar2 = nullptr;
+// 스마트 포인터를 사용하지 않고 힙에 할당한 객체 메모리는 반드시 delete로 해제해야 한다.
 
-  > 1. 파생 클래스는 반드시 자신만의 생성자를 작성해야 한다.
-  >
-  > 2. 파생 클래스에는 기초 클래스의 접근할 수 있는 모든 멤버 변수들이 저장된다.
-  >
-  > 3. 파생 클래스는 기초 클래스의 접근할 수 있는 모든 멤버 함수를 사용할 수 있다.
-  >
-  > 4. 파생 클래스에는 필요한 만큼 멤버를 추가할 수 있다.
-  > 5. 코드의 양도 줄어들고, 프로그램의 유연성이 높아지는 등 여러가지 이점을 누릴 수 있다.
+Foo myFoo3 = make_unique<Foo>();  //스마트 포인터를 사용해서 힙에 생성한 객체
+myFoo3->SumValue(2, 5);
+    
+// 힙에 생성한 객체로 멤버 함수를 호출할 땐 -> 를 사용하여 호출할 수 있다.
 
-- 선언
-
-  ```c++
-  class Winter : public Hibernaion
-  //class 파생클래스이름 : 접근제어지시자 기초클래스이름
-  {
-   	private:
-   	   
-    	public:   							
-  	Winter() : Hibernation()     // 생성자 상속
-     // 클래스 이름 : 상속받은 부모클래스 이름
-  }
-  ```
-
-  - private 상속: `class Winter : private Hibernaion`
-
-    >private 상속을 하게되면 private보다 접근 범위가 넓은(public, protected) 멤버들은 모조리 private로 바꾸어서 넘어온다. 
-    >
-    >즉, class전체가 private.
-
-  - protected 상속:  `class Winter : protected Hibernaion`
-
-    >private, protected 멤버는 그대로 있고, Parent 클래스의 public 멤버는 protected로 바뀌어 상속되는 것.
-
-  - public 상속: `class Winter : public Hibernaion`
-
-    >부모 class의 접근 범위를 그대로 상속
-
-- 생성자 상속 전체 코드로 이해하기
-
-  ```c++
-  #include <iostream>
-  using namespace std;
-  
-  class A
-  {
-      private:
-      int x;
-      public:
-      A() { x = 0; }  		// 기본생성자. 
-      A(int x)				// int형 x를 매개변수로 받은 생성자
-      {
-          this->x = x;
-          cout<< x <<endl;
-   	}    
-  };
-  
-  class B : public A 	//  A라는 class를 상속받은 B class
-  {
-      int y;             			// private: 는 생략 가능
-      public:
-    	B();				// 기본생성자. 아무것도 상속받지않음
-      B(int y) : A(y+5)   //A의 class에서 매개변수를 가진 생성자를 상속 
-      // 개체선언처럼 동작을 이해하면 됨
-      {
-          this->y = y;
-          cout << y <<endl;
-      }    
-  };
-  
-  class C : public B
-  {
-      int m;
-      public:
-      C();
-      C(int x,int y,int z) : B(x) // 받은 3 개의 인자 중 x를 상속받은 B 생성자에게 전달     
-      {
-          m = x*y*z;    // 받은 3개의 인자는 m을 초기화하는데 사용
-          cout<< m <<endl;
-      }    
-  };
-  
-  int main(void)
-  {
-     C temp(1, 2, 3);
-  }
-  
-  /* -- 출력
-  6           C class의 C(int 1, int 2, int 3) 생성자 실시, 1값은 B에게
-  1			B class의 B(int 1) 생성자 실시, 1+5값은 A생성자에게
-  6			A class의 A(int 6) 생성자 실시
-  */
-  ```
-
-  
+Foo myFoo4[2] = {Foo(0), Foo(3), F(23)};  //이니셜라이저로 선언한 객체
+    
+    return 0;
+}
+```
 
 
 
 
 
+---
 
 
-
-
-**추가 참고할 내용**
-
-- 객체 지향 프로그래밍
-
-  > 객체 지향 프로그래밍에서는 모든 데이터를 객체(object)로 취급하며, 객체가 바로 프로그래밍의 중심이 됩니다.
-  >
-  > 객체(object)란 간단히 이야기하자면 실생활에서 우리가 인식할 수 있는 사물로 이해할 수 있습니다.
-  >
-  > 이러한 객체의 상태(state)와 행동(behavior)을 구체화하는 형태의 프로그래밍이 바로 객체 지향 프로그래밍입니다.
-  >
-  > 즉, 프로그램을 기능 단위로 조각 내서 프로그래밍하는 것.
-  >
-  > 또한, 이와 같은 객체를 만들어 내기 위한 틀과 같은 개념이 바로 클래스(class)입니다.
-
-- 객체 지향 프로그래밍이 가지는 특징
-
-  > 1. 추상화(abstraction)
-  >
-  > 2. 캡슐화(encapsulation)
-  >
-  > 3. 정보 은닉(data hiding)
-  >
-  > 4. 상속성(inheritance)
-  >
-  > 5. 다형성(polymorphism)
 
