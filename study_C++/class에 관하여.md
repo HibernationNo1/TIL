@@ -72,7 +72,7 @@ class Foo 					// class 클래스이름
             cout<<"sum의 값: "sum<<endl;  // 값을 변경하는 동작이 없음
         }
      
-    	void FOO::PrintAll() const
+    	void PrintAll() const
 		{
   			cout << "sum의 값: "<<sum <<endl;
     		cout << "Value1의 값: "<< Value1 endl;
@@ -82,6 +82,7 @@ class Foo 					// class 클래스이름
  ```
 
 > - Foo class에서 선언된 함수는 'Foo class에서 지원하는 메서드' 라고 한다.
+>
 > - 메서드는 비정적 멤버, 데이터 멤버는 정적 멤버다.
 >
 > - 메서드는 프로토타입(void같은)과 메서드 이름, 메서드를 구현하는 정의 코드가 반드시 있어야 한다.
@@ -89,6 +90,13 @@ class Foo 					// class 클래스이름
 > - 데이터 멤버는 가능하면 private에서 선언한다.
 >
 > - 데이터 멤버는 생성자 안에서 초기화한다.
+>
+> - const키워드가 붙은 메서드는 멤버변수 값을 변경하는 동작을 할 수 없으며 const로 선언된 객체로만 호출이 가능하다
+>
+>   >  ```c++
+>   > const Foo myfoo(1,2);
+>   > myfoo.PrintValue()
+>   >  ```
 >
 > -  클래스를 선언하게 되면 그 클래스는 메모리에 객체로써 자리를 잡게 된다. 그러나, 이 객체는 해당 메모리에 자리만 잡고 있을 뿐이지, 초기화는 되지 않으므로, 생성자를 통해서 초기화를 해줄 필요가 있다.
 >
@@ -272,10 +280,10 @@ void Foo::setValue1(int inValue)
 > ```c++
 > int main(void)
 > {
->     Foo* myFoo;    			// 자신만의 mValue를 가지고 있음
+>     Foo myFoo;    			// 자신만의 mValue를 가지고 있음
 >     // 디폴트 생성자 호출
 >     
->     Foo* myBar(4, 5);		// 얘도 자신만의 mValue를 가지고 있음
+>     Foo myBar(4, 5);		// 얘도 자신만의 mValue를 가지고 있음
 >     //인수 4, 5를 매개변수로 하는 생성자 호출
 >     
 >     
@@ -321,7 +329,7 @@ void Foo::setValue1(int inValue)
 > - 메모리 관련 문제가 발생하지 않게 하려면 반드시 **스마트 포인터**를 사용한다.
 >
 >   ```c++
->   Foo tmp1 = make_unique<Foo>();
+>   unique_ptr<Foo> tmp1 = make_unique<Foo>();
 >   tmp->num3(3, 7);
 >   ```
 >
@@ -422,13 +430,14 @@ void Foo::setValue1(int inValue)
 >      >힙 메모리를 사용하는 생성자는 객체가 선언된 다음 호출된다.
 >
 >      ```c++
->      Foo myFoo = make_unique<Foo>();  
+>      unique_ptr<Foo> myFoo = make_unique<Foo>();  
 >      // 객체가 선언되고 나서, 스마트포인터로 메모리 공간이 할당되면 생성자 호출
-> ```
+>      ```
 >      
->      > 힙 객체 생성자를 이해하기 위해 꼭 봐야 할 참고내용
+>      >  힙 객체 생성자를 이해하기 위해 꼭 봐야 할 참고내용
 >      >
->      > [스마트 포인터](https://github.com/HibernationNo1/TIL/blob/master/study_C%2B%2B/smart%20pointer%EC%97%90%20%EA%B4%80%ED%95%98%EC%97%AC.md)
+>      >   [스마트 포인터](https://github.com/HibernationNo1/TIL/blob/master/study_C%2B%2B/smart%20pointer%EC%97%90%20%EA%B4%80%ED%95%98%EC%97%AC.md)
+> 
 
 
 
@@ -545,6 +554,8 @@ class Foo
 >
 > 복제 대입 연산자는 생략해도 컴파일러가 알아서 생성해주고, 대부분 그것만으로 충분하다.
 >
+> **형태**: `perator`
+>
 > - 인터페이스에서 객에의 값을 다른 객체에 대입하는 예제
 >
 > ```c++
@@ -555,12 +566,10 @@ class Foo
 - 복제 대입 연산자 선언
 
 ```c++
-Foo& operator=(const Foo rhs)   //하나의 메서드임
-{
+Foo& operator=(const Foo& rhs)   //하나의 메서드임
+{			//형태 클래스 이름& 대입 연산자(클래스 이름& 소스 객체)
        if (this == &rhs)
        {
-            
-           //클래스 이름& 대입 연산자(클래스 이름& 소스 객체)
             return *this;
        }
        mValue =rhs.mValue1;
@@ -573,31 +582,31 @@ Foo& operator=(const Foo rhs)   //하나의 메서드임
 >
 >- `if (this == &rhs)`: 객체는 자기 자신을 본인에게 대입을 할 수 있기 때문에  복제 대입 연산자를 선언할 때 자기 자신을 대입하는 경우도 고려해야 한다.
 >
->  > 대입하려는 두 객체가 서로 똑같은 메모리 공간에 있다면(두 객체에 대한 포인터가 똑같다면) 서로가 자기 자신이라는걸 의마하며, this포인터를 활용한다.
+>> 대입하려는 두 객체가 서로 똑같은 메모리 공간에 있다면(두 객체에 대한 포인터가 똑같다면) 서로가 자기 자신이라는걸 의마하며, this포인터를 활용한다.
 >
->  ```c++
->  Foo myFoo(4);   // 객체 선언
->  myFoo = myFoo;  //자기 자신을 대입
->  ```
+>```c++
+>Foo myFoo(4);   // 객체 선언
+>myFoo = myFoo;  //자기 자신을 대입
+>```
 >
->  > 복제 대입 연산자가 호출되는 객체는 등호의 좌변에 있는 객체(`myFoo`)다.
+>> 복제 대입 연산자가 호출되는 객체는 등호의 좌변에 있는 객체(`myFoo`)다.
+>
+>- `return *this;`: 리턴 타입이 `Foo&`이기 때문에 값을 정확히 리턴해야 한다. 즉, 대입 연산자는 항상 `*this`를 리턴한다. (자기 자신을 대입할 때도)
 >
 >- `Foo& operator=(const Foo& rhs);`: 대입 연산자는 여러 개의 대입 연산이 연달아 가능하기 때문에 Foo 객체에 대한 레퍼런스를 리턴한다. 
 >
->  > `return *this;`: 리턴 타입이 `Foo&`이기 때문에 값을 정확히 리턴해야 한다. 즉, 대입 연산자는 항상 `*this`를 리턴한다. (자기 자신을 대입할 때도)
->
->  ```c++
->  //연달아 여러 개의 대입 연산 
->  myFoo = myBar = myBaz;
->  ```
+>> ```c++
+>>  //연달아 여러 개의 대입 연산 
+>>  myFoo = myBar = myBaz;
+>> ```
 >
 >- ```c++
->         mValue =rhs.mValue1;
->         mValue =rhs.mValue2;
->         return *this;
->  ```
+>   mValue =rhs.mValue1;
+>   mValue =rhs.mValue2;
+>   return *this;
+>   ```
+> > 객체에 자기 자신이 아닌 객체를 대입할 때는 모든 멤버에 대입 연산을 수행해야 한다.
 >
->  > 객체에 자기 자신이 아닌 객체를 대입할 때는 모든 멤버에 대입 연산을 수행해야 한다.
 
 - 복제 대입 연산자와 복제 생성자의 차이점
 
@@ -616,6 +625,8 @@ Foo& operator=(const Foo rhs)   //하나의 메서드임
   >
   > > 복제 대입 연산자를 사용할때 선언
   >
+  > ---
+  >
   > 
   >
   > 복제 생성자나 소멸자가 있으면 대입 연산자를 생성해주는 기능흘 명시적으로 디폴트로 지정하는 방법 
@@ -623,10 +634,15 @@ Foo& operator=(const Foo rhs)   //하나의 메서드임
   > ```c++
   > Foo operator(const Foo& src) = default;
   > ```
-  >
+>
   > > 복제 생성자를 사용할때 선언
 
-  
+
+> 추가.
+>
+> 동적 할당 메모리를 사용하는 객체에 대해서는 반드시 복제 생성자와 복제 대입 연산자를 정의해서 깊은 복제를  제공해야 한다.
+
+
 
 ##### 8. 레퍼선스로 객체 전달하기
 
@@ -640,6 +656,10 @@ Foo& operator=(const Foo rhs)   //하나의 메서드임
 Foo(const Foo& stc);  //위의 코드에서 생성자 매개변수를 보면
 // const 클래스명& 객체명  을 매개변수로 가지고 있다.  
 ```
+
+> 참고 내용
+>
+> [레퍼런스에 관하여](https://github.com/HibernationNo1/TIL/blob/master/study_C%2B%2B/Reference%EC%97%90%20%EA%B4%80%ED%95%98%EC%97%AC.md)
 
 
 
@@ -731,9 +751,9 @@ class Foo 					// class 클래스이름
             cout<<"sum의 값: "sum<<endl;  // 값을 변경하는 동작이 없음
         }
     
-    	void printVlaue(const Foo& tmp)  const  //인수로 객체의 포인터를 받아옴
+    	void printVlaue(const Foo& myFoo1)  const  //인수로 객체의 포인터를 받아옴
 		{
-  			cout<<tmp.SumValue()<<endl;  //SumValue()함수 호출
+  			cout<<myFoo1.SumValue()<<endl;  //SumValue()함수 호출
 		} 
     
     	void PrintAll() const
@@ -790,7 +810,7 @@ delete myBar2;
 myBar2 = nullptr;
 // 스마트 포인터를 사용하지 않고 힙에 할당한 객체 메모리는 반드시 delete로 해제해야 한다.
 
-Foo myFoo3 = make_unique<Foo>();  //스마트 포인터를 사용해서 힙에 생성한 객체
+unique_ptr<Foo> myFoo3 = make_unique<Foo>();  //스마트 포인터를 사용해서 힙에 생성한 객체
 myFoo3->SumValue(2, 5);
     
 // 힙에 생성한 객체로 멤버 함수를 호출할 땐 -> 를 사용하여 호출할 수 있다.
