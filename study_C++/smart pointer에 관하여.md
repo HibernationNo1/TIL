@@ -14,6 +14,8 @@
 
 - 스마트 포인터는 함수 안에서 동적으로 할당된 리소스를 관리하는 데 사용할 수도 있고, 클래스의 데이터 멤버로 사용할 수도 있다.
 
+  > 클래스의 데이터 멤버에 대한 스마트포인터는 추후 공부하기
+
 - 템플릿을 이용하면 모든 포인터 타입에 대해 안전한 스마트 포인터를 클래스를 작성할 수 있다.
 
 - 연산자 오버로딩을 이용하여 스마트 포인터 객체를 일반 포인터처럼 활용할 수 있다.
@@ -48,7 +50,12 @@ delete myFoo;
 ```c++
 void tmp()
 {
-Foo myFoo = make_unique<Foo>(1, 2); 
+    unique_pte<int>a;
+    a = make_unique<int>;    
+    // 일반 변수 스마트 포인터 생성방법.
+    
+    // 객체의 스마트 포인터 생성방법. 
+unique_ptr<Foo> myFoo = make_unique<Foo>(1, 2); 
 // Foo의 객체를 생성 (make_nuique 키워드 적용) 
 // 1과2는 생성자의 매개변수에 전달할 인수
     mtFoo -> go(); 
@@ -83,7 +90,7 @@ Foo myFoo = make_unique<Foo>(1, 2);
 >   // tmp라는 함수에 Foo클래스의 mybar라는 객체를 생성해서 인자로 전달
 >   
 >   // 위 함수를 get()메서드를 사용해서 함수에 스마트 포인터를 전달해서 함수 호출
->   Foo myFoo = make_unique<Foo>();
+>   unique_ptr<Foo> myFoo = make_unique<Foo>();
 >   tmp(myFoo.get());
 >   ```
 >
@@ -125,7 +132,7 @@ Foo myFoo = make_unique<Foo>(1, 2);
 - shared_ptr는 레퍼런스 카운팅을 지원한다.
 
   ```c++
-  Foo myFoo = make_shared<Foo>();  //shared_ptr 생성
+  shared_ptr<Foo> myFoo = make_shared<Foo>();  //shared_ptr 생성
   
   shared_ptr<Foo> myBar(myFoo);  // myFoo를 복사한 myBar라는 shared_ptr의 복제 생성자
   ```
