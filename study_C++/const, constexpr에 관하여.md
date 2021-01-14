@@ -128,13 +128,13 @@ a = 5;  // 컴파일 에러
   	}
   	
       return 0;
-}
+  }
   ```
 
   > 상수와 일반 함수는 선언문 앞에 const를 붙인다.
 
   - `--class 안에서 메서드 뒤에 const--`
-  
+
   ```c++
   class tmp
   {
@@ -150,20 +150,23 @@ a = 5;  // 컴파일 에러
   	{
   		sum1 = a + b;
   	  	return 1;
-		}
+  	}
   ```
-  
+
   > - 객체를 변경하지 않는 멤버 함수는 항상 const로 선언하는 것이 바람직하다.
+  >
   > - main 함수에서 클래스의 객체를 const로 선언한다면, 해당 클래스 안의 const메서드만 호출할 수 있다.
   >
-  > 추가) static 메서드를 const로 선언해서는 안된다. (static 참고)
+  >   > 추가) static 메서드를 const로 선언해서는 안된다. (static 참고)
+  >   >
+  >   > const로 선언된 메서드는 non-const로 선언된 클래스 객체도 호출할 수 있다.
   >
   > - 클래스 안에서 선언된 함수만 뒤에 const를 붙일 수 있다.
   >
   > >  참고내용: [class에 관하여](https://github.com/HibernationNo1/TIL/blob/master/study_C%2B%2B/class%EC%97%90%20%EA%B4%80%ED%95%98%EC%97%AC.md)
-  
+
   - `--class 안에서 메서드 앞에 const--`
-  
+
   ```c++
   const int num(int a, int b) const  // 리턴된 값을 고정시킨다면 메서드 앞에 const
   {
@@ -175,7 +178,7 @@ a = 5;  // 컴파일 에러
   	}
   };
   ```
-  
+
   >
 
 >  9장 calss부분 p. 380 참고
