@@ -6,6 +6,8 @@
 # $ git config --global mergetool.keepBackup false
 *.orig
 
+(쉬어가는 파일)아스키코드.cpp
+
 가상환경 .txt
 bridge.py
 ex1 스레드.py
