@@ -141,3 +141,20 @@ reverse(alphabet.begin(), alphabet.end())
 
 cout << alphabet;      // dcba 출력
 ```
+
+
+
+3. ###  max, min 함수
+
+**형태**: `max(a, b)`
+
+>- min: 매개변수 a와 b의 값을 비교해서 최소 값을 반환한다.
+>- max: 매개변수 a와 b의 값을 비교해서 최대 값을 반환한다.
+
+```c++
+#include <algorithm>     //헤더파일 포함 필수
+
+min(1, 2); //1반환
+max(1234.231, 1235.111) // 1234.231반환
+```
+
