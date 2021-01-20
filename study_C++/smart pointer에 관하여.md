@@ -50,9 +50,15 @@ delete myFoo;
 ```c++
 void tmp()
 {
-    unique_pte<int>a;
-    a = make_unique<int>;    
     // 일반 변수 스마트 포인터 생성방법.
+    unique_ptr<int>a;
+    a = make_unique<int>(10);   // a포인터 위치에 10 할당. 바로 초기화해줘야함 
+    
+    // 배열 스마트 포인터 생성
+    int n = 10;
+    unique_ptr<int[]> a;
+	a = make_unique<int[]>(n); //배열의 길이가 10
+    
     
     // 객체의 스마트 포인터 생성방법. 
 unique_ptr<Foo> myFoo = make_unique<Foo>(1, 2); 
@@ -70,6 +76,21 @@ unique_ptr<Foo> myFoo = make_unique<Foo>(1, 2);
 > ```
 >
 > - 가독성은 make_unique가 더 좋다.
+> - 스마트 포인터의 시작 주소는 `begin()`이 아닌 `get()`으로 해야한다.
+>
+> ```c++
+> int n, i; 
+> cin >> n;
+> unique_ptr<int[]> a;
+> 	
+> a = make_unique<int[]>(n);
+> for (i = 0; i < n; i++) {
+> 		cin >> a[i];
+> }
+> sort(a.get(), a.get() + n, less<int>());
+> ```
+>
+> 
 
 
 
