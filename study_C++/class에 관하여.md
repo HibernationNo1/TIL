@@ -214,8 +214,9 @@ void Foo::setValue1(int inValue)
 } //예로 들기 위한 코드임
 ```
 
-- *this pointer**
+- **this pointer**
 
+  >- this라는 키워드는 객체 주소를 가리킨다.
   >- 일반 메서드를 호출하면 항상 메서드가 속한 객체의 포인터인 this가 숨겨진 매개변수 형태로 전달된다. 
   >- this포인터로 해당 객체의 데이터 멤버나 메서드에 접근할 수 있으며, 다른 메서드나 함수에 매개변수로 전달할 수도 있다.
   >- 때로는 이름을 명확히 구분하는 용도로도 사용된다.
@@ -244,9 +245,9 @@ void Foo::setValue1(int inValue)
   >>      cout<<tmp.SumValue()<<endl;  //SumValue()함수 호출
   >> } 
   >> ```
-  >>
+  >
   >> printVlaue() 함수를 setVlaue() 메서드 안에서 호출하려면 반드시 *this를 인수로 전달해야 한다. 그래야 printVlaue() 안에서 호출할 SumValue() 메서드는 자신을 호출한  printVlaue() 가 setValue()에 속한 것임을 알 수 있다.
-  >>
+  >
   >> ```c++
   >> //setValue()에서 printVlaue()를 호출했다고 가정
   >> void Foo::setValue(double Value)
