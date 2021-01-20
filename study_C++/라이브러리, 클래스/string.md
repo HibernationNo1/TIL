@@ -24,6 +24,10 @@
   
   string word;
   word = "hibernation"
+      
+  string month[8] = { "MON", "TUE" , "WED" , "TUE" , "FRI" , "SAT", "SUN" };
+  // 한 글자가 하닌, 한 단어의 배열을 선언한다면 string을 사용해야 한다.
+  //char month[8] = { "MON", "TUE" , "WED" , "TUE" , "FRI" , "SAT", "SUN" }; 이건 안됨
   ```
 
   > string 변수이름("입력하고자 하는 문자열")
@@ -31,12 +35,12 @@
 - 입력
 
   ```c++
+  #include<string>  // getline을 사용하기 위해선 string헤더파일 포함 필요
   string word;
   cin >> word;    // 단어 단위로 입력
   
   string word;
   getline(cin, word);  // 띄어쓰기 포함, 문장 단위로 입력
-  
   
   ```
 
