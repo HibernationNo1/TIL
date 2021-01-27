@@ -39,3 +39,14 @@ int main (){
 > 만약 a배열의 타입이 char(1 byte)가 아닌 int(4 byte)라면, 각 배열에는 원치 않는 값이 할당되게 된다.   a배열의 타입은 char 또는 unsigned char로 하자.
 >
 > 2번째 인자가 unsigned char로 해석되기 때문에 0~255이외의 값을 넣는다면 제대로 된 초기화가 수행될 수 없다. 두 번째 인자는 0~255사이의 값을 넣자.
+
+- 포인터 배열에 적용할 때
+
+```c++
+//스마트 포인터 배열 선언  
+unique_ptr<int[]> x;
+x = make_unique<int[]>(n);
+    
+memset(&x, -1, sizeof(x));
+```
+

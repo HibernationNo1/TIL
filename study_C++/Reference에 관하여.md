@@ -168,3 +168,33 @@ swap(*xp, *yp);
 >메모리의 소유권이 변수를 받는 코드에 있으면 객체에 대한 메모리를 해제하는 책임은 그 코드에 있다. 따라서 객체를 포인터로 표현한다.
 >
 >반면 메모리 소유권이 변수를 받는 코드에 없어서 메모리를 해제할 일이 없다면 레퍼런스로 전달한다.
+>
+>**ex)**
+
+```c++
+void main() 
+{
+changeUpper(new string("naver"));
+}
+
+void printAndDelete(string* str) 
+{
+     cout << *str << endl;
+     delete str;
+}
+//위와 같은 경우에 함수내에서 delete를 해줬으면 하는 객체라서 포인터로 전달
+//하지만 만약에 delete를  호출하는 쪽에서 하고 싶으면 
+void main() 
+{
+string* p =new string("naver");
+changeUpper(*p);
+delete p;
+}
+
+void printAndDelete(string& str) 
+{
+      cout << str << endl;
+}
+
+//이렇게 처리를 할 것
+```

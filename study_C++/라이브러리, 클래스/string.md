@@ -110,4 +110,4 @@
   > - 기존 1+n 자리의 index를 새롭게 할당하는 것이 아님. 즉, index갯수 늘어남
   > - `word.insert(2, 'm')` 처럼 `vec.bigin()+n` 자리에 int형 값을 넣으면 에러. 
 
-- `word.erase(word.begin() + n)0`:  1+n번째 자리 index삭제
+- `word.erase(word.begin() + n)`:  1+n번째 자리 index삭제

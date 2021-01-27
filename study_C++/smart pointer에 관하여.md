@@ -79,15 +79,19 @@ unique_ptr<Foo> myFoo = make_unique<Foo>(1, 2);
 > - 스마트 포인터의 시작 주소는 `begin()`이 아닌 `get()`으로 해야한다.
 >
 > ```c++
+> #include <algorithm>
+> int main(void)
+> {
 > int n, i; 
 > cin >> n;
 > unique_ptr<int[]> a;
-> 	
+> 
 > a = make_unique<int[]>(n);
 > for (i = 0; i < n; i++) {
 > 		cin >> a[i];
 > }
-> sort(a.get(), a.get() + n, less<int>());
+> sort(a.get(), a.get() + n, less<int>());  //sort 함수 사용시
+> }
 > ```
 >
 > 
@@ -100,43 +104,55 @@ unique_ptr<Foo> myFoo = make_unique<Foo>(1, 2);
 
 - unique_ptr에서는 get()과 reset(), release()메서드를 제공한다.
 
-> - get()메서드
->
->   > get()메서드를 이용하면 내부 포인터에 직접 접근할 수 있다.
->   >
->   > 함수는 보통 일반 포인터만 전달할 수 있지만, get()을 사용해서 스마트 포인터를 전달할수 있다.
->
->   ```c++
->   void tmp(Foo* mybar) { /* 스마트 포인터를 사용하느 코드 */ }       
->   // tmp라는 함수에 Foo클래스의 mybar라는 객체를 생성해서 인자로 전달
->   
->   // 위 함수를 get()메서드를 사용해서 함수에 스마트 포인터를 전달해서 함수 호출
->   unique_ptr<Foo> myFoo = make_unique<Foo>();
->   tmp(myFoo.get());
->   ```
->
-> 
->
-> - reset() 메서드
->
->   > reset()을 사용하면 unique_prt의 내부 포인터를 해제하거나 다른포인터로 변경할 수 있다.
->
->   ```c++
->   myFoo.reset();				// 리소스 해제 후 nullptr로 초기화
->   myFoo.reset(new Foo());  // 리소스 해제 후 새로운 Foo 인스턴스로 설정
->   ```
->
->   >release()는 리소스에 대한 내부 포인터를 리턴한 뒤 스마트 포인터를 unllptr로 설정한다.  그러면 스마트 포인터는 그 리소스에 대한 소유권을 잃고, 그 리소스를 다 쓴 뒤 반드시 직접 해제해야 한다.
->
->   ```c++
->   Foo mybar = myFoo.release();  // 리소스 소유권 해체
->   // mybar라는 객체 
->    
->   delete mybar;
->   mybar = nullptr;
->   ```
->
-> 
+  - get()메서드
+
+    > get()메서드를 이용하면 내부 포인터에 직접 접근할 수 있다.
+    >
+    > 함수는 보통 일반 포인터만 전달할 수 있지만, get()을 사용해서 스마트 포인터를 전달할수 있다.
+
+    ```c++
+    void tmp(Foo* mybar) { /* 스마트 포인터를 사용하느 코드 */ }       
+    // tmp라는 함수에 Foo클래스의 mybar라는 객체를 생성해서 인자로 전달
+    
+    // 위 함수를 get()메서드를 사용해서 함수에 스마트 포인터를 전달해서 함수 호출
+    unique_ptr<Foo> myFoo = make_unique<Foo>();
+    tmp(myFoo.get());
+    ```
+
+  
+
+  - reset() 메서드
+
+    > reset()을 사용하면 unique_prt의 내부 포인터를 해제하거나 다른포인터로 변경할 수 있다.
+
+    ```c++
+    myFoo.reset();				// 리소스 해제 후 nullptr로 초기화
+    myFoo.reset(new Foo());  // 리소스 해제 후 새로운 Foo 인스턴스로 설정
+    ```
+
+    >release()는 리소스에 대한 내부 포인터를 리턴한 뒤 스마트 포인터를 unllptr로 설정한다.  그러면 스마트 포인터는 그 리소스에 대한 소유권을 잃고, 그 리소스를 다 쓴 뒤 반드시 직접 해제해야 한다.
+
+    ```c++
+    Foo mybar = myFoo.release();  // 리소스 소유권 해체
+    // mybar라는 객체 
+    
+    delete mybar;
+    mybar = nullptr;
+    ```
+
+  - 그외 - rmove() 메서드
+
+    > 유니크포인터(unique_ptr)은 shared_ptr과 비슷하지만 복사 생성자와 할당 연산자가 구현되어 있지 않다. 복사를 할 수는 없으며 오직 이동(std::move)만 할 수 있다.
+    >
+    > reset()과 같음
+
+    ```c++
+    unique_ptr<class> u_ptr2 = u_ptr1; // 에러 발생
+    unique_ptr<class> u_ptr2 = std::move(u_ptr1); 
+    // u_ptr1의 주소가 u_ptr2로 인계 받으면서 통과된다.
+    ```
+
+    
 
 
 
