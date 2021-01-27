@@ -1,6 +1,6 @@
-### Git Bash 명령어 정리
+# Git Bash 명령어 정리
 
-#### 1. 기본적인 명령어
+### 1. 기본적인 명령어
 
 - `Ctrl + L`: 화면 초기화
 - `LS`: 목록 보기
@@ -24,7 +24,7 @@
 - `mv 파일이름.확장자 name`: 해당 파일을 name이라는 폴더로 이동
 - 
 
-#### 2. 깃 커밋 명령어
+### 2. 깃 커밋 명령어
 
 - `git init`: 현재 디렉토리를 git으로 버전관리 시작하기
 
@@ -47,8 +47,8 @@
 - `git commit` : Staging Area에 있는 데이터만 Local Repository로 commit
 
   - 실제 사용 -> `git commit -m "커밋 내용"`
-
-  - `git reset 파일명`: Staging Area에서 제외시키는 명령어
+- `git reset 파일명`: Staging Area에서 제외시키는 명령어
+  - `git log`: 커밋을 포함한,  Remote Repository(github)로 업로드에 관한 모든 로그를 보여준다.
 
 - `git push`: Local Repository에서 Remote Repository(github)로 업로드. 즉, 기본적으로 현재 분기를 추적 원격 지점으로 푸시
 
@@ -59,6 +59,12 @@
     >즉,  `git pull origin master`  로 받아서 내가 push 하려 했던 정보와 합친 다음에 push해야한다.
     >
     >추가 정보 : [Study_branch](https://github.com/HibernationNo1/TIL/blob/master/study_git/Study_branch.md)
+    
+  -  Remote Repository(github)를 `git clone`으로 가져왔을 경우 `git push`만 해도 되지만, `git remote`로 가져왔다면 최초 `git push`는 Repository 이름과 branch명을 명시해야 한다. `git push origin master` <<이것 처럼
+
+     > 단, `git push -u origin master` 처럼 -u 옵션을 사용한다면, 이후부터 `git push` 만 입력해도 된다.
+     
+  -  `git push --set-upstream origin master`: commit은 정상인데, push가 안될때 사용
 
 - `git fetch`: Remote Repository에서 Local Repository로 파일 정보 전달
 
@@ -92,17 +98,43 @@
 1. touch .gitignore
 2. touch README.md
 
-3. git init => add => commit...
+3. git init => remote =>  add => commit...
 
 
 
+### 3. 깃 추가 내용
 
+터미널에 `git add` 를 입력했는데 다음과 같은 에러가 뜨는 경우가 있다.
 
-######  summary
+```
+warning: CRLF will be replaced by LF in some/file.file.
+The file will have its original line endings in your working directory.
+```
 
-> 해당 파일은 아래 정보를 정리한 파일임
+이는 맥 또는 리눅스를 쓰는 개발자와 윈도우 쓰는 개발자가 Git으로 협업할 때 발생하는 **Whitespace** 에러다. 유닉스 시스템에서는 한 줄의 끝이 **LF(Line Feed)**로 이루어지는 반면, 윈도우에서는 줄 하나가 **CR(Carriage Return)**와 **LF(Line Feed)**, 즉 **CRLF**로 이루어지기 때문이다. 따라서 어느 한 쪽을 선택할지 Git에게 혼란이 온 것이다.
+
+유닉스 OS을 쓰고 있다면 `CRLF will be replaced by LF in…` 에러 메시지가 뜰 것이고, 윈도우를 사용하고 있다면 `LF will be replaced by CRLF in…` 에러 메시지가 뜰 것이다.
+
+해답은 `core.autocrlf` 를 켜는 것!
+
+> 둘 중 뭐든간에 해결 방법은 같다. Git은 똑똑해서 이를 자동 변환해주는 `core.autocrlf` 라는 기능을 가지고 있는데, 이 기능을 켜주기만 하면 된다.
 >
-> - git bash 명령어 
->
-> - 처음 프로젝트 시작할 때 tip
+> 이 기능은 개발자가 git에 코드를 추가했을 때 (예컨대 커밋할 때)에는 CRLF를 LF로 변환해주고, git의 코드를 개발자가 조회할 때 (예컨대 clone한다거나 할 때)에는 LF를 CRLF로 변환해준다.
 
+그러므로 **윈도우 사용자**의 경우 이러한 변환이 항상 실행되도록 다음과 같은 명령어를 입력한다. 물론 시스템 전체가 아닌 해당 프로젝트에만 적용하고 싶다면 `—global` 을 빼주면 된다.
+
+```
+git config --global core.autocrlf true
+```
+
+**리눅스나 맥을 사용**하고 있는 경우, 조회할 때 LF를 CRLF를 변환하는 것은 원하지 않을 것이다. 따라서 뒤에 `input`이라는 명령어를 추가해줌으로써 단방향으로만 변환이 이루어지도록 설정한다.
+
+```
+git config --global core.autocrlf true input
+```
+
+혹은 이러한 변환 기능을 원하지 않고, 그냥 **에러 메시지 끄고 알아서 작업하고 싶은 경우**에는 아래 명령어로 경고메시지 기능인 `core.safecrlf`를 꺼주면 된다.
+
+```
+git config --global core.safecrlf false
+```
