@@ -105,6 +105,8 @@ copy(arr1.begin(), arr1.begin()+3, arr2.begin()+1);  //범위 0~3까지
 
 ### 1. Sort함수
 
+##### 1. sort()
+
 **형태**:  `sort(배열의 시작 주소, 배열의 마지막 주소, 올림내림 구분<자료형>());`
 
 > - 인자로 넣는 배열의 범위 index들을 오름차순(또는 내림차순)으로 재정렬한다.
@@ -121,6 +123,165 @@ sort(arr.begin(),arr.end(), greater<int>()); // arr배열을 내림차순으로 
 
 sort(arr.begin(), arr.begin()+4); // arr배열의 첫 번째 index부터 4번째 인덱스까지 오름차순으로 정렬
 ```
+
+
+
+**2차원 배열 정렬**
+
+```c++
+	int n;
+	cin >> n;
+
+	vector<vector<int>> arr(n, vector<int>(2));  // 2중 백터 배열
+
+	for (int i = 0; i < n; i++) {
+		cin >> arr[i][0]; 
+		cin >> arr[i][1];
+	}
+
+	sort(arr.begin(), arr.end());   
+```
+
+> `sort(arr.begin(), arr.end()); ` 는 다중배열에 적용하면, 가장 하위 배열의 첫 번째 인자끼리만 정렬한다. 
+>
+> 첫 번째 인자의 값이 같을 때, 해당 인자들의 두 번째 배열끼리 비교 후 정렬된다.  
+>
+> 결과적으로 아래의 **비교함수 이용하기** 의 예시와 같은 원리이다.
+
+
+
+**pair을 활용한 sort 정렬**
+
+```c++
+#include<iostream>
+#include<vector>
+#include<utility>  // pair 사용
+#include<algorithm>
+
+using namespace std;
+
+#define endl '\n'
+
+int main(void)
+{
+	int n;
+	cin >> n;
+
+	vector< pair<int, int>> arr(n);  // pair형 vector를 선언 ([n][2] 와 비슷한 2차원 배열과 같음)
+
+	for (int i = 0; i < n; i++) {
+		cin >> arr[i].first >> arr[i].second;
+	}
+
+	stable_sort(arr.begin(), arr.end());
+	
+
+	for (int i = 0; i < n; i++) {
+		cout << arr[i].first << " " << arr[i].second << endl;
+	}
+
+	return 0;
+}
+```
+
+>위의 **2차원 배열 정렬** 과 같은 방식으로 정렬된다.
+>
+>예시: [백준 11650번 문제](boj.kr/11650)
+
+
+
+**비교함수 이용하기** 
+
+**형태**:  `sort(배열의 시작 주소, 배열의 마지막 주소, 함수호출);`
+
+```c++
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+struct Point{ // 구조체 선언
+    int x;
+    int y;
+};
+
+// const와  &를 통해서 레퍼런스로 받아오는걸 잊지말자!
+// x순으로 정렬하고 x값이 같으면 y순으로 각각 오른차순으로 정렬
+bool cmp(const Point &p1, const Point &p2){
+    if(p1.x < p2.x){
+        return true;  // true면 첫 번째 인자가 앞에 정렬됨
+    }
+    else if(p1.x == p2.x){  
+        return p1.y < p2.y;
+    }
+    else{
+        return false; // false이면 두 번째 인자가 앞에 정렬됨
+    }
+}
+
+int main (){
+    Point a[100];
+
+    // 초기화를 했다고 가정
+
+    // 정렬
+    // 첫번째 인자는 시작지점 = 배열의 포인터
+    // 두번째 인자는 끝나는지점 + 1 = a(배열의 포인터) + 배열의 크기
+    sort(a, a+100, cmp);  //cmp함수 호출
+}
+```
+
+
+
+
+
+##### 2. stable_sort()
+
+**형태**:  `stable_sort(배열의 시작 주소, 배열의 마지막 주소, 함수호출);`
+
+- stable_sort()는 구조체처럼 여러 값들이 묶여 있을 때 하나의 요소로 정렬을 했을 때 다른 요소들의 정렬 순서는 정렬 전과 같이 그대로 유지 될 수 있도록 하는 정렬이다.
+- 여러 요소를 한 번에 정렬하는 과정에서, 그 중 특정 요소만 정렬이 적용되도록 할 때 사용한다.
+
+```c++
+#include<iostream>
+#include<vector>
+#include<utility>
+#include<algorithm>
+
+using namespace std;
+
+#define endl '\n'
+
+bool cmd(const pair<int, string> &x, const pair<int, string> &y)
+{
+	return x.first < y.first;
+}
+
+int main(void)
+{
+	int n;
+	cin >> n;
+
+	vector< pair<int, int>> arr(n);
+
+	for (int i = 0; i < n; i++) {
+		cin >> arr[i].first >> arr[i].second;
+	}
+
+	stable_sort(arr.begin(), arr.end());
+	
+
+	for (int i = 0; i < n; i++) {
+		cout << arr[i].first << " " << arr[i].second << endl;
+	}
+
+	return 0;
+}
+```
+
+> pair의 first부분만 정렬되고, second부분은 first 정렬 된 상태 안에서,  입력 된 순서대로 정렬이 유지된다.
+>
+> 예시 문제: [백준 10814번 문제](boj.kr/10814)
 
 
 
