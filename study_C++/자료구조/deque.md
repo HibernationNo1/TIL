@@ -59,6 +59,6 @@ deque<int> deq(-100, 10); // -100의 값을 가진 10개의 원소를 가진 덱
 
 - `deq.swap(deq2)` : deq과 deq2를 바꾸어 줌. (swap)
 
-- `deq.insert(2, 3)` : 2번째 위치에 3의 값을 삽입
+- `deq.insert(begin() + 2, 3)` : 2+1번째 위치에 3의 값을 삽입
 - `deq.erase(deq.begin()+n)` : n+1 번째 원소 제거
 - `deq.empty()`: deq가 비어있으면 1 반환
