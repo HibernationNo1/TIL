@@ -60,39 +60,38 @@ vector<vector<int>> vec(2, vector<int>(4, 0)); //  2행 4열이며 각 열의 in
   - `vec.push_back(m)`: 마지막 index 뒤에 m의 값을 할당
 
     > index 갯수가 늘어나는 것임
-  >
-    > `pop_front`는 없음
-
-  - `vec.resize(n)`: 크기를(index 갯수를) n으로 변경한다
-
-    > 더 커졌을 경우 추가된 index의 원소값을 default값인 0으로 초기화
-
-  - `vec.resize(n,m)`: 크기를 n으로 변경한다.
-
-    > 더 커졌을 경우 추가된 index의 원소값을 m으로 초기화한다. 나머지 index값은 그대로
-
-  - `vec.size()`: index의 갯수 리턴
-
-  - `vec.insert(vec.begin()+n,m)`: 1+n번째 자리에 m의 값을 가진 index를 삽입
+  >`pop_front`, `push_front` 는 없음
+  
+- `vec.resize(n)`: 크기를(index 갯수를) n으로 변경한다
+  
+  > 더 커졌을 경우 추가된 index의 원소값을 default값인 0으로 초기화
+  
+- `vec.resize(n,m)`: 크기를 n으로 변경한다.
+  
+  > 더 커졌을 경우 추가된 index의 원소값을 m으로 초기화한다. 나머지 index값은 그대로
+  
+- `vec.size()`: index의 갯수 리턴
+  
+- `vec.insert(vec.begin()+n,m)`: 1+n번째 자리에 m의 값을 가진 index를 삽입
   
     >- `vec.insert(vec.begin()+n, m, s)`: 1+n번째 자리에 m의 값을 가진 index를 s개 삽입
     >
     >- 기존 1+n 자리의 원소값을 새롭게 할당하는 것이 아님. 즉, index갯수 늘어남
   >
     >- `vec.insert(2, m, s)` 처럼 `vec.bigin()+n` 자리에 int형 값을 넣으면 에러.  m, s자리에는 int형 값 가능
-
-  - `vec.erase(vec.begin()+n)`: 1+n번째 자리 index삭제
+  
+- `vec.erase(vec.begin()+n)`: 1+n번째 자리 index삭제
   
     > - `vec.degin()` 대신 int형 정수를 넣으면 에러
     >
   > - 원소값만 삭제하는 것이 아니라 1+n번째 자리를 삭제하는 것이기 때문에 index갯수가 줄어듦
     > - `vec.erase(vec.begin()+n, vec.begin()+m)`: 1+n, 1+m번째 자리 삭제
-
-  - `vec.clear()`: 전체 index 삭제
-
-  - `vec.empty()`: 배열 vec의 모든 index가 비어있으면 1을, 아니면 0을 반환.
-
-  - `swap(vec1, vec2)`: 두 배열 vec1, vec2을 스왑(교환)
+  
+- `vec.clear()`: 전체 index 삭제
+  
+- `vec.empty()`: 배열 vec의 모든 index가 비어있으면 1을, 아니면 0을 반환.
+  
+- `swap(vec1, vec2)`: 두 배열 vec1, vec2을 스왑(교환)
   
     > ```c++
     > vector<char> vec1 = { 'a' ,'b' ,'c' ,'d' };
