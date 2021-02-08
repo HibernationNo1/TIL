@@ -7,8 +7,8 @@
 **ex) **`numeric_limits(타입)::**최대** 또는 **최소**()`
 
 ```c++
-numeric_limits(int)::max();     //  int 형 변수의 최대 표현가능 숫자를 리턴
-numeric_limits(int)::min();      //  int 형 변수의 최소 표현가능 숫자를 리턴
+numeric_limits<int>::max();     //  int 형 변수의 최대 표현가능 숫자를 리턴
+numeric_limits<int>::min();      //  int 형 변수의 최소 표현가능 숫자를 리턴
 ```
 
 ```c++
