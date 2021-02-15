@@ -60,11 +60,46 @@
 
 ##### 3. 후위순회(postorder) 
 
-왼쪽 잎새노드부터 왼쪽 서브트리-오른쪽 서브트리-노드 순으로 순회하는 방식. 
+왼쪽 잎새노드부터 왼쪽 서브트리-오른쪽 서브트리-노드 순으로 순회하는 방식. ([병합정렬](https://github.com/HibernationNo1/TIL/blob/master/algorithm/%EC%A0%95%EB%A0%AC.md)에서 사용)   
 
-위 예시 트리를 후위순회 방식을 적용
+위 예시 트리를 후위순회 방식을 적용 
 
 > 4, 5, 2, 3, 1
 >
 > 가장 높은 레벨의 노드부터 시작한다.
+
+##### 코드 예시
+
+![](https://t1.daumcdn.net/cfile/tistory/251FE74B5100D04F2F?download)
+
+```c++
+#include<iostream>
+
+using namespace std;
+
+#define endl '\n'
+
+void Binary(int x) //트리 구현
+{
+	if (x > 15) return;
+	else {
+        // cout << x <<" ";  여기에서 호출하면 전위순회
+		Binary(x * 2);   
+        // cout << x <<" ";  여기에서 호출하면 중위순회
+		Binary(x * 2 + 1);
+     	// cout << x <<" ";	 여기에서 호출하면 후위순회
+	}
+}
+
+int main(void) {
+
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	Binary(1);
+
+	return 0;
+}
+```
 
