@@ -12,6 +12,8 @@ echo-server.py
 multiconn-client.py
 multiconn-server.py
 
+settings.json
+settings.json.vscode
 가상환경 .txt
 bridge.py
 ex1 스레드.py
@@ -20,10 +22,6 @@ ex3 이미지.py
 ex4. 스레드 클래스.py
 ex6 test.py
 knight.py
-13 ~ 27.py
-31~47.py
-49~70.py
-71.py
 1. 입, 출력, 연산자, 조건문, 반복문.py
 함수 코드블럭, 인수, 문자열, 포맷팅.py
 ex1.py
