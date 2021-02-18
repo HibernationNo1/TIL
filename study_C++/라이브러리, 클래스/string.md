@@ -38,11 +38,19 @@
   #include<string>  // getline을 사용하기 위해선 string헤더파일 포함 필요
   string word;
   cin >> word;    // 단어 단위로 입력
+  ```
   
+  ```c++
+  #include<string>
   string word;
   getline(cin, word);  // 띄어쓰기 포함, 문장 단위로 입력
-  
   ```
+  
+  > **단, cin이후에 getline을 사용하기 위해서는 `cin.ignore();` 를 호출해야 한다.**
+  >
+  > cin은 '\n'를 변수에 담지 않기 때문에 입력버퍼에 남겨두고, getline은 '\n'를 변수에 담기 때문에
+  >
+  > cin이후 바로 getline을 호출하면 cin에서 남겨둔 \n까지 읽어오기 때문에 getline()이 다음 라인을 읽어버린다.(해당 라인은 안읽음)
 
 
 
