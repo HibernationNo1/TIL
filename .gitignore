@@ -12,6 +12,8 @@ echo-server.py
 multiconn-client.py
 multiconn-server.py
 
+1.py
+config.py
 settings.json
 settings.json.vscode
 가상환경 .txt
