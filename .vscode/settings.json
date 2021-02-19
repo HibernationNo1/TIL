@@ -5,6 +5,10 @@
         "ostream": "cpp",
         "xstring": "cpp",
         "memory": "cpp",
-        "cmath": "cpp"
+        "cmath": "cpp",
+        "list": "cpp",
+        "xutility": "cpp",
+        "deque": "cpp",
+        "vector": "cpp"
     }
 }
