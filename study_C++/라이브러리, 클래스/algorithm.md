@@ -305,7 +305,9 @@ cout << alphabet;      // dcba 출력
 
 
 
-3. ###  max, min 함수
+###  3. max, min 함수
+
+##### 1. max(), min()
 
 **형태**: `max(a, b)`
 
@@ -320,4 +322,20 @@ max(1234.231, 1235.111) // 1234.231반환
     
 max({1, 2, 3})  // 인자 3개 이상을 받을땐 배열형태로 넣자   
 ```
+
+
+
+##### 2. max_element(), min_element()
+
+**형태**: `max_element()(배열의 시작 주소, 배열의 마지막 주소)`
+
+> - 배열의 요소 중 가장 큰(또는 작은) 값의 주소를 반환한다.
+
+```c++
+vector<int> arr(10) = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+cout << "max값: " << *max_element(arr.begin(), arr.end())<<endl;
+cout << "min값: " << *min_element(arr.begin(), arr.end())<<endl;
+```
+
+> 주소를 반환한다는 점 기억하자.
 
