@@ -327,7 +327,7 @@ max({1, 2, 3})  // 인자 3개 이상을 받을땐 배열형태로 넣자
 
 ##### 2. max_element(), min_element()
 
-**형태**: `max_element()(배열의 시작 주소, 배열의 마지막 주소)`
+**형태**: `max_element(배열의 시작 주소, 배열의 마지막 주소)`
 
 > - 배열의 요소 중 가장 큰(또는 작은) 값의 주소를 반환한다.
 
@@ -338,4 +338,60 @@ cout << "min값: " << *min_element(arr.begin(), arr.end())<<endl;
 ```
 
 > 주소를 반환한다는 점 기억하자.
+
+
+
+### 4. next_permutation, prev_permutation 함수
+
+**형태**: `next_permutation(배열의 시작 주소, 배열의 마지막 주소)`
+
+- 함수에 `자료구조`의 `iterator` 혹은 `배열`의 주소를 넣으면 `다음 순열`(1-2-3-4의 다음 순열은 1-2-4-3) 혹은 `이전 순열`(1-2-4-3의 이전 순열은 1-2-3-4)의 결과가 벡터나 배열에 적용된다.
+
+  > - `next_permutation`: 현재 나와 있는 수열에서 `인자로 넘어간` `범위`에 해당하는 다음 순열을 구하고 true를 반환한다. 다음 순열이 없다면(다음에 나온 순열이 순서상 이전 순열보다 작다면) false를 반환.
+  > - `prev_permutation`: 현재 나와 있는 수열에서 `인자로 넘어간` `범위`에 해당하는 이전 순열을 구하고 true를 반환한다. 이전 순열이 없다면(다음에 나온 순열이 순서상 이전 순열보다 크다면) false를 반환.
+
+**예시** 백준 10972번
+
+```c++
+#include<iostream>
+#include<algorithm>
+#include<vector>
+
+using namespace std;
+
+#define endl '\n'
+
+int main(void) {
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+	int n;
+	bool tmp;
+	cin >> n;
+	vector<int> arr(n);
+	for (int i = 0; i < n; i++) {
+		cin >> arr[i];
+	}
+
+	tmp = next_permutation(arr.begin(), arr.end());
+
+	if (!tmp) {
+		cout << "-1" << endl;
+	}
+	else {
+		for (int i = 0; i < n; i++) {
+			if (i == n - 1) {
+				cout << arr[i];
+				break;
+			}
+			cout << arr[i] << " ";
+		}
+	}
+
+	return 0;
+}
+```
+
+
 
