@@ -4,7 +4,7 @@
 
 텐서는 일관된 유형을 가진 다차원 배열이다. (매우 수학적인 개념으로 데이터의 배열이라고 볼 수 있음)
 
-하나의 벡터로 이해해야 한다.
+n차원의 벡터로 이해해야 한다.
 
 모든 텐서는 Python 숫자 및 문자열과 같이 변경할 수 없다. 텐서의 내용을 업데이트할 수 없으며 새로운 텐서를 만들 수만 있다.
 
@@ -81,7 +81,7 @@ print(type(t1))
 
 
 t2 = tf.Variable(foo)
-# t2은 ResourceVariable 클랙스의 list [1, 2, 3] 이 된다 
+# t2은 ResourceVariable 클래스의 list [1, 2, 3] 이 된다 
 print(t2)
 print(type(t2))
 
