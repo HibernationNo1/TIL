@@ -93,6 +93,21 @@
 
 
 
-###### + 마지막엔 보통 요약을 넣는다.
+## 수식 입력
 
-- summary (요약) 
+수식은 출 처음에 $$를 입력 후 줄바꿈(Enter)를 사용함으로써 사용할 수 있다.
+
+Latex언어를 사용해서 수식을 만든다.
+
+[Latex언어 웹 사이트](https://www.codecogs.com/latex/eqneditor.php)
+
+**예시**
+
+MSE = \frac {1} {2n} \sum_{j=1}^{n}(\widehat{y_i} - y_i)^{2}
+$$
+MSE = \frac {1} {2n} \sum_{j=1}^{n}(\widehat{y_i} - y_i)^{2}
+$$
+
+$$
+
+$$
