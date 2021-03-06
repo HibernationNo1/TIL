@@ -8,7 +8,7 @@
 
 $$
 가설:\ y = Wx+b 
-\\ W, b: 파라미터 \ \ \ \ x: input데이터 \ \ \ y: 정답\ 데이터  
+\\ W, b: 파라미터 \ \ \ \ x: input데이터 \ \ \ y: 정답\ 데이터
 $$
 
 ```python
@@ -35,7 +35,7 @@ b = tf.Variable(tf.random.normal(shape = [1]))
 
 손실함수는 여러 종류 중 MSE를 사용해보자.
 $$
-MSE 식:\ E = \frac {1} {2n} \sum_{j=1}^{n}(\widehat{y_i} - y_i)^{2}
+MSE 식:\ J(\theta) = \frac {1} {2n} \sum_{j=1}^{n}(\widehat{y_i} - y_i)^{2}
 $$
 
 $$
@@ -58,6 +58,26 @@ def mse_loss(y_pred, y): # y_pred: 모델이 예측한 값,  y실제 값
 ### 3. 최적화 정의
 
 최적화를 위한 확률적 경사하강법 최적화(스토우케스틱 그라디언트 디센트 옵티마이저)를 정의해보자.
+
+- 경사하강법은 다음 수식처럼 손실 함수의 미분값과 러닝 레이트의 곱만큼을 원래 파라미터에 뺀 값으로 파라미터를 한 스텝 업데이트 하는 것.
+
+  
+  $$
+  \theta_{i+1} = \theta_i - \alpha \frac{\partial}{\partial \theta_i}Cost(\theta_0, \theta_1)
+  $$
+  
+
+  - 선형회귀 모델(y  = Wx)을 사용하고 손실함수로 평균제곱오차(MES)를 사용할 경우  확률적 경사하강법(SGD)의 한 스텝 업데이트를 위해 계산하는 손실함수의 미분값
+
+  $$
+  \frac{\partial}{\partial \theta_0}Cost(\theta_0, \theta_1) = \frac {\partial}{\partial \theta_0} \frac{1}{2n}(\widehat{y} - y)^2
+  $$
+
+  $$
+  \frac{\partial}{\partial \theta_1}Cost(\theta_0, \theta_1) = \frac {\partial}{\partial \theta_1} \frac{1}{2n}(\widehat{y} - y)^2
+  $$
+
+**코드**
 
 ```python
 optimizer = tf.optimizers.SGD(0.01)
