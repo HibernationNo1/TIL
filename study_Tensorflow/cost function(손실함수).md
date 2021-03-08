@@ -31,3 +31,22 @@ y^{'}: 참값, \ \ y: 모델의\ 예측\ 값
 $$
 
 일반적으로 분류 문제에 대해서는 MSE보다 크로스 엔트로피 함수를 사용하는 것이 학습이 더 잘 되는 것으로 알려져 있다. (대부분의 텐서플로 코드들에서 크로스 엔트로피 손실 함수를 사용한다.)
+
+**코드 구현**
+
+```python
+@tf.function
+def cross_entropy_loss(y_pred, y): #크로스 엔트로피 손실함수
+    return tf.reduce_mean(-tf.reduce_sum(y * tf.math.log(y_pred), axis=[1]))
+	# 크로스 엔트로피 식 구현
+```
+
+또는 
+
+```python
+@tf.function
+def cross_entropy_loss(y_pred, y): #크로스 엔트로피 손실함수
+    return tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits = logits, labels = y))
+	# 크로스 엔트로피 식 구현
+```
+
