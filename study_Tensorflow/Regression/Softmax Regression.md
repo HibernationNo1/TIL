@@ -58,40 +58,6 @@ train_data = train_data.repeat().shuffle(60000).batch(100)
 train_data_iter = iter(train_data)
 ```
 
-**MNIST 데이터를 사용하기 적합한 상태로 변경하는 작업**
-
-1. MNIST 데이터를 다운로드
-
-   `(x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data() `
-
-2. load_data()에 의해 반환된 데이터는 numpy 타입이기 때문에 이미지들을 float32 데이터 타입으로 변경
-
-   `x_train, x_test = x_train.astype('float32'), x_test.astype('float32')`
-
-   > astype: numpy 모듈에서 제공하는 데이터타입 변경 메서드 
-
-3. 28*28 형태의 이미지를 784개의 1차원 데이터로 flattening 한다. 
-
-   `x_train, x_test = x_train.reshape([-1, 784]), x_test.reshape([-1, 784])`
-
-   > 2차원의 mnist 데이터는 softmax에 사용할 수 없기 때문에 1차원의 데이터로 변경하는 과정
-   >
-   > reshape: numpy 모듈에서 제공하는 데이터 차원 변경 메서드
-   >
-   > reshape([-1, 784]): -1을 넣으면 reshape함수가 알아서 몇 개(6만개) 데이터의 차원을 변경해야 하는지 인지한다
-
-4. [0, 255] 사이의 값을 [0, 1] 사이의 값으로 Normalize한다.
-
-   `x_train, x_test = x_train / 255., x_test / 255.`
-
-   > int 타입이 float32타입으로 변경됐기 때문에 Pixel Intensity 값을 0~255에서 0~1로 변경한다.
-
-5. 레이블 데이터에 one-hot encoding을 적용한다.
-
-   `y_train, y_test = tf.one_hot(y_train, depth=10), tf.one_hot(y_test, depth=10)`
-
-   > 정답 데이터가 interger Encoding으로 되어있기 때문에 해당 데이터 각각에 one-hot encoding을 적용해서 [[60000] * 10]으로 변환한다.
-
 **우리가 가진 dataset을 batch단위로 묶는 과정**
 
 1. tf.data API를 이용해서 데이터를 섞고 batch 형태로 가져온다.
@@ -105,6 +71,8 @@ train_data_iter = iter(train_data)
    `train_data = train_data.repeat().shuffle(60000).batch(100)`
 
    > batch: tf.data.dataset 내부의 메서드. 묶고싶은 mini-batch 단위 지정 가능
+   >
+   > shuffle: 한 번 에폭이 끝날때마다 데이터를 섞어주는 함수
 
 2.  이후 next()함수를 이용해서 mini-batch를 순차적으로 가져와서 학습에 사용할 수 있도록 함
 
