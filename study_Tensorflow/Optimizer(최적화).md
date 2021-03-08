@@ -8,7 +8,9 @@
 
 ### 종류
 
-#### 1. 경사하강법
+![](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbQ934t%2FbtqASyVqeeD%2FozNDSKWvAbxiJb7VtgLkSk%2Fimg.png)
+
+#### 1. 경사하강법(GD)
 
 $$
 수식 \ \ : \ \ \theta_{i+1} = \theta_i - \alpha \frac{\partial}{\partial \theta_i}Cost(\theta_0, \theta_1)
@@ -95,3 +97,10 @@ $$
 \frac{\partial}{\partial \theta_1}Cost(\theta_0, \theta_1) = \frac {\partial}{\partial \theta_1} \frac{1}{2m}\sum_{j = 1}^{m}(\widehat{y_i} - y_i)^2
 $$
 
+#### 2. Adam
+
+기본 SGD를 조금 더 발전시킨 optimizer라고 생각하면 됨
+
+기본 SGD은 미분값이 0이 되는 지점에서 더 나아가지 못하지만, Adam은 미분값이 0인 지점을 넘어서 계속해서 탐색한다.
+
+> 2차 함수와 같은 형태는 미분값이 0인 지점이 2개이기 때문에 더 나아가는 최적화가 필요하다.
