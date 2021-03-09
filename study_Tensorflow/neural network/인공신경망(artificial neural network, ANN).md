@@ -6,7 +6,7 @@
 
 - 퍼셉트론은 생물학적 뉴런을 공학적인 구조로 변형한 것이다.
 
-![](https://lh3.googleusercontent.com/proxy/HAu49tDD8yxPgJTN-_jTjy0V5JDr5LGxqodBmjxSk2p3f1yKIQo5ivPZZxkdAnVsSPIGUFjOPToh2twUaFoUBR_3hvpYcCeigoMYiEKsCI1g_pL9MYOBOA)
+![](https://lh3.googleusercontent.com/proxy/np0krZOO-fAMT21k3tsYjjZ70pFIMpuOd60JYPNniVe1zcvo0hB-Z_QiNw4sG4AKdiA1F7W0WrI2axAqnmqtLzxr42yYmnUApGjwQb7PVRKdEIza_rf6rw)
 
 퍼셉트론은 입력층과 출력층을 가지고 있다.
 
