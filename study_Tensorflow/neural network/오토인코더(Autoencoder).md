@@ -104,7 +104,7 @@ class Autoencoder(tf.keras.Model):
 #----------손실함수 정의----------
 # MSE 손실 함수 정의
 @tf.function
-def MSE_loss(y_pred, y_true): #크로스 엔트로피 손실함수
+def MSE_loss(y_pred, y_true): 
     return tf.reduce_mean(tf.pow(y_true - y_pred, 2))
 # 오토인코더에서는 정답 데이터가 input데이터임 : y_true
 
