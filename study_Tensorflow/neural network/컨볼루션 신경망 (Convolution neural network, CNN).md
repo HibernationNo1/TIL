@@ -143,7 +143,7 @@ class CNN(tf.keras.Model):
         # 2 * 2 인 pooling
 
         # 두 번째 Convolution Layer
-        # 5*5 kernel Size를 가진 32개의 Filter를 적용한다.
+        # 5*5 kernel Size를 가진 64개의 Filter를 적용한다.
         self.conv_layer_2 =tf.keras.layers.Conv2D(filters=64, kernel_size = 5, strides = 1, padding = 'same', activation = 'relu')
         self.pool_layer_2 = tf.keras.layers.MaxPool2D(pool_size=(2, 2), strides=2)
 
