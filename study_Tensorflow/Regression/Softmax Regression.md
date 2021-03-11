@@ -27,6 +27,7 @@ Logits 에 Softmax함수를 적용하면 sum to 1 형태로 output값을 정리�
 
 
 - Softmax 회귀를 비롯한 분류 문제에는 크로스 엔트로피(Cross-Entropy) 손실함수를 많이 사용한다.
+- softmax 활성화 함수는 다중 클래스 분류 시 사용한다.
 
 
 
