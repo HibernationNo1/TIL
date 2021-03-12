@@ -272,6 +272,8 @@ if __name__ == '__main__':
   app.run(main)
 ```
 
+---
+
 ## 2. 장/단기 기억 네트워크(Long Short-Term Memory, LSTM)
 
 LSTM은 은닉층을 각각의 노드가 input gate, forget date, output gate로 구성된 메모리 블럭이라는 조금 복잡한 구조로 대체한다. (이를 이용해서 경사도 사라짐 문제를 완화할 수 있다.)
@@ -288,7 +290,7 @@ LSTM은 은닉층을 각각의 노드가 input gate, forget date, output gate로
 
 ​	이를 통해서 RNN의 출력 결과를 4, 6에서만 방출할 수 있다.
 
-### 
+---
 
 ## 3. Gate Recurren Unit, GRU
 
