@@ -44,6 +44,28 @@ import pandas as pd
 
 `df`라는 변수에 csv파일을 할당했다고 가정
 
+```python
+df = pd.read_csv('~~~')
+```
+
+- 데이터가 광범위할때, 출력을 하고 중간이 `...`으로 생략되어 출력된다. 이러한 데이터도 다 보기 위해서 설정값을 미리 호출해야 한다.
+
+  1.  모든 열을 다 보고자 할 때.
+
+     `pd.set_option('display.max_columns', None)`
+
+  2. 모든 행을 다 보고자 할 때.
+
+     `pd.set_option('display.max_rows', None)`
+  
+- 데이터 셋의 각 칼럼을 보고자 할땐 `df.cloumns`를 통해 알 수 있다.
+
+  ```python
+  print(df.cloumns)
+  ```
+
+  
+
 ##### 1. head()
 
 dataframe의 상위 n개를 반환한다.
@@ -78,4 +100,61 @@ print(df.describe())
 ```
 
 
+
+##### 4. value_counts()
+
+특정 칼럼의 정보를 알 수 있다.(범주형, 수치형 상관 없음)
+
+`df['컬럼명'].value_counts()`
+
+```python
+print(df['gender'].value_counts())
+```
+
+
+
+
+
+### 2. 데이터 전처리
+
+#### 1. concat()
+
+dataframe을 물리적으로 이어 붙여주는 함수로, 매개변수 axis에 따라서 해당 축의 동일한 자료형(또는 key)끼리 묶어주는 동작을 한다.
+
+```python
+X = pd.concat([x_scaled, x_cat], axis = 1)
+```
+
+
+
+#### 2. one - hot encoding
+
+get_dummies 함수를 활용하면 데이터를 one - hot벡터로 바꿔줄 수 있다.
+
+범주형 데이터만 one - hot encoding 해줘야 한다.
+
+`변수명 = pd.get_dummies( df, columns=['컬럼명1', '컬럼명2' ...  '컬럼명n'], drop_first=True)`
+
+- drop_first=True로 하는 이유: Multicollinearity를 피하기 위해
+
+  - **Multicollinearity**(다중공선성): 일반적으로 회귀 분석에서 발생하며, 분석에서 사용된 모델 데이터의 일부 컬럼이 다른 컬럼과 상관 정도가 높아, 데이터 분석 시 위험한 영향을 미치는 현상  
+
+변수명이 x라고 가정할 때, x에는 DataFrame의 모든 데이터가 할당되며, 이 중 get_dummies에 명시된 데이터에만 one - hot encoding이 적용되어 할당된다.
+
+- 만약 할당하고 싶지 않은 컬럼이 있다면 df.drop을 사용해서 명시해준다.
+
+  `x = pd.get_dummies( df.drop(['드롭컬럼명1, 드롭컬럼명2'], axis = 1), columns=['컬럼명1', '컬럼명2' ...  '컬럼명n'], drop_first=True)`
+
+  - axis = 1을 해 줘야만 컬럼에서 drop을 한다. (axis = 0 을 하면 row에서 찾다가 drop을 안해버림)
+
+  ```python
+x = pd.get_dummies(df.drop(['ParentschoolSatisfaction', 'Class', 'Class_value'], axis=1),
+                   columns=['gender', 'NationalITy', 'PlaceofBirth',
+                            'StageID', 'GradeID','SectionID', 'Topic',
+                            'Semester', 'Relation', 'ParentAnsweringSurvey',
+                            'StudentAbsenceDays'],
+                   drop_first=True)
+  ```
+
+  
 
