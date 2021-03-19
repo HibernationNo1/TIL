@@ -12,13 +12,13 @@ import seaborn as sns
 
 ## 메소드
 
-데이터 출처: https://www.kaggle.com/andrewmvd/heart-failure-clinical-data 에서 csv파일을 다운받은 후 `df`라는 변수에 csv파일을 할당했다고 가정
+kaggle 에서 csv파일을 다운받은 후 `df`라는 변수에 csv파일을 할당했다고 가정
 
-- hue: 만약 컬럼(또는 카테고리)형 데이터가 섞여 있는 경우에는 `hue` 인수에 카테고리 변수 이름을 지정하여 카테고리 값에 따라 색상을 다르게 할 수 있다.
+- hue: 만약 컬럼(또는 카테고리)형 데이터에서 다른 컬럼과의 관계를 확인하고 싶다면 `hue` 매개변수에 컬럼(카테고리)이름을 지정하여 카테고리 값에 따라 색상을 다르게 할 수 있다.
+  - hue_order: hue에 할당한 컬럼의 범주를 나누어 관계를 확인할 수 있다.
 - kde: 밀집도를 나타낸다.
 - loc: 범위를 조절한다.
 - bins: plot의 크기를 조절한다.
-
 - alpha: scatter plot에서 각 점을 투명하게 찍어준다.
 
 
@@ -30,8 +30,6 @@ import seaborn as sns
 히스토그램(도수 분포표) 그래프를 생성.
 
 `sns.histplot(x = '컬럼명', data = csv파일이 할당된 변수)`
-
-컬럼명은 존재하는 컬럼이여야 함
 
 ```python
 sns.histplot(x = 'age', data =df)
@@ -50,6 +48,10 @@ plt.show()
   sns.histplot(x = 'age', data =df, hue = 'DEATH_EVENT', kde = True)
   plt.show()
   ```
+
+  - hue에 해당되는 칼럼이 범주형일때, hue_order 매개변수를 활용해서 해당 칼럼의 내부 결과에 따라서 다시 또 구분할 수 있다.
+
+    `hue_order = ['범주1', '범주2' , '범주3']`
 
 - `변수명.loc`을 사용해 보고싶은 값의 범위를 조절할 수 있다.
 
@@ -91,9 +93,7 @@ plt.show()
 
 dataframe의 데이터를 그리도(grid)형태로 각 컬럼에 대해 히스토그램과 분포도를 그린다.
 
-숫자형 column에 대해서만 그려준다.
-
-**column이 많으면 그래프가 많아져 효용성이 없다.**
+수치형 column에 대해서만 그려준다.
 
 `sns.pairplot(변수명)`
 
@@ -102,13 +102,43 @@ sns.pairplot(df)
 plt.show()
 ```
 
+
+
+#### + 그래프 활용
+
+##### 1. groupby
+
+특정 컬럼으로부터 수치에 대한 연산을 할 수 있다.
+
+- mean
+
+  `gb = df.groupby('컬럼1').mean()['컬럼2']`
+
+  컬럼1에 속한 범주마다 컬럼2에 대한 평균값을 확인할 수 있다. (컬럼1이 수치형 데이터면 활용성 제로)
+
+  ```python
+  gb = df.groupby('gender').mean()['Class_value']
+  print(gb)
+  ```
+
+  - sort_values 를 활용하면 그래프가 정렬된다.
+
+    ```python
+    gb = df.groupby('Topic').mean()['Class_value'].sort_values(ascending = False)
+    plt.barh(gb.index, gb)
+    ```
+
+    > ascending이 True면 내림차순, False면 오름차순이다. 디폴트는 Ture
+
+
+
+
+
 ---
 
 
 
-### 범주형 그래프
-
-- 
+### 2. 범주형 그래프
 
 ##### 1. Boxplot
 
@@ -156,3 +186,39 @@ plt.show()
   plt.show()
   ```
 
+
+
+##### 4. countplot
+
+범주형 데이터에서 각 범주를 막대그래프 형태로 표현한다.
+
+`sns.countplot(x = '컬럼명', data = df, order = ['범주1', '범주2', '범주3'])`
+
+```python
+sns.countplot(x='Class', data=df, order=['L', 'M', 'H'])
+plt.show()
+```
+
+- 각 컬럼의 class의 범주 비율을 알고자 한다면? hue를 사용하자
+
+  ```python
+  sns.countplot(x='gender', data=df, hue='Class', hue_order=['L', 'M', 'H'])
+  ```
+
+  > x축에 gender컬럼의 범주 안에서 Class컬럼의 각 범주가 다시 나뉘는 그래프를 볼 수 있다.
+
+
+
+#### + 그래프 활용
+
+##### 1. map
+
+범주형 컬럼을 수치형으로 바꾸어 표현하기 (DataFrame의 map 메소드 활용)
+
+`df['새로운 컬럼명'] = df['컬럼명'].map(dict(범주1=범주1에 할당하고자 하는 값, 범주2=범주2에 할당하고자 하는 값, 범주3=범주3에 할당하고자 하는 값))`
+
+```python
+df['Class_value'] = df['Class'].map(dict(L=-1, M=0, H=1))
+```
+
+> Class 컬럼이 사라지는것이 아니라, Class_value라는 새로운 컬럼이 csv안에 생성된다
