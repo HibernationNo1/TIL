@@ -58,6 +58,10 @@ from sklearn.preprocessing import StandardScaler
   x_scaled = pd.DataFrame(data=x_scaled, index = x_num.index, columns = x_num.columns)
   # index와 columns는 x_num의 것을 그대로 가져와준다.
   ```
+  
+
+**fit()** : 데이터 변환을 학습, 학습용 데이터에만 적용
+**transform()** : 실제 데이터의 스케일을 조정, 학습용 데이터와 테스트 데이터에 적용
 
 
 
@@ -260,7 +264,23 @@ from sklearn.metrics import classification_report
 
 ```python
 fig = plt.figure(figsize=(15, 8))  # 그래프가 너무 커서 그래프 창을 키워야 한다.
-plt.bar(X.columns, model_lr.coef_[0, :]) # [0, :] == [첫 번째 index = 'H', 전체 feature]
+plt.bar(x.columns, model_lr.coef_[0, :]) # [0, :] == [첫 번째 index = 'H', 전체 feature]
 plt.xticks(rotation=90)  #이름이 겹쳐보이니까 90도 돌린다.
 plt.show()
 ```
+
+ 
+
+그래프를 정렬하기 위해선 새 변수에 데이터를 할당하고, 정렬을 진행해야 한다.
+
+```python
+model_coef = pd.DataFrame(data=model_lr.coef_[0], index=x.columns, columns=['Model Coefficient'])
+# 모든 컬럼을 Model Coefficient라는 컬럼의 범주로 간주하여 변수에 할당
+model_coef.sort_values(by='Model Coefficient', ascending=False, inplace=True)
+# 정렬 진행 ascending의 디폴드는 True로, 오름차순이다. inplace를 True로 하면 정렬된 자체 DataFrame을 model_coef에 다시 저장한다.
+plt.bar(model_coef.index, model_coef['Model Coefficient'])
+plt.xticks(rotation=90)
+plt.grid()
+plt.show()
+```
+
