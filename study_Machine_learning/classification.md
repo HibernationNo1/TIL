@@ -1,7 +1,5 @@
 # classification
 
-
-
 ### 1. Logistic Regression
 
 #### 1. 모델 정의
