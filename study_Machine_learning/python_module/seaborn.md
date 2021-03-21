@@ -14,12 +14,25 @@ import seaborn as sns
 
 kaggle 에서 csv파일을 다운받은 후 `df`라는 변수에 csv파일을 할당했다고 가정
 
+##### 매개변수
+
 - hue: 만약 컬럼(또는 카테고리)형 데이터에서 다른 컬럼과의 관계를 확인하고 싶다면 `hue` 매개변수에 컬럼(카테고리)이름을 지정하여 카테고리 값에 따라 색상을 다르게 할 수 있다.
+  
   - hue_order: hue에 할당한 컬럼의 범주를 나누어 관계를 확인할 수 있다.
-- kde: 밀집도를 나타낸다.
+  
+- kde: 밀집도를 나타낸다. (실선으로 그려줌)
+
 - loc: 범위를 조절한다.
+
 - bins: plot의 크기를 조절한다.
+
 - alpha: scatter plot에서 각 점을 투명하게 찍어준다.
+
+- palette: 그래프의 색을 바꿀 수 있다.
+
+  > palette = 'RdBu' 는 앞은 빨강, 뒤는 파랑색으로 색을 변경할 수 있다. 
+  >
+  > 그 외에도 색깔은 많음
 
 
 
@@ -104,6 +117,36 @@ plt.show()
 
 
 
+##### 5. heatmap
+
+각 데이터 값에 비례하여 색깔을 다르게 해서 2차원으로 자료를 시각화하는 히트맵(Heatmap). 각 컬럼의 관계를 색으로 보며 알 수 있다.
+
+각 데이터의 상관관계를 보고자 할 때는 pandas의 corr함수에 heatmap를 씌워서 볼 수 있다.
+
+```python
+sns.heatmap(df.corr(), )
+plt.show()
+```
+
+- annot 매개변수에 Ture값을 할당하면 각 값에 대해서 숫자또한 볼 수 있음
+
+  ```py
+  sns.heatmap(df.corr(), annot = True)
+  plt.show()
+  ```
+
+  > 이렇게 하면 모든 데이터의 상관관계에 대해 모드 숫자로 표기하게 되기 때문에
+  >
+  > 대부분은 한 가지 데이터에 대한 모든 데이터의 수치만 확인한다.
+
+  ```python
+  fig = plt.figure(figsize = (5, 10))
+  sns.heatmap(df.corr()[['blueWins']], annot=True)
+  plt.show()
+  ```
+
+  > 잘 보기 위해서 그래프의 크기도 조절
+
 #### + 그래프 활용
 
 ##### 1. groupby
@@ -129,6 +172,8 @@ plt.show()
     ```
 
     > ascending이 True면 내림차순, False면 오름차순이다. 디폴트는 Ture
+
+
 
 
 
