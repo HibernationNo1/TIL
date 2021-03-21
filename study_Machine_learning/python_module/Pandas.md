@@ -113,6 +113,18 @@ print(df['gender'].value_counts())
 
 
 
+##### 5. corr()
+
+각 칼럼의 correlation을 수치화 할 수 있다.
+
+```python
+print(df.corr())
+```
+
+
+
+
+
 
 
 ### 2. 데이터 전처리
@@ -127,7 +139,21 @@ X = pd.concat([x_scaled, x_cat], axis = 1)
 
 
 
-#### 2. one - hot encoding
+#### 2. drop()
+
+Multicollinearity을 예방하기 위해 서로 값이 완전히 반대인 컬럼들을 drop해줘야 한다.
+
+```python
+df.drop(['컬럼명1', '컬럼명2'], axis=1, inplace=True)
+```
+
+> ex) 컬럼명1 =  x, 	컬럼명2 = -x의 값을 가지고 있으면 두 컬럼 중 하나는  drop해줘야 한다.
+
+- **Multicollinearity**(다중공선성): 일반적으로 회귀 분석에서 발생하며, 분석에서 사용된 모델 데이터의 일부 컬럼이 다른 컬럼과 상관 정도가 높아, 데이터 분석 시 위험한 영향을 미치는 현상  
+
+
+
+#### 3. one - hot encoding
 
 get_dummies 함수를 활용하면 데이터를 one - hot벡터로 바꿔줄 수 있다.
 
@@ -137,7 +163,6 @@ get_dummies 함수를 활용하면 데이터를 one - hot벡터로 바꿔줄 수
 
 - drop_first=True로 하는 이유: Multicollinearity를 피하기 위해
 
-  - **Multicollinearity**(다중공선성): 일반적으로 회귀 분석에서 발생하며, 분석에서 사용된 모델 데이터의 일부 컬럼이 다른 컬럼과 상관 정도가 높아, 데이터 분석 시 위험한 영향을 미치는 현상  
 
 변수명이 x라고 가정할 때, x에는 DataFrame의 모든 데이터가 할당되며, 이 중 get_dummies에 명시된 데이터에만 one - hot encoding이 적용되어 할당된다.
 
