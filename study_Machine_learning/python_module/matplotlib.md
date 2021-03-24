@@ -30,8 +30,9 @@ import matplotlib as plt
 
 
 
-
+- `plt.grid()`: 그래프에 수직선을 그려준다.
 
 - `plt.xticks(rotation=90)` : x축의 각 데이터 이름을 90도 회전
 - `plt.yticks(rotation=m)` : x축의 각 데이터 이름을 m도 만큼 회전
 
+- `plt.title('제목')`: 그래프에 제목 써줌
