@@ -82,6 +82,17 @@ plt.show()
 
   > bins를 할당하지 않으면 ejection_fraction의 중간 데이터가 비어있는것을 볼 수 있다. 이건 데이터가 없는것이 아니라 plot의 크기가 너무 작아서 plot자체적으로 빈 것으로 표현해버린 것.
 
+###### + kdeplot
+
+커널이라는 함수를 겹치는 방법으로 히스토그램보다 부드러운 분포 곡선으로 시각화해준다.
+
+```python
+sns.kdeplot(x = 'age', data =df)
+plt.show()
+```
+
+
+
 ##### 2. joinplot
 
 - scatter plot: 두 개의 변수 각각의 분포를 보여주는 그래프
@@ -117,7 +128,7 @@ plt.show()
 
 
 
-##### 5. heatmap
+##### 4. heatmap()
 
 각 데이터 값에 비례하여 색깔을 다르게 해서 2차원으로 자료를 시각화하는 히트맵(Heatmap). 각 컬럼의 관계를 색으로 보며 알 수 있다.
 
@@ -147,17 +158,29 @@ plt.show()
 
   > 잘 보기 위해서 그래프의 크기도 조절
 
+##### 5. rugplot()
+
+자료의 분포를 묘사하기 위한 그래프로, 데이터 위치를 x축 위에 작은 선분(rug)로 나타내어 실제 데이터의 위치를 보여준다.
+
+```python
+sns.rugplot(x ='age', data = df)
+```
+
+hieght라는 매개변수에 실수를 할당해서 선분의 최대크기 표현을 정할 수 있다.
+
+
+
 #### + 그래프 활용
 
-##### 1. groupby
+##### 1. groupby()
 
-특정 컬럼으로부터 수치에 대한 연산을 할 수 있다.
+pandas에서 제공하는 특정 컬럼값을 그룹화하는 함수
 
 - mean
 
   `gb = df.groupby('컬럼1').mean()['컬럼2']`
 
-  컬럼1에 속한 범주마다 컬럼2에 대한 평균값을 확인할 수 있다. (컬럼1이 수치형 데이터면 활용성 제로)
+  컬럼1에 속한 범주마다 컬럼2에 대한 평균값을 확인할 수 있다.
 
   ```python
   gb = df.groupby('gender').mean()['Class_value']
@@ -251,6 +274,16 @@ plt.show()
   ```
 
   > x축에 gender컬럼의 범주 안에서 Class컬럼의 각 범주가 다시 나뉘는 그래프를 볼 수 있다.
+
+- 각 컬럼의 막대그래프를 등장 숫자를 기준으로 내림차순 정렬해보자
+
+  ```python
+  sns.countplot(x='Class', data=df, order=['L', 'M', 'H'].value_counts().index)
+  ```
+
+  > `value_counts().index`가 sort의 역할을 해준다.
+
+- 그래프의 x축을 y축과 바꾸려면 매개변수 x를 단순이 y로 바꿔주면 된다.
 
 
 
