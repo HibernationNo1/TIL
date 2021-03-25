@@ -1,8 +1,8 @@
 # classification
 
-### 1. Logistic Regression
+## 1. Logistic Regression
 
-#### 1. 모델 정의
+### 1. 모델 정의
 
 범주형 변수를 예측하는 모델로, 두 가지의 결과가 나오는 분류 문제에서 각각의 결과가 나오는  확률을 구할 수 있다. 입력 데이터가 주어졌을 때 해당 데이터의 결과가 특정 분류로 나뉘기 때문에 일종의 **classification** 기법으로 본다.
 
@@ -35,7 +35,7 @@ model_lr.fit(x_train, y_train)
 
 
 
-#### 2. 모델 학습 결과 평가
+### 2. 모델 학습 결과 평가
 
 ```python
 from sklearn.metrics import classification_report
@@ -60,9 +60,9 @@ from sklearn.metrics import classification_report
 
 ---
 
-### 2. XGboost Classification
+## 2. XGboost Classification
 
-#### 1. 모델 정의
+### 1. 모델 정의
 
 XGboost Classification는 약한 분류기를 세트로 묶어서 정확도를 예측하는 기법이다. 10원, 50원, 100원, 500원이 섞인 주머니를 여러 크기의 체를 가지고 조합해서 그것을 분류하는 과정으로 생각하면 된다.
 
@@ -83,7 +83,7 @@ from xgboost import XGBClassifier
 
 
 
-#### 2. 모델 학습 결과 평가
+### 2. 모델 학습 결과 평가
 
 ```python
 from sklearn.metrics import classification_report
@@ -93,7 +93,7 @@ print(classification_report(y_test, pred))
 
 
 
-#### 3. 학습 결과 분석
+### 3. 학습 결과 분석
 
 모델로부터 학습된 결과로부터 특징의 중요도를 확인한다.
 
@@ -108,3 +108,36 @@ plt.show()
 > bar함수를 사용해 막대그래프를 사용, x축엔 x.columns, y축엔 model_xgb.feature_importances_를 사용
 >
 > xticks함수의 rotation을 사용해 x축의 이름을 90도 돌려서 볼 수 있다.
+
+
+
+## 3. LightGBM 
+
+#### 1. 모델 정의
+
+Light GBM은 Gradient Boosting 프레워크로 Tree 기반 학습 알고리즘이다. XGboost와 같은 Tree기반의 다른 알고리즘은 Tree가 수평적으로 확장되지만 Light GBM은 Tree가 수직적으로 확장된다.
+
+Light GBM은 큰 사이즈의 데이터를 다룰 수 있고 실행시킬 때 적은 메모리를 차지한다.
+
+Light GBM의 디폴트는 회귀분석 알고리즘이지만, 핵심 파라미터 중 application에 어떤 값을 할당하냐에 따라서 그 사용법을 달리 할 수 있다.
+
+- regression: 회귀분석
+- binary: 이진 분류
+- multiclass: 다중 분류
+
+```python
+from lightgbm import LGBMRegressor
+```
+
+
+
+- 입력 데이터와 출력 데이터를 매개변수로 모델에 학습시키기
+
+  ```python
+  model_reg = LGBMRegressor()
+  # model_reg.fit(pca.transform(X_train), y_train)
+  model_reg.fit(x_train, y_train)
+  ```
+
+
+
