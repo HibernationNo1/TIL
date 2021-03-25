@@ -450,7 +450,27 @@ df.dropna(inplace = True)
 
 
 
-##### 4. one - hot encoding
+##### 4. fillna()
+
+결측값을 특정 값으로 채우는 함수
+
+```python
+df.fillna(0)
+```
+
+> 결측값이 0으로 채워진 df가 반환된다.
+
+특정 값은 데이터로 채워도 된다.
+
+```py
+df['foo'].fillna('others', inplace = True)
+```
+
+> df의 foo라는 컬럼의 결측 데이터를 전부 'other'이라는 범주로 채우고 다시 자신에게 재할당
+
+
+
+##### 5. one - hot encoding
 
 get_dummies 함수를 활용하면 데이터를 one - hot벡터로 바꿔줄 수 있다.
 
@@ -489,7 +509,8 @@ x = pd.get_dummies(df.drop(['ParentschoolSatisfaction', 'Class', 'Class_value'],
 
   > filter함수를 사용. lambda에 df.columns가 할당되어 각 컬럼에 'Class'라는 단어가 포함되었는지 찾는다. find가 1이 반환돠는 컬럼들만 list화
   >
-  > 
+
+
 
 ---
 
