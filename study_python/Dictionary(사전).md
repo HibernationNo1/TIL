@@ -1,5 +1,7 @@
 # Dictionary
 
+### 정의
+
 딕셔너리는 리스트나 튜플처럼 순차적으로(sequential) 해당 요솟값을 구하지 않고 Key를 통해 Value를 얻는다. 
 
 특정 값을 찾기 위해 사전의 내용을 순차적으로 모두 검색하는 것이 아니라 baseball이라는 단어가 있는 곳만 펼쳐 보는 것이다.
@@ -42,36 +44,61 @@ dic = {Key1:Value1, Key2:Value2, Key3:Value3, ...}
 
 
 
-- 관련 함수
+### 관련 함수
+
+```python
+# keys()
+dic = {'name': 'pey', 'phone': '0119993323', 'birth': '1118'}
+a = dic.keys()  # a == ['name', 'phone', 'birth']
+# Key 리스트 만들기
+# keys() 함수로 만들어진 a는 list객체가 아닌, dict_keys 객체임. 객체 종류가 다르기 때문에 리스트 고유의 append, insert, pop, remove, sort 함수는 수행할 수 없다.
+
+b = list(dic.keys())   # b의 객체는 list  
+
+# values()
+c = dic.values()      
+# Value만 얻을 수 있다.
+# c의 객체는 dict_values 임
+
+# items()
+d = dic.items()
+# items 함수는 Key와 Value의 쌍을 튜플로 묶은 값을 dict_items 객체로 돌려준다.
+
+# clear()
+dic.clear()
+# clear 함수는 딕셔너리 안의 모든 요소를 삭제한다. 
+```
+
+
+
+- get()
+
+  `dic.get('key 이름')`
 
   ```python
-  # keys()
-  dic = {'name': 'pey', 'phone': '0119993323', 'birth': '1118'}
-  a = dic.keys()  # a == ['name', 'phone', 'birth']
-  # Key 리스트 만들기
-  # keys() 함수로 만들어진 a는 list객체가 아닌, dict_keys 객체임. 객체 종류가 다르기 때문에 리스트 고유의 append, insert, pop, remove, sort 함수는 수행할 수 없다.
-  
-  b = list(dic.keys())   # b의 객체는 list  
-  
-  # values()
-  c = dic.values()      
-  # Value만 얻을 수 있다.
-  # c의 객체는 dict_values 임
-  
-  # items()
-  d = dic.items()
-  # items 함수는 Key와 Value의 쌍을 튜플로 묶은 값을 dict_items 객체로 돌려준다.
-  
   # get()
   print (dic.get('name'))   # 'pey'출력
   # Key에 대응되는 Value를 반환한다.
   # dic[name] 과의 차이점: 
     #  dic[name]는 존재하지 않는 키(nokey)로 값을 가져오려고 할 경우 Key 오류를 발생시킨다.
     #  dic.get('nokey')는 false을 돌려준다. (오류 없음)
+  ```
+
+  `dic.get('key 이름', 값)`
+
+  `Key 이름`에 대응되는 key가 dic에 존재하면 해당 key에 존재하는 Value를 반환한다.
+
+  만약 'Key 이름'에 대응되는 key가 dic에 존재하지 않는다면 `값`을 반환한다.
+
+  ```python
+  score_list = [0부터 20까지 숫자 중 랜덤한 값이 1000개 있는 리스트]
   
-  # clear()
-  dic.clear()
-  # clear 함수는 딕셔너리 안의 모든 요소를 삭제한다. 
+  cnt_dict = dict()
+  for score in score_list:
+      cnt_dict[score] = cnt_dict.get(score, 0) + 1
+      # score라는 key가 존재하면 그 값에 +1 후 다시 해당 key에 할당
+      # score라는 key가 존재하지 않으면 0을 반환하고 +1 후 새롭게 만들어진 key에 값 할당 	
+  print(cnt_dict)
   ```
 
   
