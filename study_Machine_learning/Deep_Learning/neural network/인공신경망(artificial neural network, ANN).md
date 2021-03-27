@@ -5,8 +5,7 @@
 ## 퍼셉트론(perceptron)
 
 - 퍼셉트론은 생물학적 뉴런을 공학적인 구조로 변형한 것이다.
-
-![](https://lh3.googleusercontent.com/proxy/np0krZOO-fAMT21k3tsYjjZ70pFIMpuOd60JYPNniVe1zcvo0hB-Z_QiNw4sG4AKdiA1F7W0WrI2axAqnmqtLzxr42yYmnUApGjwQb7PVRKdEIza_rf6rw)
+- artificial neural network에서는 하나의 artificial neural이 바로 perceptron이다.
 
 퍼셉트론은 입력층과 출력층을 가지고 있다.
 
@@ -14,11 +13,21 @@
 
 
 
-- 퍼셉트론의 동작 과정을 수학적으로 표현
+- 퍼셉트론의 동작 (입력 1개)
   $$
   수식 : \ y = \sigma(Wx + b) \\ \sigma: 활성\ 함수
   $$
   여기서 활성함수로 계단함수를 사용하여 퍼셉트론의 출력을 0 또는 1만 출력하게 하기 때문에**선형 이진분류기**라고 한다.
+  
+- artificial neural의 동작(입력 다수)
+$$
+  수식 : \ y = \sigma(W_1x_1 +W_2x_2 +W_3x_3 +W_4x_4 +... + b) \\ \sigma: 활성\ 함수
+$$
+  
+  
+  1. 이전 layer의 artificial neural들로부터 받은 weight들을 합한다.
+  
+  2.  weighted sum에 activation function을 적용해서 다음 layer의 artigicial neural에게 전달한다.
 
 
 
@@ -31,8 +40,6 @@
 - 단일 퍼셉트론은 선형 분리가 불가능한 문제는 해결할 수 없다.
 
 ### 다층 퍼셉트론 (Multi-Layer perceptron, MLP)
-
-- 다층 퍼셉트론을 이용하면 성형 분리가 불가능한 문제도 해결할 수 있다.
 
 - 다층 인공신경망(ANN)은 일반적으로 퍼셉트론(MLP)을 의미한다.
 
@@ -48,13 +55,17 @@
 
   ![](https://clickai.ai/assets/img/img_blog_post_3_2.png)
   $$
-  각각의\ 노드에서\ 일어나는\ 연산: \ y = \sigma(Wx + b)
+  각각의\ 노드에서\ 일어나는\ 연산: \ y = \sigma(\sum _{k=1}^nW_kx_k + b)
   $$
   이 때 활성함수는 분류기가 **비선형적인 특징을 학습**할 수 있도록 만드는 것이 단일 퍼셉트론과의 차이점이다.
 
   > 활성 함수로 계단함수를 사용하지 않고 비선형 함수인 시그모이드, 쌍곡탄젠트 혹은 **ReLU**를 사용한다.
   >
   > y는 활성함수의 출력 결과인 **활성값**이라고 한다.
+
+- 다층 퍼셉트론을 이용하면 성형 분리가 불가능한 문제도 해결할 수 있다.
+
+
 
 ---
 
