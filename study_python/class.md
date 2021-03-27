@@ -56,7 +56,7 @@ instance variable과 class variable의 차이
 class node:
     node_cnt = 0
     
-    def __init__(self, x, y):
+    def __init__(self, x = 30, y = 60):  # 객체가 매개변수가 없다면  x = 30, y = 60 자동 할당
         self.x, self.y = x, y
         node.node_cnt += 1
         
