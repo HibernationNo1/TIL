@@ -14,9 +14,7 @@ $$
 \overrightarrow{r} = (f(t), g(t), h(t))
 $$
 
-​		이미지 1
-
-
+![](https://github.com/HibernationNo1/TIL/blob/master/image/1.jpg?raw=true)
 
 우리가 vector function에 대해서 미분을 하게 되면, 4가지의 경우의 수가 나올 수 있다.
 $$
@@ -33,11 +31,11 @@ f_2\\
 f_m
 \end{pmatrix} = \overrightarrow{f} \ 일 때\\ \frac{\partial f}{\partial x},\ \frac{\partial f}{\partial \overrightarrow{x}},\ \frac{\partial \overrightarrow{f}}{\partial x},\ \frac{\partial \overrightarrow{f}}{\partial \overrightarrow{x}}  \ \ 이렇게\ 4\ 가지의\ 경우의\ 수가\ 나올 \ 수\ 있다.
 $$
-이미지 2
+![](https://github.com/HibernationNo1/TIL/blob/master/image/2.jpg?raw=true)
 $$
 여기서 \ \frac{\partial \overrightarrow{f}}{\partial \overrightarrow{x}}\ 에\ 대한\ 식을\ jacobian\ matrices\ 라고\ 한다.
 $$
-이미지 3
+![](https://github.com/HibernationNo1/TIL/blob/master/image/3.jpg?raw=true)
 
 즉, jacobian matrices란 다변수 벡터 함수의 도함수 행렬을 의미한다.
 

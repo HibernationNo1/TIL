@@ -9,7 +9,7 @@ z에\ 대한\ s,\ t의 편미분은 \ \ \frac {\partial z(x, y)}{\partial s} \ �
 $$
 이러한 chain rule의 개념을 이용해서 z의 s와 t에 대한 편미분을 구하는 식은 4 가지가 나올 수 있다.
 
-이미지 4
+![](https://github.com/HibernationNo1/TIL/blob/master/image/4.jpg?raw=true)
 
 x(s, t)는 z(x, y)로부터 받은 미분값에 자신이 수행한 미분값을 곱하고 다시 s와 t로 보냄으로써 propagation 동작이 이루어지고 최종적으로는 z의 s와 t에 대한 편미분을 구할 수 있게 되는 것이다.
 $$
@@ -24,7 +24,7 @@ $$
 
 
 
-Vector Chain Rule
+## Vector Chain Rule
 
 - Hadamard product(아다마르 곱): 같은 위치의 entry끼리 element by element 곱셈 연산을 수행한 것으로, 같은 크기의 두 행렬의 각 성분을 곱하는 연산이다. 기호는 `\bigcirc`를 사용한다. 
 
@@ -72,17 +72,17 @@ s^{(n)} - t^{(n)}
 \end{pmatrix}\\ 이고
 $$
 
-이미지 5
+![](https://github.com/HibernationNo1/TIL/blob/master/image/5.jpg?raw=true)
 
 가 성립된다고 할 때, propagation 동작은 아래와 같다.
 
-이미지 6
+![](https://github.com/HibernationNo1/TIL/blob/master/image/6.jpg?raw=true)
 
 이러한 과정을 통해 실제 연산 식은 아래와 같이 나오게 된다.
 
-이미지7
+![](https://github.com/HibernationNo1/TIL/blob/master/image/7.jpg?raw=true)
 
-이미지 8
+![](https://github.com/HibernationNo1/TIL/blob/master/image/8.jpg?raw=true)
 
 vector의 Chain Rule의 결과에서 z의 s(또는 t)에 대한 편미분 연산의 결과는 scala의 Chain Rule의 결과와는 달리 1*n의 shape을 가진 metric가 나옴을 확인할 수 있다.
 
