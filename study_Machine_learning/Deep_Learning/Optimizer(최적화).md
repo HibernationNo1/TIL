@@ -26,7 +26,27 @@ $$
 
 실제 최적화는 lost, cost function의 개형을 알지 못하는 상황에서 특정 point의 gradient만 보고 theta를 업데이트 시켜야 한다.
 
-**최적화 동작 순서**
+
+
+**입력 데이터가 n개일때의 gradient descent method for theta**
+
+![](https://github.com/HibernationNo1/TIL/blob/master/image/9.jpg?raw=true)
+
+- Loss에 대해서
+
+  ![](https://github.com/HibernationNo1/TIL/blob/master/image/10.jpg?raw=true)
+
+- Cost에 대해서
+
+  ![](https://github.com/HibernationNo1/TIL/blob/master/image/11.jpg?raw=true)
+
+---
+
+
+
+## 최적화 예시
+
+### 최적화 동작 순서
 
 1. Loss(또는 Cost) function을 구해야 한다.
    1. forwrd propagation 동작
@@ -38,7 +58,7 @@ $$
 
 > 예시(1 Iteration)
 > $$
-> \widehat{y} = \theta x\ 일때\ 파라미터를\ 1회\ 업데이트\ 하는\ 과정\\
+> \widehat{y} = \theta x\ 일때\ Loss\ 를\ 사용해서\ 파라미터를\ 1회\ 업데이트\ 하는\ 과정\\
 > $$
 >
 > $$
@@ -77,27 +97,9 @@ $$
 > (x = 0이면\ 업데이트가\ 소용 없고,\ y=\widehat{y}이면\ 최적의\ 파라미터임)
 > $$
 >
-> ![image-20210330214214856](Optimizer(최적화).assets/image-20210330214214856.png)
+> ![](https://github.com/HibernationNo1/TIL/blob/master/image/12.-1.jpg?raw=true)
 
-
-
-**입력 데이터가 n개일때의 gradient descent method for theta**
-
-이미지 9
-
-- Loss에 대해서
-
-  이미지 10
-
-- Cost에 대해서
-
-  이미지 11
-
----
-
-
-
-## 코드 구현
+### 코드 구현
 
 
 
