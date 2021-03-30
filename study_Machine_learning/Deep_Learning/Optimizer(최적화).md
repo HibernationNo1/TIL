@@ -1,10 +1,48 @@
 # Optimizer
 
+
+
+cost function을 최소화 하기 위해 반복을 통해 y = wx + b에서 파라미터값을 변경하는 과정을 최적화 라고 하며 가장 간단한 optimizer(최적화)는 gradient descent(경사하강법)이다.
+
+- 한 개의 파라미터 값을 한 번 업데이트 하는 것을 1 **Iteration**이라고 한다.
+- 전체 파라미터 값을 한 번 업데이트 하는 것을 1 **Epoch**라고 한다.
+
+$$
+gradient\ descent => x:=x- \alpha \frac{dy}{dx}\ \ 동작을\ 반복하며\ 기울기가\ 0인\ 지점으로\ x값을\ 이동시키는\ 것
+$$
+여기서 alpha는 learning rate를 의미하며, learning rate값을 결정해서 gradient descent method가 발산하는 것을 예방할 수 있다. 
+
+> learning rate의 값에 의해 발산 여부, 학습 속도가 결정될 수 있다. 가장 이상적인 learning rate의 값은 gradient의 변화가 한 방향으로만 진행되며 학습 횟수가 낮도록 하는 값이다.
+>
+> learning rate값이 크면 학습 속도가 빠르지만, 그럼에도 불구하고 learning rate를 낮게 잡는 이유: 우리가 학습시키는 파라미터는 수많은 weight와 하나의 bias인데, 각각의 파라미터의 학습 속도가 다르면 전체적인 학습이 불안정할 수 있다.(weight 하나만 발산해도 전체적인 Loss와 Cost가 발산을 하게 되기 때문에 잘못된 학습이 이루어지게 된다.)
+
+$$
+Loss\ function\ \ L^{(i)}(\theta) = (y^{(i)} - \theta x^{(i)})^2\\
+Loss\ function\ 에\ 대한\ gradient\ descent=>\ \theta = \theta - \alpha\frac{\partial L^{(i)}(\theta)}{\partial \theta}
+$$
+
+$$
+Cost\ function\ \ J^{(i)}(\theta) =\frac{1}{n}\sum_{i=1}^{n} (y^{(i)} - \theta x^{(i)})^2\\
+Cost\ function\ 에\ 대한\ gradient\ descent=>\ \theta = \theta - \alpha\frac{\partial J^{(i)}(\theta)}{\partial \theta}
+$$
+
+실제 최적화는 cost function의 개형을 알지 못하는 상황에서 특정 point의 gradient만 보고 theta를 업데이트 시켜야 한다.
+
+**입력 데이터가 n개일때의 gradient descent method for theta**
+
+이미지 9
+
+- Loss에 대해서
+
+  이미지 10
+
+- Cost에 대해서
+
+  이미지 11
+
+
+
 텐서플로우에서 손실 함수를 최소화하기 위해 조금씩 variable들을 변경해주는 optimizer을 제공한다.
-
-(가장 간단한 optimizer(최적화)는 gradient descent(경사하강법)다.)
-
-
 
 ### 종류
 
