@@ -1,8 +1,6 @@
 # Optimizer
 
-
-
-cost function을 최소화 하기 위해 반복을 통해 y = wx + b에서 파라미터값을 변경하는 과정을 최적화 라고 하며 가장 간단한 optimizer(최적화)는 gradient descent(경사하강법)이다.
+loss function 또는 cost function을 최소화 하기 위해 반복을 통해 y = wx + b에서 파라미터값을 변경하는 과정을 최적화 라고 하며 가장 간단한 optimizer(최적화)는 gradient descent(경사하강법)이다.
 
 - 한 개의 파라미터 값을 한 번 업데이트 하는 것을 1 **Iteration**이라고 한다.
 - 전체 파라미터 값을 한 번 업데이트 하는 것을 1 **Epoch**라고 한다.
@@ -26,7 +24,62 @@ Cost\ function\ \ J^{(i)}(\theta) =\frac{1}{n}\sum_{i=1}^{n} (y^{(i)} - \theta x
 Cost\ function\ 에\ 대한\ gradient\ descent=>\ \theta = \theta - \alpha\frac{\partial J^{(i)}(\theta)}{\partial \theta}
 $$
 
-실제 최적화는 cost function의 개형을 알지 못하는 상황에서 특정 point의 gradient만 보고 theta를 업데이트 시켜야 한다.
+실제 최적화는 lost, cost function의 개형을 알지 못하는 상황에서 특정 point의 gradient만 보고 theta를 업데이트 시켜야 한다.
+
+**최적화 동작 순서**
+
+1. Loss(또는 Cost) function을 구해야 한다.
+   1. forwrd propagation 동작
+   2. back propagation 동작
+2. gredient descent를 구해야 한다.
+3. 앞에서 구한 gredient descent를 target 파라미터에 대입한다.
+4. 1, 2, 3번의 동작이 1 Iteration이다.
+5. 각각의 target 파라미터마다 1 Iteration를 전부 수행해줘야 1 Epoch이다.
+
+> 예시(1 Iteration)
+> $$
+> \widehat{y} = \theta x\ 일때\ 파라미터를\ 1회\ 업데이트\ 하는\ 과정\\
+> $$
+>
+> $$
+> 1.\\ Loss\ function\ 구현\\
+> $$
+>
+> $$
+> foward\ propagation:\\
+> Node1\ 의\ 동작: z_1 = \theta x\\
+> Node2\ 의\ 동작: z_2 = y - \widehat{y}=y-z_1\\
+> Node3\ 의\ 동작: L = (z_2)^2
+> $$
+>
+> $$
+> back\ propagation:\\
+> \frac{\partial z_1}{\partial  \theta} = x,\ \ \ \ \frac{\partial z_2}{\partial z_1}  = -1,\ \ \ \ \frac{\partial L}{\partial z_2}  = 2z_2\\
+> \frac{\partial L}{\partial \theta} = \frac{\partial L}{\partial z_2} \frac{\partial z_2}{\partial z_1}\frac{\partial z_1}{\partial  \theta} = 2z_2*(-1)*x \\
+> = -2(y-z_1)*x\\
+> = -2x(y- \widehat{y})\\
+> = -2x(y-\theta x)\\
+> $$
+>
+> $$
+> 2. \\ gradient\ descent\ 구현
+> $$
+>
+> $$
+> \theta := \theta - \alpha\frac{\partial L^{(i)}(\theta)}{\partial \theta}\\
+> = \theta + 2\alpha x^{(i)}(y^{(i)} - \widehat{y}^{(i)}) \\
+> = \theta + 2\alpha x^{(i)}(y^{(i)} - \theta x^{(i)})
+> $$
+>
+> $$
+> 이\ 때\ 각각의\ \theta + 2\alpha x^{(i)}(y - \widehat{y})에\ 대해서\\ x >0,\ \ \ x<0,\ \ \  y>\widehat{y},\ \ \  y<\widehat{y}\\
+> 이\ 네\ 가지의\ 경우의\ 수에\ 대해서\ 생각을\ 해야한다.\\
+> (x = 0이면\ 업데이트가\ 소용 없고,\ y=\widehat{y}이면\ 최적의\ 파라미터임)
+> $$
+>
+> ![image-20210330214214856](Optimizer(최적화).assets/image-20210330214214856.png)
+
+
 
 **입력 데이터가 n개일때의 gradient descent method for theta**
 
@@ -40,11 +93,21 @@ $$
 
   이미지 11
 
+---
+
+
+
+## 코드 구현
+
+
+
+---
+
 
 
 텐서플로우에서 손실 함수를 최소화하기 위해 조금씩 variable들을 변경해주는 optimizer을 제공한다.
 
-### 종류
+## 종류
 
 ![](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbQ934t%2FbtqASyVqeeD%2FozNDSKWvAbxiJb7VtgLkSk%2Fimg.png)
 
