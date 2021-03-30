@@ -2,7 +2,7 @@
 
 ## 개념
 
-input data에 대한 output data가 training data로 인해 이루어진 연속된 값으로 나타나는 것을 regression이라고 한다.
+input data에 대한 output data가 training data로 인해 이루어진 연속된 값으로 나타나는 것을 Linear Regression이라고 한다.
 
 **선형 회귀 모델**: 함수f(x)에서, 우리가 알고 있는 x의 값과 y의 값을 데이터로 사용하여 우리가 알지 못하는 x의 값에 대한 y의 값을 유추할 수 있는 모델
 
@@ -16,13 +16,11 @@ input data에 대한 output data가 training data로 인해 이루어진 연속�
 
   **과정**  반복적인 회귀를 통해 W, b값을 찾아나가며 올바른 값에 가까워지도록 컴퓨터에 학습시킨다.
 
-  1. 가설 정의
+- 가설 정의
 
-     y = Wx+b 형태의 식이 만족함을 컴퓨터에게 알려주고, W와 b를 임의의 값으로 전달해준다.
+  y = Wx+b 형태의 식이 만족함을 컴퓨터에게 알려주고, W와 b를 임의의 값으로 전달해준다.
 
-     1. 처음 임의로 전달된 W와 b가 정답과는 얼마나 다른지를 알려주는 함수를 **cost function(손실함수)** 라고 한다.
-
-
+  임의로 전달된 W와 b가 정답과는 얼마나 다른지를 알려주는 함수를 **cost function(손실함수)** 라고 한다.
 
 
 
