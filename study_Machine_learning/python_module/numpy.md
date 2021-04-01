@@ -1,10 +1,18 @@
 # numpy
 
-다차원 컨테이너 자료구조로서 Numpy에서 다루는 data structure는 ndarray라고 부른다. 
+- Numerical python의 줄임말로, 다차원 컨테이너 자료구조로서 Numpy에서 다루는 data structure는 ndarray라고 부른다. 
+- 정교한 브로드캐스팅 기능을 제공한다
+- 반복문 없이 데이터 배열에 대한 처리를 지원하여 빠르고 편리하다.
 
 ```python
 import numpy as np
 ```
+
+```python
+np.__version__
+```
+
+![](https://media.vlpt.us/images/mingki/post/e0cdf6b1-cfd0-4a64-82d1-0c489237f1c2/array_shape.png)
 
 ---
 
@@ -89,6 +97,14 @@ import numpy as np
 
   `np.empty(shape = )`
 
+- np.eye()
+
+  단위행렬을 만든다.
+
+  `np.eye(size)` size는 임임의 정수값.
+
+  단위행렬은 정사각 행렬이기 때문에 shape의 가로세로 axis가 동일하다.
+
 - np.random
 
   난수를 만들어주는 함수다.
@@ -108,19 +124,18 @@ import numpy as np
     [[2 1 0]
      [1 2 1]]
     ```
-
-
+  
   - np.random.normal()
-
+  
     실수 난수를 만든다.
-
+  
     `np.random.normal(low , high , size = ( , ))`
-
+  
     ```python
     tmp = np.random.normal(0, 1, size= (2, 1))
     print(tmp)
     ```
-
+  
     
 
 ##### like() 생성함수
