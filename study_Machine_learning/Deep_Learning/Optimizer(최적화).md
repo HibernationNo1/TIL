@@ -58,6 +58,8 @@ $$
 4. 1, 2, 3번의 동작이 1 Iteration이다.
 5. 각각의 target 파라미터마다 1 Iteration를 전부 수행해줘야 1 Epoch이다.
 
+**아래 예시는 BGD를 구현하는 과정이다.**
+
 > 예시1) (1 Iteration)
 > $$
 > \widehat{y} = \theta x\ 일때\ Loss\ 를\ 사용해서\ 파라미터를\ 1회\ 업데이트\ 하는\ 과정\\
@@ -174,7 +176,7 @@ $$
 
 
 
-### 코드 구현
+### 코드 구현(BGD)
 
 ```python
 # basic_node
@@ -247,9 +249,6 @@ epochs = 50  # total epoch setting
 lr = 0.05   # learning rate setting
 th = -1     # arbitrary theta
 
-cost_list = list()  # for drow plot
-th_list = list()
-
 # learning
 for epoch in range(epochs):
     x, y = x_data, y_data
@@ -267,23 +266,7 @@ for epoch in range(epochs):
     dth, dx = node1.backward(dz1)   # dx는 버릴 값
 
     th = h - lr*np.sum(dth)   # gradient descent(theta updata)
-         
-    th_list.append(th)      # for drow plot
-    cost_list.append(z3)
 
-# REsult Visualization
-fig, ax = plt.subplot(2, 1, figsize = (30, 10))
-ax[0].plot(th_list)
-ax[1].plot(loss_list)
-
-# 그래프로 시각화
-title_font = {'size': 30, 'alpha': 0.8, 'color' : 'navy'}
-label_font = {'size': 20, 'alpha': 0.8}
-plt.style.use('seaborn')
-
-ax[0].set_title(r'$\theta$', fontdict = title_font)
-ax[1].set_title('Loss', fontdict = title_font)
-ax[1].set_xlabel('Iteration', fontdict = label_font)
 ```
 
 이때 back propagation의 동작을 numpy로 구현한다면 hadamard product(원소 곱) 연산을 사용해야 한다.
@@ -361,6 +344,54 @@ GD의 경우 항상 전체 데이터 셋을 가지고 한발자국 전진할 때
 optimizer = tf.optimizers.SGD(a)  # 여기서 a는 learning rate임 (상수여야함) 
 ```
 
+**상세히** - Learning Without Replacement
+
+```python
+import numpy as np
+
+from dataset_generator import dataset_generator
+import basic_nodes as nodes
+
+np.random.seed(0)
+
+# dataset preparation
+dataset_gen = dataset_generator()
+dataset_gen.set_coefficient([5, 0])  # y = 5x + 0
+x_data, t_data = dataset_gen.make_dataset()
+
+#model implementation
+nond1 = nodes.mul_node()  # make mul_node instance 
+
+# MSE loss implementation
+node2 = nodes.minus_node()  # make minus_node instance 
+node3 = nodes.square_node() # make square_node instance 
+
+epochs = 2
+lr = 0.01   # learning rate setting
+th = -1     # arbitrary theta
+
+for epoch in range(epochs):
+    random_idx = np.arange(len(x_data))
+    np.random.shuffle(random_idx)
+    x_data = x_data[random_idx]
+    y_data = y_data[random_idx]
+
+    for data_idx in range(len(x_data)):
+        x, y = x_data[data_idx], y_data[data_idx]
+
+        # forward propagation
+        z1 = node1.forward(th, x)
+        z2 = node2.forward(y, z1)
+        L = node3.forward(z2)
+
+         # back propagation
+        dz2 = node3.backward(1)
+        dy, dz1 = node2.backward(dz2)   # dy는 버릴 값
+        dth, dx = node1.backward(dz1)   # dx는 버릴 값
+
+        th = h - lr*dth   # gradient descent(theta updata)
+```
+
 
 
 ##### 3. MGD(Mini - Batch Gradient Descent)
@@ -385,6 +416,76 @@ batch size가 크면 전체 데이터의 특성을 잘 반영하지만, 연산 �
 Mini - batch가 어떻게 학습 속도를 빠르게 해줄까?
 
 1. GPU의 다수의 코드에 batch들을 할당해서 동시에 연산을 수행해서 빠른 학습이 가능하게 한다.
+
+
+
+**코드구현** - Learning Without Replacement
+
+```python
+# z = x의 mean perceptron
+import matplotlib.pyplot as plt
+import numpy as np
+
+from dataset_generator import dataset_generator
+import basic_node as nodes
+
+# dataset preparation
+dataset_gen = dataset_generator()
+dataset_gen.set_coefficient([5, 0])  # y = 5x + 0
+x_data, t_data = dataset_gen.make_dataset()
+
+#model implementation
+nond1 = nodes.mul_node()  # make mul_node instance 
+
+# MSE loss implementation
+node2 = nodes.minus_node()  # make minus_node instance 
+node3 = nodes.square_node() # make square_node instance 
+node4 = nodes.mean_node()   # make mean_node instance 
+
+# hyperparameter setting
+epochs = 50  # total epoch setting
+lr = 0.05   # learning rate setting
+th = -1     # arbitrary theta
+
+batch_size = 16
+n_batch = int(np.ceil(len(x_date)/batch_size))
+
+t_iteration = 500
+epochs = np.ceil(t_iteration/n_batch).astype(int)
+
+# shuffle
+for epoch in range(epochs):
+    idx_np = np.atange(len(x_data))
+    np.random.shuffle(idx_np)
+    x_data = x_data[idx_np]
+    y_data = y_data[idx_np]
+
+# learning
+for epoch in range(epochs):
+    for batch_idx in range(n_batch):
+        if batch_idx is n_batch-1:
+            x = x_data[batch_idx*batch_size :]
+            y = y_data[batch_idx*batch_size :]
+        else:
+            x = x_data[batch_idx*batch_size : (batch_idx + 1)*batch_size]
+            y = y_data[batch_idx*batch_size : (batch_idx + 1)*batch_size]
+
+    # forward propagation
+    z1 = node1.forward(th, x)
+    z2 = node2.forward(y, z1)
+    L = node3.forward(z2)
+    J = node4.forward(L)
+
+    # back propagation
+    dL = node4.backward(1)
+    dz2 = node3.backward(dL)
+    dy, dz1 = node2.backward(dz2)   # dy는 버릴 값
+    dth, dx = node1.backward(dz1)   # dx는 버릴 값
+
+    th = h - lr*np.sum(dth)   # gradient descent(theta updata)
+```
+
+
 
 
 
