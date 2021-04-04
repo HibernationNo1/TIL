@@ -33,7 +33,7 @@ plot은 그림(figure)과 축(axes)으로 구성되어 있다.
 
 - `plt.figure()` : axes와 그래픽, 텍스트, 레이블을 표시하는 모든 객체를 포함하는 컨테이너
 - `plt.axse()`: 눈금과 레이블이 있는 테두리 박스로 시각화를 형성하는 플롯 요소를 포함
-- `plt.show`: plot을 팝업 창으로 띄워준다.
+- `plt.show()`: plot을 팝업 창으로 띄워준다.
 
 ```python
 fig = plt.figure()
@@ -110,18 +110,37 @@ plt.xlabel("x!")
 plt.ylabel("y!")
 ```
 
-- `label = "" `  각 범례에 이름을 붙여준다.
+- `label = "" `  각 범례에 이름을 붙여준다. (plot의 속성임)
+
 - `plt.legend()` 각 범례의 이름을 그래프 위에 표현해준다. (이거 없으면 label 속성 설정해도 안뜸) 
 
-```python
-plt.plot(np.random.randn(50), label = "one!")
-plt.plot(np.random.randn(50), label = "two!")
-plt.legend()
-```
+  ```python
+  plt.plot(np.random.randn(50), label = "one!")
+  plt.plot(np.random.randn(50), label = "two!")
+  plt.legend()
+  ```
+
+  - legend의 위치를 설정 속성 `loc`
+
+  ```python
+  plt.legend(loc = 'lower right')
+  plt.legend(loc = 'upper center')
+  ```
+
+  - legend를 여러 컬럼으로 표현하는 속성 `ncol`
+
+  ```python
+  plt.legend(fameon = False , ncol = 2)
+  # fameon = False 은 고정, # 두 개의 columns
+  ```
+
+  
 
 
 
 
+
+#### . plot data
 
 
 
@@ -129,6 +148,8 @@ plt.legend()
 - `plt.yticks(rotation=m)` : x축의 각 data 이름을 m도 만큼 회전
 
 ####  
+
+
 
 ---
 
@@ -193,6 +214,28 @@ plt.plot(np.random.randn(50).cumsum(), 'b:')
 
 
 
-
-
 ### 3. Font
+
+- Font 종류 보는법
+
+  ```python
+  print(set([f.name for f in mpl.font_manager.fontManager.ttflist]))
+  ```
+
+- 폰트 할당
+
+  `변수명 = {'family' : '폰트이름', 'size': 폰트 사이즈, 'color': '폰트 색'}`
+
+  ```python
+  font1 = {'family' : 'DEjavu Sans', 'size': 24, 'color': 'black'}
+  ```
+
+- 할당된 폰트 사용
+
+  `plt.label("label name", fontdict = forn 변수)`
+
+  ```python
+  plt.title("tmp", fontdict = font1)
+  ```
+
+  
