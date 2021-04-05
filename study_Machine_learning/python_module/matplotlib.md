@@ -33,11 +33,13 @@ plot은 그림(figure)과 축(axes)으로 구성되어 있다.
 
 - `plt.figure()` : axes와 그래픽, 텍스트, 레이블을 표시하는 모든 객체를 포함하는 컨테이너
 - `plt.axse()`: 눈금과 레이블이 있는 테두리 박스로 시각화를 형성하는 플롯 요소를 포함
+- `plt.subplots()`: plt.figure와 plt.axse에 대한 모든 요소를 포함한다. (subplot아님. subplots임)
 - `plt.show()`: plot을 팝업 창으로 띄워준다.
 
 ```python
 fig = plt.figure()
 ax = plt.axes()
+fig, ax = plt.subplots()  # 위의 두 줄을 합친 것임
 plt.show()
 ```
 
@@ -52,9 +54,9 @@ plt.show()
 
 ### 1. Graph
 
-#### 1. Graph Type
+#### 1. plot type
 
-- `plt.plot()` : 전달인자로 받아온 구성 요소를 선 모양의 그래프로 표현한다.
+- `plt.plot()` : 전달인자로 받아온 data를 선 모양의 그래프로 표현한다.
 
   ```python
   plt.plot([0, 1, 0.4])
@@ -70,9 +72,15 @@ plt.show()
   plt.plot(x, np.cos(x))
   ```
 
-- `plt.bar(xx, yy)` : 전달인자로 받아온 구성 요소를 막대 모양의 그래프로 표현한다.
+- `plt.bar(x, y)` : 전달인자로 받아온 data를 막대 모양의 그래프로 표현한다.
 
-  - `plt.barh(xx, yy)`: 막대 그래프를 수평 방향으로 표현한다.
+  - `plt.barh(x, y)`: 막대 그래프를 수평 방향으로 표현한다.
+
+
+
+
+
+
 
 
 
@@ -86,6 +94,8 @@ x, y 축을 설정할 수 있다.
 - `plt.axis([xmin, xmax, ymin, ymax])` x, y축 한 번에 설정
   - `plt.axis('tight')`  x, y축을 알아서 딱 맞게 지정
   - `plt.axis('equal')`  x, y축을 보다 넓은 범위로 지정
+  - `plt.axis(xscale = 'log', yscale = 'log')`  x, y축의 scale를 log로 표현
+  - `plt.xaxis.set_major_formatter(plt.NullFormatter)`  x축의 date를 아예 표현하지 않음  (xaxis 대신 yaxis사용하면 y축에 적용)
 
 ```python
 plt.plot(np.random.randn(50))
@@ -94,6 +104,10 @@ plt.ylim(-5, 5)
 plt.axis([0, 40, -10, 10])
 plt.axis('tight')
 ```
+
+
+
+
 
 
 
@@ -135,6 +149,112 @@ plt.ylabel("y!")
   ```
 
   
+
+#### 4. Multiple Subplots
+
+- subplot
+
+  subplot의 argument를 사용해 다중 graph를 표현할 수 있다.
+
+  배열 형태의 다중 plot
+
+  `plt.subplot(abc)` a: 전체 비율 중 행의 개수 //  b: 전체 비율 중 열의 수, c: 전체 비율 중 plot이 위치할 자리의 수
+
+  ```python
+  plt.plot(np.random.randn(50).cumsum)
+  plt.subplot(411)  # (4, 1) shape에서 첫 번째 위치에 plot 생성
+  plt.subplot(3, 3, 8)  # (3, 3) shape에서 8번째 위치에 plot 생성
+  ```
+
+  
+
+  - `subplot_adjust`
+
+    ```python
+    fig = plt.figure()
+    fig.subplot_adjust(hspace = 0.4, wspace = 0.4)
+    ```
+
+    > figure 정보에 subplot_adjust를 호출해서 다중 plot을 만들 때 여백을 조절할 수 있다.
+    >
+    > `hspace` : 각 plot간의 수직 여백
+    >
+    > `wspace` : 각 plot간의 수평 여백
+
+  
+
+- GridSpec
+
+  다중 plot을 배열처럼 사용하되, 합치는 동작까지 제공
+
+  `plt.GridSpec(a, b)`   a: 전체 비율 중 행의 개수 //  b: 전체 비율 중 열의 수
+
+  ```python
+  grid = plt.GridSpec(2, 3, wspace = 0.4, hspace = 0.4)
+  # (2, 3) shape의 plot배열
+  plt.subplot(grid[0, 0]) 	# 0, 0 자리에 plot 한개 
+  plt.subplot(grid[0, 1:])  	# (0, 1), (0, 2) 두 자리를 사용하는 하나의 plot
+  plt.subplot(grid[1, :2])	# (1, 0), (1, 1) 두 자리를 사용하는 하나의 plot
+  plt.subplot(grid[1, 2])		# 1, 2 자리에 plot 한개 
+  plt.show()
+  ```
+
+  
+
+#### 5. text
+
+plot 위의 원하는 곳에 text를 삽입할 수 있다.
+
+위치 기준은 Data, Axis, Figure로 나뉜다.
+
+- `ax.transData`
+
+  기준이 Data이기 때문에, 원하는 data값의 위치에 text를 삽입할 수 있다.
+
+  `plt.text(x, y, ". text", transform = ax.transData)`
+
+  x = x_data에 대응되는 값, 		y = y_data에 대응되는 값
+
+  
+
+- `ax.transAxse`
+
+  기준이 Axse이기 때문에, 원하는 Axse 좌표 위치에 text를 삽입할 수 있다.
+
+  `plt.text(x, y, ". text", transform = ax.transAxes)`
+
+  x = x축에 대응되는 값(최소 0, 최대 1), 		y = y축에 대응되는 값(최소 0, 최대 1)
+
+- `fig.transFigure`
+
+  기준이 figure이기 때문에, 원하는 figure 좌표 위치에 text를 삽입할 수 있다.
+
+  `plt.text(x, y, ". text", transform = fig.transFigure)`
+
+  x = 전체 figure에서 x축에 대응되는 값(최소 0, 최대 1)
+
+  y = 전체 figure에서 y축에 대응되는 값(최소 0, 최대 1)
+
+```python
+fig, ax = plt.subplots()
+ax.axis([0, 6, -1.5, 1.5])  # plot의 axis 범위 설정 
+x = np.arange(0, 20, 0.1) 
+y = np.sin(x)  	# x에 대한 sin값
+plt.plot(x, y)
+
+plt.text(np.pi/2, 1 , ". transData(pi/2,1)", transform = ax.transData)
+# x, y값이 (np.pi/2, 1)인 위치에 ". transData(pi/2,1)" 라는 text 삽입
+
+plt.text(0.2, 0.5, ". transAxes(0.2, 0.5)", transform = ax.transAxes)
+# x, y축의 전체 비율이 1일때, (0.2/0.5)인 위치에 ". transAxes(0.2, 0.5)" 라는 text 삽입
+
+plt.text(0.2, 0.2, ". transFigure(0.2, 0.2)", transform= fig.transFigure)
+# figure에서 x, y축의 전체 비율이 1일때, (0.2/0.2)인 위치에 ". . transFigure(0.2, 0.2)" 라는 text 삽입
+
+plt.show()
+```
+
+
 
 
 
