@@ -6,7 +6,7 @@ input data에 대한 output data가 training data로 인해 이루어진 연속�
 
 **선형 회귀 모델**: 함수f(x)에서, 우리가 알고 있는 x의 값과 y의 값을 데이터로 사용하여 우리가 알지 못하는 x의 값에 대한 y의 값을 유추할 수 있는 모델
 
-- 예
+- 예)
 
   함수 f(x)를 H(W, b)라는 함수라고 지칭하고, H(W, b) = Wx+b라는 수식이 있을 때
 
@@ -24,7 +24,116 @@ input data에 대한 output data가 training data로 인해 이루어진 연속�
 
 
 
-## 구현
+### Finding Optimal 과정
+
+- **Model**
+  $$
+  Model => \ \  \widehat{y} = \theta_1 x + \theta_0\\
+  $$
+
+- **Loss function**
+  $$
+  Loss => \ \ L = (y^{(i)} - \widehat{y}^{(i)})^2 = (y^{(i)}-(\theta_1 x^{(i)} + \theta_0))^2 \\
+  즉,\ L^{(i)}(\theta_1, \theta_0) = (y^{(i)}-(\theta_1 x^{(i)} + \theta_0))^2 \\
+  $$
+
+- **Cost function**
+  $$
+  Cost => \ \  J(\theta_1, \theta_0) = \frac{1}{n}\sum_{i=1}^{n}\left [ (y^{(i)}-(\theta_1 x^{(i)} + \theta_0))^2 \right ]
+  $$
+
+- **Gradients**
+  $$
+  \bigtriangledown _{(\theta_1, \theta_0)}L^{(i)}(\theta_1, \theta_0) = \left (    \frac{\part L^{(i)}(\theta_1, \theta_0)}{\part \theta_1}\ , \  \frac{\part L^{(i)}(\theta_1, \theta_0)}{\part \theta_0}  \right )\\
+  \bigtriangledown _{(\theta_1, \theta_0)}  J(\theta_1, \theta_0) =\left ( \frac{\part J(\theta_1, \theta_0)}{\part \theta_1}\ ,\ \ \frac{\part J(\theta_1, \theta_0)}{\part \theta_0} \right )
+  $$
+  각각의 theta에 대한 Gradient를 원소로 갖는 벡터가 만들어진다.
+
+  - Gradients Descent Method
+    $$
+    (\theta_1, \theta_0):= (\theta_1, \theta_0) - \alpha \left ( \frac{\part J(\theta_1, \theta_0)}{\part \theta_1}\ ,\ \ \frac{\part J(\theta_1, \theta_0)}{\part \theta_0} \right )
+    $$
+    각각의 theta(n)은 target theta(n)에 가까워지는 updata가 이루어질 것이다. 
+
+
+
+- **Loss Function에 대한 Gradient Descent Method**
+
+  **Loss Partial Derivates** 
+
+  여기서 Loss에서 theta에 대한 partial derivate는 theta_1(= weight), theta_2(= bais) 이렇게 두 가지가 있다. 
+  $$
+  \frac{\part L(\theta_1, \theta_0)}{\part \theta_1} = -2x(y-(\theta_1 x + \theta_0)) \\ = -2x(y - \widehat{y})
+  \\
+  \frac{\part L(\theta_1, \theta_0)}{\part \theta_0} = -2(y-(\theta_1 x + \theta_0)) \\ = -2(y - \widehat{y})
+  $$
+  **Loss Gradient**
+
+   theta_1(= weight), theta_2(= bais)에 대해서 각각 적용되어야 한다.
+  $$
+  \bigtriangledown _{(\theta_1, \theta_0)}L(\theta_1, \theta_0) = \left (\frac{\part L(\theta_1, \theta_0)}{\part \theta_1}, \ \frac{\part L(\theta_1, \theta_0)}{\part \theta_0}  \right ) =  \left ( -2x(y - \widehat{y}) ,\ -2(y - \widehat{y})  \right )\
+  $$
+  이고, 
+  $$
+  \overrightarrow{\theta}:= \overrightarrow{\theta} - \alpha \bigtriangledown _{\overrightarrow{\theta}}L(\overrightarrow{\theta}) \ \\
+  $$
+  이므로 아래의 식이 성립된다.
+  $$
+  (\theta_1, \theta_0) := (\theta_1, \theta_0) -\alpha\left (\frac{\part L(\theta_1, \theta_0)}{\part \theta_1}, \ \frac{\part L(\theta_1, \theta_0)}{\part \theta_0}  \right )
+  $$
+  즉, Gradient Descent Method는 아래 식으로 표현할 수 있다.
+  $$
+  \theta_1 := \theta_1 + 2\alpha x(y - \widehat{y})\\
+  \theta_0 := \theta_0 + 2\alpha (y - \widehat{y})
+  $$
+  여기서 theta_1의 parameter updata의 방향은 x, y값의 양 또는 음의 값에 따라서 달라진다.
+
+  ![](https://github.com/HibernationNo1/TIL/blob/master/image/18.jpg?raw=true)
+
+  하지만 theta_2의 parameter updata의 방향은 y값에만 영향을 받는다.
+
+  ![](https://github.com/HibernationNo1/TIL/blob/master/image/19.jpg?raw=true)
+
+
+
+- **Cost Function에 대한 Gradient Descent Method**
+
+  **Cost Partial Derivates** 
+  $$
+  \frac{\part J(\theta_1, \theta_0)}{\part \theta_1} = \frac{\part}{\part \theta_1} \left [\frac{1}{n}\sum_{i=1}^{n} \frac{\part L(\theta_1, \theta_0)}{\part \theta_1}  \right ] =-\frac{1}{n}\sum_{i=1}^{n}\left [2x^{(i)}(y^{(i)} - \widehat{y}^{(i)})\right ]\\
+  \frac{\part J(\theta_1, \theta_0)}{\part \theta_0} = \frac{\part}{\part \theta_1} \left [\frac{1}{n}\sum_{i=1}^{n} \frac{\part L(\theta_1, \theta_0)}{\part \theta_0}  \right ] =-\frac{1}{n}\sum_{i=1}^{n}\left [2(y^{(i)} - \widehat{y}^{(i)})\right ]
+  $$
+  
+
+  **Cost Gradient**
+  $$
+  \bigtriangledown _{(\theta_1, \theta_0)}J(\theta_1, \theta_0) = \left ( -\frac{1}{n}\sum_{i=1}^{n}\left [2x^{(i)}(y^{(i)} - \widehat{y}^{(i)})\right ],\ -\frac{1}{n}\sum_{i=1}^{n}\left [2(y^{(i)} - \widehat{y}^{(i)})\right ] \right )
+  $$
+  이므로 
+  $$
+  (\theta_1, \theta_0) := (\theta_1, \theta_0) -\alpha\left (\frac{\part J(\theta_1, \theta_0)}{\part \theta_1}, \ \frac{\part J(\theta_1, \theta_0)}{\part \theta_0}  \right )
+  $$
+  즉, Gradient Descent Method는 아래 식으로 표현할 수 있다.
+  $$
+  \theta_1 := \theta_1 -\frac{\alpha}{n}\sum_{i=1}^{n}\left [2x^{(i)}(y^{(i)} - \widehat{y}^{(i)})\right ]\\
+  \theta_0 := \theta_0 -\frac{\alpha}{n}\sum_{i=1}^{n}\left [2(y^{(i)} - \widehat{y}^{(i)})\right ]
+  $$
+
+
+
+이 과정에서 data semple(x_i, y_i)에 값을 할당하면 알 수 있듯, x값을 계수로 갖는 theta_1과 계수가 없는 theta_0은 data값에 따라서 학습속도에 차이를 보일 수 밖에 없다. 
+
+그리고 learning rate는 x값을 계수로 갖는 theta_1과 계수가 없는 theta_0 둘 다에 적용되기 때문에 발산에 대한 문제도 발생할 수 있다.
+
+> theta_1에 알맞은 크기의 learning rate을 적용하면 theta_0의 학습속도가 너무 느릴 수 있고, theta_0에 알맞은 크기의 learning rate을 적용하면 theta_1이 너무 커져서 발산할 위험이 있다.
+
+
+
+---
+
+
+
+## 구현(tensorflow)
 
 모든 딥러닝 모델은 **가설 정의** -> **손실함수 정의** -> **최적화 정의** 를 거쳐야 한다.
 
