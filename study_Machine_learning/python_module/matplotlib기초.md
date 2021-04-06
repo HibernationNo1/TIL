@@ -27,13 +27,32 @@ mpl.__version__
 
 
 
-### 0. 기초
+## 1. 기초
 
 plot은 그림(figure)과 축(axes)으로 구성되어 있다.
 
 - `plt.figure()` : axes와 그래픽, 텍스트, 레이블을 표시하는 모든 객체를 포함하는 컨테이너
+
 - `plt.axse()`: 눈금과 레이블이 있는 테두리 박스로 시각화를 형성하는 플롯 요소를 포함
+
+- `plt.plot()` : 전달인자로 받아온 data를 선 모양의 그래프로 표현한다.
+
+  ```python
+  plt.plot([0, 1, 0.4])
+  plt.plot([0, 1, 0.4]*5)  # 위의 그림을 plot 하나 안에 5번 그린다.
+  plt.plot(np.random.randn(50))
+  ```
+
+  x, y에 대한 그래프도 그릴 수 있다.
+
+  ```python
+  x = np.arange(0, 10, 0.01)
+  plt.plot(x, np.sin(x))
+  plt.plot(x, np.cos(x))
+  ```
+
 - `plt.subplots()`: plt.figure와 plt.axse에 대한 모든 요소를 포함한다. (subplot아님. subplots임)
+
 - `plt.show()`: plot을 팝업 창으로 띄워준다.
 
 ```python
@@ -48,43 +67,15 @@ plt.show()
 - `plt.waitforbuttonpress()` : 아무 버튼이 눌리면 이미지 팝업창 닫음
 
 
+
+
 ---
 
+## 2. Method 및 Property
 
+### 1. plot
 
-### 1. Graph
-
-#### 1. plot type
-
-- `plt.plot()` : 전달인자로 받아온 data를 선 모양의 그래프로 표현한다.
-
-  ```python
-  plt.plot([0, 1, 0.4])
-  plt.plot([0, 1, 0.4]*5)  # 위의 그래프를 창 하나 안에 5번 그린다.
-  plt.plot(np.random.randn(50))
-  ```
-
-  x, y에 대한 그래프도 그릴 수 있다.
-
-  ```python
-  x = np.arange(0, 10, 0.01)
-  plt.plot(x, np.sin(x))
-  plt.plot(x, np.cos(x))
-  ```
-
-- `plt.bar(x, y)` : 전달인자로 받아온 data를 막대 모양의 그래프로 표현한다.
-
-  - `plt.barh(x, y)`: 막대 그래프를 수평 방향으로 표현한다.
-
-
-
-
-
-
-
-
-
-#### 2. plot axis
+#### 1. axis
 
 x, y 축을 설정할 수 있다.
 
@@ -109,9 +100,7 @@ plt.axis('tight')
 
 
 
-
-
-#### 3. Plot Label
+#### 2. Label
 
 - `plt.title("title이름")` 그래프의 이름
 - `plt.xlabel("")`  그래프의 x축 이름
@@ -150,7 +139,7 @@ plt.ylabel("y!")
 
   
 
-#### 4. Multiple Subplots
+#### 3. Multiple Subplots
 
 - subplot
 
@@ -201,7 +190,7 @@ plt.ylabel("y!")
 
   
 
-#### 5. text
+#### 4. text
 
 plot 위의 원하는 곳에 text를 삽입할 수 있다.
 
@@ -256,20 +245,12 @@ plt.show()
 
 
 
-
-
-
-
-#### . plot data
-
-
+#### 5. ticks
 
 - `plt.xticks(rotation=m)` : x축의 각 data 이름을 90도 회전
-- `plt.yticks(rotation=m)` : x축의 각 data 이름을 m도 만큼 회전
+- `plt.yticks(rotation=m)` : y축의 각 data 이름을 m도 만큼 회전
 
 ####  
-
-
 
 ---
 
