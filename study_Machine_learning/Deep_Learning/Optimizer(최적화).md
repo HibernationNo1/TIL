@@ -6,7 +6,8 @@ loss function 또는 cost function을 최소화 하기 위해 반복을 통해 y
 - 전체 파라미터 값을 한 번 업데이트 하는 것을 1 **Epoch**라고 한다.
 
 $$
-gradient\ descent => x:=x- \alpha \frac{dy}{dx}\ \ 동작을\ 반복하며\ 기울기가\ 0인\ 지점으로\ x값을\ 이동시키는\ 것
+gradient\ descent \\
+x:=x- \alpha \frac{dy}{dx}\ \ 동작을\ 반복하며\ 기울기가\ 0인\ 지점으로\ x값을\ 이동시키는\ 것
 $$
 여기서 alpha는 learning rate를 의미하며, learning rate값을 결정해서 gradient descent method가 발산하는 것을 예방할 수 있다. 
 
