@@ -204,31 +204,23 @@ cost는 data 각각의 loss들의 평균이기 때문에 function 자체가 하�
 
   1. 0에 대칭적인 data set
 
-     data로 입력받은 x값의 평균이 0이면 가장 이상적인 cost function 모양이 나오지만, 그렇지 않다면 (x 평균이 절대값이 0이 아니면) x값에 [곱하기 (-1)]을 한 data를 받아옴으로써 평균을 0으로 맞출 수 있다. 이런 원리처럼, 우리는 data set을 준비할 때 0을 기준으로 대칭을 한 값으로 모아놓은 data set을 준비하는게 학습에 더욱 좋다. 이것이 바로 전처리 과정에서 data set의 평균을 0으로 하고 양-음 data의 대칭을 맞추는 이유이다.  
-
   2. 양, 음의 평균 절대값이 1인 data set
 
-     위의 loss에서의 Gradient Descent Method에서는 x값에 의해 theta_1, theta_0의 학습 속도가 달라진다는 것을 알아보았으며, 두 theta값의 학습속도를 동일하게 하는 가장 이상적인 x값은 1이라는 것을 알 수 있었다. 
-
-     cost function은 여러 x값의 평균을 사용하기 때문에, x의 양수값들의 평균과 음수값들의 평균이 각각 1, -1을 가지고 있어야 두 theta값의 학습속도를 동일하게 할 수 있다는 것을 알 수 있다. (이를 위해서 큰 값을 가진 x 하나에는 작은 값을 가진 수많은 x값이 함께 있어야 평균 1을 맞출 수 있음을 기억하자.  
-
-     ex) [2, 0.1, 0.1, ...] 의 평균 = 1.00...01)
-
-  즉, 0에 대칭적이면서 양, 음수 data들의 평균에 절대값을 씌우면 1이 나오는 data set이 학습이 가장 이상적인 data set이라는 것을 알 수 있다.
-
-  이러한 data set이 바로 **standard normal distribution**(표준 정규분포)이다.
-
-  ![](https://cdn.scribbr.com/wp-content/uploads/2020/10/standard-normal-distribution-1024x633.png)
+  
+즉, 0에 대칭적이면서 양, 음수 data들의 평균에 절대값을 씌우면 1이 나오는 data set이 학습이 가장 이상적인 data set이라는 것을 알 수 있다.
+  
+이러한 data set이 바로 **standard normal distribution**(표준 정규분포)이다.
+  
+![](https://cdn.scribbr.com/wp-content/uploads/2020/10/standard-normal-distribution-1024x633.png)
 
 그렇다면 normal distribution에서 어떻게 standard normal distribution으로 값을 바꿀 수 있을까?  
 
-- Feature Scaling - Normalization(표준화)
+- Feature Scaling - standardiztion(표준화)
   $$
-  x : data, \ \ \ \mu: mean, \ \ \ \sigma: standard\ deviation
+  x : data, \ \ \ \mu: mean, \ \ \ \sigma: std
   \\ x:= \frac{x - \mu}{\sigma}
   $$
   
-- 
 
 이 때, Feature Scaling을 통해 새롭게 만들어진 data set은 우리가 처음에 선택한 data set과는 전혀 다른 data를 가지고 있기 되기 때문에, 이 data set으로 training을 하게 되면 해당 모델은 실제 test data set을 그대로 받았을 때 전혀 다른 prediction을 보여준다.
 
