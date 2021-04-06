@@ -26,6 +26,8 @@ input data에 대한 output data가 training data로 인해 이루어진 연속�
 
 ### Finding Optimal 과정
 
+#### 식 표현
+
 - **Model**
   $$
   Model => \ \  \widehat{y} = \theta_1 x + \theta_0\\
@@ -100,8 +102,8 @@ input data에 대한 output data가 training data로 인해 이루어진 연속�
 
   **Cost Partial Derivates** 
   $$
-  \frac{\part J(\theta_1, \theta_0)}{\part \theta_1} = \frac{\part}{\part \theta_1} \left [\frac{1}{n}\sum_{i=1}^{n} \frac{\part L(\theta_1, \theta_0)}{\part \theta_1}  \right ] =-\frac{1}{n}\sum_{i=1}^{n}\left [2x^{(i)}(y^{(i)} - \widehat{y}^{(i)})\right ]\\
-  \frac{\part J(\theta_1, \theta_0)}{\part \theta_0} = \frac{\part}{\part \theta_1} \left [\frac{1}{n}\sum_{i=1}^{n} \frac{\part L(\theta_1, \theta_0)}{\part \theta_0}  \right ] =-\frac{1}{n}\sum_{i=1}^{n}\left [2(y^{(i)} - \widehat{y}^{(i)})\right ]
+  \frac{\part J(\theta_1, \theta_0)}{\part \theta_1} = \frac{\part}{\part \theta_1} \left [\frac{1}{n}\sum_{i=1}^{n} L(\theta_1, \theta_0)  \right ] =-\frac{1}{n}\sum_{i=1}^{n}\left [2x^{(i)}(y^{(i)} - \widehat{y}^{(i)})\right ]\\
+  \frac{\part J(\theta_1, \theta_0)}{\part \theta_0} = \frac{\part}{\part \theta_1} \left [\frac{1}{n}\sum_{i=1}^{n} L(\theta_1, \theta_0) \right ] =-\frac{1}{n}\sum_{i=1}^{n}\left [2(y^{(i)} - \widehat{y}^{(i)})\right ]
   $$
   
 
@@ -126,6 +128,119 @@ input data에 대한 output data가 training data로 인해 이루어진 연속�
 그리고 learning rate는 x값을 계수로 갖는 theta_1과 계수가 없는 theta_0 둘 다에 적용되기 때문에 발산에 대한 문제도 발생할 수 있다.
 
 > theta_1에 알맞은 크기의 learning rate을 적용하면 theta_0의 학습속도가 너무 느릴 수 있고, theta_0에 알맞은 크기의 learning rate을 적용하면 theta_1이 너무 커져서 발산할 위험이 있다.
+
+---
+
+
+
+#### 식 전개, 분석
+
+위 식은 간단하게 표현한 것으로, 해당 식을 전개해보면 아래와 같다.
+
+##### **Loss**
+
+Loss function은 아래와 같다.
+$$
+L^{(i)}(\theta_1, \theta_0) = (y^{(i)}-(\theta_1 x^{(i)} + \theta_0))^2 \\
+= x^2(\theta_1)^2 + (\theta_0)^2 - 2xy\theta_1 - 2y\theta_0 + 2x\theta_1 \theta_0 + y^2
+$$
+위 식에 partial derivates를 적용하면 
+$$
+\frac{\part L(\theta_1, \theta_0)}{\part \theta_1}  = 2x(x\theta_1 + \theta_0 - y)
+\\
+ \frac{\part L(\theta_1, \theta_0)}{\part \theta_0} = 2(\theta_0 + x\theta_1 - y)
+$$
+ Loss에 대한 Gradient Descent Method는 아래와 같다.
+$$
+\theta_1 := \theta_1 + 2\alpha x(x\theta_1 + \theta_0 - y)\\
+\theta_0 := \theta_0 + 2\alpha (\theta_0 + x\theta_1 - y)
+$$
+
+> 이 때 x에 어떤 값을 넣느냐에 따라서 theta_0과 theta_1의 학습 속도의 차이를 확인할 수 있다. (y는 크게 의미가 없기 때문에 y = 0이고, learning rate은 고정을 위해 1 이라고 가정)
+>
+> ![](https://github.com/HibernationNo1/TIL/blob/master/image/20.jpg?raw=true)
+>
+> 왼쪽 이미지는 x의 값이 음수인 경우, 오른쪽 이미지는 x의 값이 양수인 경우에 따라 각 theta값의 학습 속도의 차이를 보여준다.
+>
+> - x의 값이 음수인 경우 
+>
+>   x값의 절대값이 작을수록 theta_1의 학습 속도보다 theta_0의 학습 속도가 높고
+>
+>   x값이 절대값이 클수록 theta_0의 학습 속도보다 theta_1의 학습 속도가 빠름을 알 수 있다.
+>
+> - x의 값이 양수인 경우
+>
+>    x의 값이 음수인 경우와 반대의 결과을 볼 수 있다.
+>
+> 즉 x의 절대값이 클수록 발산의 위험이 커지고, x의 절대값이 작을수록 학습속도가 느려진다는 것이며 더욱 중요한 것은, x의 절대값이 1에 가까울수록 두 theta의 학습 속도가 비슷해진다는 것이다.
+>
+> 그래서 우리는 두 theta의 학습 속도를 맞추기 위해 입력 data의 절대값을 1로 맞추기 위한 작업인 **Feature Scaling**을 하는 것이다.
+
+각각의 data에 대해서 loss function에서 Gradient Descent Method를 통해 theta를 updata하기 때문에 하나의 큰 값의 data에 의해서 발산할 위험또한 높음을 알 수 있다. 이를 방지하기 위해 Cost를 활용해보자.
+
+
+
+##### **Cost**
+
+위의 Loss식에 의해 Cost function의 partial derivates는 아래와 같다.
+$$
+\frac{\part J(\theta_1, \theta_0)}{\part \theta_1} = \frac{\part}{\part \theta_1} \left [\frac{1}{n}\sum_{i=1}^{n} L(\theta_1, \theta_0) \right ] = \frac{1}{n}\sum_{i=1}^{n} \frac{\part L(\theta_1, \theta_0)}{\part \theta_1} \\ 
+= -\frac{1}{n}\sum_{i=1}^{n}\left [2x(x\theta_1 + \theta_0 - y)\right ]
+\\
+\frac{\part J(\theta_1, \theta_0)}{\part \theta_0} = \frac{\part}{\part \theta_0} \left [\frac{1}{n}\sum_{i=1}^{n} L(\theta_1, \theta_0)  \right ] =\frac{1}{n}\sum_{i=1}^{n} \frac{\part L(\theta_1, \theta_0)}{\part \theta_0} \\ 
+=-\frac{1}{n}\sum_{i=1}^{n}\left [2(\theta_0 + x\theta_1 - y)\right ]
+$$
+즉, Gradient Descent Method는 아래 식으로 표현할 수 있다
+$$
+\theta_1 := \theta_1 -\frac{\alpha}{n}\sum_{i=1}^{n}\left [2x(x\theta_1 + \theta_0 - y)\right ]\\
+\theta_0 := \theta_0 -\frac{\alpha}{n}\sum_{i=1}^{n}\left [2(\theta_0 + x\theta_1 - y)\right ]
+$$
+
+
+
+cost는 data 각각의 loss들의 평균이기 때문에 function 자체가 하나만 존재함을 기억해보자. (가장 이상적인 function 모양은 구 형태의 밥그릇 모양임을 기억하자.)
+
+- 가장 이상적인 cost function을 구하기 위한 조건 2가지
+
+  1. 0에 대칭적인 data set
+
+     data로 입력받은 x값의 평균이 0이면 가장 이상적인 cost function 모양이 나오지만, 그렇지 않다면 (x 평균이 절대값이 0이 아니면) x값에 [곱하기 (-1)]을 한 data를 받아옴으로써 평균을 0으로 맞출 수 있다. 이런 원리처럼, 우리는 data set을 준비할 때 0을 기준으로 대칭을 한 값으로 모아놓은 data set을 준비하는게 학습에 더욱 좋다. 이것이 바로 전처리 과정에서 data set의 평균을 0으로 하고 양-음 data의 대칭을 맞추는 이유이다.  
+
+  2. 양, 음의 평균 절대값이 1인 data set
+
+     위의 loss에서의 Gradient Descent Method에서는 x값에 의해 theta_1, theta_0의 학습 속도가 달라진다는 것을 알아보았으며, 두 theta값의 학습속도를 동일하게 하는 가장 이상적인 x값은 1이라는 것을 알 수 있었다. 
+
+     cost function은 여러 x값의 평균을 사용하기 때문에, x의 양수값들의 평균과 음수값들의 평균이 각각 1, -1을 가지고 있어야 두 theta값의 학습속도를 동일하게 할 수 있다는 것을 알 수 있다. (이를 위해서 큰 값을 가진 x 하나에는 작은 값을 가진 수많은 x값이 함께 있어야 평균 1을 맞출 수 있음을 기억하자.  
+
+     ex) [2, 0.1, 0.1, ...] 의 평균 = 1.00...01)
+
+  즉, 0에 대칭적이면서 양, 음수 data들의 평균에 절대값을 씌우면 1이 나오는 data set이 학습이 가장 이상적인 data set이라는 것을 알 수 있다.
+
+  이러한 data set이 바로 **standard normal distribution**(표준 정규분포)이다.
+
+  ![](https://cdn.scribbr.com/wp-content/uploads/2020/10/standard-normal-distribution-1024x633.png)
+
+그렇다면 normal distribution에서 어떻게 standard normal distribution으로 값을 바꿀 수 있을까?  
+
+- Feature Scaling - Normalization(표준화)
+  $$
+  x : data, \ \ \ \mu: mean, \ \ \ \sigma: standard\ deviation
+  \\ x:= \frac{x - \mu}{\sigma}
+  $$
+  
+- 
+
+이 때, Feature Scaling을 통해 새롭게 만들어진 data set은 우리가 처음에 선택한 data set과는 전혀 다른 data를 가지고 있기 되기 때문에, 이 data set으로 training을 하게 되면 해당 모델은 실제 test data set을 그대로 받았을 때 전혀 다른 prediction을 보여준다.
+
+그렇기 때문에 우리는 traning data set을 Feature Scaling하고, 학습이 끝난 모델에 test data set을 입력할 때도 Feature Scaling을 수행해주어야 한다. 이후 결과로 나온 prediction은 Feature Scaling의 역 연산을 통해 우리가 최종적으로 기대하는 올바른 prediction으로 바꿔주여야 한다.
+
+![](https://github.com/HibernationNo1/TIL/blob/master/image/21.jpg?raw=true)
+
+
+
+###### Batch size
+
+data 전체를 batch로 결정한다면 cost function의 모양은 가장 이상적이겠지만, 이후에 사용하게 될 artificial에서 batch size가 너무 크면 복잡한 함수의 연산이 이루어지기 때문에 모델이 너무 무거워진다는 단점이 있다. 그렇기 때문에 batch size를 적당히 작게 결정하는 mini batch size의 원리에 따르는 것이 좋다. (보통 batch size는 32로 결정한다고 한다.)
 
 
 
