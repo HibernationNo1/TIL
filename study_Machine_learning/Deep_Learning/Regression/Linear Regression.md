@@ -69,8 +69,12 @@ input data에 대한 output data가 training data로 인해 이루어진 연속�
   \\
   \frac{\part L(\theta_1, \theta_0)}{\part \theta_0} = -2(y-(\theta_1 x + \theta_0)) \\ = -2(y - \widehat{y})
   $$
-  **Loss Gradient**
+  ![](https://github.com/HibernationNo1/TIL/blob/master/image/22.jpg?raw=true)
 
+  
+  
+  **Loss Gradient**
+  
    theta_1(= weight), theta_2(= bais)에 대해서 각각 적용되어야 한다.
   $$
   \bigtriangledown _{(\theta_1, \theta_0)}L(\theta_1, \theta_0) = \left (\frac{\part L(\theta_1, \theta_0)}{\part \theta_1}, \ \frac{\part L(\theta_1, \theta_0)}{\part \theta_0}  \right ) =  \left ( -2x(y - \widehat{y}) ,\ -2(y - \widehat{y})  \right )\
@@ -84,11 +88,14 @@ input data에 대한 output data가 training data로 인해 이루어진 연속�
   (\theta_1, \theta_0) := (\theta_1, \theta_0) -\alpha\left (\frac{\part L(\theta_1, \theta_0)}{\part \theta_1}, \ \frac{\part L(\theta_1, \theta_0)}{\part \theta_0}  \right )
   $$
   즉, Gradient Descent Method는 아래 식으로 표현할 수 있다.
-  $$
+  
+$$
   \theta_1 := \theta_1 + 2\alpha x(y - \widehat{y})\\
   \theta_0 := \theta_0 + 2\alpha (y - \widehat{y})
-  $$
-  여기서 theta_1의 parameter updata의 방향은 x, y값의 양 또는 음의 값에 따라서 달라진다.
+$$
+
+
+여기서 theta_1의 parameter updata의 방향은 x, y값의 양 또는 음의 값에 따라서 달라진다.
 
   ![](https://github.com/HibernationNo1/TIL/blob/master/image/18.jpg?raw=true)
 
@@ -100,27 +107,26 @@ input data에 대한 output data가 training data로 인해 이루어진 연속�
 
 - **Cost Function에 대한 Gradient Descent Method**
 
-  **Cost Partial Derivates** 
-  $$
+  **Cost Partial Derivates**
+$$
   \frac{\part J(\theta_1, \theta_0)}{\part \theta_1} = \frac{\part}{\part \theta_1} \left [\frac{1}{n}\sum_{i=1}^{n} L(\theta_1, \theta_0)  \right ] =-\frac{1}{n}\sum_{i=1}^{n}\left [2x^{(i)}(y^{(i)} - \widehat{y}^{(i)})\right ]\\
   \frac{\part J(\theta_1, \theta_0)}{\part \theta_0} = \frac{\part}{\part \theta_1} \left [\frac{1}{n}\sum_{i=1}^{n} L(\theta_1, \theta_0) \right ] =-\frac{1}{n}\sum_{i=1}^{n}\left [2(y^{(i)} - \widehat{y}^{(i)})\right ]
-  $$
-  
+$$
+
 
   **Cost Gradient**
-  $$
+$$
   \bigtriangledown _{(\theta_1, \theta_0)}J(\theta_1, \theta_0) = \left ( -\frac{1}{n}\sum_{i=1}^{n}\left [2x^{(i)}(y^{(i)} - \widehat{y}^{(i)})\right ],\ -\frac{1}{n}\sum_{i=1}^{n}\left [2(y^{(i)} - \widehat{y}^{(i)})\right ] \right )
-  $$
+$$
   이므로 
-  $$
+$$
   (\theta_1, \theta_0) := (\theta_1, \theta_0) -\alpha\left (\frac{\part J(\theta_1, \theta_0)}{\part \theta_1}, \ \frac{\part J(\theta_1, \theta_0)}{\part \theta_0}  \right )
-  $$
+$$
   즉, Gradient Descent Method는 아래 식으로 표현할 수 있다.
-  $$
+$$
   \theta_1 := \theta_1 -\frac{\alpha}{n}\sum_{i=1}^{n}\left [2x^{(i)}(y^{(i)} - \widehat{y}^{(i)})\right ]\\
   \theta_0 := \theta_0 -\frac{\alpha}{n}\sum_{i=1}^{n}\left [2(y^{(i)} - \widehat{y}^{(i)})\right ]
-  $$
-
+$$
 
 
 이 과정에서 data semple(x_i, y_i)에 값을 할당하면 알 수 있듯, x값을 계수로 갖는 theta_1과 계수가 없는 theta_0은 data값에 따라서 학습속도에 차이를 보일 수 밖에 없다. 
@@ -155,7 +161,6 @@ $$
 \theta_1 := \theta_1 + 2\alpha x(x\theta_1 + \theta_0 - y)\\
 \theta_0 := \theta_0 + 2\alpha (\theta_0 + x\theta_1 - y)
 $$
-
 > 이 때 x에 어떤 값을 넣느냐에 따라서 theta_0과 theta_1의 학습 속도의 차이를 확인할 수 있다. (y는 크게 의미가 없기 때문에 y = 0이고, learning rate은 고정을 위해 1 이라고 가정)
 >
 > ![](https://github.com/HibernationNo1/TIL/blob/master/image/20.jpg?raw=true)
@@ -195,6 +200,7 @@ $$
 \theta_1 := \theta_1 -\frac{\alpha}{n}\sum_{i=1}^{n}\left [2x(x\theta_1 + \theta_0 - y)\right ]\\
 \theta_0 := \theta_0 -\frac{\alpha}{n}\sum_{i=1}^{n}\left [2(\theta_0 + x\theta_1 - y)\right ]
 $$
+이 과정 속에서의 back propagation에서, 벡터의 chain rule은 벡터끼리의 곱이 아닌 hadamard product이 적용되어야 한다. 
 
 
 
@@ -207,20 +213,21 @@ cost는 data 각각의 loss들의 평균이기 때문에 function 자체가 하�
   2. 양, 음의 평균 절대값이 1인 data set
 
   
+
 즉, 0에 대칭적이면서 양, 음수 data들의 평균에 절대값을 씌우면 1이 나오는 data set이 학습이 가장 이상적인 data set이라는 것을 알 수 있다.
-  
+
 이러한 data set이 바로 **standard normal distribution**(표준 정규분포)이다.
-  
+
 ![](https://cdn.scribbr.com/wp-content/uploads/2020/10/standard-normal-distribution-1024x633.png)
 
 그렇다면 normal distribution에서 어떻게 standard normal distribution으로 값을 바꿀 수 있을까?  
 
 - Feature Scaling - standardiztion(표준화)
-  $$
+$$
   x : data, \ \ \ \mu: mean, \ \ \ \sigma: std
   \\ x:= \frac{x - \mu}{\sigma}
-  $$
-  
+$$
+
 
 이 때, Feature Scaling을 통해 새롭게 만들어진 data set은 우리가 처음에 선택한 data set과는 전혀 다른 data를 가지고 있기 되기 때문에, 이 data set으로 training을 하게 되면 해당 모델은 실제 test data set을 그대로 받았을 때 전혀 다른 prediction을 보여준다.
 
@@ -234,23 +241,172 @@ cost는 data 각각의 loss들의 평균이기 때문에 function 자체가 하�
 
 data 전체를 batch로 결정한다면 cost function의 모양은 가장 이상적이겠지만, 이후에 사용하게 될 artificial에서 batch size가 너무 크면 복잡한 함수의 연산이 이루어지기 때문에 모델이 너무 무거워진다는 단점이 있다. 그렇기 때문에 batch size를 적당히 작게 결정하는 mini batch size의 원리에 따르는 것이 좋다. (보통 batch size는 32로 결정한다고 한다.)
 
+![](https://github.com/HibernationNo1/TIL/blob/master/image/23.jpg?raw=true)
+
+
+
 
 
 ---
 
 
 
-## 구현(tensorflow)
+## 코드 구현(no tensorflow)
+
+### 1. basic_node
+
+```python
+import numpy as np
+
+class plus_node():
+    def forward(self, x, y):
+        self._x, self._y = x, y
+        self._z = self._x + self._y
+        return self._z
+    
+    def backward(self, dz):
+        return dz
+
+class mul_node():
+    def forward(self, x, y):
+        self._x, self._y = x, y
+        self._z = self._x*self._y
+        return self._z
+
+    def backward(self, dz):
+        return (dz*self._y, dz*self._x)
+
+class minus_node():
+    def forward(self, x, y):
+        self._x, self._y = x, y
+        self._z = self._x - self._y
+        return self._z
+
+    def backward(self, dz):
+        return -1*dz
+
+class square_node():
+    def forward(self, x):
+        self._x = x
+        self._z = self._x*self._x
+        return self._z
+
+    def backward(self, dz):
+        return (2*dz*self._x)
+
+class mean_node():
+    def forward(self, x):
+        self._x = x
+        self._z = np.mean(self._x)
+        return self._z
+
+    def backward(self, dz):
+        dx = dz*1/len(self._x)*np.ones_like(self._x)
+        return dx 
+```
+
+
+
+### 2. SVLR
+
+```python
+import basic_node as nodes
+import numpy as np
+
+class SVLR:
+    def __init__(self, th1, th0):
+        self.th1, self.th0 = th1, th0
+
+    def model_imp(self):
+        self.node1 = nodes.mul_node()
+        self.node2 = nodes.plus_node()
+    
+    def cost_imp(self):
+        self.node3 = nodes.minus_node()
+        self.node4 = nodes.square_node()
+        self.node5 = nodes.mean_node()
+
+    def forward(self, mini_batch): 
+        Z1 = self.node1.forward(self.th1, mini_batch[:, 0])
+        Z2 = self.node2.forward(Z1, self.th0)
+        Z3 = self.node3.forward(mini_batch[:, 1], Z2)
+        L = self.node4.forward(Z3)
+        J = self.node5.forward(L)
+
+    def backward(self, lr):
+        dL = self.node5.backward(1)
+        dZ3 = self.node4.backward(dL)
+        dZ2 = self.node3.backward(dZ3)
+        dZ1, dTh0 = self.node2.backward(dZ2)
+        dTh1 = self.node1.backward(dZ1) 
+
+        self.th1 = self.th1 - lr*np.sum(dTh1)
+        self.th0 = self.th0 - lr*np.sum(dTh0)
+
+```
+
+
+
+### 3. main
+
+```python
+import numpy as np
+import basic_node as nodes
+from dataset_generator import dataset_generator
+import SVLR
+
+np.random.seed(0)
+
+t_th1, t_th0 = 5, 5     # target theta
+th1, th0 = 1, 1
+
+distribution_params = {'feature_0': {'mean' : 0, 'std' : 1}}
+
+lr = 0.01
+epochs = 10
+batch_size = 4
+
+def get_data_batch(data, batch_idx):
+    if batch_idx is n_batch-1:
+        batch = data[batch_idx*batch_size : ]
+    else :
+        batch = data[batch_idx*batch_size : (batch_idx + 1) * batch_size]
+    return batch
+
+
+dataset_gen = dataset_generator()
+dataset_gen.set_coefficient([t_th1, t_th0])
+dataget_gen.set_distribution_params(distribution_params)
+x_data, y_data = dataset_gen.make_dataset()
+data = np.hstack((x_data, y_data))
+n_batch = np.ceil(data.shape[0] / batch_size).astype(int)
+
+
+model = SVLR(th1, th0)
+
+for epoch in range(epochs): 
+    np.random.shuffle(data)
+
+    for batch_idx in range(n_batch):
+        batch = get_data_batch(data, batch_idx)
+
+        model.forward(batch)
+        model.backward(lr)
+```
+
+
+
+
+
+## 코드 구현(tensorflow)
 
 모든 딥러닝 모델은 **가설 정의** -> **손실함수 정의** -> **최적화 정의** 를 거쳐야 한다.
 
 ### 1. 가설 정의
-
 $$
 가설:\ y = Wx+b 
 \\ W, b: 파라미터 \ \ \ \ x: input데이터 \ \ \ y: 정답\ 데이터
 $$
-
 ```python
 @tf.function
 def linear_model(x):   # x: input 데이터
@@ -281,7 +437,6 @@ $$
 $$
 \widehat{y_i} : 모델의\ 예측\ 값, \ \  	y_i : 정답\ 값, \ \ \frac {1} {2n}: 평균 \ 을\ 의미함
 $$
-
 ```python
 # MSE 손실함수
 @tf.function
@@ -302,20 +457,19 @@ def mse_loss(y_pred, y): # y_pred: 모델이 예측한 값,  y실제 값
 - 경사하강법은 다음 수식처럼 손실 함수의 미분값과 러닝 레이트의 곱만큼을 원래 파라미터에 뺀 값으로 파라미터를 한 스텝 업데이트 하는 것.
 
   
-  $$
+$$
   \theta_{i+1} = \theta_i - \alpha \frac{\partial}{\partial \theta_i}Cost(\theta_0, \theta_1)
-  $$
-  
+$$
+
 
   - 선형회귀 모델(y  = Wx)을 사용하고 손실함수로 평균제곱오차(MES)를 사용할 경우  확률적 경사하강법(SGD)의 한 스텝 업데이트를 위해 계산하는 손실함수의 미분값
-
-  $$
+$$
   \frac{\partial}{\partial \theta_0}Cost(\theta_0, \theta_1) = \frac {\partial}{\partial \theta_0} \frac{1}{2n}(\widehat{y} - y)^2
-  $$
+$$
 
-  $$
+$$
   \frac{\partial}{\partial \theta_1}Cost(\theta_0, \theta_1) = \frac {\partial}{\partial \theta_1} \frac{1}{2n}(\widehat{y} - y)^2
-  $$
+$$
 
 **코드**
 
@@ -379,7 +533,7 @@ print(linear_model(x_test))
 
 
 
-## 전체 코드
+### 전체 코드
 
 ```python
 # 선형 회귀(Linear Regression) 알고리즘
