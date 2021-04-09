@@ -738,17 +738,19 @@ print(test_np)
 ```
 
 ```python
-reshaped_np1 = test_np.reshape(12)
+reshaped_np1 = test_np.reshape(12)  
 print(reshaped_np1)
 
-reshaped_np2 = test_np.reshape(2,6)
+reshaped_np2 = test_np.reshape(2,6)	# == test_np.reshape(-1,6)
 print(reshaped_np2)
 
-reshaped_np3 = test_np.reshape(4,3)
+reshaped_np3 = test_np.reshape(4,3) # == test_np.reshape(-1,3)
 print(reshaped_np3)
 ```
 
 > test_np의 size = (3, 4)
+>
+> `reshape(-1, n)`을 사용하면 n에 알맞게 알아서 차원이 맞춰진다.
 
 ```
 [0 1 2 2 0 1 0 0 2 1 2 1]
@@ -765,6 +767,8 @@ print(reshaped_np3)
 > 이를 원치 않으면 copy()함수를 사용할 수 있다.
 >
 > `test_np.reshape(4,3).copy()`
+
+
 
 
 
