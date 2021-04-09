@@ -274,7 +274,7 @@ for epoch in range(epochs):
 
 ![](https://github.com/HibernationNo1/TIL/blob/master/image/17.jpg?raw=true)
 
-어짜피 numpy의 곱셈 연산은 elementry operation이 적용되기 때문에 partial derivative를 그대로 곱해주고, np.sum() 을 사용해서 전체 entry를 합해주는 연산을 통해 back propagation의 동작을 구현할 수 있다.
+어짜피 numpy의 곱셈 연산은 elementry operation이 적용되기 때문에 partial derivative를 그대로 곱해주고, np.sum() 을 사용해서 전체 element를 합해주는 연산을 통해 back propagation의 동작을 구현할 수 있다.
 
 ---
 

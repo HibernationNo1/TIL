@@ -62,7 +62,7 @@ $$
 
 ### Vector Chain Rule
 
-- Hadamard product(아다마르 곱): 같은 위치의 entry끼리 element by element 곱셈 연산을 수행한 것으로, 같은 크기의 두 행렬의 각 성분을 곱하는 연산이다. 기호는 `\bigcirc`를 사용한다. 
+- Hadamard product(아다마르 곱): 같은 위치의 element끼리 element by element 곱셈 연산을 수행한 것으로, 같은 크기의 두 행렬의 각 성분을 곱하는 연산이다. 기호는 `\bigcirc`를 사용한다. 
 
 vector에 대한 Chain Rule의 식을 예시로 들어보자면
 $$
