@@ -223,9 +223,9 @@ x_2, x_1의 값이 크면 theta_2, theta_1의 학습 속도가 빨라지지만, 
 
 
 
+## No batch
 
-
-## 코드 구현(non class)
+### 코드 구현(non class)
 
 > 3가지의 feature
 
@@ -407,7 +407,7 @@ class mean_node():
 
 
 
-## 코드 구현(use class)
+### 코드 구현(use class)
 
 #### main.py
 
@@ -636,5 +636,281 @@ def result_visualization(th_accum, loss_list, feature_dim):
     ax[0].set_title(r'$\vec{\theta}$', fontsize = 40)
     ax[1].set_title(r'Loss', fontsize = 40)
     plt.show()
+```
+
+
+
+## Mini-batch
+
+### 코드 구현(use class)
+
+#### main.py
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm
+
+import Function_implementation as function
+import basic_node as nodes
+import dataset_generator as dataset
+
+# data set 만들기
+feature_dim = 3
+n_sample = 1000 
+coefficient_list = [5, 5, 5, 5]     # target theta
+data_gen = dataset.Dataset_Generator(feature_dim, n_sample, coefficient_list )
+x_data, y_data = data_gen.make_dataset()
+
+# batch 작업
+batch_size = 8
+data = np.hstack((x_data, y_data))   # data shuffle을 위해
+n_batch = np.ceil(data.shape[0]/batch_size).astype(int)
+
+Th = data_gen.make_theta()
+epochs, lr = 20, 0.001
+
+th_accum = Th.reshape(-1, 1)
+cost_list = list()
+
+affine = function.Affine_Function(feature_dim, Th)
+loss = function.Square_Error_Loss()
+cost = function.Cost()
+
+for epoch in range(epochs):
+    np.random.shuffle(data)
+
+    for batch_idx in range(n_batch):
+        batch = function.get_data_batch(data, batch_idx, n_batch, batch_size)
+        x, y = batch[:, : -1], batch[:, -1]
+        
+
+        pred = affine.forward(x)
+        los = loss.forward(y, pred)
+        J = cost.forward(los)
+
+        dlos = cost.backward()
+        dpred = loss.backward(dlos)
+        affine.backward(dpred, lr)
+    
+        th_accum = np.hstack((th_accum, affine._Th))
+        cost_list.append(los)
+
+function.result_visualization(th_accum, cost_list, feature_dim)
+```
+
+
+
+
+
+#### basic_node.py
+
+```python
+import numpy as np
+
+class plus_node():
+    def forward(self, x, y):
+        self._x, self._y = x, y
+        self._z = self._x + self._y
+        return self._z
+    
+    def backward(self, dz):
+        return (dz, dz)
+
+class mul_node():
+    def forward(self, x, y):
+        self._x, self._y = x, y
+        self._z = self._x*self._y
+        return self._z
+
+    def backward(self, dz):
+        return (dz*self._y, dz*self._x)
+
+class minus_node():
+    def forward(self, x, y):
+        self._x, self._y = x, y
+        self._z = self._x - self._y
+        return self._z
+
+    def backward(self, dz):
+        return (-1*dz, -1*dz)
+
+class square_node():
+    def forward(self, x):
+        self._x = x
+        self._z = self._x*self._x
+        return self._z
+
+    def backward(self, dz):
+        return (2*dz*self._x)
+
+class mean_node():
+    def forward(self, x):
+        self._x = x
+        self._z = np.mean(self._x)
+        return self._z
+
+    def backward(self, dz):
+        dx = dz*1/len(self._x)*np.ones_like(self._x)
+        return dx 
+```
+
+
+
+#### dataset_generator.py
+
+```python
+import numpy as np
+
+class Dataset_Generator:
+    def __init__(self, feature_dim, n_sample, coefficient_list):
+        self._feature_dim = feature_dim
+        self._n_sample = n_sample
+        self._coefficient_list = coefficient_list
+
+        self.dataset_imp()
+
+    def dataset_imp(self):
+        self._x_data = np.zeros(shape = (self._n_sample, 1))
+        self._y_data = np.zeros(shape = (self._n_sample, 1))
+
+    def make_dataset(self):
+        distribution_params = dict()
+        for idx in range(1, self._feature_dim + 1):
+            
+            distribution_params[idx] = {'mean': 0, 'std': 1}
+
+        for feature_idx in range(1, self._feature_dim + 1):
+            feature_data = np.random.normal(loc = distribution_params[feature_idx]['mean'],
+                                            scale = distribution_params[feature_idx]['std'],
+                                            size = (self._n_sample, 1))
+            self._x_data = np.hstack((self._x_data, feature_data))            # 위에서 만든 normal dataset을 수평으로 stack 
+            self._y_data += self._coefficient_list[feature_idx]*feature_data  # weight * x 입력값
+
+        self._y_data += self._coefficient_list[0]
+        return self._x_data, self._y_data
+    
+    def make_theta(self):
+        Th = np.random.normal(0, 1, size = (self._feature_dim + 1)).reshape(-1, 1)
+        return Th
+
+```
+
+
+
+
+
+#### Function_implementation.py
+
+```python
+import numpy as np
+import basic_node as nodes
+import matplotlib.pyplot as plt
+
+class Affine_Function:
+    def __init__(self, feature_dim, Th):
+        self._feature_dim = feature_dim
+        self._Th = Th
+
+        self._z1_list = [None]*(self._feature_dim + 1)
+        self._z2_list = self._z1_list.copy()
+        self._dz1_list, self._dz2_list = self._z1_list.copy(), self._z1_list.copy()
+        self._dth_list = self._z1_list.copy()
+        
+        self.affine_imp()
+
+    def affine_imp(self):
+        self._node1 = [None] + [nodes.mul_node() for _ in range(self._feature_dim)]
+        self._node2 = [None] + [nodes.plus_node() for _ in range(self._feature_dim)]
+
+    def forward(self, x):
+        for node_idx in range(1, self._feature_dim + 1):
+            self._z1_list[node_idx] = self._node1[node_idx].forward(self._Th[node_idx], x[:, node_idx])
+        
+        for node_idx in range(1, self._feature_dim + 1):
+            if node_idx == 1:
+                self._z2_list[node_idx] = self._node2[node_idx].forward(self._Th[0], self._z1_list[node_idx])
+            else :
+                self._z2_list[node_idx] = self._node2[node_idx].forward(self._z2_list[node_idx-1], self._z1_list[node_idx])
+
+        return self._z2_list[-1]
+
+    def backward(self, dz2_last, lr):
+        for node_idx in reversed(range(1, self._feature_dim + 1)): 
+            if node_idx == 1:
+                self._dth_list[0], self._dz1_list[node_idx] = self._node2[node_idx].backward(self._dz2_list[node_idx])
+            elif node_idx == self._feature_dim:
+                self._dz2_list[node_idx -1], self._dz1_list[node_idx] = self._node2[node_idx].backward(dz2_last)
+            else: 
+                self._dz2_list[node_idx -1], self._dz1_list[node_idx] = self._node2[node_idx].backward(self._dz2_list[node_idx])
+        
+
+        for node_idx in reversed(range(1, self._feature_dim + 1)): 
+            self._dth_list[node_idx], _ = self._node1[node_idx].backward(self._dz1_list[node_idx])
+        dth = np.sum(self._dth_list)
+        
+        self._Th = self._Th - (lr*np.array(dth).reshape(-1, 1))
+        return self._Th
+
+class Square_Error_Loss:
+    def __init__(self):
+        self.loss_imp()
+
+    def loss_imp(self):
+        self._node3 = nodes.minus_node()
+        self._node4 = nodes.square_node()
+
+    def forward(self, y, z2_last):
+        z3 = self._node3.forward(y, z2_last)
+        loss = self._node4.forward(z3)
+        return loss
+
+    def backward(self, dlos):
+        dz3 = self._node4.backward(dlos)
+        _, dz2_last = self._node3.backward(dz3)
+        return dz2_last
+     
+class Cost:
+    def __init__(self):
+        self.cost_imp()
+    
+    def cost_imp(self):
+        self._node5 = nodes.mean_node()
+
+    def forward(self, los):
+        J = self._node5.forward(los)
+        return J
+
+    def backward(self):
+        dlos = self._node5.backward(1)
+        return dlos
+
+
+def get_data_batch(data, batch_idx, n_batch, batch_size):
+    if batch_idx is n_batch -1:
+        batch = data[batch_dix*batch_size:]
+    else:
+        batch = data[batch_idx*batch_size : (batch_idx + 1)*batch_size]
+    return batch
+
+def result_visualization(th_accum, cost_list, feature_dim):
+    plt.style.use('seaborn')
+
+    fig, ax = plt.subplots(2, 1, figsize = (20, 10))
+
+    for i in range(feature_dim + 1):
+        ax[0].plot(th_accum[i], label = r'$\theta_{%d}$' %i, linewidth = 5)
+
+    ax[1].plot(cost_list)
+
+    ax[0].legend(loc = 'lower right', fontsize = 30)
+    ax[0].tick_params(axis = 'both', labelsize = 30)
+    ax[1].tick_params(axis = 'both', labelsize = 30)
+
+    ax[0].set_title(r'$\vec{\theta}$', fontsize = 40)
+    ax[1].set_title(r'Loss', fontsize = 40)
+    plt.show()
+
+
 ```
 
