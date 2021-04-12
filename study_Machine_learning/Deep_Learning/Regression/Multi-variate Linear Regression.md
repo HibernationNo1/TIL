@@ -644,6 +644,8 @@ def result_visualization(th_accum, loss_list, feature_dim):
 
 ### 코드 구현(use class)
 
+data가 vector형태로 다뤄지기 때문에, 이를 유의해서 코드를 짜야한다.
+
 #### main.py
 
 ```python
@@ -658,12 +660,12 @@ import dataset_generator as dataset
 # data set 만들기
 feature_dim = 3
 n_sample = 1000 
-coefficient_list = [5, 5, 5, 5]     # target theta
+coefficient_list = [3,3,3, 3]     # target theta
 data_gen = dataset.Dataset_Generator(feature_dim, n_sample, coefficient_list )
 x_data, y_data = data_gen.make_dataset()
 
 # batch 작업
-batch_size = 8
+batch_size = 6
 data = np.hstack((x_data, y_data))   # data shuffle을 위해
 n_batch = np.ceil(data.shape[0]/batch_size).astype(int)
 
@@ -694,7 +696,7 @@ for epoch in range(epochs):
         affine.backward(dpred, lr)
     
         th_accum = np.hstack((th_accum, affine._Th))
-        cost_list.append(los)
+        cost_list.append(J)
 
 function.result_visualization(th_accum, cost_list, feature_dim)
 ```
@@ -777,9 +779,9 @@ class Dataset_Generator:
     def make_dataset(self):
         distribution_params = dict()
         for idx in range(1, self._feature_dim + 1):
-            
             distribution_params[idx] = {'mean': 0, 'std': 1}
 
+        
         for feature_idx in range(1, self._feature_dim + 1):
             feature_data = np.random.normal(loc = distribution_params[feature_idx]['mean'],
                                             scale = distribution_params[feature_idx]['std'],
@@ -811,6 +813,7 @@ class Affine_Function:
     def __init__(self, feature_dim, Th):
         self._feature_dim = feature_dim
         self._Th = Th
+        self._dth_sum_list = self._Th.copy()
 
         self._z1_list = [None]*(self._feature_dim + 1)
         self._z2_list = self._z1_list.copy()
@@ -844,12 +847,12 @@ class Affine_Function:
             else: 
                 self._dz2_list[node_idx -1], self._dz1_list[node_idx] = self._node2[node_idx].backward(self._dz2_list[node_idx])
         
-
+            self._dth_sum_list[0] = np.sum(self._dth_list[0])
         for node_idx in reversed(range(1, self._feature_dim + 1)): 
             self._dth_list[node_idx], _ = self._node1[node_idx].backward(self._dz1_list[node_idx])
-        dth = np.sum(self._dth_list)
-        
-        self._Th = self._Th - (lr*np.array(dth).reshape(-1, 1))
+            self._dth_sum_list[node_idx] = np.sum(self._dth_list[node_idx])
+
+        self._Th = self._Th - (lr*np.array(self._dth_sum_list).reshape(-1, 1))
         return self._Th
 
 class Square_Error_Loss:
