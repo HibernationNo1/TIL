@@ -27,316 +27,265 @@ mpl.__version__
 
 
 
-## 1. 기초
+## 0. 기초 개념
 
 plot은 그림(figure)과 축(axes)으로 구성되어 있다.
 
-- `plt.figure()` : axes와 그래픽, 텍스트, 레이블을 표시하는 모든 객체를 포함하는 컨테이너
+#### plot 구성 요소
 
-- `plt.axse()`: 눈금과 레이블이 있는 테두리 박스로 시각화를 형성하는 플롯 요소를 포함
+- figure
 
-- `plt.plot()` : 전달인자로 받아온 data를 선 모양의 그래프로 표현한다.
+  > 전체 창을 의미한다. 그 안에 axes를 할당해서 기본 plot이 완성되는 것이다.
 
-  ```python
-  plt.plot([0, 1, 0.4])
-  plt.plot([0, 1, 0.4]*5)  # 위의 그림을 plot 하나 안에 5번 그린다.
-  plt.plot(np.random.randn(50))
-  ```
+- axes
 
-  x, y에 대한 그래프도 그릴 수 있다.
+  > plot에 속한 list라고 생각하면 된다. 이 axse안에 그림을 할당해서 기본 plot을 완성시키는 것이다.
 
-  ```python
-  x = np.arange(0, 10, 0.01)
-  plt.plot(x, np.sin(x))
-  plt.plot(x, np.cos(x))
-  ```
+- tick
 
-- `plt.subplots()`: plt.figure와 plt.axse에 대한 모든 요소를 포함한다. (subplot아님. subplots임)
+  > plot를 구성하는 '칸' 을 의미한다.
 
-- `plt.show()`: plot을 팝업 창으로 띄워준다.
+- label
+
+  > 각각의 data의 이름을 의미한다.
+
+- title
+
+  > plot의 이름을 의미한다.
+
+- line
+
+  > plot 안에 수치를 그림으로 표현하는 것을 의미한다. 이는 점, 선, 박스 등 다양한 형태의 그림으로 표현될 수 있다.
+
+- spines
+
+  > plot의 가장자리 선을 의미한다. plot의 틀이라고 생각하면 된다.
+
+- legend
+
+  > plot 안에 표현되는 Line의 이름이다. '범주' 라고 한다.
+
+- grid
+
+  > plot 안에 tick에 따라 위치를 좌표처럼 표현해주는 격자를 의미한다.
+
+
+
+#### plot의 종류
+
+- plot
+
+  > line plot을 의미한다.
+
+---
+
+## 코드
+
+### 1. figure, axes
+
+#### 1. plt.figure
 
 ```python
 fig = plt.figure()
-ax = plt.axes()
-fig, ax = plt.subplots()  # 위의 두 줄을 합친 것임
-plt.show()
 ```
 
-> 빈 그래프창이 나오는걸 볼 수 있다.
+> plt.plot() 과의 차이 : instance를 사용하므로써 더욱 다양한 함수를 호출해가며 사용할 수 있다.
 
-- `plt.waitforbuttonpress()` : 아무 버튼이 눌리면 이미지 팝업창 닫음
+ **속성**
+
+- `figsize = (n, m)` : figure의 크기를 결정한다.
+
+- `facecolor = ` : figure의 특정 color를 결정한다.
+
+  > 여러 코드를 통해 색상을 지정할 수 있다.
+  >
+  > - `'r'` 빨강
+  > - `'g'` 초록
+  > - `'b'` 파랑
+  > - `'#색상코드'` 
+  > - `(R수치, G수치, B수치)`
+  >
+  > - `'색상이름'`
+  >
+  > ```python
+  > fig = plt.figure(facecolor = 'r')
+  > fig = plt.figure(facecolor = 'g')
+  > fig = plt.figure(facecolor = 'b')
+  > fig = plt.figure(facecolor = '#1243FF')
+  > fig = plt.figure(facecolor = (0.2, 0.4, 0.6))  # 각각 R G B 값을 의미함
+  > fig = plt.figure(facecolor = 'darkblue')
+  > ```
+  >
+  > ![](https://mblogthumb-phinf.pstatic.net/MjAxNzA2MDJfMTg5/MDAxNDk2Mzk0OTQxNjYy.scwSCt72W3lW-32VrUH6Vi6tXBzSEPH86d5NfCwPe6Ug.MEWCQsPL2xBQQU3675ELH1y1xB4unFG0Mes-CBvkJSsg.PNG.radii26omg/named_colors.png?type=w2)
+  >
 
 
 
-
----
-
-## 2. Method 및 Property
-
-### 1. plot
-
-#### 1. axis
-
-x, y 축을 설정할 수 있다.
-
-- `plt.xlim(min, max)` x축 범위 설정
-- `plt.tlim(min, max)` y축 범위 설정
-
-- `plt.axis([xmin, xmax, ymin, ymax])` x, y축 한 번에 설정
-  - `plt.axis('tight')`  x, y축을 알아서 딱 맞게 지정
-  - `plt.axis('equal')`  x, y축을 보다 넓은 범위로 지정
-  - `plt.axis(xscale = 'log', yscale = 'log')`  x, y축의 scale를 log로 표현
-  - `plt.xaxis.set_major_formatter(plt.NullFormatter)`  x축의 date를 아예 표현하지 않음  (xaxis 대신 yaxis사용하면 y축에 적용)
+#### 2. fig.add_subplot
 
 ```python
-plt.plot(np.random.randn(50))
-plt.xlim(-1, 50)
-plt.ylim(-5, 5)
-plt.axis([0, 40, -10, 10])
-plt.axis('tight')
+fig = plt.figure()
+ax = fig.add_subplot  # axis를 하나 추가
 ```
 
+axis의 instance를 만듦으로써 ax위에 여러 plot을 할당할 수 있게 되는 것이다.
+
+ex)`ax.plot()`
+
+- axis의 grid system을 활용하자
+
+  ```python
+  ax = fig.add_subplot([3, 3]) # [3, 3] 형태의 axis를 ax에 할당
+  ax[0] # 9개의 ax중 첫 번째 ax에 접근
+  ax = fig.add_subplot(3, 3, 1)  
+  # 첫 번째 argument는 rows를, 두 번째 argument는 columns를, 세 번째 argument는 axis가 위치할 자리를 의미한다.  
+  # ax = fig.add_subplot(331) 과 같이 사용할 수 있다.
+  ```
+
+  아래처럼 grid system을 활용해서 figure에 여러 크기의 axes를 구성할 수 있다.
+
+  ```python
+  ax1 = fig.add_subplot(221)
+  ax2 = fig.add_subplot(222)
+  ax3 = fig.add_subplot(212)
+  ```
+
+ **속성**
+
+- `facecolor = ` : axis의 특정 color를 결정한다.
 
 
 
+#### 3. plt.subplots
 
-#### 2. Label
-
-- `plt.title("title이름")` 그래프의 이름
-- `plt.xlabel("")`  그래프의 x축 이름
-- `plt.ylabel("")`  그래프의 y축 이름
+figure과 axes를 한 번에 반환한다.
 
 ```python
-plt.plot(np.random.randn(50))
-plt.title("tmp")
-plt.xlabel("x!")
-plt.ylabel("y!")
+fig, ax = plt.subplots()		# 1개의 figure과 axis를 반환한다.
+fig, ax = plt.subplots(2, 2)  	# (2, 2) shape의 axes를 반환한다.
+# 즉 첫 번째 argument는 rows를, 두 번째 argument는 columns를 의미한다.
+fig, (ax1, ax2) = plt.subplots(2, 2)  
 ```
 
-- `label = "" `  각 범례에 이름을 붙여준다. (plot의 속성임)
-
-- `plt.legend()` 각 범례의 이름을 그래프 위에 표현해준다. (이거 없으면 label 속성 설정해도 안뜸) 
-
-  ```python
-  plt.plot(np.random.randn(50), label = "one!")
-  plt.plot(np.random.randn(50), label = "two!")
-  plt.legend()
-  ```
-
-  - legend의 위치를 설정 속성 `loc`
-
-  ```python
-  plt.legend(loc = 'lower right')
-  plt.legend(loc = 'upper center')
-  ```
-
-  - legend를 여러 컬럼으로 표현하는 속성 `ncol`
-
-  ```python
-  plt.legend(fameon = False , ncol = 2)
-  # fameon = False 은 고정, # 두 개의 columns
-  ```
-
-  
-
-#### 3. Multiple Subplots
-
-- subplot
-
-  subplot의 argument를 사용해 다중 graph를 표현할 수 있다.
-
-  배열 형태의 다중 plot
-
-  `plt.subplot(abc)` a: 전체 비율 중 행의 개수 //  b: 전체 비율 중 열의 수, c: 전체 비율 중 plot이 위치할 자리의 수
-
-  ```python
-  plt.plot(np.random.randn(50).cumsum)
-  plt.subplot(411)  # (4, 1) shape에서 첫 번째 위치에 plot 생성
-  plt.subplot(3, 3, 8)  # (3, 3) shape에서 8번째 위치에 plot 생성
-  ```
-
-  
-
-  - `subplot_adjust`
-
-    ```python
-    fig = plt.figure()
-    fig.subplot_adjust(hspace = 0.4, wspace = 0.4)
-    ```
-
-    > figure 정보에 subplot_adjust를 호출해서 다중 plot을 만들 때 여백을 조절할 수 있다.
-    >
-    > `hspace` : 각 plot간의 수직 여백
-    >
-    > `wspace` : 각 plot간의 수평 여백
-
-  
-
-- GridSpec
-
-  다중 plot을 배열처럼 사용하되, 합치는 동작까지 제공
-
-  `plt.GridSpec(a, b)`   a: 전체 비율 중 행의 개수 //  b: 전체 비율 중 열의 수
-
-  ```python
-  grid = plt.GridSpec(2, 3, wspace = 0.4, hspace = 0.4)
-  # (2, 3) shape의 plot배열
-  plt.subplot(grid[0, 0]) 	# 0, 0 자리에 plot 한개 
-  plt.subplot(grid[0, 1:])  	# (0, 1), (0, 2) 두 자리를 사용하는 하나의 plot
-  plt.subplot(grid[1, :2])	# (1, 0), (1, 1) 두 자리를 사용하는 하나의 plot
-  plt.subplot(grid[1, 2])		# 1, 2 자리에 plot 한개 
-  plt.show()
-  ```
-
-  
-
-#### 4. text
-
-plot 위의 원하는 곳에 text를 삽입할 수 있다.
-
-위치 기준은 Data, Axis, Figure로 나뉜다.
-
-- `ax.transData`
-
-  기준이 Data이기 때문에, 원하는 data값의 위치에 text를 삽입할 수 있다.
-
-  `plt.text(x, y, ". text", transform = ax.transData)`
-
-  x = x_data에 대응되는 값, 		y = y_data에 대응되는 값
-
-  
-
-- `ax.transAxse`
-
-  기준이 Axse이기 때문에, 원하는 Axse 좌표 위치에 text를 삽입할 수 있다.
-
-  `plt.text(x, y, ". text", transform = ax.transAxes)`
-
-  x = x축에 대응되는 값(최소 0, 최대 1), 		y = y축에 대응되는 값(최소 0, 최대 1)
-
-- `fig.transFigure`
-
-  기준이 figure이기 때문에, 원하는 figure 좌표 위치에 text를 삽입할 수 있다.
-
-  `plt.text(x, y, ". text", transform = fig.transFigure)`
-
-  x = 전체 figure에서 x축에 대응되는 값(최소 0, 최대 1)
-
-  y = 전체 figure에서 y축에 대응되는 값(최소 0, 최대 1)
+> 이때 반환되는 ax는 ndarray type이다.
 
 ```python
-fig, ax = plt.subplots()
-ax.axis([0, 6, -1.5, 1.5])  # plot의 axis 범위 설정 
-x = np.arange(0, 20, 0.1) 
-y = np.sin(x)  	# x에 대한 sin값
-plt.plot(x, y)
-
-plt.text(np.pi/2, 1 , ". transData(pi/2,1)", transform = ax.transData)
-# x, y값이 (np.pi/2, 1)인 위치에 ". transData(pi/2,1)" 라는 text 삽입
-
-plt.text(0.2, 0.5, ". transAxes(0.2, 0.5)", transform = ax.transAxes)
-# x, y축의 전체 비율이 1일때, (0.2/0.5)인 위치에 ". transAxes(0.2, 0.5)" 라는 text 삽입
-
-plt.text(0.2, 0.2, ". transFigure(0.2, 0.2)", transform= fig.transFigure)
-# figure에서 x, y축의 전체 비율이 1일때, (0.2/0.2)인 위치에 ". . transFigure(0.2, 0.2)" 라는 text 삽입
-
-plt.show()
+fig, ax = plt.subplots(2, 2) # 여기서 첫 번째 ax에 접근하기 위해서는
+# ax가 ndarray type이기 때문에
+ax[0, 0] # 이런 식으로 접근해야 한다.
 ```
 
-
-
-#### 5. ticks
-
-- `plt.xticks(rotation=m)` : x축의 각 data 이름을 90도 회전
-- `plt.yticks(rotation=m)` : y축의 각 data 이름을 m도 만큼 회전
-
-####  
-
----
-
-
-
-### 2. Line
-
-#### 2. Line Style
-
-plot의 속성값으로 linestyle을 지정할 수 있다. 
-
-`linestyle = `
-
-- `'solid'` 실선  	`'-'`
-- `'dashed'` 막대선   `'--'`
-- `'dashdot'` 실점선  `'-.'`
-- `'dotted'` 점선  `':'`
+위의 접근방식을 list 다룰때처럼 하기 위해`enumerate`,  `flat` 을 사용해보자.
 
 ```python
-plt.plot(np.random.randn(50).cumsum(), linestyle = 'solid')
-plt.plot(np.random.randn(50).cumsum(), linestyle = 'dashed')
-plt.plot(np.random.randn(50).cumsum(), linestyle = 'dashdot')
-plt.plot(np.random.randn(50).cumsum(), linestyle = 'dotted')
+fig, axes = plt.subplots(2, 3)
+
+for ax_idx, ax in enumerate(axes.flat):
+    print(ax_idx, ax)
+# 또는
+ax = list()
+for axs in axes.flat:
+    ax.append(axs) 
 ```
 
 
 
-#### 3. Line Color 
+단, plt.subplots은 grid system을 사용하기 어렵다.
 
-plot의 속성값으로 라인의 색상을 지정할 수 있다.
+ **속성**
 
-`color = `
+- `figsize = (n, m)` : figure의 크기를 결정한다.
+- `facecolor = ` : figure의 특정 color를 결정한다.(axis color 아님)
 
-- `'r'` 빨강
-- `'g'` 초록
-- `'b'` 파랑
-- `'#색상코드'` 
-- `(R수치, G수치, B수치)`
 
-- `'색상이름'`
+
+#### 4. plt.subplot2grid
+
+grid system을 사용하기 위해 plt.subplot2grid를 사용해보자.
+
+이는 fig인스턴스로부터 subplots를 호출하는 것 보다 더욱 진보적인 함수다.
+
+`ax = plt.subplot2grid(shape, loc, rowspan = ,  colspan = , fig = )`
 
 ```python
-plt.plot(np.random.randn(50).cumsum(), color = 'r')
-plt.plot(np.random.randn(50).cumsum(), color = 'g')
-plt.plot(np.random.randn(50).cumsum(), color = 'b')
-plt.plot(np.random.randn(50).cumsum(), color = '#1243FF')
-plt.plot(np.random.randn(50).cumsum(), color = (0.2, 0.4, 0.6))
-plt.plot(np.random.randn(50).cumsum(), color = 'darkblue')
+fig = plt.figure()
+ax1 = plt.subplot2grid((2, 1), (1, 0), fig = fig)
+ax2 = plt.subplot2grid((2, 1), (2, 0), fig = fig)
 ```
 
-![](https://mblogthumb-phinf.pstatic.net/MjAxNzA2MDJfMTg5/MDAxNDk2Mzk0OTQxNjYy.scwSCt72W3lW-32VrUH6Vi6tXBzSEPH86d5NfCwPe6Ug.MEWCQsPL2xBQQU3675ELH1y1xB4unFG0Mes-CBvkJSsg.PNG.radii26omg/named_colors.png?type=w2)
+- `colspan =` : 오른쪽 방향으로 몇 개의 column을 차지할건지를 의미한다.
 
-**color와 line 한 번에 지정**
+  ```python
+  ax1 = plt.subplot2grid((3, 3), (0, 1), colspan =2, fig = fig)
+  ```
 
-옵션으로 `color linestyle` 을 바로 지정해버린다. 
+- `rowspan =` : 아래 방향으로 몇 개의 row를 차지할건지를 의미한다.
+
+  ```python
+  ax2 = plt.subplot2grid((3, 3), (1, 1), rowspan =2, fig = fig)
+  ```
+
+두 속성을 같이 사용하면 사각형 형태로 axes를 차지하게 된다.
 
 ```python
-plt.plot(np.random.randn(50).cumsum(), 'r-')
-plt.plot(np.random.randn(50).cumsum(), 'g-.')
-plt.plot(np.random.randn(50).cumsum(), 'b:')
+ax = plt.subplot2grid((3, 3), (1, 1), colspan =2, rowspan =2, fig = fig)
 ```
 
 
 
-### 3. Font
+#### 5. fig.add_axse
 
-- Font 종류 보는법
+각 plot간의 간격을 자유롭게 결정할 수 있다.
 
-  ```python
-  print(set([f.name for f in mpl.font_manager.fontManager.ttflist]))
-  ```
+plot 안에 또 다른 plot을 삽입할 수 있다.
 
-- 폰트 할당
+plot 안의 특정 부분을 확대해서 plot안에 삽입할 수 있다.
 
-  `변수명 = {'family' : '폰트이름', 'size': 폰트 사이즈, 'color': '폰트 색'}`
+`ax = fig.add_axes([left, bottom, width, height])`
 
-  ```python
-  font1 = {'family' : 'DEjavu Sans', 'size': 24, 'color': 'black'}
-  ```
+```python
+fig = plt.figure()
+```
 
-- 할당된 폰트 사용
+각 속성의 최대 기준값은 1이다.
 
-  `plt.label("label name", fontdict = forn 변수)`
+- `left좌표` : plot이 시작할 왼쪽 축의 기준 좌표
+- `bottom좌표`: plot이 시작할 아래 축의 기준 좌표
+- `width` : plot의 가로축 길이
+- `height`: plot의 세로축 길이
 
-  ```python
-  plt.title("tmp", fontdict = font1)
-  ```
+```python
+ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
+# 전체 figure의 가로, 세로 길이가 1일 때
+# (0.1, 0.1) 의 좌표를 기준으로 가로 길이가 0.8, 세로 길이가 0.8인 plot을 추가한다.
+```
 
-  
+이 기능을 더욱 편리하게 사용하기 위해 이미 list를 할당해 놓자
+
+```python
+rect = [0.1, 0.1, 0.8, 0.8]
+ax = fig.add_axes(rect)
+```
+
+또는 각각의 값을 변수로 할당해서 사용할수도 있다.
+
+```python
+left, bottom = 0.1, 0.1
+spacing = 0.005
+
+width1, height1 = 0.65, 0.65
+width2 = 1 - (2*left + width1 + spacing)
+height2 = 1 - (2*bottom + height1 + spacing)
+
+rect1 = [left, bottom, width1, height1]
+rect2 = [left, bottom + height1 + spacing, width1, height2]
+rect3 = [left + width1 + spacing, bottom, width2, height1]
+
+fig = plt.figure(figsize = (7, 7))
+ax1 = fig.add_axes(rect1)
+ax2 = fig.add_axes(rect2)
+ax3 = fig.add_axes(rect3)
+```
+
+
+
