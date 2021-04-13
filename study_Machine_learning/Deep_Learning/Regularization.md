@@ -10,6 +10,14 @@ OverFitting을 방지할 수 있도록 만들어주는 기법들을 총칭해서
 
 - 언더피팅(underfitting): 오버피팅의 반대 상황으로 모델의 표현력이 부족해서 트레이닝 데이터도 제대로 예측하지 못하는 현상
 
+
+
+##### Large Dataset
+
+model의 차수가 높아 모든 noise를 정확하게 학습하는 over fitting의 문제를 해결하기 위해, data set에  data의 개수를 더욱 많이 포함시켜서 model의 차수가 data set의 noise를 정확히 캐치하지 못하게 하는 방법이다. (Regularization 기법은 아님)
+
+
+
 딥러닝의 경우 모델의 표현력이 강력하기 때문에 오버피팅에 빠지기 쉽기 때문에 오버피팅 문제를 완화하기 위해서 **드롭아웃(dropout)**과 같은 다양한 Regularization 기법을 사용한다.
 
 >  드롭 아웃(Dropout)은 대표적인 Regularization 기법중에 하나임.
@@ -18,7 +26,7 @@ OverFitting을 방지할 수 있도록 만들어주는 기법들을 총칭해서
 
 ## 드롭아웃(dropout)
 
-드롭아웃(dropout)운 학습 과정에서 일부 노드를 사용하지 않는 형태로 만들어서 오버피팅을 방지할 수 있도록 만들어주는 Regularization 기법이다.
+드롭아웃(dropout)운 학습 과정에서 일부 노드를 사용하지 않는 형태로 만들어서 over fitting을 방지할 수 있도록 만들어주는 Regularization 기법이다.
 
 ![](https://miro.medium.com/max/1200/1*iWQzxhVlvadk6VAJjsgXgg.png)
 
@@ -47,3 +55,8 @@ tf.nn.dropout(적용할 레이어, 비율, )
 > 트레이닝 데이터에는 dropout을 적용하고, 테스트 데이터에는 dropout을 적용하지 않을때 사용
 
 dropout을 적용한 코드 : [CIFAR-10 이미지 분류를 위한 CNN 구현](https://github.com/HibernationNo1/TIL/blob/master/study_Tensorflow/neural%20network/%EC%BB%A8%EB%B3%BC%EB%A3%A8%EC%85%98%20%EC%8B%A0%EA%B2%BD%EB%A7%9D%20(Convolution%20neural%20network%2C%20CNN).md) 
+
+
+
+
+
