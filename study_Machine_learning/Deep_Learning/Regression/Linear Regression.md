@@ -2,7 +2,7 @@
 
 ## 개념
 
-input data에 대한 output data가 training data로 인해 이루어진 연속된 값으로 나타나는 것을 Linear Regression이라고 한다.
+**Linear Regression**: 학습 데이터(training data set)를 이용한 학습(training) 과정을 거쳐 데이터에 가장 잘 맞는 선형 모델의 매개변수(parameter)를 찾아 예측하는 회귀 알고리즘(예측의 범위는 연속적인 범위)
 
 **선형 회귀 모델**: 함수f(x)에서, 우리가 알고 있는 x의 값과 y의 값을 데이터로 사용하여 우리가 알지 못하는 x의 값에 대한 y의 값을 유추할 수 있는 모델
 
