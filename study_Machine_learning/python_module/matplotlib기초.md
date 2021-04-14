@@ -289,3 +289,95 @@ ax3 = fig.add_axes(rect3)
 
 
 
+### 2. title, label, layout
+
+#### 1. ax.set_title
+
+`ax.set_title(' ', fontsize = )`
+
+```python
+fig, ax = plt.subplots(figsize = (7, 7))
+ax.set_title('Title', fontsize = 20)
+```
+
+
+
+
+
+#### 2. ax.set_x(y)label
+
+`ax.set_xlabel(' ', fontsize = )`
+
+`ax.set_ylabel(' ', fontsize = )`
+
+```python
+fig, ax = plt.subplots(figsize = (7, 7))
+ax.set_xlabel('X Label!', fontsize = 15)
+ax.set_ylabel('X Label!', fontsize = 15)
+```
+
+
+
+#### 3. fig.tight_layout
+
+axes를 figure안에 균등하고 적절하게 위치하게 한다.  axes들의 label, title이 겹칠 때 사용
+
+`fig.tight_layout()`
+
+**속성**
+
+`pad = ` : figure과 axes사이의 간격, axes와 axes간의 거리를 의미한다. 디폴트는 0.5
+
+
+
+#### 4. fig.subplot_adjust
+
+tight_layout과는 다르게 각각의 빈 공간의 거리를 따로따로 결정할 수 있다.
+
+##### 1. ax.get_x(y)axis
+
+axis의 x축 또는 y축을 반환한다.
+
+`ax.get_xaxis()`
+
+`ax.get_yaxis()`
+
+##### 2. x(y)axis.set_visible
+
+x축(또는 y축)의 값을 안보이게 한다. 디폴트는 True
+
+`xaxis.set_visible(False)` 
+
+`yaxis.set_visible(False)`
+
+```python
+fig, axes = plt.subplots(2, 2, figsize = (10, 10))
+
+for ax_idx, ax in enumerate(axes.flat):
+    ax.get_xaxis().set_visible(False)
+    ax.get_yaxis().set_visible(False)
+```
+
+##### 3. fig.subplot_adjust
+
+**속성**
+
+- `bottom = ` 하단 axis의 시작 지점의 y좌표 
+
+  > bottom = 0.01  : 전체 fig의 y길이 중 0.01 비율의 길이만큼 하단 빈 공간을 생성
+
+- `top = ` 상단 axis의 끝 지점의 y좌표
+
+  > top = 0.99  : 전체 fig의 y길이 중 0.01 비율의 길이만큼 상단 빈 공간을 생성
+
+- `left = ` 좌측 axis의 시작 지점의 x좌표
+
+- `right = ` 우측 axis의 끝 지점의 x좌표
+
+- `hspace = ` axes간의 상하 거리
+- `wspace = ` axes간의 좌우 거리
+
+```python
+fig.subplot_adjust(bottom = 0.1, top = 0.99, left = 0.01, right = 0.99, hspace = 0.2, wspace = 0.05)
+```
+
