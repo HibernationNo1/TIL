@@ -199,6 +199,8 @@ $$
 
 
 
+##### **standardiztion**
+
 cost는 data 각각의 loss들의 평균이기 때문에 function 자체가 하나만 존재함을 기억해보자. (가장 이상적인 function 모양은 구 형태의 밥그릇 모양임을 기억하자.)
 
 - 가장 이상적인 cost function을 구하기 위한 조건 2가지
