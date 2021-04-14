@@ -26,9 +26,11 @@
 
 ### 1. Sigmoid
 
+linear regression에서 classification을 수행하기 위해 사용하는 대표적인 함수. 
+
 - 수식
   $$
-  a = \frac{1}{1+e^{-x}}
+  \sigma(x) = \frac{1}{1+e^{-x}}
   $$
   
 
@@ -69,9 +71,27 @@ output값을 0에서 1사이로 만들어준다. 데이터의 평균은 0.5를 �
 ### 2. Tanh
 
 - 수식
+  ##### 
+  
   $$
-  a = \frac{e^x-x^{-x}}{e^x+e^{-x}}
+  \frac{e^{z} -e^{(-z)}}{e^{(z)} + e^{(-z)}}
   $$
+  
+  하지만 tanh(z)의 값은 마이너스가 존재하기 때문에 Classification에서 확률로서의 해석을 할 수 없어서 sigmoid function을 사용할 수 밖에 없다.
+  
+  **tanh function의 partial derivative**
+  $$
+  \frac{\part(tanh(z))}{\part z} = \frac{\part}{\part z } \left[ \frac{e^{z} -e^{(-z)}}{e^{(z)} + e^{(-z)}}\right] = \frac{(e^{z} + e^{-z})^2 - (e^{z} - e^{-z})^2}{(e^{z} + e^{-z})^2} \\
+   = \frac{4}{(e^{z} + e^{-z})^2} = \frac{2e^{-z}}{e^{z} + e^{-z}} * \frac{2e^z}{e^{z} + e^{-z}} \\
+   = \frac{(e^{z} + e^{-z}) + (e^{z} - e^{-z})}{e^{z} + e^{-z}}* \frac{(e^{z} + e^{-z}) - (e^{z} - e^{-z})}{e^{z} + e^{-z}} \\
+   = \left (1 + \frac{e^{z} - e^{-z}}{e^{z} + e^{-z}} \right) * \left (1 - \frac{e^{z} - e^{-z}}{e^{z} + e^{-z}} \right)
+  $$
+  즉, 
+  $$
+  \frac{\part(tanh(z))}{\part z}  = \left (1 + tanh(z)\right) * \left (1 - tanh(z) \right)
+  $$
+  
+  
   ![](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fc0ambs%2FbtqA2VvQ82W%2FaUsDa9VwaMcKiOfR1UZqJ0%2Fimg.png)
 
 시그모이드 함수와 거의 유사하다. 차이는 -1~1값을 가지고 데이터의 평균이 0이라는 점이다. 시그모이드와 같이 결과값의 평균이 양수로 편향된 문제를 해결하기 위해 사용된다. 데이터의 평균이 0.5가 아닌 0이라는 유일한 차이밖에 없지만 대부분의 경우에서 시그모이드보다 Tanh가 성능이 더 좋다. 그러나 시그모이드와 마찬가지로 Vanishing gradient라는 단점이 있다.
@@ -89,8 +109,25 @@ output값을 0에서 1사이로 만들어준다. 데이터의 평균은 0.5를 �
 ### 3. ReLU
 
 - 수식
+  ##### 
+  
   $$
-  a = max(0, x)
+  ReLU(z) = \left\{\begin{matrix}
+  0,\ \ \ \ where\ z <0
+  \\ 
+  z,\ \ \ \ where\ z \geq 0
+  \end{matrix}\right.\\ max(0, z)
+  $$
+  
+  
+  
+  **ReLU function의 partial derivative**
+  $$
+  \frac{\part (ReLU(z)) }{\part z}= \left\{\begin{matrix}
+  0,\ \ \ \ where\ z <0
+  \\ 
+  1,\ \ \ \ where\ z \geq 0
+  \end{matrix}\right.
   $$
   ![](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FcfAwRD%2FbtqA1y2vSnH%2FeL8PnTymMANrq5TfV7BNw0%2Fimg.png)
 
