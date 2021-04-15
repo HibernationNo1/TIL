@@ -1,6 +1,6 @@
 # Logistic Regression
 
-**Logistic Regression**: 데이터가 특정 카테고리에 속할지를 0과 1사이의 연속적인 확률로 예측하는 회귀 알고리즘 (Binary Classification 문제를 해결하기 위한 Regression)
+**Logistic Regression**: 데이터가 0(No Pass)과 1(Pass)중 어디에 속할지를 연속적인 확률로 예측하는 회귀 알고리즘 (Binary Classification 문제를 해결하기 위한 Regression)
 
 과정: 입력 data에 의해 Initial Decision Boundary가 정해지고, 계속해서 data를 통해 training을 하며 최종 Decision Boundary을 결정하는 것이 Logistic Regression의 학습 과정이다.
 
