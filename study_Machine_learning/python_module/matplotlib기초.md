@@ -154,6 +154,24 @@ ex)`ax.plot()`
 
 - `facecolor = ` : axis의 특정 color를 결정한다.
 
+- `sharex = ax ` : xlim에 대해서 **axis sharing**를 사용. 
+
+  즉, ax는 add_subplot에 의해 만들어진 axis와 같은 xlim을 사용한다. (디폴트 False)
+
+  > **axis sharing** : 다수의 axes를 공유하면서 한 번에 정보를 다꿀 수 있는 기능
+  >
+  > sharex 또는 sharey를 설정 후 set_xlim 또는 set_ylim을 사용하면 모든 axes가 한 번에 변한다.
+  >
+  > `sharey = ax` 도 있음
+
+  ```python
+  ax1 = fig.add_subplot(211)
+  ax2 = fig.add_sibplot(212, sharex = ax1)
+  ax2.set_xlim([0, 100])  # 다른 모든 ax1도 같이 set_xlim이 적용됨
+  ```
+
+  
+
 
 
 #### 3. plt.subplots
@@ -188,14 +206,29 @@ for axs in axes.flat:
     ax.append(axs) 
 ```
 
-
-
 단, plt.subplots은 grid system을 사용하기 어렵다.
+
+
 
  **속성**
 
 - `figsize = (n, m)` : figure의 크기를 결정한다.
 - `facecolor = ` : figure의 특정 color를 결정한다.(axis color 아님)
+
+- `sharex = True ` : xlim에 대해서 **axis sharing**를 사용. 
+
+  즉, 모든 axes는 같은 xlim을 사용한다. (디폴트 False)
+
+  > `sharey = True` 도 있음
+
+  ```python
+  fig, axes = plt.subplots(2, 2, figsize = (7, 7), sharex = True, sharey = True)
+  axes[1].set_xlim([0, 100])  # 다른 모든 axes도 같이 set_xlim이 적용됨
+  ```
+
+  
+
+
 
 
 
@@ -230,6 +263,10 @@ ax2 = plt.subplot2grid((2, 1), (2, 0), fig = fig)
 ```python
 ax = plt.subplot2grid((3, 3), (1, 1), colspan =2, rowspan =2, fig = fig)
 ```
+
+- `sharex = ax `: add_subplot에서의 axis sharing 동작과 동일하다.
+
+
 
 
 
@@ -381,3 +418,84 @@ for ax_idx, ax in enumerate(axes.flat):
 fig.subplot_adjust(bottom = 0.1, top = 0.99, left = 0.01, right = 0.99, hspace = 0.2, wspace = 0.05)
 ```
 
+
+
+### 3. ticks
+
+#### 1. ax.set_x(y)lim
+
+x(또는 y)의 data 범위를 조절
+
+`ax.set_xlim([start, end])`
+
+```python
+fig, ax = plt.subplots(figsize - (7, 7))
+ax.set_xlim([-10, 10])
+ax.set_ylim([0, 1])
+```
+
+
+
+
+
+
+
+
+
+## 연습 코드
+
+1. 
+
+```python
+import matplotlib.pyplot as plt
+import numpy as np
+
+fig = plt.figure(figsize = (18, 9))
+n_row, n_col = 3, 4
+axes = np.empty(shape = (0, n_col))
+xlabel_list = ['one', 'two', 'three', 'four']
+ylabel_list = ['five', 'six', 'seven']
+
+for r_idx in range(n_row):
+    axes_row = np.empty(shape = (0, ))
+    if r_idx == 0:
+        for c_idx in range(n_col):
+            if c_idx == 0:
+                ax = fig.add_subplot(n_row, n_col, r_idx*n_col + c_idx + 1)
+            else :
+                ax = fig.add_subplot(n_row, n_col, r_idx*n_col + c_idx + 1, 
+                                    sharey = axes_row[0])
+            axes_row = np.append(axes_row, ax) 
+    else:
+        for c_idx in range(n_col):
+            if c_idx  == 0:
+                ax = fig.add_subplot(n_row, n_col, r_idx*n_col + c_idx + 1,
+                                    sharex = axes[0, c_idx])
+            else : ax = fig.add_subplot(n_row, n_col, r_idx*n_col + c_idx + 1, 
+                                    sharex = axes[0, c_idx],
+                                    sharey = axes_row[0])
+            axes_row = np.append(axes_row, ax)
+    axes = np.vstack((axes, axes_row))
+
+axes[0, 0].set_ylim([0, 1])
+axes[1, 0].set_ylim([1, 2])
+axes[2, 0].set_ylim([2, 3])
+axes[0, 0].set_xlim([0, 100])
+axes[0, 1].set_xlim([0, 200])
+axes[0, 2].set_xlim([0, 300])
+axes[0, 3].set_xlim([0, 400])
+
+for ax_idx, ax in enumerate(axes.flat):
+    if ax_idx % n_col == 0:
+        ax.set_ylabel(ylabel_list[ax_idx // n_col], fontsize = 20)
+    else :
+        ax.get_yaxis().set_visible(False)
+    
+    if ax_idx >= 2*n_col :
+        ax.set_xlabel(xlabel_list[ax_idx - 2*n_col], fontsize = 20)
+    else :
+        ax.get_xaxis().set_visible(False)
+fig.tight_layout()
+fig.subplots_adjust(hspace = 0.2, wspace = 0.01)
+plt.show()
+```
