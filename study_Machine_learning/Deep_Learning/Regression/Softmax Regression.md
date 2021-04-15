@@ -6,9 +6,70 @@
 
 > Softmax함수는 Normalization 함수로써 출력값들의 합을 1로 만들어준다. 
 > $$
-> 수식\ : \ \ softmax(x)_i = \frac{exp(x_i)}{\sum_jexp(x_j)}
+> 수식\ : \ \ Softmax(x_i) == P(C_i) = \frac{e^{l(C_i)}}{\sum_{j=1}^{K}e^{l(C_j)}}
 > $$
 > 출력값으로 나온 모든 확률을 더하면 1이 되는 것이다.
+
+
+
+#### Softmax 수식 유도
+
+Softmax 수식
+$$
+Softmax(x_i) == P(C_i) = \frac{e^{l(C_i)}}{\sum_{j=1}^{K}e^{l(C_j)}}
+$$
+
+
+class가 여러개일 때
+$$
+C = \{C_1, C_2, ..., C_k\} \\
+P(C_1), P(C_2),...,P(C_k)  \\
+P(C_1)+P(C_2)+...+P(C_k) = 1 \\
+l(C_1), l(C_2),...,l(C_k)
+$$
+일 때
+$$
+(1) \ \ \ \ \ \  l(C_i) = ln \left( \frac{P(C_i)}{P(C_K)} \right)\\
+k =  임의의\ 수 \ \ \ \ \ \ \ \ \ \ \ \ \ i = k 가\ 아닌\ 임의의\ 수
+$$
+
+$$
+(2) \ \ \ \ \ \ l(C_i) = ln \left( \frac{P(C_K)}{P(C_K)} \right) =1
+$$
+
+(1)양 변의 값을 exp의 지수로 올리면
+$$
+(3)\ \ \ \ \ \ e^{l(C_i)} = e^{ln \left( \frac{P(C_i)}{P(C_K)} \right)} = \frac{P(C_i)}{P(C_K)}
+$$
+
+$$
+(5)\ \ \ \ \ \  e^{l(C_k)} = 1\\
+(6)\ \ \ \ \ \  p(C_i) = e^{l(C_i)}P(C_K)
+$$
+
+(3)에 i를 제외한 모든 수를 더하는 sum을 취하면
+$$
+\sum_{j=1}^{K-1}e^{l(C_i)}  = \sum_{j=1}^{K-1}\frac{P(C_i)}{P(C_K)} = \frac{1-P(C_K)}{P(C_K)} = \frac{1}{P(C_K)}-1\\
+1 + \sum_{j=1}^{K-1}e^{l(C_i)}  = \frac{1}{P(C_K)}\\
+P(C_K) = \frac{1}{1 + \sum_{j=1}^{K-1}e^{l(C_i)}}
+$$
+여기서 1에 (5)를 대입한다면
+$$
+P(C_K) = \frac{1}{e^{l(C_k)} + \sum_{j=1}^{K-1}e^{l(C_i)}} = \frac{1}{\sum_{j=1}^{K}e^{l(C_i)}}
+$$
+그리고 이 값을 (6)에 대입하면
+$$
+p(C_i) = \frac{e^{l(C_i)}}{\sum_{j=1}^{K}e^{l(C_i)}} == Softmax(x_i)
+$$
+Softmax 수식이 나옴을 알 수 있다.
+
+**즉, C_i 에 대한 Logit을 C_i에 대한 확률로 표현을 한 것이 Softmax Function이다.**
+
+> 위의 식에서 알 수 있듯, P(C_k)는 어짜피 사라지기 때문에 K에 어떤 수를 넣는다 해도 상관이 없다.
+>
+>  Softmax Function 의 input은 Logit(C_i)고, output은 Pass(C_i)임을 알 수 있다.
+
+
 
 Softmax함수를 마지막에 씌우게 되면 모델의 출력값이 레이블에 대한 확률을 나타내게 된다.(출력값들의 합이 1이 되므로)
 
@@ -21,8 +82,6 @@ Softmax함수를 마지막에 씌우게 되면 모델의 출력값이 레이블�
 
 
 Logits 에 Softmax함수를 적용하면 sum to 1 형태로 output값을 정리해주기 때문에 이를 확률적 개념으로 이해할 수 있게 된다.
-
-> Softmax함수를 적용하기 전의 출력값을 Logits이라고 한다.
 
 
 
