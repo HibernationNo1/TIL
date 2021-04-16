@@ -88,7 +88,7 @@ $$
 \sigma(x) = \frac{1}{1+e^{-x}}
 $$
 
-> [Sigmoid Function](https://github.com/HibernationNo1/TIL/blob/master/study_Machine_learning/Deep_Learning/Regression/Logit.md)
+> [Sigmoid Function](https://github.com/HibernationNo1/TIL/blob/master/study_Machine_learning/Deep_Learning/Regression/Logistic%20Regression/Logit.md)
 
 
 
@@ -192,6 +192,18 @@ $$
 
 ##### Binary Cross Entropy
 
+Binary Cross Entropy는 왜 사용할까?
+
+Sigmoid Function의 Partial Derivative는 Convex하지 않기 때문에 이를 보완하기 위해서 사용하게 되었다.
+$$
+\frac{\part \widehat{y}}{\part z} = \widehat{y}(1-\widehat{y})\\
+\frac{\part L}{\part \widehat{y}} = \frac{1-\widehat{y}}{\widehat{y}(1-\widehat{y})}
+$$
+
+>Binary Cross Entropy Loss의 Partial Derivative 식을 보면 Sigmoid Function의 Partial Derivative을 분모에 깔아버려 Convex함을 유지시키는 모습을 볼 수 있다.
+
+
+
 ###### Cross Entropy
 
 x_data에 대해서 Probablity Distribution 이 두 개가 있다고 한다면
@@ -228,7 +240,7 @@ KL Divergence을 유도하기 위해서, 확률분포가 아닌 random variable 
 $$
 P에\ 대한\ Q의\ 차이 : \frac{Q(x_i)}{p(x_i)}
 $$
-이미지 42
+![](https://github.com/HibernationNo1/TIL/blob/master/image/42.jpg?raw=true)
 
 
 
@@ -253,7 +265,7 @@ $$
 
 > P에서부터 Q를 측정한 KL Divergence
 
-이미지 43
+![](https://github.com/HibernationNo1/TIL/blob/master/image/43.jpg?raw=true)
 
 > 굵은 line의 distribution이 P, 보라~빨강의 각각 distribution이 여러개의 Q
 
@@ -266,13 +278,15 @@ D_{KL}(P||Q) = -\sum_{x\in X }P_X(x) *log \left( \frac{Q_X(x)}{p_X(x)} \right) \
 $$
 이는 **P, Q에 대한 Cross Entropy - P에 대한 Self Entropy**로 나타남을 알 수 있다.
 
-이 때 P를 정답 label(정답 값)이라고 하면 P가 뽑은 distribution은 1 또는 0의 값만 담고있기 때문에 P에 대한 Self Entropy는 0이 된다.
+이 때 P를 정답 label(정답 값)이라고 하면 P가 속한 distribution은 One Hot Encoding으로 인해 1 또는 0의 값만 담고있기 때문에 P에 대한 Self Entropy는 0이 된다.
 
 즉, Classification Learning에서 Cross Entropy는 KL Divergence의 대체품이 되는 것이다.
 
 
 
-위에서 표현한 P, Q에 대한 Cross Entropy의 data colunm을 두 개만 담고, P는 정답 label이라고 한다면,  Binary Cross Entropy는 아래와 같이 표현될 수 있다.
+**1. Single-Variate **
+
+위에서 표현한 P, Q에 대한 Cross Entropy에서 Distribution이 두 개만 있다고 가정하고 P는 정답 label이라고 한다면,  Binary Cross Entropy는 아래와 같이 표현될 수 있다.
 $$
 X = \{x_1, x_2\} \left\{\begin{matrix}
 Y(x_1) = y \ \ \ \ \ Y(x_2) = 1 - y \ \ \ where\ y \in \{0, 1\}
@@ -289,7 +303,7 @@ $$
 
 즉, Model은 Loss Function으로 Binary Cross Entropy를 사용하게 되고, 학습이 진행될수록 Y, Y_hat에 대한 Cross Entropy는 작아지게 되는 것이다.
 
-이미지 44
+![](https://github.com/HibernationNo1/TIL/blob/master/image/44.jpg?raw=true)
 
 
 
@@ -301,7 +315,53 @@ $$
   $$
   그렇기 때문에 해당 데이터들을 따로 추려낸 후, 여러 data와 합치며 새로운 data set을 만들어 learning함으로써 더욱 좋은 Classification 성능을 기대할 수 있을 것이다.
 
-  
+
+
+
+**2. Multi-Variate **
+
+Distribution이 세 개 일때의 정답 data P에 대한 Cross Entropy는 아래와 같다
+$$
+H(P, Q) = - \sum_{i=1}^{3}P(x) *log \left( Q(x) \right)\\
+H(P, R) = - \sum_{i=1}^{3}P(x) *log \left( R(x) \right)
+$$
+그리고 이 두 Cross Entropy를 서로 비교함으로써 어떤 Distribution이 더 P에 가까운지를 알 수 있게 된다.
+
+이를 Y와 Probability로 표현해보면 다음과 같다
+
+- predict
+  $$
+  \left (\widehat{Y}(C_1), \widehat{Y}(C_2), \widehat{Y}(C_3) \right ) = \left (P(C_1), P(C_2), P(C_3) \right )
+  $$
+
+- Cross Entropy
+  $$
+  H(Y, \widehat{Y}) = - \sum_{i=1}^{3}Y(C_i) *log \left( P(C_i) \right)
+  $$
+  각각의 Distribution이 정답인 경우를 확인해보자. 
+
+  > label은 One Hot Encoding이 적용됨을 기억하자
+
+  - C_1이 분류하고 싶은 기준일 때
+    $$
+    \left (Y(C_1), Y(C_2), Y(C_3) \right ) = (1, 0, 0) \ \ \ \ \ H(Y, \widehat{Y}) = -log(P(C_1))
+    $$
+
+  - C_2이 분류하고 싶은 기준일 때
+    $$
+    \left (Y(C_1), Y(C_2), Y(C_3) \right ) = (0, 1, 0) \ \ \ \ \ H(Y, \widehat{Y}) = -log(P(C_2))
+    $$
+
+  - C_3이 분류하고 싶은 기준일 때
+    $$
+    \left (Y(C_1), Y(C_2), Y(C_3) \right ) = (0, 0, 1) \ \ \ \ \ H(Y, \widehat{Y}) = -log(P(C_3))
+    $$
+
+  즉, C_1이 분류로 찾고싶은 정답일 때 C_2, C_3의 Probability는 아예 Loss에 값이 들어가지 않는다는 것을 알 수 있다.
+
+  그리고 C_1의 Probability가 낮을수록 Loss값이 커짐을 알 수 있다.
+
+
 
 
 
@@ -324,7 +384,7 @@ $$
 
 
 $$
- \left\{\begin{matrix}
+\left\{\begin{matrix}
 -log_e(\widehat{y}), \ \ \ \ where \ y = 1
 \\ 
 -log_e(1-\widehat{y}), \ \ \ \ where \ y = 0
@@ -388,7 +448,7 @@ $$
 = -\left( \frac{y}{\widehat{y}} - \frac{1 - y}{1 - \widehat{y}} \right) \\ = \frac{\widehat{y} - y}{\widehat{y}(1-\widehat{y})}
 $$
 
-#### 
+
 
 #### GDM
 
