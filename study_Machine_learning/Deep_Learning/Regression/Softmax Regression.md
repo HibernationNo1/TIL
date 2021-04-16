@@ -71,7 +71,13 @@ Softmax 수식이 나옴을 알 수 있다.
 
 
 
-Softmax함수를 마지막에 씌우게 되면 모델의 출력값이 레이블에 대한 확률을 나타내게 된다.(출력값들의 합이 1이 되므로)
+Affine Function에서 받은 Logit을 Sigmoid Function에 대입하고 이를 Cross Entropy  Loss Function에 대입하는 과정이 바로 Single Variate Softmax Regression이다.
+
+
+
+#### 요약
+
+Softmax함수를 씌우게 되면 모델의 출력값이 레이블에 대한 확률을 나타내게 된다.(출력값들의 합이 1이 되므로)
 
 **회귀 구조**
 
