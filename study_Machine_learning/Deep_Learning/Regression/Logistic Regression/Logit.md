@@ -95,7 +95,7 @@ Logit의 역함수 구해주는 역할이다.
 
 왜 Logit의 역함수를 구하는 것일까? Loss를 구하려면 Binary Cross Entropy를 사용해야 하는데, 이  Binary Cross Entropy를 사용하려면 input이 확률(pass)여야 한다.
 
-그렇기 때문에 **Activation Function에 Sigmiod Function을 사용함으로써 Affine Function의 weighted sum을 pass로 바꿔주는 것이다. ** 
+그렇기 때문에 **Activation Function에 Sigmiod Function을 사용함으로써 Affine Function의 weighted sum을 pass(확률)로 바꿔주는 것이다. ** 
 
 
 
