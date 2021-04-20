@@ -171,50 +171,55 @@ np.random.seed(0)
 
 visual_plot = visual.Visualization()
 
-x_dict = {'mean' : 1, 'std' : 1, 'n_sample' :100 , 'noise_factor': 0.3,
-            'cutoff': 1 , 'direction': 1}
-# cutoff: pass 조건 (1초과, 1미만)
-# direction : 1  1이상을 pass  (direction = 0 이면 1미만을 pass)
-
 data_gen = dataset.Dataset_Generator()
-data = data_gen.dataset_generator(x_dict)
-
-batch_size = 8
-
-
-# visual_plot.data_visualization(data)
 
 logistic = function.SVLoR()
 sigmoid = function.Sigmoid()
-BCE_loss = function.BinaryCrossEntropy()
+BCE_cost = function.BinaryCrossEntropy()
+
+x_dict = {'mean' : 0, 'std' : 1, 'n_sample' :100 , 'noise_factor': 1,
+            'cutoff': 0 , 'direction': 1}
+# cutoff: pass 조건 (1초과, 1미만)
+# direction : 1  1이상을 pass  (direction = 0 이면 1미만을 pass)
+
+data = data_gen.dataset_generator(x_dict)
+
+batch_size = 100
+n_batch = np.ceil(data.shape[0]/batch_size).astype(int)
+
 
 th_accum = logistic.get_Th()
 
-loss_list = list()
-iter_idx, check_freq = 0, 2
-epochs, lr = 100, 0.01
+# visual_plot.data_visualization(data)
+
+cost_list = list()
+epochs, lr = 5000, 0.05
+iter_idx, check_freq = 0, 10
+
 
 for epoch in range(epochs):
     np.random.shuffle(data)
-    for data_idx in range(data.shape[0]):
-        batch = data_gen.get_data_batch(batch_size, data, data_idx)
-        x, y =data[data_idx, 1], data[data_idx, -1]
+    for data_idx in range(n_batch):
+        batch = data_gen.get_data_batch(batch_size, n_batch, data, data_idx)
+        
+        x, y =batch[:, 1], batch[:, -1]
 
         # forward propagation
         pred = logistic.forward(x)
-        loss = BCE_loss.forward(y, pred)
+        J = BCE_cost.forward(y, pred)
+        
 
         # backward propagation
-        dpred = BCE_loss.backward()
+        dpred = BCE_cost.backward()
         logistic.backward(dpred, lr)
 
         # result Tracking
         if iter_idx % check_freq == 0:
             th_accum = np.hstack((th_accum, logistic.get_Th()))
-            loss_list.append(loss)
+            cost_list.append(J)
         iter_idx +=1
 
-visual_plot.result_visualization(th_accum, loss_list, data)
+visual_plot.result_visualization(th_accum, cost_list, data)
 
 ```
 
@@ -294,9 +299,7 @@ class Dataset_Generator:
 
         return data
 
-    def get_data_batch(self, batch_size, data, batch_idx):
-        n_batch = np.ceil(data.shape[0]/batch_size).astype(int)
-        
+    def get_data_batch(self, batch_size, n_batch, data, batch_idx):     
         if batch_idx is n_batch -1:
             batch = data[batch_idx * batch_size:]
         else:
@@ -317,7 +320,6 @@ import basic_node as nodes
 class Affine:
     def __init__(self):
         self._feature_dim = 1
-        self._Th = None
 
         self.node_imp()
         self.random_initialization()
@@ -328,7 +330,6 @@ class Affine:
 
     def random_initialization(self):
         r_feature_dim = 1 / self._feature_dim
-
         self._Th = np.random.uniform(low = -1*r_feature_dim,
                                         high = r_feature_dim, 
                                         size = (self._feature_dim + 1, 1))
@@ -387,6 +388,7 @@ class BinaryCrossEntropy:
 
     def forward(self, y, pred):
         self._y, self._pred = y, pred
+        
         loss = -1*(self._y*np.log(self._pred) + (1-self._y)*np.log(1-self._pred))
         J = self._mean_node.forward(loss)
         return J
@@ -425,7 +427,7 @@ class Visualization:
                 s = 200, alpha = 0.5)
         plt.show()
 
-    def result_visualization(self, th_accum, loss_list, data):
+    def result_visualization(self, th_accum, cost_list, data):
         fig, ax = plt.subplots(2, 1, figsize = (15, 7))
         fig.subplots_adjust(hspace = 0.3)
         ax[0].set_title(r'$\vec{\theta}$' + ' Updata')
@@ -437,8 +439,8 @@ class Visualization:
         iter_ticks = np.linspace(0, th_accum.shape[1], 10).astype(np.int)
         ax[0].set_xticks(iter_ticks)
 
-        ax[1].set_title(r'$\mathcal{L}$')
-        ax[1].plot(loss_list)
+        ax[1].set_title(r'$Cost$')
+        ax[1].plot(cost_list)
         ax[1].set_xticks(iter_ticks)
 
         n_pred = 1000
@@ -446,7 +448,7 @@ class Visualization:
         ax.set_title('Predictor Updata')
         ax.scatter(data[:,1], data[:, -1])
 
-        ax_idx_arr = np.linspace(0, len(loss_list)-1, n_pred).astype(np.int)
+        ax_idx_arr = np.linspace(0, len(cost_list)-1, n_pred).astype(np.int)
         cmap = cm.get_cmap('rainbow', lut = len(ax_idx_arr))
 
         x_pred = np.linspace(np.min(data[:, 1]), np.max(data[:, 1]), 1000)
