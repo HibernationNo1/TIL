@@ -28,6 +28,22 @@
 
 
 
+## Backpropagation of Aritficial Neuron
+
+ANN에서 하나의 perceptron에서 진행되는 Backpropagation의 과정을 확인해보자
+
+> Activation Function은 Sigmoid Function을 사용한다고 가정
+
+각각의 perceptron은 자신의 theta를 updata하는 것 뿐만 아니라, 앞서 있는 Layer의 perceptron에도 partial을 넘겨줘야 하기 때문에 theta에 대한 partial derivative 외에도 x에 대한 partial derivative를 계산해야 한다.
+
+![](https://github.com/HibernationNo1/TIL/blob/master/image/49.jpg?raw=true)
+
+
+
+
+
+
+
 ---
 
 
