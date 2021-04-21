@@ -99,15 +99,25 @@ Loss Function은 두 가지의 경우가 있다.
 
 
 
-- x data에 대해서 
+- x data에 대해서 1
 
-  x의 절대값이 Decision Boundary에 가까울 수록 Loss Function이 더욱 크기 때문에 Sigmoid Function이 더욱Sharply하게 Updata된다.
+  x의 절대값이 Decision Boundary에 가까울 수록 Loss Function이 더욱 크기 때문에 Sigmoid Function이 더욱 Sharply하게 Updata된다.
 
-  즉, data의 mean이 Decision Boundary와 일치했을 때 std가 작을수록 학습이 잘 됨을 알 수 있다.
+  즉, data의 mean이 Decision Boundary와 일치했을 때 std가 작을수록 학습이 잘 됨을 알 수 있다. ( data의 mean이 Decision Boundary에서 멀때는 학습 속도가 낮아짐을 예상할 수 있다.)
 
-  단, a*x(y-y_hat) 의 관점에서는 x가 너무 작아지기 때문에 data의 std는 적당한 타협point가 필요하다. 
+  데이터의 분포에 따라서 학습 속도에 차이가 있을 수 있다.
+  
+  > 단, a*x(y-y_hat) 의 관점에서는 x가 너무 작아지기 때문에 data의 std는 적당한 타협point가 필요하다. 
   
   
+  
+- x data에 대해서 2
+
+  학점 F, D, C, B, A 가 있다고 가정하고, F만 nopass일 때
+
+  Pass data가 월등히 많기 때문에 Pass에 대한 theta만 updata가 활발히 되고, NoPass에 대한 theta는 updata가 잘 되지 않기 때문에 학습속도가 느려질 수 있다.
+
+
 
 
 
@@ -123,19 +133,16 @@ Loss Function은 두 가지의 경우가 있다.
    Sigmoid\ Function\ \ \ \ \ \ \ \ \widehat{y} = \frac{1}{1+e^{-z}}\\
    Binary\ Cross\ Entropy\ Loss\ \ \ \ \ \ \ \ L =-[y log(\widehat{y}) + (1 - y)log(1 - \widehat{y})]\\
    Cost\ Function\ \ \ \ \ \ \ \  J= mean(L)
-$$
+	$$
    
    
-
 $$
 \frac{\part z}{\part \theta_1} = x , \ \ \ \ \ \frac{\part z}{\part \theta_0} = 1\\ 
 \frac{\part \widehat{y}}{\part z} = \widehat{y}(1-\widehat{y})\\
 \frac{\part L}{\part \widehat{y}} = \frac{1-\widehat{y}}{\widehat{y}(1-\widehat{y})}\\
 \frac{\part J}{\part L} = \frac{1}{n}
 $$
-
 2. Back Propagation을 진행해서 GDM을 구해보자.
-
 $$
 \frac{\part J}{\part \theta_1}  = \frac{\part J}{\part L}\frac{\part L }{\part \widehat{y}} \frac{\part \widehat{y}}{\part z} \frac{\part z}{\part \theta_1} = \frac{1}{n}*x*(\widehat{y} - y) \\
 \frac{\part J}{\part \theta_1}  =\frac{\part J}{\part L} \frac{\part L }{\part \widehat{y}} \frac{\part \widehat{y}}{\part z} \frac{\part z}{\part \theta_0}  = \frac{1}{n}*(\widehat{y} - y)\\
