@@ -93,9 +93,9 @@ Logit의 역함수 구해주는 역할이다.
 
 ![](https://github.com/HibernationNo1/TIL/blob/master/image/37.jpg?raw=true)
 
-왜 Logit의 역함수를 구하는 것일까? Loss를 구하려면 Binary Cross Entropy를 사용해야 하는데, 이  Binary Cross Entropy를 사용하려면 input이 확률(pass)여야 한다.
+왜 Logit의 역함수를 구하는 것일까? Loss를 구하려면 Binary Cross Entropy를 사용해야 하는데, 이  Binary Cross Entropy를 사용하려면 input이 확률(Possibility)여야 한다.
 
-그렇기 때문에 **Activation Function에 Sigmiod Function을 사용함으로써 Affine Function의 weighted sum을 pass(확률)로 바꿔주는 것이다. ** 
+그렇기 때문에 **Activation Function에 Sigmiod Function을 사용함으로써 Affine Function의 weighted sum을 Possibility(확률)로 바꿔주는 것이다. ** 
 
 
 
@@ -228,7 +228,7 @@ Softmax 수식이 나옴을 알 수 있다.
 
 > 위의 식에서 알 수 있듯, P(C_k)는 어짜피 사라지기 때문에 K에 어떤 수를 넣는다 해도 상관이 없다.
 >
->  Softmax Function 의 input은 Logit(C_i)고, output은 Pass(C_i)임을 알 수 있다.
+>  Softmax Function 의 input은 Logit(C_i)고, output은 Possibility(C_i)임을 알 수 있다.
 
 
 
@@ -242,3 +242,12 @@ Sigmoid Function을 사용하면 Logistic Regression이고
 
 Softmax Function을 사용하면 Softmax Regression이다.
 
+
+
+
+
+##### Sigmoid와 Softmax의 차이
+
+Sigmoid는 Bainary Classification에 사용
+
+Softmax는 Multi Classification에 사용
