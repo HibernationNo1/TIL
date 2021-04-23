@@ -78,7 +78,7 @@
 
 
 
-- Logistic Regression에서 Activation Function으로 Sigmoid만 사용하는 이유
+ - Logistic Regression에서 Activation Function으로 Sigmoid만 사용하는 이유
 
   Sigmoid Function을 사용해야 Binary Cross Entropy를 사용할 수 있기 때문에
 
@@ -111,8 +111,8 @@ $$
 
 **GDM**
 $$
-\theta_m := \theta_m - \alpha\frac{\part J}{\part \theta_m}  = \theta_m + \frac{\alpha}{n}\sum_{i=1}^{n} \left[ x_m^{(i)} (y^{(i)}-\widehat{y}^{(i)}) \right ]\ \ \ \ \ ( m \geq 1) \\
-\theta_0 := \theta_0 - \alpha\frac{\part J}{\part \theta_0}  = \theta_0 + \frac{\alpha}{n}\sum_{i=1}^{n} \left[  (y^{(i)}-\widehat{y}^{(i)})\right ] \\
+\theta_m := \theta_m - \alpha\frac{\part J}{\part \theta_m}  = \theta_m + \frac{\alpha}{n}x_m (y-\widehat{y}) \ \ \ \ \ ( m \geq 1)\\
+\theta_0 := \theta_0 - \alpha\frac{\part J}{\part \theta_0}  = \theta_0 + \frac{\alpha}{n}(y-\widehat{y})
 $$
 
 
@@ -121,8 +121,6 @@ $$
 > $$
 > \widehat{y} = \theta_2 x_2 + \theta_1 x_1 + \theta_0
 > $$
->
-> Activation Function으로 Sigmoid Function을 사용한 Artificial Neural Network이라고 생각하면 된다.
 
 
 
@@ -141,13 +139,13 @@ import Class_implementation as class_imp
 feature_dim = 2
 noise_factor = 0.3
 direction = 1
-n_sample = 200
+n_sample = 100
 
 x_dict = {1: {'mean': 0, 'std': 1}, 
             2: {'mean': 0, 'std': 2}}
-t_th_list = [2, 3, 3]
+t_th_list = [0, 1, 1]
 
-epochs, lr = 1000, 0.01
+epochs, lr = 300, 0.01
 iter_idx, check_freq = 0, 1
 
 data_gen = dataset.DatasetGenerator(feature_dim = feature_dim, 
@@ -159,34 +157,30 @@ data_gen.set_t_th(t_th_list)
 data_gen.set_feature_dict(x_dict)
 data = data_gen.make_dataset()
 
-batch_size = 8
-n_batch = np.ceil(data.shape[0]/batch_size).astype(int)
-
 model = class_imp.MVLoR(feature_dim)
-BCE_cost = class_imp.BinaryCrossEntropy()
+BCE_loss = class_imp.BinaryCrossEntropy()
 
-cost_list = list()
+loss_list = list()
 th_accum = model.get_Th()
 
 for epoch in range(epochs):
     np.random.shuffle(data)
 
-    for batch_idx in range(n_batch):
-        batch = data_gen.get_data_batch(batch_size, n_batch, data, batch_idx)
-        x, y = batch[:, :-1], batch[:, -1]
+    for data_idx in range(data.shape[0]):
+        x, y = data[data_idx,: -1], data[data_idx, -1]
 
         pred = model.forward(x)
-        J = BCE_cost.forward(y, pred)
+        l = BCE_loss.forward(y, pred)
 
-        dpred = BCE_cost.backward()
+        dpred = BCE_loss.backward()
         model.backward(dpred, lr)
 
         if iter_idx % check_freq == 0:
             th_accum = np.hstack((th_accum, model.get_Th()))
-            cost_list.append(1)
+            loss_list.append(1)
         iter_idx+=1
 
-visual.result_visualizer(th_accum,feature_dim)
+visual.result_visualizer(th_accum, loss_list,feature_dim)
 visual.plot_classifier(data, th_accum)
 
 ```
@@ -308,14 +302,6 @@ class DatasetGenerator:
             y_data = (y_noise < 0).astype(np.int)
         data = np.hstack((x_data, y_data))
         return data
-
-    def get_data_batch(self, batch_size, n_batch, data, batch_idx):     
-        if batch_idx is n_batch -1:
-            batch = data[batch_idx * batch_size:]
-        else:
-            batch = data[batch_idx * batch_size: (batch_idx + 1)*batch_size]
-        return batch
-
 ```
 
 
@@ -354,7 +340,7 @@ class AffineFunction:
     def forward(self, X):
         for node_idx in range(1, self._feature_dim + 1):
             self._z1_list[node_idx] = self._node1[node_idx].forward(self._Th[node_idx], 
-                                                                    X[:, node_idx])
+                                                                    X[node_idx])
         self._z2_list[1] = self._node2[1].forward(self._Th[0], self._z1_list[1])
         for node_idx in range(2, self._feature_dim + 1): 
             self._z2_list[node_idx] = self._node2[node_idx].forward(self._z2_list[node_idx-1], 
@@ -375,8 +361,7 @@ class AffineFunction:
             dth, _ = self._node1[node_idx].backward(self._dz1_list[node_idx])
             self._dth_list[node_idx] = dth
 
-        for th_idx in range(self._Th.shape[0]):
-            self._Th[th_idx] = self._Th[th_idx] - lr*np.sum(self._dth_list[th_idx])
+        self._Th = self._Th - lr*np.array(self._dth_list).reshape(-1, 1)
         return self._Th
 
     def get_Th(self):
@@ -419,18 +404,15 @@ class MVLoR:
 class BinaryCrossEntropy:
     def __init__(self):
         self._y, self._pred = None, None
-        self._mean_node = nodes.mean_node()
 
     def forward(self, y, pred):
         self._y, self._pred = y, pred
         
         loss = -1*(self._y*np.log(self._pred) + (1-self._y)*np.log(1-self._pred))
-        J = self._mean_node.forward(loss)
-        return J
+        return loss
 
     def backward(self):
-        dloss = self._mean_node.backward(1)
-        dpred = dloss *(self._pred-self._y) / (self._pred *(1-self._pred))
+        dpred = (self._pred-self._y) / (self._pred *(1-self._pred))
         return dpred
 ```
 
@@ -471,7 +453,7 @@ def plot_classifier(data, th_accum):
     ax.plot_wireframe(X1, X2, pred)
     plt.show()
 
-def result_visualizer(th_accum,feature_dim):
+def result_visualizer(th_accum, loss_list,feature_dim):
     fig, ax = plt.subplots(figsize = (10, 5))
     fig.subplots_adjust(hspace = 0.3)
     ax.set_title(r'$\vec{\theta}$' + ' Updata')
@@ -482,6 +464,6 @@ def result_visualizer(th_accum,feature_dim):
     ax.legend()
     iter_ticks = np.linspace(0, th_accum.shape[1], 10).astype(np.int)
     ax.set_xticks(iter_ticks)
-    plt.show()
+    plt.show() 
 ```
 
