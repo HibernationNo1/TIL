@@ -37,11 +37,9 @@ t1 = tf.cast(t1, dtype = tf.int16)
 
 
 
-
-
-
-
 [여러 계산 함수](https://m.blog.naver.com/PostView.nhn?blogId=stop2y&logNo=221526715840&proxyReferer=https:%2F%2Fwww.google.com%2F)
+
+
 
 ## **axis** 활용
 

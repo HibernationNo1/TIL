@@ -58,13 +58,13 @@ tensors에는 두 개의 클래스가 있다.
 
 1. **constant tensors** : 변화가 불가능한 값
 
-   > 클랙스: EagerTensor 
+   > 클래스: EagerTensor 
    >
    > input, 이미지와 같은 data set 은 EagerTensor로 사용한다.
 
 2. **Variable tensors** : 변화가 가능한 값
 
-   > 클랙스: ResourceVariable
+   > 클래스: ResourceVariable
    >
    > 업데이트가 필요한 파라미터는 ResourceVariable로 사용한다.
 
@@ -75,7 +75,7 @@ import tensorflow as tf
 foo = [1, 2, 3]
 
 t1 = tf.constant(foo)  
-# t1은 EagerTensor 클랙스의 list [1, 2, 3] 이 된다 
+# t1은 EagerTensor 클래스의 list [1, 2, 3] 이 된다 
 print(t1) # tf.Tensor([1 2 3], shape=(3,), dtype=int32 출력
 print(type(t1))
 
@@ -86,15 +86,15 @@ print(t2)
 print(type(t2))
 
 t3 = tf.constant(t2)
-# t2는 변화가 가능한 ResourceVariable 클랙스이기 때문에 EagerTensor 클랙스로 변환이 가능하다.
-# t3은 EagerTensor 클랙스의 list [1, 2, 3] 이 된다 
+# t2는 변화가 가능한 ResourceVariable 클래스이기 때문에 EagerTensor 클래스로 변환이 가능하다.
+# t3은 EagerTensor 클래스의 list [1, 2, 3] 이 된다 
 print(t3)
 print(type(t3))
 
 #=============================덧셈 연산
 t3 = t1 + t2  #EagerTensor + ResourceVariable
 print(t3) # [1,2,3,1,2,3] 이 아닌, [2, 4, 6]이 출력된다.
-print(type(t3))  #EagerTensor + ResourceVariable = EagerTensor 클랙스
+print(type(t3))  #EagerTensor + ResourceVariable = EagerTensor 클래스
 ```
 
 > tensor끼리의 연산은 각 원소끼리의 연산이 적용된다.
@@ -111,7 +111,7 @@ print(type(t3))  #EagerTensor + ResourceVariable = EagerTensor 클랙스
   import tensorflow as tf
   foo = [1, 2, 3]
   t1 = tf.convert_to_tensor(foo)
-  print(type(t1))  #EagerTensor 클랙스
+  print(type(t1))  #EagerTensor 클래스
   ```
 
   > constant와 convert_to_tensor의 output은 동일하다
