@@ -1,4 +1,4 @@
-### 1. 클래스
+                                                                           ### 1. 클래스
 
 tensors에는 두 개의 클래스가 있다.
 
@@ -65,7 +65,7 @@ print(type(t3))  #EagerTensor + ResourceVariable = EagerTensor 클래스
 
 
 
-### 2. Tensor 생성
+### 1. Tensor 생성
 
 - **tf.ones()** : 모든 원소가 1
 
@@ -167,7 +167,7 @@ print(type(t3))  #EagerTensor + ResourceVariable = EagerTensor 클래스
 
 
 
-### 3. Tensor에서 정보 추출
+### 2. Tensor에서 정보 추출
 
 - **shape** : shape을 반환
 
@@ -192,7 +192,7 @@ print(type(t3))  #EagerTensor + ResourceVariable = EagerTensor 클래스
 
   
 
-### 4. 형 변환
+### 3. 형 변환
 
 - **cast()**: 형 변환
 
@@ -211,7 +211,7 @@ print(type(t3))  #EagerTensor + ResourceVariable = EagerTensor 클래스
 
 
 
-### 5. Tensor 연산
+### 4. Tensor 연산
 
 #### 1. broadcasting
 
