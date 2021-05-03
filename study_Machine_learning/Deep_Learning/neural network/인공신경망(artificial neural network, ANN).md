@@ -4,11 +4,19 @@
 
 - 다층 인공신경망(ANN)은 일반적으로 다중 퍼셉트론(MLP)을 의미한다.
 
+  > 각각의 Perceptron은  Correlation Filter를 의미한다.
+  >
+  > 각각의 Layer은 Correlation Filter가 묶여진 Filter Bank라고 불리며
+  >
+  > 각각의 Filter Bank 의 Cascaded 구조를 Deep Learning Architecture를 의미한다.
+
 - 다층 퍼셉트론은 입력층, 은닉층, 출력층으로 구성되어 있으며 은닉층은 데이터의 입출력 과정에서 직접적으로 보이진 않지만 숨겨진 특징을 학습하는 역할을 한다.
 
   > 은닉층을 여러 번 쌓아올린 형태를 **깊은 인공신경망**이라고 부르고 이 구조가 우리가 일반적으로 **딥러닝**이라고 부르는 기법이다.
 
   ![](https://wikidocs.net/images/page/49071/multilayerperceptron.PNG)
+
+  > 위 그림처럼 각각의 neural에 이전 Layer의 다수 neural이 전부 연결되는 형태를 Dense Layer라고 한다. 
 
 - 다층 퍼셉트론 1개의 층은 여러 개의 노드로 구성되며 1개의 노드에서 일어나는 연산은 퍼셉트론 구조와 동일하다.
 
