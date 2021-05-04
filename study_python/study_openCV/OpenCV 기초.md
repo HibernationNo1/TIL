@@ -30,7 +30,7 @@ import cv2
 >
 > `flags = IMEAD_UNCHANGED` : 영상 파일 속성 그대로 읽기 	 // shape = (rows, cols, 4)
 >
-> 주로 투명한 속성의 PNG파일을 불러올때 사용한다.
+> 주로 투명한 속성의 PNG파일을 불러올때 사용한다. 포토샵 작업을 하다 보면 투명한 공간이 나오는데, 그러한 부분이 있는 image를 불러올때 사용한다.
 >
 > 
 >
@@ -190,7 +190,7 @@ plt.show()
 
 #### 4. 데이터 자료형
 
-이미지 1
+![](https://github.com/HibernationNo1/TIL/blob/master/image/c1.jpg?raw=true)
 
 cv2.imread() 를 통해 불러온 데이터는 ndarray type이기 때문에 numpy 메서드를 이용할 수 있음을 기억하자.
 
@@ -204,5 +204,50 @@ if img is None:
 print(type(img1)) 	# numpy.ndarray
 print(img.shape) 	# (480, 640, 3)
 print(img.dtype)	# uint8 
+```
+
+
+
+왠만한 영상, image의 자료형은 `np.uint8` 이다.
+
+
+
+#### 5. pixel에 접근
+
+image에서 pixel값 가져오기
+
+```python
+img = cv2.imread('cat.bmp')
+
+x = 20
+y = 10
+pix = img[x, y]
+print(pix)  # x, y좌표의 픽셀 BGR scale을 알 수 있다.
+
+# imp를 만약 GRAYSCALE로 받았다면 해당 좌표의 garyscale값을 알 수 있다.
+```
+
+index 접근 방법을 이용해서 해당 pixel의 값을 바꿀 수도 있다
+
+```python
+img[x, y] = (0, 0, 255)
+img[x:, y:] =  (0, 255, 255)
+```
+
+
+
+#### 6. image copy
+
+그냥 = 연산을 통해 메모리에 image를 할당하면 같은 주소를 공유하게 된다. 
+
+아예 복사를 하려면 numpy의 copy() 를 사용해야 한다.
+
+```python
+img1 = cv2.imread('cat.bmp')
+
+img2 = img1
+img3 = img1.copy()  # image 복사
+
+img4 = img1[40:120, 30:150].copy()  	# img1의 부분만 잘라내서 copy
 ```
 
