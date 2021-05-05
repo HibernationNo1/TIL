@@ -1,6 +1,8 @@
-# Dense Layer
+# keras.layers
 
-### Dense Layer
+## Dense
+
+### 1. Dense Layer
 
 ![](https://wikidocs.net/images/page/49071/multilayerperceptron.PNG)
 
@@ -69,7 +71,7 @@ print("Y: ", Y.shape)	# (8, 3)
 
 
 
-### Cascaded Dense Layer
+### 2. Cascaded Dense Layer
 
 ```python
 import tensorflow as tf
@@ -154,10 +156,6 @@ Y = model(X)
 
 
 
-
-
-
-
 ##### 2. class: Model
 
 tensorflow를 활용한 모델 class 생성
@@ -220,4 +218,21 @@ model.trainable_variables
 
 - Sequential(): model이라는 박스 안에 각각의 Dense Layers를 차례로 connection한다.
 - class: Model : model이라는 박스 안에 각각의 Dense Layers의 connection 순서를 내 마음대로 설정할 수 있다.
+
+
+
+## Activation
+
+Activation Function을 간단하게 구현할 수 있다.
+
+`Acivation('function name')(x_data)`
+
+```python
+import tensorflow as tf
+from tensorflow.feras.layers import Activation
+
+X = tf.random.uniform(shape = (1, 5), minval = -10, maxval = 10)
+
+softmax_value = Acivation('softmax')(X)
+```
 
