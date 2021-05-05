@@ -96,11 +96,168 @@ Logits 에 Softmax함수를 적용하면 sum to 1 형태로 output값을 정리�
 
 
 
-## 코드 구현
+#### 코드로 설명
 
-**MNIST 숫자분류기 구현**
+```python
+import tensorflow as tf
+from tensorflow.feras.layers import Activation
 
-#### 기본 순서
+logit = tf.random.uniform(shape = (1, 5), minval = -10, maxval = 10)
+# 5개 class에 대한 1개의 data semple
+
+softmax_value = Acivation('softmax')(logit)
+softmax_sum = tf.reduce_sum(softmax_value, axis = 1)
+
+print("Logits: ", logit.numpy())				
+print("probabilities: ", softmax_value.numpy())	# 각 확률의 값
+print("Sum of softmax values", softmax_sum)		# 모든 확률의 합 = 1에 가까운 값 
+```
+
+
+
+use Dense
+
+```python
+import tensorflow as tf
+from tensorflow.feras.layers import Dense
+
+logit = tf.random.uniform(shape = (1, 5), minval = -10, maxval = 10)
+# 5개 class에 대한 1개의 data semple
+
+dense = Dense(units = 8, activation = 'softmax')
+
+Y = dense(logit)
+```
+
+
+
+## 코드 구현(Multi-class Classifier)
+
+```python
+import tensorflow as tf
+
+from tensorflow.keras.models import Model
+from tensorflow.keras.layers import Dense
+
+class TestModel(Model):
+    def __init__(self): 
+        super(TestModel, self).__init__()
+
+        self.dense1 = Dense(units = 8, activation = 'relu')
+        self.dense2 = Dense(units = 5, activation = 'relu')
+        self.dense3 = Dense(units = 3, activation = 'softmax') # 3개의 class를 분류
+        # 마지막 layer에만 softmax activation 적용
+
+    def call(self, x):
+        print(f"X: {x.shape} \n, {x.numpy()} \n")
+
+        x = self.dense1(x)
+        print(f"X: {x.shape} \n, {x.numpy()} \n")
+        
+        x = self.dense2(x)
+        print(f"X: {x.shape} \n, {x.numpy()} \n")
+
+        x = self.dense3(x)
+        print(f"X: {x.shapee} \n, {x.numpy()} \n")
+        print(f"sum of vectors {tf.reduce_sum(x, axis = 1)}\n")
+        return x
+
+model = TestModel()
+
+X = tf.random.uniform(shape = (8, 5), minval = -10, maxval = 10)
+Y = model(X)
+```
+
+출력을 확인해보면 
+
+x_data
+
+```
+X: (8, 5)
+, [[ 5.078247    3.6812572   3.4688902   5.475504   -0.49888134]
+ [ 9.259651   -7.1174836  -4.874556   -0.02946663  4.761875  ]
+ [-2.8033328  -0.3299408  -5.08451     7.5884285  -5.276699  ]
+ [ 8.864445   -6.3580728   9.760931   -6.574049   -3.9082956 ]
+ [-6.299641   -3.3285165   9.284933   -5.502827    8.822647  ]
+ [-6.6491866   9.026583    4.260845   -0.25538635 -1.7791634 ]
+ [-8.961771    5.297777   -1.611619   -4.9916863  -0.76620865]
+ [-3.5544968   4.3313484  -8.299551   -2.9858947   6.3275375 ]]
+```
+
+
+
+dense layer 1을 통과한 x_data
+
+```
+X: (8, 8) 
+, [[3.2006586  0.         4.0548368  1.0098346  0.         0.
+  3.2924485  3.266006  ]
+ [4.2121015  6.4383445  0.         0.         0.         0.
+  3.5497625  7.691199  ]
+ [1.530852   4.000815   1.17051    0.         0.         5.9650645
+  0.         0.        ]
+ [0.         3.700261   0.         6.5730233  7.506935   0.
+  7.352618   2.9707932 ]
+ [0.         0.         1.2863406  0.         0.         0.
+  4.681222   0.69082844]
+ [0.         0.         3.055755   3.1548195  1.9683249  1.2204959
+  0.         0.        ]
+ [0.         0.         0.         2.2302346  1.4577997  3.5814095
+  0.         0.        ]
+ [5.1651783  0.         5.0865903  0.         0.         2.9486299
+  0.         0.        ]]
+```
+
+> 8개의 neuron으로 인해 8개의 cols가 된 것을 볼 수 있다.
+
+
+
+dense layer 2을 통과한 x_data
+
+```
+X: (8, 5)
+, [[0.         0.         2.719185   1.7694728  1.6167226 ]
+ [3.0043662  0.         4.4817557  2.9345589  8.16365   ]
+ [2.9774191  0.         3.731237   0.         0.        ]
+ [4.254131   0.         5.178421   4.306243   7.3503237 ]
+ [0.5648164  0.09151176 1.4998931  0.14860022 0.12280792]
+ [0.         0.         2.1814466  0.81757444 0.10802191]
+ [1.505584   0.         0.5333323  0.         0.        ]
+ [0.         0.         3.1576104  0.03980994 0.        ]]
+```
+
+> 5개의 neuron으로 인해 5개의 cols가 된 것을 볼 수 있다.
+
+
+
+dense layer 3을 통과한 x_data
+
+```
+X: (8, 3)
+, [[0.2801364  0.4297622  0.29010132]
+ [0.06073103 0.11108198 0.828187  ]
+ [0.171719   0.71279705 0.11548404]
+ [0.10346349 0.59419924 0.3023372 ]
+ [0.31862938 0.39301965 0.28835097]
+ [0.30660465 0.46553043 0.22786494]
+ [0.27897632 0.51202065 0.20900299]
+ [0.28445974 0.37455374 0.34098658]]
+```
+
+> 3개의 neuron으로 인해 3개의 cols가 된 것을 볼 수 있다.
+
+그리고 위 출력을 각 cols기준으로 더해보면 1의 값이 나오는걸 확인할 수 있다.
+
+```
+sum of vectors [0.9999999  1.         1.0000001  0.9999999  1.         1.
+ 0.99999994 1.0000001 ]
+```
+
+
+
+
+
+## 코드 구현(MNIST classifier)
 
 1. MNIST 데이터 받아와서 batch단위로 묶기
 2. 가설정의
