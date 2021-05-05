@@ -141,13 +141,31 @@ $$
   $$
   P(x) = \frac{1}{1 + e^{-Logit(x)}}  
   $$
-  
 
 **즉, Affine Function을 Logit이라는 가정 하에 역함수를 취하는 Sigmoid Function을 Logistic Function이라고 한다.**
 
 
 
+#### 코드(tensorflow)
+
+```python
+import tensorflow as tf
+
+X = tf.linspace(-10, 10, 100)
+sigmoid = Activation('sigmoid')(X)
+```
+
+> Activation 함수를 통해 sigmoid activation function을 손쉽게 가져올 수 있다.
+
+
+
 ## Softmax Function
+
+multi classification을 위해 사용하는 activation function으로, Softmax Layer을 통과하여 나온 output은 각각의 class에 대한 확률(정확도)를 의미한다.
+
+즉, input으로 K개의 logit vecter를 inout으로 넣으면 K개의 probability를 output으로 내보내주는 것이 softmax의 역할이다. (input과 output의 개수가 동일하기 위해서 Model의 output layer은 분류할 개수의 class와 같은 개수의 neuron을 놓아주고 softmax를 적용해야 한다.)
+
+
 
 각각의 Perceptron에서 나온 Affine Function을 Logit(C) 라고 할 때
 
