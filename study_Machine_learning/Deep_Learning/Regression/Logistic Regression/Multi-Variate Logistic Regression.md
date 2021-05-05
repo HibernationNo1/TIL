@@ -467,3 +467,38 @@ def result_visualizer(th_accum, loss_list,feature_dim):
     plt.show() 
 ```
 
+
+
+#### use tensorflow
+
+```python
+import tensorflow as tf
+
+from tensorflow.keras.layers import Dense
+
+X = tf.random.normal(shape = (100, 5))  # 5개의 feature로 100개의 data
+dense = Dense(units = 1, activation = 'sigmoid')	# sigmoid function이 적용된 dense layer 생성 (neuron 1개)
+		
+Y = dense(X)		# X_data input
+```
+
+
+
+model class의 Seqential을 사용해보자
+
+```python
+import tensorflow as tf
+from tensorflow.keras.models import Seqential
+from tensorflow.keras.layers import Dense
+
+X = tf.random.normal(shape = (100, 5))
+
+model = Sequential()
+model.add(Dense(units = 10, activation = 'relu'))
+model.add(Dense(units = 5, activation = 'relu'))
+model.add(Dense(units = 1, activation = 'sigmoid'))
+# 마지막 leyer에 units에 1을 줌으로써 binary classifire 완성
+
+Y = model(X)
+```
+

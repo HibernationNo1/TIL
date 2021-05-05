@@ -468,3 +468,18 @@ class Visualization:
         plt.show()
 ```
 
+
+
+### use tensorflow
+
+```python
+import tensorflow as tf
+
+from tensorflow.keras.layers import Dense
+
+X = tf.random.normal(shape = (100, 1))  # 1개의 feature로 100개의 data
+dense = Dense(units = 1, activation = 'sigmoid')	# sigmoid function이 적용된 dense layer 생성 (neuron 1개)
+		
+Y = dense(X)		# X_data input
+```
+
