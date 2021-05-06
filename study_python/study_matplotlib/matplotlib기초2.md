@@ -4,7 +4,9 @@
 
 #### 1. ax.text()
 
-`ax.text(x, y, s = , fontsize = )`
+```python
+ ax.text(x, y, s = , fontsize = )
+```
 
 `x, y` : text의 좌측 하단 좌표
 
@@ -148,5 +150,268 @@ font_dict = {'fontsize': 20, 'fontfamilt': 'serif', 'fontweight' : 'bold'
 ax.set_title("font dict", fontdict = title_fint_dict)
 ax.text(x = 0.1, y = 0.1, s = "font dict", fontdict = font_dict)
 # 한 번에 여러 속성이 결정된다.
+```
+
+
+
+### 2. ticks, label
+
+```python
+fig, ax = plt.subplots(figsize = (7, 7))
+```
+
+#### 1. ax.tick_params
+
+위의 code로 figure을 만들면, 각각의 x, y axis에는 main label만 표현되어 있는 것을 볼 수 있다.
+
+이 main label(major ticks) 또는 minor ticks의 글씨를 키우는 함수가 **ax.tick_params()** 이다.
+
+```python
+ax.tick_params(속성)
+```
+
+> x, y 중 axis에 적용할건지 명시를 안하면 둘 다 적용됨
+
+- `labelsize` : main label의 size를 결정
+
+- `length` : label 표시 막대(tick)의 길이를 결정
+- `width` : label 표시 막대(tick)의 굵기를 결정
+
+- `bottom` : False를 주면 x axis의 tick을 표시 안함 (default = True)
+
+  > `left` : y axis에 적용
+  >
+  > `top` : 상단 x axis에 적용 (default = False) 
+  >
+  > `right` : 우측 y axis에 적용 (default = False) 
+
+- `labelbottom` : False를 주면 x axis의  main label을 표시 안함 (default = True)
+
+  > `labelleft`: : y axis에 적용
+  >
+  > `labeltop` : 상단 x axis에 적용 (default = False) 
+  >
+  > `labelright` : 우측 y axis에 적용 (default = False) 
+
+- `rotation` : label을 반시계방향으로 회전시킴 (적용하는 각도만큼)
+
+  주로 label이 길 때 사용한다. 90을 주면 수직방향으로 회전
+
+- `axis` : 특정 axis에만 위 속성들이 적용되도록 할 수 있다.
+
+  axis = 'x' or 'y'
+
+```python
+ax.tick_params(labelsize = 20, length = 10, width = 3, 
+               left = False, labelleft = False, 
+               right = True, labelright =  True, 
+               rotation = 30, axis = y)
+```
+
+- `which` : 속성을 major에 적용할 것인지, minor에 적용할 것인지를 결정한다. (defualt = major)
+
+  > which ='minor'
+  >
+  > 물론 ax.set_xticks(minor = 'True') 가 이미 선언되어있어야 한다.
+
+
+
+#### 2. ax.set_x(y)lim
+
+x(또는 y)의 data 범위를 조절
+
+`ax.set_xlim([start, end])`
+
+```python
+fig, ax = plt.subplots(figsize - (7, 7))
+ax.set_xlim([-10, 10])
+ax.set_ylim([0, 1])
+```
+
+> 표현되는 label 범위는 결정되지만 표현되는 label의 개수는 변함이 없다.
+
+
+
+#### 3. ax.set_x(y)ticks
+
+표현되는 main label의 개수를 결정할 수 있다.
+
+```python
+xticks = [i for i in range(10)]
+ax.set_xticks(xticks)  
+```
+
+> 0~1 까지 6개로 표현되던 x axis의 label이 0~9까지 10개로 표현됨
+
+```python
+ax.set_xticks([0, 1, 5, 10])  
+```
+
+> 0부터 10까지 크기게 알맞는 간격으로 label이 표현된다.
+
+또한 minor ticks까지 등장시켜 표현할 수 있다.
+
+- `minor` : minor ticks 표현 (default = False)
+
+  > `major` : default = True
+
+```python
+major_yticks = [i for i in range(0, 101, 20)]
+minor_yticks = [i for i in range(0, 101, 5)]
+ax.set_yticks(major_yticks)
+ax.set_yticks(minor_yticks, minor = True)
+```
+
+
+
+**예시**
+
+```python
+fig, ax = plt.subplots(figsize = (7, 7))
+
+major_xticks = [i for i in range(0, 101, 20)]
+minor_xticks = [i for i in range(0, 101, 5)]
+major_yticks = [i for i in range(0, 11, 2)]
+minor_yticks = [i for i in range(0, 11, 1)]
+
+ax.set_xticks(major_xticks)
+ax.set_xticks(minor_xticks, minor = True)
+
+ax.tick_params(axis = 'x', labelsize = 20, length = 10, width = 3, 
+               rotation = 30)
+ax.tick_params(axis ='x', which = 'minor', length = 5, width = 2)
+
+ax.set_yticks(major_yticks)
+ax.set_yticks(minor_yticks, minor = True)
+
+ax.tick_params(axis = 'y', labelsize = 20, length = 10, width = 3)
+ax.tick_params(axis = 'y', which = 'minor', length = 5, width = 2)
+```
+
+
+
+#### 4. ax.set_x(y)tickslabels
+
+실질적인 값을 나타내는 label을 결정한다.
+
+> ticks를 이미 설정 한 후에 설정해야 한다.
+
+```python
+ax.set_xtickslabel(label이름)
+```
+
+label 이름은 ticks가 존재하는 개수 만큼 동일한 개수의 string 원소로 이루어진 list형태다.
+
+```python
+xticks = [i for i in range(10)]
+xtick_labels = ['class' + str(i) for i in xticks]
+
+ax.set_xticks(xticks)
+ax.set_xtickslabels(xtick_labels)
+```
+
+- `ha`(horizontalalignment) : text의 기준점을 text안의 수평 위치로 잡는다.  default는 left
+
+  `{'center', 'right', 'left'}`
+
+- `vs`(vertiacalaligment) : text의 기준점을 text안의 수직 위치로 잡는다. default는 bottom
+
+  `{'center', 'top', 'bottom', 'baseline', 'center_baseline'}`
+
+
+
+#### 5. ax.set_x(y)scale()
+
+ticks의 scale을 결정
+
+```python
+ax.set_xscale('log')
+```
+
+
+
+
+
+### 4. grid
+
+#### 1. ax.grid
+
+tick을 따라서 plot 안에도 선을 표현해준다.
+
+```python
+ax.grid(속성)
+```
+
+- `axis` : 'x' or 'y'   (default = 둘 다)
+
+- `linewidth` : line 굵기
+
+- `linestyle` 
+
+  > ':' 점선
+  >
+  > '-.' 실, 점 혼합선
+  >
+  > '--' 짧은 실선
+  >
+  > '-' 실선
+
+```python
+ax.grid(axis = 'y', linewidth = 2, linestyle = '--')
+```
+
+- `which` : 속성을 적용할 tick을 결정 'minor' or 'major'  
+
+
+
+**예시**
+
+yticks를 logscale로 표현한 ax (0부터 10^5까지)
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+m_exp, M_exp = 0, 5
+n_inter_yticks = 4 		# 칸 안에 표현하고자 하는 minor ticks의 개수
+
+n_major_yticks = M_exp - m_exp + 1  # 표현하고자 하는 y의 major ticks의 개수
+n_minor_yticks = (n_major_yticks -1)*(n_inter_yticks + 1) + 1 
+# (표현하고자 하는 y의 major ticks에 의해 만들어지는 칸) * (칸 마다 표현하고자 하는 minor ticks의 개수) + bottom의 줄
+
+major_yticks = np.logspace(m_exp, M_exp, n_major_yticks) # 10^(m_exp)부터 10^(M_exp)까지 n_major_yticks개로 표현
+minor_yticks = np.logspace(m_exp, M_exp, n_minor_yticks)
+
+fig, ax = plt.subplots(figsize = (7, 7))
+ax.set_yscale('log')
+ax.set_ylim([10**m_exp, 10**M_exp])
+
+ax.set_yticks(major_yticks)
+ax.set_yticks(minor_yticks, minor = True)
+
+ax.tick_params(axis = 'y', which = 'major', length = 10)
+ax.tick_params(axis = 'y', which = 'minor', length = 3)
+
+ax.grid(axis = 'y', which = 'major', linewidth = 1.5)
+ax.grid(axis = 'y', which = 'minor', linestyle = ':')
+
+plt.show()
+```
+
+
+
+또는
+
+```python
+fig, ax = plt.subplots(figsize = (10, 10))
+ax.set_yscale('log')
+ax.set_xscale('log')
+
+ax.set_ylim([10**(-10), 10**3]) # 10^(-13)부터 10^3 까지
+ax.set_xlim([10**0, 10**4])
+
+major_yticks = [10**i for i in [-10, -5, 0]]
+minor_yticks = [10**i for i in range(-10, 4)]
+major_xticks = [10**i for i in range(0, 5)] \
 ```
 
