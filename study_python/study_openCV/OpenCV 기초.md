@@ -12,6 +12,38 @@ import cv2
 
 
 
+##### color space model
+
+![](https://t1.daumcdn.net/cfile/tistory/017E584E5199F0A436)
+
+1. Gray 모델
+
+   색(color) 정보를 사용하지 않고 밝기 정보만으로 영상을 표현하는 것이다. 검정색 0부터 흰색 255까지 총 256단계의 밝기값(intensity)으로 영상 픽셀값을 표현한다.
+
+
+
+2. RGB 모델
+
+   가장 기본적인 색상모델로서 색(color)을 Red, Green, Blue의 3가지 성분의 조합으로 생각하는 것이다. RGB 모델에서 검은색은 R=G=B=0, 흰색은 R=G=B=255, 빨강색은 R=255, G=B=0, 노란색은 R=G=255, B=0로 표현된다. R=G=B인 경우는 무채색인 Gray 색상이 된다. R, G, B 각각은 0 ~ 255 사이의 값을 가질 수 있기 때문에 RGB 색상 모델을 사용하면 총 256*256*256 = 16,777,216가지의 색을 표현할 수 있다.
+
+   OpenCV에서는 RGB 대신 BGR으로 사용한다.
+
+
+
+3. HSV 모델
+
+    Hue(색조), Saturation(채도), Value(명도)의 3가지 성분으로 색을 표현한다. Hue는 색조(예: 붉은색 계열인지 푸른색 계열인지, ...)를, Saturation은 그 색이 얼마나 선명한(순수한) 색인지를, Value는 밝기(intensity)를 나타낸다. HSV 모델은 우리가 색을 가장 직관적으로 표현할 수 있는 모델이며 또한 머리속에서 상상하는 색을 가장 쉽게 만들어낼 수 있는 모델이다. 영상처리/영상인식에서 HSV 모델을 사용할 때, H, S, V 각각은 0 ~ 255 사이의 값으로 표현된다. H 값은 색의 종류를 나타내기 때문에 크기는 의미가 없으며 단순한 인덱스(index)를 나타낸다. S 값은 0이면 무채색(gray 색), 255면 가장 선명한(순수한) 색임을 나타낸다. V 값은 작을수록 어둡고 클수록 밝은 색임을 나타낸다. HSV 색상 모델은 그림과 같이 원뿔(conic) 형태, 원기둥(cylindric) 형태가 있다. 
+
+   
+
+4. YCbCr 모델
+
+   RGB 색에서 밝기성분(Y)과 색차정보(Cb, Cr)를 분리하여 표현하는 색상모델이다. 위 5번째 그림을 보면,  Y=128일 때의 CbCr 색상평면이다. 디지털 영상에서 Y, Cb, Cr은 각각 0 ~ 255 사이의 값을 가지며 Y가 커지면 위 그림이 전체적으로 밝아지고 Y가 작아지면 전체적으로 어두워진다. YCbCr 모델은 mpeg에서 사용되는 색상모델로서 인간의 눈이 밝기차에는 민감하지만 색차에는 상대적으로 둔감하다는 점을 이용해서 Y에는 많은 비트수(해상도)를 할당하고 Cb, Cr에는 낮은 비트수를 할당하는 방식으로 비디오를 압축한다. 따라서 비디오 데이터를 처리할 경우에 YCbCr 모델을 사용하면 별도의 색상변환을 하지 않아도 되는 장점을 갖는다. YCbCr 모델은 YUV 모델로도 불린다.
+
+   OpenCV에서는 YCbCr 대신 YCrCb으로 사용한다
+
+
+
 #### 1. 영상 가져오기
 
 ##### 1. cv2.imread()
@@ -49,6 +81,38 @@ if img is None:  		# image를 불러오면 항상 이런 식으로 잘 load 됐�
     print('Image load failed!')
     sys.exit()
 ```
+
+
+
+###### img.read()
+
+이미지를 그대로 다시 반환
+
+`ret, frame = img.read()`
+
+`ret` : 반환이 정상적으로 되면 True, 아니면 False
+
+`frame` : img 그 자체라고 보면 됨.
+
+이건 주로 while문 안에서 video의 순간순간의 frame을 추출할때 사용
+
+```python
+while True:
+    ret1, frame1 = video1.read() #
+
+    if not ret1:
+        break
+    
+    # do_composit 플래그가 True일 때에만 합성
+    ret2, frame2 = video2.read()
+
+    if not ret2:
+        break
+```
+
+> 두 개의 영상을 가져왔다고 가정
+
+
 
 
 
@@ -212,7 +276,9 @@ print(img.dtype)	# uint8
 
 
 
-#### 5. pixel에 접근
+#### 5. Pixel
+
+##### pixel에 접근
 
 image에서 pixel값 가져오기
 
@@ -233,6 +299,16 @@ index 접근 방법을 이용해서 해당 pixel의 값을 바꿀 수도 있다
 img[x, y] = (0, 0, 255)
 img[x:, y:] =  (0, 255, 255)
 ```
+
+
+
+##### cv2.resize
+
+```python
+src = cv2.resize(src, (w, h))
+```
+
+src image의 size를 (w, h) 크기로 변경 후 다시 src에 저장
 
 
 
