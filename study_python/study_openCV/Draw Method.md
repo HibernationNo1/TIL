@@ -117,3 +117,18 @@ cv2.rectangle(img, (50, 200, 150, 100), (0, 255, 0), 2)
 `bottomLeftOrigin` : Ture or False. 보통 사용하는 default는 Ture.
 
 문자열을 출력할 때는 `lineType = cv2.LINE_AA` 을 주는게 좋다.
+
+
+
+#### 6. cv2.selectROI
+
+ROI 창을 띄워 창 위에서 마우스로 드래그하면 사각형의 영역이 선택된다. 
+
+그리고 선택된 사각형의 x, y 좌표와 width와 hight가 반환된다.
+
+이후 해당 영역에 속한 color와 같은 모든 영역의 pixel값을 찾아서 화면에 보여준다. (크로마키)
+
+```python
+x, y, w, h = cv2.selectROI(src)
+```
+
