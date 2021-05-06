@@ -18,10 +18,10 @@ instanse 생성
 
 #### 연결
 
-##### 1. open()
+##### 1. cv2.VideoCapture()
 
 ```python
-retval = cv2.VideoCapture.open(index, apiPreference = )
+retval = cv2.VideoCapture.open(index, apiPreference = None)
 ```
 
 `index` : camera_id + domain_offset_id
@@ -35,6 +35,12 @@ retval = cv2.VideoCapture.open(index, apiPreference = )
 `apiPreference` : 선호하는 카메라 처리 방법을 지정
 
 `retval` : instance. 성공하면 Ture, 실패하면 False 반환
+
+```python
+retval = cv2.VideoCapture(0)
+```
+
+> 내 카메라를 받아온다.
 
 
 
@@ -121,6 +127,8 @@ cv2.VideoCapture.get(propId)
 ![](https://github.com/HibernationNo1/TIL/blob/master/image/c3.jpg?raw=true)
 
 이 외에도 OpenCV document에 가면 더 많은 속성을 볼 수 있다.
+
+
 
 **예시**
 
@@ -213,11 +221,12 @@ OpenCV에서는 cv2.VideiWriter class를 이용해서 일련의 frame을 video f
 
 
 
-##### 1. open()
+##### 1. cv2.VideoWriter()
 
-저장을 위한 동영상 파일 열기
+동영상을 저장하는 함수
 
 ```python
+fourcc = cv2.VideoWriter_fourcc(*'DIVX') # 예시
 cv2.VideoWriter(filename, fourcc, fps, frameSize, isColor = )
 ```
 
