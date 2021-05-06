@@ -4,7 +4,7 @@
 
 OpenCV에서는 카메라와 동영상으로부터 frame을 받아오는 작업을 `cv2.VideoCapture` 클래스 하나로 처리한다.
 
-이미지 2
+![](https://github.com/HibernationNo1/TIL/blob/master/image/c2.jpg?raw=true)
 
 ```python
 retval = cv2.VideoCapture()
@@ -118,7 +118,7 @@ cv2.VideoCapture.get(propId)
 
 `propId`: 속성 상수
 
-이미지 3
+![](https://github.com/HibernationNo1/TIL/blob/master/image/c3.jpg?raw=true)
 
 이 외에도 OpenCV document에 가면 더 많은 속성을 볼 수 있다.
 
@@ -209,7 +209,7 @@ OpenCV에서는 cv2.VideiWriter class를 이용해서 일련의 frame을 video f
 
 동영상 파일의 코덱, 압축 방식, color, pixel format등을 정의하는 정수 값
 
-이미지 4
+![](https://github.com/HibernationNo1/TIL/blob/master/image/c4.jpg?raw=true)
 
 
 
