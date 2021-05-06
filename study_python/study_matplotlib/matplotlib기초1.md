@@ -419,26 +419,6 @@ fig.subplot_adjust(bottom = 0.1, top = 0.99, left = 0.01, right = 0.99, hspace =
 
 
 
-### 3. ticks
-
-#### 1. ax.set_x(y)lim
-
-x(또는 y)의 data 범위를 조절
-
-`ax.set_xlim([start, end])`
-
-```python
-fig, ax = plt.subplots(figsize - (7, 7))
-ax.set_xlim([-10, 10])
-ax.set_ylim([0, 1])
-```
-
-
-
-
-
-
-
 
 
 ## 연습 코드
