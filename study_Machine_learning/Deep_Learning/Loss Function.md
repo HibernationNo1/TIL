@@ -246,3 +246,177 @@ Label data는 one-hot encoding이 적용된 data가 입력된다.
 $$
 H = -log(\widehat{y}_4) = -log(P(C_4))
 $$
+
+
+**code Implementation**
+
+simple ver
+
+```python
+import tensorflow as tf
+
+from tensorflow.keras.losses import CategoricalCrossentropy
+
+batch_size, n_class= 16, 5
+
+predictions = tf.random.uniform(shape = (batch_size, n_class), 
+                                minval = 0, maxval = 1, 
+                                dtype = tf.float32)
+pred_sum = tf.reshape(tf.reduce_sum(predictions, axis = 1), (-1, 1))
+predictions = predictions / pred_sum
+# to make the sum of predictions to 1
+
+labels = tf.random.uniform(shape = (batch_size, ), 
+                                minval = 0, maxval = n_class, 
+                                dtype = tf.int32)
+
+labels = tf.one_hot(labels, n_class)
+# print(labels)
+
+loss_object = CategoricalCrossentropy()
+loss = loss_object(labels, predictions)
+print(loss.numpy())  
+
+# or
+loss = tf.reduce_mean(tf.reduce_sum(-labels*tf.math.log(predictions), axis = 1))
+print(loss.numpy()) # same loss
+```
+
+
+
+with model, dataset
+
+```python
+import tensorflow as tf
+
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.losses import CategoricalCrossentropy
+
+N, n_feature = 16, 2 
+n_class = 5
+batch_size = 16
+
+X = tf.zeros(shape = (0, n_feature))
+Y = tf.zeros(shape = (0, ), dtype = tf.int32)
+
+for class_idx in range(n_class):
+    center = tf.random.uniform(minval = -15, maxval = 15, shape = (2, ))
+
+    x1 = center[0] + tf.random.normal(shape = (N, 1))
+    x2 = center[1] + tf.random.normal(shape = (N, 1))
+
+    x = tf.concat((x1, x2), axis = 1)   # [x1, x2]
+    y = class_idx*tf.ones(shape = (N, ), dtype = tf.int32)  # for expression number of class
+
+    X = tf.concat((X, x), axis = 0)
+    Y = tf.concat((Y, y), axis = 0)
+
+Y = tf.one_hot(Y, depth = n_class, dtype = tf.int32)
+
+
+dataset = tf.data.Dataset.from_tensor_slices((X,Y))
+dataset = dataset.batch(batch_size)
+
+model = Dense(units = n_class, activation = 'softmax')
+loss_object = CategoricalCrossentropy()
+
+
+
+for x, y in dataset:
+    predictions = model(x)
+    loss = loss_object(y, predictions)
+    print(loss.numpy())
+```
+
+
+
+
+
+
+
+##### SCCE
+
+Sparse Caregorical Cross Entropy
+
+categorical cross entropy(CCE) and sparse categorical cross entropy(SCCE) have the same loss function. The only difference is the format labels.
+
+if One-hot encoding is not applied, use SCCE. On the ather hand, use CCE if One-hot encoding applied. 
+
+
+
+**code Implementation**
+
+simpe ver
+
+```python
+import tensorflow as tf
+
+from tensorflow.keras.losses import SparseCategoricalCrossentropy
+
+batch_size, n_class= 16, 5
+
+predictions = tf.random.uniform(shape = (batch_size, n_class), 
+                                minval = 0, maxval = 1, 
+                                dtype = tf.float32)
+pred_sum = tf.reshape(tf.reduce_sum(predictions, axis = 1), (-1, 1))
+predictions = predictions / pred_sum
+# to make the sum of predictions to 1
+
+labels = tf.random.uniform(shape = (batch_size, ), 
+                                minval = 0, maxval = n_class, 
+                                dtype = tf.int32)
+
+print(labels)  # not applied ont-hot encoding
+loss_object = SparseCategoricalCrossentropy()
+loss = loss_object(labels, predictions)
+
+print(loss.numpy())
+
+cross_etropy = 0
+for label, prediction in zip(labels, predictions): 
+    ce += -tf.math.log(prediction[label])
+ce /= batch_size  # cost 
+print(ce.numpy())
+```
+
+
+
+with model, dataset
+
+```python
+import tensorflow as tf
+
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.losses import SparseCategoricalCrossentropy
+
+N, n_feature = 32, 2 
+n_class = 3
+batch_size = 16
+
+X = tf.zeros(shape = (0, n_feature))
+Y = tf.zeros(shape = (0, 1), dtype = tf.int32)
+
+for class_idx in range(n_class):
+    center = tf.random.uniform(minval = -15, maxval = 15, shape = (2, ))
+
+    x1 = center[0] + tf.random.normal(shape = (N, 1))
+    x2 = center[1] + tf.random.normal(shape = (N, 1))
+
+    x = tf.concat((x1, x2), axis = 1)   # [x1, x2]
+    y = class_idx*tf.ones(shape = (N, 1), dtype = tf.int32)  # for expression number of class
+
+    X = tf.concat((X, x), axis = 0)
+    Y = tf.concat((Y, y), axis = 0)
+
+dataset = tf.data.Dataset.from_tensor_slices((X,Y))
+dataset = dataset.batch(batch_size)
+
+model = Dense(units = n_class, activation = 'softmax')
+loss_object = SparseCategoricalCrossentropy()
+
+for x, y in dataset:
+    predictions = model(x)
+    loss = loss_object(y, predictions)
+    print(loss)
+```
+
