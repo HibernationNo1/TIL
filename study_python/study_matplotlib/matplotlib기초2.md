@@ -415,3 +415,141 @@ minor_yticks = [10**i for i in range(-10, 4)]
 major_xticks = [10**i for i in range(0, 5)] \
 ```
 
+
+
+### 5. Spine
+
+#### 1. ax.spines
+
+Spine objects means the edge axis of plot.
+
+Sepine object type is **dictionary**
+
+```python
+fig, ax = plt.subplots(figsize = (5, 5))
+print(ax.spines.keys()) 
+```
+
+> odict_keys(['left', 'right', 'bottom', 'top'])
+
+so, we need to as a dictonary when access to spine 
+
+
+
+**property**
+
+- `ax.spines[spine_loc].set_visible(False)`
+
+  keep the selected axis invisible
+
+  > ticks, labels are not invisible
+  >
+  > need to use `ax.tick_params` if you make invisible the ticks, labels
+
+- `ax.spines[spine_loc].set_linewidth(int)`
+
+- `ax.spines[spine_loc].set_alpha(float)`
+
+- `ax.spines[spine_loc].set_color('navy')`
+
+  
+
+**ex**
+
+```python
+ax.spines['right'].set_visible(False)
+```
+
+```python
+for spine_loc, spine in ax.spines.items():
+    if spine_loc in ['left', 'bottom']
+    spine.set_linewidth(3)
+    spine.set_alpha(0.5)
+	
+    if spine_loc in ['right', 'top']
+    spine.set_visible(False)
+```
+
+> using items()
+
+
+
+if you jsut want to see only img (no ticks, no spine)
+
+```python
+fig, ax = plt.subplots(figsize = (5, 5))
+
+for spine_loc spine in ax.spines.items():
+    spine.set_visible(False)
+
+ax.tick_params(left = False, labelleft = False, bottom = Falsem labelbottom = False)
+```
+
+
+
+###### 1. set_position('center')
+
+> one of the property 
+
+if you want the tick and label locate to center of plot, using this property
+
+`ax.spines[spine_loc].set_position('center')`
+
+this property change locate of spine
+
+```python
+fig, ax = plt.subplots(figsize = (5, 5))
+
+for spine_loc, spine in ax.spines.items():
+    if spine_loc in ['right', 'top']:
+        spine.set_visible(False)
+
+    if spine_loc in ['left', 'bottom']:
+        spine.set_position('center')
+```
+
+but this method have one drawback; the standard point of label is not fit
+
+
+
+###### 2. set_position(('axse', 0.5))
+
+to solve this problem, use tuple argument
+
+```python
+ax.spines[spine_loc].set_position(('axse', 0.5))
+```
+
+this means the standard of spine position fit by axse. not figure
+
+so, the corrected code is
+
+```python
+fig, ax = plt.subplots(figsize = (5, 5))
+
+for spine_loc, spine in ax.spines.items():
+    if spine_loc in ['right', 'top']:
+        spine.set_visible(False)
+
+    if spine_loc in ['left', 'bottom']:
+        spine.set_position(('axes', 0.5))
+```
+
+
+
+###### 3. set_position(('data', 0))
+
+this means the standard of label value(data) fit to 0 
+
+```python
+for spine_loc, spine in ax.spines.items():
+    if spine_loc in ['right', 'top']:
+        spine.set_visible(False)
+
+    if spine_loc in ['left']:
+        spine.set_position(('axes', 0.5))
+    
+    if spine_loc in ['bottom']:
+        spine.set_position(('data', 0)) # left spine label value start from 0
+```
+
