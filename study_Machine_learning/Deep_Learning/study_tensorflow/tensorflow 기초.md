@@ -176,11 +176,39 @@ t1 = tf.random.normal(shape = (3, 3))
 
 ##### **tf.constant**()
 
-list를 constant tensor로 변경
+list를 constant tensor로 변경하거나 새로운 tensor 생성
+
+constant는 immutable object이기 때문에 learning이 되지 않는 parameters에 적용해야 한다. (data set)
 
 ```
 tmp = [1, 2, 3]
 t1 = tf.constant(tmp)
+t2 = tf.constant([1, 2, 3, 4])
+```
+
+
+
+##### tf.Variable()
+
+mutable object이기 때문에 learning 되는 parameters에 적용해야 한다. (wieght, bias)
+
+```python
+tmp = [1, 2, 3]
+t1 = tf.Variable(tmp)
+t2 = tf.Variable([1, 2, 3, 4])
+```
+
+
+
+##### tf.convert_to_tensor()
+
+constant tersor와 같은 type을 가지고 있다.
+
+Difference from constant : constant에서는 Variable로 type change가 가능하지만, Variable에서 constant로는 type change가 불가능하다. 하지만 convert_to_tensor로 만들어진 tensor는 Variable로 type change가 가능하다.
+
+```python
+t1 = tf.Variable([1, 2, 3, 4])
+t2 = tf.convert_to_tensor(t1)  # no error
 ```
 
 
