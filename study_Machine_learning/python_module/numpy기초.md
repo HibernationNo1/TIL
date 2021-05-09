@@ -182,15 +182,21 @@ np.random
    [1 2 1]]
   ```
 
+  
+
 - np.random.normal()
 
-  정규 분포를 고려한, 범위 내의 실수 난수를 만든다.
+  정규 분포를 고려한, 범위 내의 실수 난수를 만든다
 
-  `np.random.normal(low , high , size = ( , ))`
+  `np.random.normal(loc = , scale = , size = ( , ))`
+
+  setting mean(loc), standard deviation(scale) value
 
   ```python
-  tmp = np.random.normal(0, 1, size= (2, 1))
+  tmp = np.random.normal(loc = 0, scale = 1, size= (2, 1))
   ```
+
+
 
 
 - np.random.rand()

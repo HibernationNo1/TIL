@@ -394,7 +394,7 @@ for ax_idx, ax in enumerate(axes.flat):
     ax.get_yaxis().set_visible(False)
 ```
 
-##### 3. fig.subplot_adjust
+##### 3. fig.subplots_adjust
 
 **속성**
 
@@ -414,7 +414,7 @@ for ax_idx, ax in enumerate(axes.flat):
 - `wspace = ` axes간의 좌우 거리
 
 ```python
-fig.subplot_adjust(bottom = 0.1, top = 0.99, left = 0.01, right = 0.99, hspace = 0.2, wspace = 0.05)
+fig.subplots_adjust(bottom = 0.1, top = 0.99, left = 0.01, right = 0.99, hspace = 0.2, wspace = 0.05)
 ```
 
 
