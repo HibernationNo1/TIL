@@ -1,14 +1,22 @@
-# keras.layers
+# keras
 
-## Dense
+## layers
 
-### 1. Dense Layer
+### Dense
+
+##### Dense Layer
 
 ![](https://wikidocs.net/images/page/49071/multilayerperceptron.PNG)
 
 위 그림처럼 Layer 안의 각각 neuran에 이전 Layer의 다수 neuran이 전부 연결되는 형태를 Dense Layer라고 한다. 
 
-##### 1. Dense()
+```python
+from tensorflow.keras.layers import Dense
+```
+
+
+
+##### Dense()
 
 Dense Layer를 생성한다.
 
@@ -26,7 +34,7 @@ Dense Layer를 생성한다.
 
 
 
-##### 2. get_weights()
+##### get_weights()
 
 Dense Layer 객체의 weight와 bias를 반환한다.
 
@@ -71,12 +79,12 @@ print("Y: ", Y.shape)	# (8, 3)
 
 
 
-### 2. Cascaded Dense Layer
+##### Cascaded Dense Layer
 
 ```python
 import tensorflow as tf
 
-from tensorflow.keras.layer import Dense
+from tensorflow.keras.layers import Dense
 
 N, n_feature = 4, 10
 X = tf.random.normal(shape = (N, n_feature))
@@ -111,7 +119,7 @@ W3, B3 = dense3.get_weights()
 ```python
 import tensorflow as tf
 
-from tensorflow.keras.layer import Dense
+from tensorflow.keras.layers import Dense
 
 N, n_feature = 4, 10
 X = tf.random.normal(shape = (N, n_feature))
@@ -130,16 +138,49 @@ for dense in dense_layers:		# 각 layer에 input으로 통과
 
 
 
-### Model
+### Activation
 
-##### 1. Sequential()
+```python
+from tensorflow.feras.layers import Activation
+```
+
+
+
+Activation Function을 간단하게 구현할 수 있다.
+
+`Acivation('function name')(x_data)`
+
+```python
+import tensorflow as tf
+from tensorflow.feras.layers import Activation
+
+X = tf.random.uniform(shape = (1, 5), minval = -10, maxval = 10)
+
+softmax_value = Acivation('softmax')(X)
+```
+
+
+
+---
+
+
+
+## models
+
+### Sequential()
+
+```python
+from tensorflow.keras.models import Sequential
+```
+
+
 
 Dense Layer이 몇개든 Model 안에 포함되게 만드는 함수
 
 model이라는 박스 안에 각각의 Dense Layers를 차례로 connection해주는 함수이다.
 
 ```python
-from tensorflow.keras.layer import Dense
+from tensorflow.keras.layers import Dense
 
 from tensorflow.keras.models import Sequential
 
@@ -156,7 +197,13 @@ Y = model(X)
 
 
 
-##### 2. class: Model
+### Model
+
+```python
+from tensorflow.keras.models import Model
+```
+
+
 
 tensorflow를 활용한 모델 class 생성
 
@@ -187,7 +234,7 @@ Y = model(X)			# call 함수 자동 호출
 
  
 
-###### 1. layers
+#### layers
 
 Model Object에서 .layers를 통해 각각의 dense에 접근할 수 있다.
 
@@ -201,7 +248,7 @@ model.layers[0]  # dense1 에 접근
 
 
 
-###### 2. trainable_variables
+#### trainable_variables
 
 Model Object에서 .trainable_variables를 통해 weight, bias 등등의 학습에 필요한 정보들에 접근할 수 있다.
 
@@ -221,18 +268,116 @@ model.trainable_variables
 
 
 
-## Activation
 
-Activation Function을 간단하게 구현할 수 있다.
 
-`Acivation('function name')(x_data)`
+## losses
+
+#### MSE
+
+```python
+from tensorflow.keras.losses import MeanSquaredError
+```
+
+
+
+ex)
 
 ```python
 import tensorflow as tf
-from tensorflow.feras.layers import Activation
 
-X = tf.random.uniform(shape = (1, 5), minval = -10, maxval = 10)
+from tensorflow.keras.losses import MeanSquaredError
 
-softmax_value = Acivation('softmax')(X)
+loss_object = MeanSquaredError()
+
+batch_size = 32
+
+predictions = tf.random.normal(shape = (batch_size, 1))
+labels = tf.random.normal(shape = (batch_size, 1))
+
+mse = loss_object(labels, predictions)
 ```
+
+
+
+
+
+#### BCE
+
+```python
+from tensorflow.keras.losses import BinaryCrossentropy
+```
+
+ex)
+
+```python
+import tensorflow as tf
+
+from tensorflow.keras.losses import BinaryCrossentropy
+
+batch_size = 32
+n_class = 2
+
+predictions = tf.random.uniform(shape = (batch_size, 1), 
+                                minval = 0, maxval = 1, 
+                                dtype = tf.float32)
+
+labels = tf.random.uniform(shape = (batch_size, 1), 
+                                minval = 0, maxval = n_class, 
+                                dtype = tf.int32)
+
+loss_object = BinaryCrossentropy()
+loss = loss_object(labels, predictions)
+
+print(loss.numpy())
+```
+
+
+
+
+
+#### CCE
+
+```python
+from tensorflow.keras.losses import CategoricalCrossentropy
+```
+
+
+
+ex)
+
+```python
+import tensorflow as tf
+
+from tensorflow.keras.losses import CategoricalCrossentropy
+
+batch_size, n_class= 16, 5
+
+predictions = tf.random.uniform(shape = (batch_size, n_class), 
+                                minval = 0, maxval = 1, 
+                                dtype = tf.float32)
+pred_sum = tf.reshape(tf.reduce_sum(predictions, axis = 1), (-1, 1))
+predictions = predictions / pred_sum
+# to make the sum of predictions to 1
+
+labels = tf.random.uniform(shape = (batch_size, ), 
+                                minval = 0, maxval = n_class, 
+                                dtype = tf.int32)
+
+labels = tf.one_hot(labels, n_class)
+# print(labels)
+
+loss_object = CategoricalCrossentropy()
+loss = loss_object(labels, predictions)
+print(loss.numpy())  
+
+# or
+loss = tf.reduce_mean(tf.reduce_sum(-labels*tf.math.log(predictions), axis = 1))
+print(loss.numpy()) # same loss
+```
+
+
+
+
+
+## optimizers
 
