@@ -108,6 +108,12 @@ image에 filter sliding을 하게 되면 그 output matrix의 shape은 더욱 �
 
 > 제로패딩 1을 적용한 이미지
 
+size를 보존하기 위한 padding의 크기는 (F-1)/2 만큼 하면 된다.
+
+F : size of filter
+
+
+
 
 
 ##### Stride
@@ -147,14 +153,6 @@ receptive field에서 average만을 추려낸다.
 > 즉 activation의 영향 때문에 잘 사용하지 않는다.
 
 
-
-##### Flatten
-
-Feature Extractor의 마지막 단계
-
-이 때의 shape은 (1, 1, n) 형태이기 때문에
-
-(n, ) 의 shape으로 (vector) 만들어주는 작업
 
 
 
@@ -244,7 +242,288 @@ Feature Extractor을 통과하고 나온 data를 input으로 받는다.
 
 Fully connected는 ANN이라고 생각하면 됨
 
+마지막에 Softmax와 같은 Activation Function을 적용함으로써 output을 각각의 class에 대한 probability로 만들어준다.
 
+
+
+##### Flatten
+
+Feature Extractor의 마지막 단계
+
+이 때의 shape은 (1, 1, n) 형태이기 때문에
+
+(n, ) 의 shape으로 (vector) 만들어주는 작업
+
+
+
+
+
+---
+
+
+
+## CNN Implement
+
+**simple ver**
+
+```python
+import tensorflow as tf
+from tensorflow.keras.layers import Conv2D, MaxPooling2D
+from tensorflow.keras.layers import Flatten, Dense
+
+test_image = tf.random.normal(mean = 0, stddev = 1, shape = (32, 50, 50, 3))
+conv =Conv2D(filters = 8, kernel_size = (3, 3), 
+            padding = 'same', activation = 'relu')
+conv_pool = MaxPooling2D(pool_size = 2, strides = 2)
+flatten = Flatten()
+dense = Dense(units = 10, activation = 'softmax')
+
+print(f"test_image : {test_image.shape}")
+
+x = conv(test_image)
+print(f"after conv: {x.shape} ")
+
+x = conv_pool(x)
+print(f"after conv_pool: {x.shape} ")
+
+x = flatten(x)
+print(f"after flatten : {x.shape}")
+
+x = dense(x)
+print(f"after danse: {x.shape}")
+```
+
+
+
+**CNN with Model**
+
+##### sequential()
+
+```python
+import tensorflow as tf
+
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Conv2D, MaxPooling2D
+from tensorflow.keras.layers import Flatten, Dense
+
+model = Sequential()
+
+# feature extractor
+model.add(Conv2D(filters = 8, kernel_size = 5, padding = 'same', activation = 'relu'))           
+model.add(MaxPooling2D(pool_size = 2, strides = 2))
+
+model.add(Conv2D(filters = 32, kernel_size = 5, padding = 'same', activation = 'relu'))       
+model.add(MaxPooling2D(pool_size = 2, strides = 2))
+
+# classifier
+model.add(Flatten())
+model.add(Dense(units = 64, activation = 'relu'))
+model.add(Dense(units = 10, activation = 'softmax'))
+
+model.build(input_shape = (None, 28, 28, 1))
+model.summary()
+```
+
+```
+Model: "sequential"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #
+=================================================================
+conv2d (Conv2D)              (None, 28, 28, 8)         208
+_________________________________________________________________
+max_pooling2d (MaxPooling2D) (None, 14, 14, 8)         0
+_________________________________________________________________
+conv2d_1 (Conv2D)            (None, 14, 14, 32)        6432
+_________________________________________________________________
+max_pooling2d_1 (MaxPooling2 (None, 7, 7, 32)          0
+_________________________________________________________________
+flatten (Flatten)            (None, 1568)              0
+_________________________________________________________________
+dense (Dense)                (None, 64)                100416
+_________________________________________________________________
+dense_1 (Dense)              (None, 10)                650
+=================================================================
+Total params: 107,706
+Trainable params: 107,706
+Non-trainable params: 0
+_________________________________________________________________
+```
+
+
+
+##### Model Sub-classing
+
+```python
+import tensorflow as tf
+
+from tensorflow.keras.models import Model
+from tensorflow.keras.layers import Conv2D, MaxPooling2D
+from tensorflow.keras.layers import Flatten, Dense
+
+class CNN_Model(Model):
+    def __init__(self):
+        super(CNN_Model, self).__init__()
+
+        # feature extractor
+        self.conv1 = Conv2D(filters = 8, kernel_size = 5, padding = 'same', activation = 'relu')
+        self.conv1_pool =  MaxPooling2D(pool_size = 2, strides = 2)
+        self.conv2 = Conv2D(filters = 32, kernel_size = 5, padding = 'same', activation = 'relu')       
+        self.conv2_pool = MaxPooling2D(pool_size = 2, strides = 2)
+
+        # classifier
+        self.flatten = Flatten()
+        self.dense1 = Dense(units = 64, activation = 'relu')
+        self.dense2 = Dense(units = 10, activation = 'softmax')
+
+    def call(self, x):
+        x =self.conv1(x)
+        x =self.conv1_pool(x)
+        x =self.conv2(x)
+        x =self.conv2_pool(x)
+
+        x =self.flatten(x)
+        x =self.dense1(x)
+        x =self.dense2(x)
+        return x
+        
+model = CNN_Model()
+model.build(input_shape = (None, 28, 28, 1))
+model.summary()
+```
+
+```
+Model: "cnn__model"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #
+=================================================================
+conv2d (Conv2D)              multiple                  208
+_________________________________________________________________
+max_pooling2d (MaxPooling2D) multiple                  0
+_________________________________________________________________
+conv2d_1 (Conv2D)            multiple                  6432
+_________________________________________________________________
+max_pooling2d_1 (MaxPooling2 multiple                  0
+_________________________________________________________________
+flatten (Flatten)            multiple                  0
+_________________________________________________________________
+dense (Dense)                multiple                  100416
+_________________________________________________________________
+dense_1 (Dense)              multiple                  650
+=================================================================
+Total params: 107,706
+Trainable params: 107,706
+Non-trainable params: 0
+_________________________________________________________________
+```
+
+
+
+##### M-Sub + Seq
+
+```python
+import tensorflow as tf
+
+from tensorflow.keras.models import Model, Sequential
+from tensorflow.keras.layers import Conv2D, MaxPooling2D
+from tensorflow.keras.layers import Flatten, Dense
+
+class CNN_Model(Model):
+    def __init__(self):
+        super(CNN_Model, self).__init__()
+
+        # feature extractor
+        self.fe = Sequential()
+        self.fe.add(Conv2D(filters = 8, kernel_size = 5, padding = 'same', activation = 'relu'))  
+        self.fe.add(MaxPooling2D(pool_size = 2, strides = 2))
+        self.fe.add(Conv2D(filters = 32, kernel_size = 5, padding = 'same', activation = 'relu'))        
+        self.fe.add(MaxPooling2D(pool_size = 2, strides = 2))
+
+        # classifier
+        self.classifier = Sequential()
+        self.classifier.add(Flatten())
+        self.classifier.add(Dense(units = 64, activation = 'relu'))
+        self.classifier.add(Dense(units = 10, activation = 'softmax'))
+
+    def call(self, x):
+        x = self.fe(x)
+        x = self.classifier(x)
+        return x
+        
+        
+model = CNN_Model()
+model.build(input_shape = (None, 28, 28, 1))
+model.summary()
+```
+
+```
+Model: "cnn__model"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #
+=================================================================
+sequential (Sequential)      (None, 7, 7, 32)          6640
+_________________________________________________________________
+sequential_1 (Sequential)    (None, 10)                101066
+=================================================================
+Total params: 107,706
+Trainable params: 107,706
+Non-trainable params: 0
+_________________________________________________________________
+```
+
+
+
+##### M-Sub + L-Sub + Seq
+
+```python
+import tensorflow as tf
+
+from tensorflow.keras.models import Model, Sequential
+from tensorflow.keras.layers import Conv2D, MaxPooling2D
+from tensorflow.keras.layers import Flatten, Dense
+from tensorflow.keras.layers import Layer, Activation
+
+class ConvLayer(Layer):
+    def __init__(self, filters, kernel_size):
+        super(ConvLayer, self).__init__()
+
+        self.conv = Conv2D(filters = filters, kernel_size = kernel_size,
+                            padding = 'same')
+        self.conv_act = Activation('relu')
+        self.conv_pool = MaxPooling2D(pool_size = 2, strides = 2)
+
+    def call(self, x):
+        x = self.conv(x)
+        x = self.conv_act(x)
+        x = self.conv_pool(x)
+        return x
+
+class CNN_Model(Model):
+    def __init__(self):
+        super(CNN_Model, self).__init__()
+
+        # feature extractor
+        self.fe = Sequential(name = 'feature_extractor')
+        self.fe.add(ConvLayer(8, 3))
+        self.fe.add(ConvLayer(16, 3))
+        self.fe.add(ConvLayer(32, 3)) 
+
+        # classifier
+        self.classifier = Sequential(name = 'classifier')
+        self.classifier.add(Flatten())
+        self.classifier.add(Dense(units = 64, activation = 'relu'))
+        self.classifier.add(Dense(units = 10, activation = 'softmax'))
+
+    def call(self, x):
+        x = self.fe(x)
+
+        x = self.classifier(x)
+        return x
+        
+        
+model = CNN_Model()
+model.build(input_shape = (None, 28, 28, 1))
+model.summary()
+```
 
 
 
@@ -277,3 +556,4 @@ A guide to convolution arithmetic for deep learning
 Vinsent Dumoulin and Francesco Visin
 
 January 12, 2018
+
