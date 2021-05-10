@@ -8,6 +8,12 @@ LeNet - 5 Architecture
 
 Gray scale input
 
+---
+
+LeNet - 5에서 사용하는 pooling filter는 Average Pooling임
+
+
+
 
 
 - **when through layer == 1** 

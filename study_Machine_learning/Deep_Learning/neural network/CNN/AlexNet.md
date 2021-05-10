@@ -1,8 +1,12 @@
 # AlexNet
 
-![](https://i.imgur.com/CwIvlUW.png)
+Video 인식에 뛰어난 성능을 발휘한 CNN algorithm
+
+
 
  AlexNet using two GPU
+
+![](https://i.imgur.com/CwIvlUW.png)
 
 ![](https://seongkyun.github.io/assets/post_img/study/2019-01-25-num_of_parameters/fig2.png)
 
@@ -25,20 +29,20 @@ Color scale input
 
 
   shape of bais
-  $$
+$$
   b.shape = (48*2 )
-  $$
-  
+$$
+
 
   shape of output image
-  $$
+$$
   W_1 = H_1 = \left[ \frac{H_{n-1} + 2p - k}{s}  \right] + 1 = \left[ \frac{227 + 0 - 11}{4} \right] + 1 \\= 55
   \\
-  $$
+$$
 
-  $$
+$$
   img.shape = (55, 55, 48 * 2)
-  $$
+$$
 
   
 

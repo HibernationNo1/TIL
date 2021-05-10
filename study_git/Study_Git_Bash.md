@@ -30,7 +30,7 @@
 
 - `git remote add origin github_repository주소`: git으로 버전관리 되는 디렉토리에서 명령 실행 시 gib hub와 연동
 
-  - ex) `git remote add origin https://github.com/HibernationNo1/TIL.git`
+  - ex) `git remote add origin https://github.com/HibernationNo1/menual-function.git`
 
 - `git clone github_repository주소`:  
   
@@ -83,7 +83,7 @@
 
 
 
-#####  git init 이전에 `touch .gitignore` 을 통해 내 프로젝트의 최 상단 repository에 gitignore 파일을 만든다.  (사실 순서는 크게 상관없음)
+git init 이전에 `touch .gitignore` 을 통해 내 프로젝트의 최 상단 repository에 gitignore 파일을 만든다.  (사실 순서는 크게 상관없음)
 
 > 이 파일 안에 '파일이름.확장자' 또는  '폴더명/'를 입력하면 git add 에서 제외돼서 git 버전관리에서 제외된다.
 >
