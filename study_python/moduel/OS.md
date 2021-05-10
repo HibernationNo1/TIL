@@ -72,3 +72,15 @@ os.chdir("C:\Tmp")
 os.path.isdir('test_name1')
 ```
 
+
+
+#### listdir()
+
+경로 위 모든 directory list를 return한다.
+
+```python
+os.listdir(os.getcwd())
+```
+
+
+
