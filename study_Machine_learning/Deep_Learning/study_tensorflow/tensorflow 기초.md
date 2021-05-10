@@ -261,9 +261,27 @@ print(t1+t2) # 정수에 대한 결과가 나옴
 
 
 
+### 4. dim change
+
+##### reshape()
+
+원하는 shape을 직접 설정해서 기존 object의 shape을 변경할 수 있다.
 
 
-### 4. Tensor 연산
+
+##### squeeze()
+
+dimension 중 size 가 1인 것을 찾아 scalar 값으로 바꿔 해당 dimension을 제거한다.
+
+
+
+##### expend_dims
+
+axis로 지정된 차원을 추가한다.
+
+
+
+### 5. Tensor 연산
 
 ##### 1. broadcasting
 
