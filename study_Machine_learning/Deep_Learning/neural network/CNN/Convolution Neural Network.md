@@ -223,6 +223,12 @@ receptive field에서 average만을 추려낸다.
   > k : size of pooling filter 
   >
   > s : stride
+  
+  만약 padding의 'same'이라는 argument를 주고, strides가 1이면
+  
+  layer을 통과해도 image의 size는 변하지 않는다.
+
+
 
 
 
