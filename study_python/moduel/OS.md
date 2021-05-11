@@ -84,3 +84,11 @@ os.listdir(os.getcwd())
 
 
 
+#### GPU ALLOW
+
+GPU 를 과하지 않게 사용하기 위한 속성. 코드처음에 작성
+
+```python
+os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
+```
+
