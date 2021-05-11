@@ -378,7 +378,7 @@ res3 = tf.reduce_sum(t1, axis = 2) # 3차원 방향으로 더한다.(z축)
 
 
 
-##### 4. tf.concat
+##### 4. tf.concat()
 
 Function that stack serveral matrices
 
@@ -412,3 +412,16 @@ print(x)
 
 > [[1 2 3]
 >  [4 5 6]], shape=(2, 3), dtype=int32)
+
+
+
+##### 5. tf.argmax()
+
+argument의 최대값을 반환한다.
+
+```python
+tf.argmax(predictions, axis = 1)
+```
+
+> predictions 이라는 dnarray의 각 column에서 가장 큰 값들만 추려서 반환
+
