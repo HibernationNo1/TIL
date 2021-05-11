@@ -105,3 +105,11 @@ print(loss.numpy()) # same loss
 
 
 
+##### SCCE
+
+CCE와의 차이: label data에 one-hot encoding을 적용하지 않음
+
+```python
+from tensorflow.keras.losses import SparseCategoricalCrossentropy
+```
+
