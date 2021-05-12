@@ -1,5 +1,7 @@
 # keras.layers
 
+![](https://github.com/HibernationNo1/TIL/blob/master/image/k1..jpg?raw=true)
+
 ### Dense
 
 ![](https://wikidocs.net/images/page/49071/multilayerperceptron.PNG)
@@ -9,6 +11,10 @@
 ```python
 from tensorflow.keras.layers import Dense
 ```
+
+> Dense Layer can receive only one dimension data
+>
+> and inout data to dense layer is all columns
 
 
 
