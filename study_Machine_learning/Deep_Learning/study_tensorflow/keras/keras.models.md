@@ -141,26 +141,194 @@ model.trainable_variables
 add를 통해 쌓인 Dense를 기반으로 실질적인 Model을 만드는 함수
 
 ```python
+model.build(input_shape = )
+```
+
+`input_shape`: 입력되는 data의 shape
+
+
+
+ex)
+
+```python
 class Test_Model(Model):
     def __init__(self):
         super(CNN_Model, self).__init__()
 		pass
 
-    def call(self, x):
+    def call(self, x_data):
         pass
         
-model = Test_Model()
+model = Test_Model(x_data)
 model.build(input_shape = (None, 28, 28, 1))
 model.summary()
 ```
 
-- `input_shape`: 입력되는 image의 shape
+
 
 
 
 #### summary()
 
 model의 information을 보여주는 함수
+
+```python
+model.summary()
+```
+
+
+
+
+
+#### compiled()
+
+model의 learning process를 설정한다.
+
+```python
+model.compile(loss, optimizer, metrics)
+```
+
+> `loss` 사용할 loss function을 결정한다
+>
+> ```python
+> from tensorflow.keras.losses import CategoricalCrossentropy
+> loss_object = CategoricalCrossentropy()
+> ```
+>
+> `optimizer` 사용할 optimizer를 결정한다.
+>
+> ```python
+> from tensorflow.keras.optimizers import SGD
+> optimizer_object = SGD(lr = 0.01)
+> ```
+>
+> `metrics` 사용할 accuracy를 결정한다.
+>
+> ```python
+> from tensorflow.keras.metrics import Mean
+> accuracy_object = Mean()
+> ```
+
+```python
+from tensorflow.keras.losses import CategoricalCrossentropy
+from tensorflow.keras.optimizers import SGD
+from tensorflow.keras.metrics import Mean
+
+loss_object = CategoricalCrossentropy()
+optimizer_object = SGD(lr = 0.01)
+accuracy_object = Mean()
+
+model.compile(loss = loss_object,
+              optimizer = optimizer_object, 
+              metrics = accuracy_object)
+```
+
+
+
+
+
+#### fit()
+
+data를 통해 mode을 learning시키는 함수
+
+```python
+loss_accs = model.fit(train_image, train_label, epochs=, batch_size=, verbose = None)
+```
+
+- `loss_accs` : loss와 accuracy의 history를 epoch마다 기록, save한다.
+
+- `epochs`
+
+- `batch_size`
+
+- `verbose = ` 1 을 설정해놓으면  학습의 진행 상황을 보여준다.
+
+- `validation_data =(val_image, val_label) ` validation data set을 input하고 싶을 때 설정.
+
+  tuple로 argument를 넣어준다.
+
+  loss_accs에도 val_loss와 val_accs를 기록, save한다.
+
+```python
+loss_accs = model.fit(train_image, train_label, epochs=5, batch_size=32,verbose = 1)
+```
+
+
+
+- 일반적으로 fit() 수행시 별도의 validation data set를 이용해서 Overtiffing이 발생하는지 확인한다. 
+
+- fit()을 사용하면 iteration을 반복하기 때문에 중간에 hyperparameters 변경(Learning rate)등의 작업에 어려움이 있다.
+  이를 위해 iteration 순간 여러 작업을 하기 위해 Callback 객체를 가진다.
+
+  **Callback** : iteration 이 반복되다가 특정 particular condition이 맞으면 반복을 멈추고 여러 작업등을 수행할 수 있게 해준다.
+
+  보통 overfitting이 발생하거나 performance가 더 이상 좋아지지 않으면 collback 함수를 사용한다.
+
+
+
+
+
+###### history
+
+`loss_accs`에 저장된 loss와 accuracy에 acess할 수 있다.
+
+```python
+print(loss_accs.history['loss'])
+print(loss_accs.history['accuracy'])
+```
+
+
+
+#### predict()
+
+학습된 model에 test data를 input해서 label 값을 prediction
+
+```python
+pred_proba = model.predict(test_images)
+print(pred_proba[0]) # test_iamge 중 0번째 index에 대한 각 classicication 결과값을 0~1 사이로 반환한다.
+```
+
+> - training data for learning의 category가 10개였다면,  test_images 또한 10개의 categorical data이어야 한다.
+>
+> - training data의 dimension과 `test_images`의 dimesion이 같아야 함
+>
+>   gaty scale image가 layer을 통과할땐 3차원으로 자동 converted 때문에 
+>
+>   `np.expand_dims(test_images, axis = 0)` 를 통해 iamge의 metirx를 3 dimension으로 conversion 해야한다.
+
+```python
+print(np.argmax(pred_proba[0]))
+```
+
+
+
+
+
+#### evaluate()
+
+validtion of model performance
+
+```python
+result = model.evaluate( input1, input2, batch_size = )
+```
+
+- `input1` : test data
+
+- `input2` : labels 
+
+  > if your model learning using CCE, input2 have to applid One-hot encoding
+
+```py
+print(result)
+```
+
+
+
+
+
+
+
+---
 
 
 
