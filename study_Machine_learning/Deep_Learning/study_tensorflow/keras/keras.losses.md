@@ -65,8 +65,12 @@ print(loss.numpy())
 
 ### CCE
 
+computes loss using CategoricalCrossentropy
+
 ```python
 from tensorflow.keras.losses import CategoricalCrossentropy
+loss = CategoricalCrossentropy()
+loss(abels, predictions)
 ```
 
 
