@@ -15,7 +15,7 @@ tmp1 = os.getcwd()
 print(tmp)	# D:\Project\tmp\.venv
 ```
 
-
+> terminal command $ cd 를 사용해서 작업하는 위치 변경
 
 
 
