@@ -40,7 +40,7 @@ Size = (X, X) 인 Filter를 size = (Y, Y)인 image의 좌측 상단에 dotted(el
 
 ![](https://blog.kakaocdn.net/dn/sSowL/btqCLeODqbH/0VNYdYkafga04UZhgxliv0/img.png)
 
-이 과정에서 Filter(== kerenel)의 각 elements와  image의 특정 영역의 각 elements의 value가 비슷하면 해당 matrix의 sum이 커지는 것이다.
+이 과정에서 Filter의 각 elements와  image의 특정 영역의 각 elements의 value가 비슷하면 해당 matrix의 sum이 커지는 것이다.
 
 > image의 영역 중 kerenel과 convolution 되는 영역을 **Receptive Field** 라고 한다.
 >
@@ -64,6 +64,8 @@ filter bank를 통과하고 나온 output을 모아놓은 것이 바로 feature 
 
 > filters을 통해 추출한 **활성화 맵(feature map)**은 원본 image에서 명확히 들어나지 않았던 특징들을 보여준다. 
 
+kernel은 filter의 채널을 의미하는 것이다.
+
 
 
 - Shape of Filter Bank
@@ -72,14 +74,18 @@ filter bank를 통과하고 나온 output을 모아놓은 것이 바로 feature 
 
   
 
-
-
-
-
 ##### Multi-channel input
 
-color image는 (B, G, R)3개의 channel이 있는데, 이러한 image가 input되면 각각의 channel에 대해서 filter bank가 적용되고, 모든 output을 sum한 각각의 결과를 또 sum을 한 후 bias를 add하는 것이 Multi-channel input에서의 Convolution이다.
+color image는 (B, G, R)3개의 channel이 있는데, 이러한 image가 input되면 각각의 channel에 대해서 filter bank가 적용된다.(이 때 1개의 filter당 3개의 kernel이 있다.)
 
+그 과정에서 sum(receptive field * kernel) == output의 1 pixel이 된다. receptive field가 한 칸씩 이동해 가며 compute를 해서 완성된 output의 개수는 filter bank에 존재하는 filter의 개수와 동일하다. 이것이 Multi-channel input에서의 Convolution이다.
+
+![](https://github.com/HibernationNo1/TIL/blob/master/image/dc4.jpg?raw=true)
+
+> color image 가 convolution layer의 input일 때, fieter가 1개라면 kernel은 3개. 
+>
+> 각각의 kernel을 전부 더한 후 마지막에 bias를 add ==> ouput은 1개
+>
 > filter bank에 10개의 filter가 있다고 하면 10개의 feature map이 나오게 되는것이다.
 
 ![](https://debuggercafe.com/wp-content/uploads/2019/06/LeNet-5.png)
