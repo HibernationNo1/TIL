@@ -51,11 +51,19 @@ tmp = cost(loss).result()
 
 
 
-### SparseCategoricalAccuracy
+### CategoricalAccuracy
 
 method computes accuracy
 
 instance의 argument에 labels, predictions를 주면 accuracy을 computes 한 후 자신에게 누적한다.
+
+
+
+### SparseCategoricalAccuracy
+
+CategoricalAccuracy와 동작은 같다.
+
+단, argument는 one-hot encoding 된 data이어야 한다.
 
 ```python
 from tensorflow.keras.metrics import SparseCategoricalAccuracy
