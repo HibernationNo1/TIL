@@ -1,8 +1,6 @@
 # tf.math
 
-
-
-#### confusion_matrix()
+### confusion_matrix()
 
 분류 모델 성능 평가 지표
 
@@ -32,3 +30,38 @@ tf.math.confusion_matrix(labels, predictions)
   먼저 size = (4, 4) 의 metrix가 만들어진 다음
 
   index[1, 2], index[2, 2], index[4, 4] 자리에 1이, 나머지는 0이 채워진다.
+
+
+
+# tf.split
+
+method for split data
+
+```python
+object = tf.split(input_data, num_or_size_spits = , axis = )
+```
+
+- `num_or_size_spits` if gaven integers, split equally
+
+  if gaven list, split by elements
+
+ex)
+
+```python
+input_data = tf.Variable(tf.random.uniform([5, 30], -1, 1))
+object1, object2, object3 = tf.split(input_data, num_or_size_spits = 3, axis = 1)
+# object1.shape == object2.shape == object3.shape == (5, 10)
+
+object1, object2 = tf.split(input_data, num_or_size_spits = [2, 3], axis = 0)
+# object1.shape == (2, 30)
+# object2.shape == (3, 30)
+```
+
+
+
+
+
+tf.squeeze
+
+numpy와 동일
+
