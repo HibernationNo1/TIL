@@ -19,7 +19,7 @@ import pandas as pd
 
 
 
-### 생성
+### create
 
 #### pd.DataFrame
 
@@ -56,9 +56,13 @@ print(df)
 
 
 
-####  read
+---
 
-##### pd.read_csv
+
+
+###  read file
+
+#### pd.read_csv
 
 csv파일 읽는 방법
 
@@ -103,7 +107,7 @@ df = pd.read_csv('path\file_name.csv')
 
 
 
-##### pd.read_sql_query
+#### pd.read_sql_query
 
 sql파일에서 데이터를 가져오는 방법 
 
@@ -119,7 +123,7 @@ df_match = pd.read_sql_query('SELECT * from Match', conn)
 
 
 
-##### pd.read_html
+#### pd.read_html
 
 웹 페이지도 가져올 수 있다.
 
@@ -405,7 +409,7 @@ df ==
 4	5월   320    17   12
 ```
 
-이름이 없던 인덱스에 index라는 이름이 생기고 첫 번째 컬럼으로 자동 할당된 것을 볼 수 있다.
+이름이 없던 tuple에 index라는 이름이 생기고 첫 번째 컬럼으로 자동 할당된 것을 볼 수 있다.
 
 
 
@@ -466,6 +470,8 @@ foo2 = df.iloc[ :3, 2: ]
 
 
 
+---
+
 
 
 ### delete data
@@ -507,6 +513,71 @@ x_num = df.drop(col_cats, axis=1)
 
 
 
+#### df.dropna()
+
+NaN value data를 delete한 df를 return
+
+```python
+new_df = df.dropna()
+```
+
+```python
+df.dropna(inplace = True)
+```
+
+
+
+
+
+---
+
+
+
+### insert, undata
+
+#### df[ ]
+
+create new column
+
+```python
+df['new column name'] = 0
+```
+
+> 모든 index가 0인 new column 생성
+
+
+
+row value에 특정 값을 넣으면서 create하고 싶으면
+
+```python
+df['new column name'] = df['매출액'] + df['영업이익']
+```
+
+
+
+np.where 활용
+
+```python
+df['new column name'] = np.where(df['매출액'] == 300, 'True', 'False')
+```
+
+
+
+#### df.apped()
+
+```python
+df.apped(new_df, ignore_index = True)
+```
+
+- `ignore_index = True`  자연스럽게 마지막 index에 넣겠다는 뜻
+- `new_df = new insert data frame`
+
+
+
+---
+
+
+
 ### save file
 
 #### df.to_csv
@@ -525,3 +596,6 @@ df.to_csv('file_name')
 
 - `na_rep = '-'`  : None Value는 '-'로 채워서 저장
 
+
+
+#### 
