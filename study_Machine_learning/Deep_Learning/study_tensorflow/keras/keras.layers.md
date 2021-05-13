@@ -14,13 +14,15 @@ from tensorflow.keras.layers import Dense
 
 > Dense Layer can receive only one dimension data
 >
-> and inout data to dense layer is all columns
+> and input data to dense layer is all columns
 
 
 
 Dense Layer 생성
 
-`object = Dense(unit = , activation = ' ')`
+```python
+object = Dense(unit = , activation = ' ')
+```
 
 - `object` : Dense Layer를 저장할 객체
 
@@ -31,6 +33,8 @@ Dense Layer 생성
 > 해당 Dense Layer을 통과할 때는 객체에 input을 넣어줘야 한다.
 >
 > `output = object(input)`
+
+- `name` : Dense의 name을 정할 수 있다.
 
 
 
@@ -193,22 +197,26 @@ softmax_value = Acivation('softmax')(X)
 
 2D Convolution Layer
 
+Conv2D의 input data는 4 dimensions이어야 한다.  그래서 Conv2D는 input data가 4 dimensions이도록 알아서 받는다. 
+
+(gray scalse image도 3차원으로 입력된다.)
+
 ```python
 import tensorflow as tf
 from tensorflow.keras.layers import Cov2D
 ```
 
-
-
-**property**
+```python
+dense = Cov2D(filters, kernel_size, strides, padding, activation)
+```
 
 - `filters`
 
 - `kernel_size`
 
-- `strides = (, )`
+- `strides `
 
-- `padding = `
+- `padding  `
 
   > 'valid' : padding을 적용하지 않음 
   >
@@ -217,8 +225,6 @@ from tensorflow.keras.layers import Cov2D
   > 단, strides가 2 이상이면 padding에 same을 넣는다 해도 input과 output image의 size는 다를 수 있다.
 
 - `activation`
-
-  > None
 
 
 
@@ -465,4 +471,57 @@ class ConvLayer(Layer):
 layer 하나하나의 속성을 간편하게 결정할 수 있다.
 
 
+
+### Input
+
+Functional API를 이용한 Model 설계에 사용된다.
+
+```python
+from tensorflow.keras.layers import Input
+input_tensor = Input(shape = (INPUT_SIZE, INPUT_SIZE))
+```
+
+
+
+Input을 사용한 Model은 keras.models에서 import한 Model이다.
+
+```python
+from tensorflow.keras.models import Model
+```
+
+그리고 해당 Model은 argument로 Input의 instance을 받아간다.
+
+```python
+from tensorflow.keras.layers import Input, Flatten, Dense
+from tensorflow.keras.models import Model
+
+input_tensor = Input(shape = (INPUT_SIZE_W, INPUT_SIZE_H)) # create instance
+
+x = Flatten()(input_tensor)
+x = Dense(units = 10, activation = 'sigmoid')(x)
+output = Dense(units = 20, activation = 'sigmoid')(x)
+
+model = Model(inputs = input_tensor, outputs = output)
+```
+
+line 6, 7, 8의 code를 Model-subclassing을 하지 않고도  Model instance를 만들 수 있다.
+
+
+
+**Model-subclassing**
+
+```python
+class TestModel(Model):						# 여기서부터
+    def __init__(self):
+        super(TestModel, self).__init__() 
+        self.flatten = Flatten()
+        self.dense1 = Dense(units = 10, activation = 'sigmoid')
+        self.dense2 = Dense(units = 20, activation = 'sigmoid')
+        
+    def call(x)
+    	x = self.flatten(x)
+        x = self.dense1(x)
+        x = self.dense2(x)
+        return x
+```
 
