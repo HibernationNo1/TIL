@@ -243,32 +243,36 @@ loss_accs = model.fit(train_image, train_label, epochs=, batch_size=, verbose = 
 
 - `verbose = ` 1 을 설정해놓으면  학습의 진행 상황을 보여준다.
 
+  > callback 객체에서 verbose 설정해놨다면 None으로 해도 ㄱㅊ
+
 - `validation_data =(val_image, val_label) ` validation data set을 input하고 싶을 때 설정.
 
   tuple로 argument를 넣어준다.
 
   loss_accs에도 val_loss와 val_accs를 기록, save한다.
+  
+- `shuffle`
+
+- `callback = []`
+
+  fit()을 사용하면 iteration을 반복하기 때문에 중간에 hyperparameters 변경(Learning rate)등의 작업에 어려움이 있다.
+  이를 위해 iteration 순간 여러 작업을 하기 위해 **Callback** 객체를 가진다.
 
 ```python
-loss_accs = model.fit(train_image, train_label, epochs=5, batch_size=32,verbose = 1)
+loss_acc = model.fit(x = train_iamges, y = train_oh_labels, batch_szie = 128, epoch = 10, validation_data = (val_images, val_oh_labels), callbacks = [mcp_cb])
 ```
+
+> 여러개 callback instance를 list 형태로 동시에 적용 가능
+
+
 
 
 
 - 일반적으로 fit() 수행시 별도의 validation data set를 이용해서 Overtiffing이 발생하는지 확인한다. 
 
-- fit()을 사용하면 iteration을 반복하기 때문에 중간에 hyperparameters 변경(Learning rate)등의 작업에 어려움이 있다.
-  이를 위해 iteration 순간 여러 작업을 하기 위해 Callback 객체를 가진다.
-
-  **Callback** : iteration 이 반복되다가 특정 particular condition이 맞으면 반복을 멈추고 여러 작업등을 수행할 수 있게 해준다.
-
-  보통 overfitting이 발생하거나 performance가 더 이상 좋아지지 않으면 collback 함수를 사용한다.
 
 
-
-
-
-###### history
+##### history
 
 `loss_accs`에 저장된 loss와 accuracy에 acess할 수 있다.
 
@@ -324,6 +328,40 @@ print(result)
 
 
 
+#### save()
+
+method for save model
+
+```python
+model.save(path)
+```
+
+no need file name. 
+
+file named 'saved_model.pb' automatically
+
+
+
+###### load_model()
+
+method for load file when you want load 'saved_model.pd'
+
+```python
+from tensorflow.keras.models import load_model
+model = load_model(path)
+model.summary()
+```
+
+- `path` no need file name. just 'path' where saved_model.pd exist
+
+
+
+simple ver
+
+```python
+model = tf.keras.models.load_model(path)
+```
+
 
 
 
@@ -371,5 +409,26 @@ class CNN_Model(Model):
 model = CNN_Model()
 model.build(input_shape = (None, 28, 28, 1))
 model.summary()
+```
+
+
+
+
+
+### Functional API
+
+create Model using `keras.layers` import `Input`
+
+```python
+from tensorflow.keras.layers import Input, Flatten, Dense
+from tensorflow.keras.models import Model
+
+input_tensor = Input(shape = (INPUT_SIZE_W, INPUT_SIZE_H)) # create instance
+
+x = Flatten()(input_tensor)
+x = Dense(units = 10, activation = 'sigmoid')(x)
+output = Dense(units = 20, activation = 'sigmoid')(x)
+
+model = Model(inputs = input_tensor, outputs = output)
 ```
 
