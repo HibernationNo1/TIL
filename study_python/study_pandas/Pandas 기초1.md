@@ -19,7 +19,7 @@ import pandas as pd
 
 
 
-### create
+### 1. create
 
 #### pd.DataFrame
 
@@ -60,7 +60,7 @@ print(df)
 
 
 
-###  read file
+###  2. read file
 
 #### pd.read_csv
 
@@ -137,7 +137,7 @@ state_code = pd.read_html('https://www.infoplease.com/us/postal-information/stat
 
 
 
-### acess
+### 3. acess
 
 #### df.head()
 
@@ -225,6 +225,32 @@ foo = df.query('매출액>300' and '영업이익 == 17')
 ```
 
 > can use conditional  
+
+
+
+##### df.rename()
+
+```python
+rename({'old_name': 'new_name', 'old_name': 'new_name'}, axis=)
+```
+
+- `axis=1` : rename columns
+- `axis=0` : rename index
+
+ex)
+
+```python
+df.rename({'월': 'new_월', '매출액': 'new_매출액'}, axis=1, inplace=True)
+```
+
+```
+  new_월  new_매출액   영업이익  순이익
+0  1월   	100    		25    10
+1  2월   	200    		20    11
+2  3월   	300    		15    12
+```
+
+
 
 
 
@@ -474,70 +500,13 @@ foo2 = df.iloc[ :3, 2: ]
 
 
 
-### delete data
+### 4. insert, undata
 
-#### df.drop()
+#### df['name']
 
-using when drop non use data (only)
+if no exist named column, create new column
 
-```python
-df.drop(['name1', 'name1'], axis = , inplace=True)
-```
-
-- `axis = 0` : index_name에 해당되는 data만 drop
-
-  `axis = 1` : column_name에 해당되는 data만 drop
-
-- `inplace=True`가 되어야 drop된 데이터를 뺀 나머지가 다시 df에 할당된다.
-
-  default = False
-
-  ```python
-  df = df.drop(['name', 'name'], axis =1)
-  ```
-
-  > 위 코드와 같음
-
-> tip) 컬럼명1 =  x, 	컬럼명2 = -x의 값을 가지고 있으면 두 컬럼 중 하나는  drop해줘야 한다.
->
-> **Multicollinearity**(다중공선성): 일반적으로 회귀 분석에서 발생하며, 분석에서 사용된 모델 데이터의 일부 컬럼이 다른 컬럼과 상관 정도가 높아, 데이터 분석 시 위험한 영향을 미치는 현상  
-
-
-
-```python
-col_cats = list['column_name1', 'column_name1' ...]
-x_num = df.drop(col_cats, axis=1)
-```
-
-> categorycal data만 drop하고 싶을 때 처럼, 특정 column만 drop하고 싶을 때는 위 처럼 list를 사용하자. 
-
-
-
-#### df.dropna()
-
-NaN value data를 delete한 df를 return
-
-```python
-new_df = df.dropna()
-```
-
-```python
-df.dropna(inplace = True)
-```
-
-
-
-
-
----
-
-
-
-### insert, undata
-
-#### df[ ]
-
-create new column
+but exist named column, change new column
 
 ```python
 df['new column name'] = 0
@@ -578,7 +547,7 @@ df.apped(new_df, ignore_index = True)
 
 
 
-### save file
+### 5. save file
 
 #### df.to_csv
 
@@ -598,4 +567,5 @@ df.to_csv('file_name')
 
 
 
-#### 
+
+
