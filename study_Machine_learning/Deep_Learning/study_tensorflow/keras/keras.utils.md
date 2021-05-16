@@ -9,13 +9,23 @@ from tensorflow.keras.utils import
 
 ### to_categorical
 
-Function that One-hot encoding
+method that One-hot encoding
 
 ```python
 from tensorflow.keras.utils import to_categorical
-train_oh_labels = to_categorical(train_labels)
-test_oh_labels = to_categorical(test_labels)
 ```
+
+
+
+```python
+y = to_categorical(y = labels, num_classes=None)
+```
+
+`num_classes=` : 분류할 class 개수
+
+
+
+
 
 
 
