@@ -12,7 +12,7 @@ import tensorflow as tf
 
 주어진 값의 (가중) mean을 계산
 
-instance의 argument에 loss값을 주면 mean을 구해서 cost를 computes 한 후 자신에게 누적한다.
+instance의 argument에 loss값을 주면 mean을 구해서 cost를 computes 한 후 자신에게 save한다.
 
 ```python
 from tensorflow.keras.metrics import Mean
@@ -55,7 +55,7 @@ tmp = cost(loss).result()
 
 method computes accuracy
 
-instance의 argument에 labels, predictions를 주면 accuracy을 computes 한 후 자신에게 누적한다.
+instance의 argument에 labels, predictions를 주면 accuracy을 computes 한 후 자신에게 save한다.
 
 
 
