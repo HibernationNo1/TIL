@@ -6,7 +6,51 @@ HEAD: 내가 화면으로 보고있는 위치
 
 master branch: 시초의 branch 
 
-## 1. branch 명령어
+---
+
+## git flow
+
+- main branch : 프로젝트가 끝날 때 까지 항상 유지되는 branch
+
+  - master : 제품으로 출시(Launching)할 수 있는 branch
+
+    > branch name은 master/v 0.0.0 이런 식
+
+  - develop: 개발 brach. 여기서 feature, release가 분기되고 병합된다.
+
+    > branch name은 develop/v 0.0.0 이런 식
+
+- sub branch : 필요할때만 사용되고 소멸되는 branch
+
+  - feature : develop로 부터 분기되어 개별 기능을 개발하는 branch. 기능이 완료되면 다시 develop으로 병합된다.
+
+    > branch name은 feature - ~~~ 또는 feature/ 이런 식
+
+  - release: 기능 개발이 완료되어 출시 버전을 준비하는 branch. 주로 주석을 정리하거나 gitignore에 등록하고 readme를 정리하는 작업 등을 한다.
+
+    > branch name은 release/ v 0.0.0 이런 식
+
+  - hofix : 출시 버전에서 발생한 bug를 fix하는 branch로 유일하게 mastger에서 분기된다.
+
+    > branch name은 hofix/v 0.0.0 이런 식
+
+
+
+### model 구성
+
+![](https://media.vlpt.us/images/cos/post/57fa6718-f327-4ae8-b789-26259632e4fe/Simplified-version-of-the-gitflow-branching-model-adapted-from-8.png)
+
+
+
+
+
+
+
+
+
+## branch
+
+###  branch 명령어
 
 `git branch, git branch --list` : 현재 repository의 branch 목록을 확인할 수 있다.
 
@@ -36,9 +80,9 @@ master branch: 시초의 branch
 
 
 
-## 2. branch 경우의 수
+###  branch 경우의 수
 
-### - master branch를 사용하면서 프로젝트를 진행할 때
+#### - master branch를 사용하면서 프로젝트를 진행할 때
 
 1. first commit 이후 branch가 1개만 생성되어 몇 번의 commit 후 merge
 
@@ -55,7 +99,6 @@ master branch: 시초의 branch
    >그 동안은 MERGING상태. merge가 완료된 것이 아님.
    >
    >>이 때는 commit이 불가능
-   
 
 2 -2.그 외
 
@@ -198,7 +241,7 @@ master branch: 시초의 branch
 >
 >master가 commit3 위치로 이동 (commit 2과 3이 합쳐짐)
 
-### - master branch는 구현 branch로만 활용해서 프로젝트를 진행할 때
+#### - master branch는 구현 branch로만 활용해서 프로젝트를 진행할 때
 
 1. 각자 브랜치에서 작업함 (commit)
 
