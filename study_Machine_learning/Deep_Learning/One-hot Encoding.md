@@ -29,7 +29,24 @@ $$
 
 
 
-**code implementation**
+### 
+
+#### to_categorical
+
+One-hot encoding meaning  change from categorical value to binary value
+
+```python
+from tensorflow.keras.utils import to_categorical
+
+train_oh_labels = to_categorical(train_labels)
+test_oh_labels = to_categorical(test_labels)
+```
+
+> class의 종류를 알아서 인지 후 분할
+
+
+
+#### tf.one_hot
 
 ```python
 Y = tf.one_hot(Y_vec, depth = , dtype = tf.int32)
@@ -38,3 +55,16 @@ Y = tf.one_hot(Y_vec, depth = , dtype = tf.int32)
 > `Y_vec` : must be a vector. not matrix.
 >
 > `depth` : number of class
+
+
+
+ex)
+
+```python
+import tensorflow as tf
+oh_labels = tf.one_hot(labels, 10)
+# 10개의 calss로 분할해서 one-hot
+```
+
+> class의 종류를 결정 후 분할
+
