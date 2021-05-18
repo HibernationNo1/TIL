@@ -525,3 +525,69 @@ class TestModel(Model):						# 여기서부터
         return x
 ```
 
+
+
+
+
+
+
+### Batch Normalization
+
+why need batch normalization?
+
+Arise 'internal Convariate Shift' issue when data passed through a filter. Batch Normalization need to prevent for this issue
+
+> internal Convariate Shift 
+>
+> 각 layer를 통과 할 때마다 input 데이터의 분포가 조금씩 변하는 현상
+
+
+
+![](https://blog.kakaocdn.net/dn/r5elS/btqBPXN1ib0/SKLvm2ZQj4pky6MyYOst3K/img.png)
+
+
+$$
+layer\ output \Rightarrow \   x \Rightarrow \  \widehat{x} = \frac{x-u}{\sigma} \Rightarrow \  y = \gamma\widehat{x} \\
+\Rightarrow y = \gamma\widehat{x} + \beta \ \ \ \ \ (BN)\\ 
+\gamma : Scaling\ 파라미터\\
+\beta : \ shift\ 파라미터
+$$
+layer를 통과한 data가 weight에 의해 한 쪽에 치우친 형태로 나오면 Batch Normalization 을 shift 파라미터로 사용해서 data 위치를 보정해준다.
+
+> 동적으로 layer의 output을 조절할 수 있게 된다.
+
+
+
+언제 적용할까?
+
+Conv2D -> BN -> Activation Function
+
+단, test data에는 적용하지 않는다.
+
+> Scaling파라미터와 beta 파라미터는 학습시에 최종 결정된 값을 이용 
+
+
+
+
+
+
+
+어떤 효과가 있나?
+
+- performance improvements
+
+- Regularization 
+
+  > Normalization 후에 scaling, shift로 일종의 noise추가 효과
+
+- Weight Initialization설정을 크게 신경 쓸 필요가 없다.
+
+
+
+```python
+from tensorflow.keras.layers import BatchNormalization
+x = Conv2D(filter = 32, kernel_size = 3, padding = 'same')(input)
+x = BatchNormalization()(x)
+x = Activation('relu')(x)
+```
+
