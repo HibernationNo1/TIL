@@ -164,7 +164,7 @@ from tensorflow.feras.layers import Activation
 
 X = tf.random.uniform(shape = (1, 5), minval = -10, maxval = 10)
 
-softmax_value = Acivation('softmax')(X)
+softmax_value = Activation('softmax')(X)
 ```
 
 
@@ -282,42 +282,73 @@ import numpy as np
 
 tf.random.set_seed(0)
 
-batch_size = 1
+batch_size = 2
 H, W= 7, 7
 test_image = tf.random.normal(mean = 0, stddev = 1, shape = (batch_size, W, H, 1))
 # (batch_size, width, height, image 개수) 즉, size = (7, 7) 의 grayscale iamge 1장
-
+# (None, W, H, chennal)
 num_of_kernel = 1
-pad = 0
+pad = 'valid'
 kernel_size = 3
 stride = 1
+filter = 8
 
 w = tf.random.normal(mean = 0, stddev = 1, shape = (kernel_size, kernel_size))
 b = tf.random.normal(mean = 0, stddev = 1, shape = (num_of_kernel, ))
-valid_idx = int((kernel_size-1)/2)  
-# padding  = 0 이므로 window slicing 시작 자리를 valid_idx로 설정
 
-test_image = test_image.numpy().squeeze()
+test_image = test_image.numpy()
+if pad == 'same':
+    valid_idx = int(0)  
+    H_conved = H
+    W_conved = W
+elif pad == 'valid':
+    valid_idx = int((kernel_size-1)/2)  
+    # padding  = 0 이므로 window slicing 시작 자리를 valid_idx로 설정
+    H_conved = int((H - kernel_size)/stride) + 1
+    W_conved = int((W - kernel_size)/stride) + 1
 
-W_conved = int((W + pad - kernel_size)/stride) + 1
-H_conved = int((H + pad - kernel_size)/stride) + 1
 print(f"W_conved: {W_conved} , H_conved : {W_conved}") 
 
-conved = np.zeros(shape = (H_conved, W_conved))
+
+#test = np.zeros_like(test_image)
 # window slicing
-for r_idx in range(valid_idx, H - 1 - valid_idx ):
-    for c_idx in range(valid_idx, W - 1 - valid_idx): 
-        receptive_field = test_image[r_idx - valid_idx : r_idx + valid_idx + 1, 
-                                     c_idx - valid_idx : c_idx + valid_idx + 1]
-        # print(receptive_field.shape)  
-        # filter shape대로 receptive_field가 잘 설정됨을 알 수 있다.
-        conved_tmp = receptive_field*w  # weight
-        conved_tmp = np.sum(conved_tmp) + b
+conved_images = list()
+batch_size = test_image.shape[0]
+for filter_idx in range(filter):
+    for batch_idx in range(batch_size):
+        conved = np.zeros(shape = (H_conved, W_conved))
+        cov_r_idx = 0
+        for r_idx in range(valid_idx, H - valid_idx, stride):
+            cov_c_idx = 0
+            for c_idx in range(valid_idx, W - valid_idx, stride): 
+                
+                receptive_field = test_image[batch_idx, r_idx - valid_idx : r_idx + valid_idx + 1, 
+                                            c_idx - valid_idx : c_idx + valid_idx + 1, -1:]
+                # print(receptive_field.shape)  
+                # filter shape대로 receptive_field가 잘 설정됨을 알 수 있다.
 
-        conved[r_idx - valid_idx : r_idx + valid_idx + 1, 
-                      c_idx - valid_idx : c_idx + valid_idx + 1] = conved_tmp
-
-print(f"conved {conved}")  
+                receptive_field = receptive_field.squeeze()
+                conved_tmp = receptive_field*w  # weight
+                conved_tmp = np.sum(conved_tmp) + b            
+                conved[cov_r_idx,cov_c_idx] = conved_tmp
+                #test[r_idx, c_idx] = 1
+                #print(test, "\n")
+                cov_c_idx +=1
+            cov_r_idx +=1
+        
+        conved = conved[np.newaxis,:, :]
+        if batch_idx == 0:
+            conved_img_tmp = conved
+        else:
+            conved_img_tmp = np.vstack([conved_img_tmp, conved])
+    if filter_idx == filter-1:
+        conved_images.append(conved_img_tmp)
+        conved_images = np.stack(conved_images, axis=3)
+        #import sys
+        #print(conved_images.shape)
+        #sys.exit()
+    else:
+        conved_images.append(conved_img_tmp)
 ```
 
 

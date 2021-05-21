@@ -888,7 +888,7 @@ print(d2)
 
 - hstack()
 
-  매개변수로 가져온 ndarray를 1차원으로 append한다.(수평으로 stack)
+  매개변수로 가져온 ndarray를 2차원으로 append한다.(수평으로 stack)
 
   append와 concatenate의 axis = 0 으로 이해하면 된다.
 
@@ -896,7 +896,7 @@ print(d2)
 
 - vstack()
 
-  매개변수로 가져온 ndarray를 2차원으로 append한다.. (수직으로 stack)
+  매개변수로 가져온 ndarray를 1차원으로 append한다.. (수직으로 stack)
 
   append와 concatenate의 axis = 1 으로 이해하면 된다.
 

@@ -159,7 +159,7 @@ class Test_Model(Model):
     def call(self, x_data):
         pass
         
-model = Test_Model(x_data)
+model = Test_Model()
 model.build(input_shape = (None, 28, 28, 1))
 model.summary()
 ```
@@ -173,10 +173,11 @@ model.summary()
 model의 information을 보여주는 함수
 
 ```python
+model.build(input_shape = (None, 28, 28, 1))
 model.summary()
 ```
 
-
+> model이 build 된 이후에 call
 
 
 
@@ -251,7 +252,7 @@ loss_accs = model.fit(train_image, train_label, epochs=, batch_size=, verbose = 
 
   loss_accs에도 val_loss와 val_accs를 기록, save한다.
   
-- `shuffle`
+- `shuffle` default  = True
 
 - `callback = []`
 
@@ -288,7 +289,7 @@ print(loss_accs.history['accuracy'])
 학습된 model에 test data를 input해서 label 값을 prediction
 
 ```python
-pred_proba = model.predict(test_images)
+pred_proba = model.predict(test_data)
 print(pred_proba[0]) # test_iamge 중 0번째 index에 대한 각 classicication 결과값을 0~1 사이로 반환한다.
 ```
 
@@ -316,7 +317,7 @@ validtion of model performance
 result = model.evaluate( input1, input2, batch_size = )
 ```
 
-- `input1` : test data
+- `input1` : images
 
 - `input2` : labels 
 

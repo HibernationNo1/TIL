@@ -77,12 +77,12 @@ np.where(ndarray != 'winter', 'True', 'False')
 
 
 
-##### np.squzzez()
+##### np.squeeze()
 
 ndarray안의 dimensions 중 1의 shape을 가진 dimensions를 delete해서 return
 
 ```python
-data = np.squzzez(data)
+data = np.squeeze(data)
 ```
 
 
