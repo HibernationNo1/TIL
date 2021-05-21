@@ -42,7 +42,29 @@ master branch: 시초의 branch
 
 
 
+#### GitKraken
 
+1. develop 에서 feature 만든 후 code 변경. 
+
+   > 각 feature은 파일 1개당 1개씩 하자
+
+2. 변경된 code를 up stage한 후 commit
+
+3. finish feature (변경사항)
+
+4. develop 에서 release 만든 후 주석 변경. 
+
+   > 각 release는  feature개당 1개씩
+
+5. 변경된 주석을 up stage한 후 commit
+
+6. finish release (v 0.0.0)
+
+7. master에서 push
+
+   > finish release 안하면 develop에서 master로 marge가 안됨
+
+같은 파일의 내용에 대해서 각각의 feature 또는 release를 진행하면, 변경된 두 경우 중 어떤 경우를 marge할건지 물어본다. 그렇기 때문에 가능하면 각 branch마다 다른 file에 대해서 개발하자.
 
 
 
