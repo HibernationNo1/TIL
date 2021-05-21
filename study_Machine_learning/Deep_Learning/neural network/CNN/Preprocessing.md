@@ -26,6 +26,8 @@ def get_Image_normalization(images, labels):
 
 ### One-hot encoding
 
+#### to_categorical
+
 One-hot encoding meaning  change from categorical value to binary value
 
 ```python
@@ -34,7 +36,19 @@ train_oh_labels = to_categorical(train_labels)
 test_oh_labels = to_categorical(test_labels)
 ```
 
+> class의 종류를 알아서 인지 후 분할
 
+
+
+#### tf.one_hot
+
+```python
+import tensorflow as tf
+oh_labels = tf.one_hot(labels, 10)
+# 10개의 calss로 분할해서 one-hot
+```
+
+> class의 종류를 결정 후 분할
 
 
 
