@@ -202,7 +202,7 @@ receptive field에서 average만을 추려낸다.
   >
   > W : width of image
   >
-  > p : pooling width
+  > p : padding width
   >
   > s : stride
   >
@@ -220,16 +220,10 @@ receptive field에서 average만을 추려낸다.
 
   이 공식은 pooling layer에서도 동일하게 사용할 수 있다.
   $$
-  H_n = \left[ \frac{H_{n-1} }{s}  \right] + 1 \\
-  W_n = \left[ \frac{W_{n-1} }{s}  \right] + 1
+  H_n = \left[ \frac{H_{n-1} + 2p - k}{s}  \right] + 1 \\
+  W_n = \left[ \frac{W_{n-1} + 2p - k}{s}  \right] + 1
   $$
 
-  > p : size of pooling filter 
-  >
-  > k : size of pooling filter 
-  >
-  > s : stride
-  
   만약 padding의 'same'이라는 argument를 주고, strides가 1이면
   
   layer을 통과해도 image의 size는 변하지 않는다.
