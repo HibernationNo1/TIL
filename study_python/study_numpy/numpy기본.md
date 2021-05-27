@@ -122,3 +122,12 @@ print(instance)
 
 
 
+
+
+##### np/count_nonzero()
+
+```python
+np.count_nonzero(bbox, axis=0)
+```
+
+> bbox의 0 dim에서 0이 아닌 element의 개수를 count
