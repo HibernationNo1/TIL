@@ -261,6 +261,18 @@ print(t1+t2) # 정수에 대한 결과가 나옴
 
 
 
+조건도 사용 가능
+
+```python
+tf.cast( (t2 > 3), dtype = tf.float32)
+```
+
+위 조건이 True면 1, False면 0을 return
+
+
+
+
+
 ### 4. dim change
 
 ##### reshape()
@@ -322,42 +334,7 @@ t3 = t1 + t2
 
 
 
-##### 2. tf.reduce()
-
-텐서를 연산하는 함수
-
-```python
-import tensorflow as tf
-
-t1 = tf.random.normal(shape = (3, 4))
-
-t1 = tf.cast(t1, dtype = tf.int16)
-```
-
-- `reduce_sum` : 텐서의 차원을 가로지르는 원소의 합을 반환
-
-  ```python
-  res = tf.reduce_sum(t1)
-  print(res)
-  ```
-
-- `reduce_prod`: 텐서의 차원을 가로지르는 원소의 곱을 반환
-
-- `reduce_max`: 텐서의 차원에서 요소의 최대 값을 반환
-
-- `reduce_min`: 텐서의 차원에서 요소의 최소 값을 반환
-
-- `reduce_mean `: 텐서의 차원에서 요소의 평균 값을 반환
-
-- `reduce_std` : 텐서의 차원에서 요소의 표준편자를 반환
-
-- `reduce_variance` : 텐서의 차원에서 요소의 분산을 반환
-
-[여러 계산 함수](https://m.blog.naver.com/PostView.nhn?blogId=stop2y&logNo=221526715840&proxyReferer=https:%2F%2Fwww.google.com%2F)
-
-
-
-##### 3. axis
+##### 2. axis
 
 axis는 연산하고 싶은 차원을 의미한다.
 
@@ -378,7 +355,7 @@ res3 = tf.reduce_sum(t1, axis = 2) # 3차원 방향으로 더한다.(z축)
 
 
 
-##### 4. tf.concat()
+##### 3. tf.concat()
 
 Function that stack serveral matrices
 
@@ -414,14 +391,4 @@ print(x)
 >  [4 5 6]], shape=(2, 3), dtype=int32)
 
 
-
-##### 5. tf.argmax()
-
-argument의 최대값을 반환한다.
-
-```python
-tf.argmax(predictions, axis = 1)
-```
-
-> predictions 이라는 dnarray의 각 column에서 가장 큰 값들만 추려서 반환
 
