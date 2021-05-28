@@ -429,6 +429,20 @@ avepooled = avepool(test_image)
 
 
 
+#### GlobalAveragePooling2D
+
+AveragePooling2D을 전체 feature map에 적용
+
+kernel size == feature map size 이기 때문에 반환되는 값은 scala임
+
+```python
+x = tf.keras.layers.GlobalAveragePooling2D()(x)
+```
+
+> ex) 3 × 3 의 image에 GlobalAveragePooling2D 를 하면 값 1개만 나옴
+
+
+
 ---
 
 
@@ -503,9 +517,15 @@ layer 하나하나의 속성을 간편하게 결정할 수 있다.
 
 
 
-### Input
+### Keras Functional API
+
+#### Input
 
 Functional API를 이용한 Model 설계에 사용된다.
+
+what Functional API : model의 input 구조와 output 구조를 개발자가 원하는대로 만드는 model 구현 방법
+
+Keras Functional API (https://www.tensorflow.org/guide/keras/functional)
 
 ```python
 from tensorflow.keras.layers import Input
@@ -513,6 +533,8 @@ input_tensor = Input(shape = (INPUT_SIZE, INPUT_SIZE))
 ```
 
 
+
+**ex1**
 
 Input을 사용한 Model은 keras.models에서 import한 Model이다.
 
@@ -536,6 +558,28 @@ model = Model(inputs = input_tensor, outputs = output)
 ```
 
 line 6, 7, 8의 code를 Model-subclassing을 하지 않고도  Model instance를 만들 수 있다.
+
+output부터 역으로 올라가며 학습 과정을 확인할 수 있다.
+
+
+
+**ex2**
+
+```python
+class YOLOv1(tf.keras.Model):
+    def __init__(self, input_height, input_width, cell_size, boxes_per_cell, num_classes):
+        super(YOLOv1, self).__init__()
+        base_model = tf.keras.applications.InceptionV3(include_top=False, weights='imagenet', input_shape=(input_height, input_width, 3))
+        # Bring GoogLeNet ver.3, only feature extractor part
+        base_model.trainable = True
+        # include parameters of GoogLeNet ver.3 for training
+        # To get better performance
+        x = base_model.output
+```
+
+> model subclassing 안에서 다른 이미 완성된 model(InceptionV3) 을 가져와서 사용할 때 위 처럼 사용
+>
+> `weights='imagenet'` 사전훈련 된 파라미터를 가져옴
 
 
 
