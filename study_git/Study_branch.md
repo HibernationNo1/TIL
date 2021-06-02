@@ -52,13 +52,17 @@ master branch: 시초의 branch
 
 3. finish feature (변경사항)
 
-4. develop 에서 release 만든 후 주석 변경. 
+4. develop 에서 release 만든 후 주석 변경.  
 
    > 각 release는  feature개당 1개씩
+   >
+   > finish feature (변경사항) 이후에 release해야함
 
 5. 변경된 주석을 up stage한 후 commit
 
 6. finish release (v 0.0.0)
+
+   >  release 만든 후 바로 변경사항 없이 finish release 해도 됨
 
 7. master에서 push
 

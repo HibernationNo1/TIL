@@ -45,12 +45,16 @@ cv2.line(img, (50, 50), (200, 50), (0, 0, 255), 5)
 
 #### 2. Draw rectangle 
 
-- `cv2.rectangle(img, pt1, pt2, color, thickness = , lineType = , shift = )`
+- ```python
+  cv2.rectangle(img, pt1, pt2, color, thickness = None, lineType = None, shift =None )
+  ```
 
   `pt1, pt2` : 사각형의 두 꼭지점(좌측 상단, 우측 하단) 좌표
 
-- `cv2.rectangle(img, rec, color, thickness = , lineType = , shift = )`
-
+- ```python
+  cv2.rectangle(img, rec, color, thickness = None, lineType = None, shift = None)
+  ```
+  
   `rec` : 사각형의 위치 정보 (x, y, w, h)의 tuple  x, y는 좌측 상단 꼭지점의 좌표
 
 `thickness = -1` 을 주면 내부가 채워진 채로 그려진다.
