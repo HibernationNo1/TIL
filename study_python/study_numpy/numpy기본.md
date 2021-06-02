@@ -124,10 +124,23 @@ print(instance)
 
 
 
-##### np/count_nonzero()
+##### np.count_nonzero()
 
 ```python
 np.count_nonzero(bbox, axis=0)
 ```
 
 > bbox의 0 dim에서 0이 아닌 element의 개수를 count
+
+
+
+
+
+##### np.clip()
+
+input array안의 elements에 대해서 min값 보다 작은 값들을 min값으로, max값 보다 큰 값들을 max값으로 바꿔주는 method
+
+```python
+np.clip(array, min, max)
+```
+
