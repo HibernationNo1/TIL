@@ -189,3 +189,10 @@ cv2.waitKey()
 cv2.destroyAllWindows()
 ```
 
+
+
+
+
+#### 관련 method
+
+![image-20210604073158348](Contour detection.assets/image-20210604073158348.png)
