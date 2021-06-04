@@ -195,5 +195,5 @@ cv2.destroyAllWindows()
 
 #### 관련 method
 
-이미지 19
+![](https://github.com/HibernationNo1/TIL/blob/master/image/c19.jpg?raw=true)
 
