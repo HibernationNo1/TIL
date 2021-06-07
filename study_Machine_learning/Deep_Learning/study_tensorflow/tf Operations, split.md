@@ -65,6 +65,40 @@ tf.math.max() 와 같다
 
 
 
+#### tf.equal()
+
+argument로 받아온 두 값이 같으면 True, 다르면 False 반환
+
+```python
+tmp = tf.equal(a, b)
+```
+
+> a, b가 matrix면 element wise로 compute
+
+
+
+#### tf.not_equal()
+
+argument로 받아온 두 값이 다르면 True, 같으면 False 반환
+
+```python
+tmp = tf.not_equal(a, b)
+```
+
+> a, b가 matrix면 element wise로 compute
+
+
+
+#### tf.greater()
+
+argument로 받아온 두 x, y값 중 (x>y)가 만족하면 True값을 return
+
+```python
+tmp = tf.greater(x, y)
+```
+
+
+
 
 
 ### confusion_matrix()
