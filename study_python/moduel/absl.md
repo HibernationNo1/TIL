@@ -59,3 +59,19 @@ $ python3 ex.py --foo=150
 
 
 
+## app
+
+c++에서 main 함수만 시작으로 진행되는 것 처럼, python file에서 entry point로 결정할 file에 사용되는 method다.
+
+```python
+from absl import app
+
+def main:
+    ...
+
+if __name__ == '__main__':  # 해당 code가 쓰여진 file이 entry point면
+    app.run(main) # main함수 실행
+```
+
+
+
