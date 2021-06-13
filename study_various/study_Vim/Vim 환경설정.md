@@ -21,6 +21,14 @@ $ vi _vimrc
 
 ### Linux
 
+우분투의 경우 `.vimrc` file을 만들어줘야 한다. 위치는 home directory이다.
+
+```
+$ vi ~/.vimrc
+```
+
+
+
 
 
 ## 설정 문법
@@ -123,6 +131,7 @@ if has("syntax")
 endif
 set autowrite
 set autoindent
+set shiftwidth=4
 set smartindent
 set cindent
 set nu
@@ -178,5 +187,21 @@ colorscheme dark_plus
 
 ##### Linux
 
-우분투의 경우 /home 디렉토리에 숨김파일인 .vimrc로 저장되어 있다.
+vim colors directory의 위치
+
+```
+/usr/share/vim/vim81/colors
+```
+
+이곳에 `dark_plus.vim` 이라는 colorscheme 소스 파일을 저장한다.
+
+
+
+`.vimrc` 파일에 `colorscheme dark_plus` 를 남긴다
+
+```
+$ vi ~/.vimrc
+```
+
+
 
