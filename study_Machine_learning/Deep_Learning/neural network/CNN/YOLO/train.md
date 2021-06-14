@@ -123,6 +123,8 @@ def calculate_loss(model, batch_image, batch_bbox, batch_labels):
     
     image = tf.expand_dims(image, axis=0)
 	# expand_dims을 사용해서 0차원에 dummy dimension 추가
+    # dummy을 추가하는 이유
+   	# tf.keras.applications.InceptionV3의 input으로 기대하는 dimension은 [batch_size, height, width, color_channel]이므로 dummy로 batch_size=1을 넣어줘서 차원을 맞춰주어서 오류가 나지 않도록 하기 위해
 
     predict = model(image) # predict의 shape은 flatten vector 형태
     predict = reshape_yolo_preds(predict)
@@ -341,10 +343,13 @@ def main(_):
     # latest_checkpoint : 마지막 checkpoint에서 저장된 file의 path를 return 
 
   # restore latest checkpoint
-  # 마지막 checkpoint의 값들을 ckpt에 저장
+  # 마지막 checkpoint의 값들을 ckpt에 저장 
   if latest_ckpt:
     ckpt.restore(latest_ckpt)
     print('global_step : {}, checkpoint is restored!'.format(int(ckpt.step)))
+  # 이전에 training 중 의도치 않게 프로그램이 종료되었거나 이전의 학습에 추가적으로 더 학습시키고자 할 때, 저장된 여러 checkpoint 중 마지막 checkpoint에 저장된 model값을  tf.train.Checkpoint의 instance에 다시 저장
+
+
 
   # set tensorboard log
   # tensorboard_log를 write하기 위한 writer instance 만들기
