@@ -133,7 +133,6 @@ set autowrite
 set autoindent
 set shiftwidth=4
 set smartindent
-set cindent
 set nu
 set title
 set incsearch
