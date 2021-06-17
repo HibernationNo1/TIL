@@ -108,7 +108,6 @@ set nu " show line number
 set incsearch " 검색시 입력된 글자까지 순차적으로 검색한다
 set mouse=a " 마우스를 클릭하는 곳으로 커서 옮김
 set guifont=consolas:h11 " 글꼴 설정
-colorscheme dark_plus
 ```
 
 
@@ -126,52 +125,6 @@ colorscheme dark_plus
 - 내가 사용하는 colorscheme의 Reference : https://github.com/tomasiser/vim-code-dark/blob/master/colors/codedark.vim (License 무료 허가)
 
   > name : dark_plus
-
-
-
-- cheme 적용 예시문
-
-  ```
-  require 'active_support'
-  
-   module VimColors
-     class RubyExample
-       CONSTANT = /^[0-9]+ regex awesomes$/
-  
-       attr_reader :colorscheme
-  
-       # TODO: Bacon ipsum dolor sit amet
-       def initialize(attributes = {})
-         @colorscheme = attributes[:colorscheme]
-       end
-  
-       def self.examples
-         # Bacon ipsum dolor sit amet
-         ['string', :symbol, true, false, nil, 99.9, 1..2].each do |value|
-           puts "it appears that #{value.inspect} is a #{value.class}"
-         end
-  
-         {:key1 => :value1, key2: 'value2'}.each do |key, value|
-           puts "the #{key.inspect} key has a value of #{value.inspect}"
-         end
-  
-          %w[One Two Three].each { |number| puts number }
-       end
-  
-       private
-  
-       def heredoc_example
-        <<-SQL
-          SELECT *
-          FROM colorschemes
-          WHERE background = 'dark'
-        SQL
-      end
-    end
-  end
-  ```
-
-  
 
 
 
@@ -219,3 +172,10 @@ $ vi ~/.vimrc
 
 
 
+
+
+## plugin
+
+plugin을 사용해서 환경 설정을 하는 방법이 있다.
+
+이는 github의 code를 그대로 가져와서 사용하는 방법으로, [여기](https://github.com/HibernationNo1/TIL/blob/master/study_various/study_Vim/Plugin.md) 에서 자세한 설명을 하도록 하겠다.
