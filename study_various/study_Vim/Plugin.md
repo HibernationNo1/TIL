@@ -97,10 +97,28 @@ Reference : https://github.com/VundleVim/Vundle.vim
   ```
 
   > " codedark  colorscheme 플러그인
+  
+- ```
+  Plugin 'tomasiser/vim-code-dark'
+  ```
+
+  >  " colorscheme 플러그인
+  >
+  > `colorscheme dark_plus` 사용
+
+- 
 
 
 
 ##### for python
+
+- ```
+  Plugin 'vim-python/python-syntax'
+  ```
+
+  > " pyhon syntax 적용하는 Plugin
+  >
+  > `let g:python_highlight_all = 1`
 
 - ```
   Plugin 'davidhalter/jedi-vim' 
@@ -110,7 +128,7 @@ Reference : https://github.com/VundleVim/Vundle.vim
   >
   > `let g:jedi#show_call_signatures=0       " 자세히 설명하는 창을 보여준다 1=활성화, 0=비>활성화`
   >
-  > `let g:jedi#popup_select_first="0"       " 자동완성시 자동팝업 등장 x`
+  > `let g:jedi#popup_select_first=0       " 자동완성시 자동팝업 등장 x`
   >
   > `let g:jedi#force_py_version=3           " 자동완성 3 = python3 , 2 = python2`
 
@@ -148,11 +166,9 @@ set nu " show line number
 set incsearch " 검색시 입력된 글자까지 순차적으로 검색한다
 set mouse=a " 마우스를 클릭하는 곳으로 커서 옮김
 set guifont=consolas:h11 " 글꼴 설정
-
 "-----------------------------------vim 기본 설정 끝
 
-"----------------------------------- plugin 설정
-"----------------------------------- Vundle plugin 기본 설정
+"----------------------------------- plugin 기본 설정
 
 set nocompatible              " be iMproved, required
 filetype off                  " required
@@ -166,16 +182,12 @@ call vundle#begin()
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
 
-
-"----------------------------------- Vundle plugin 기본 설정 끝
-
-"-----------------------------------개인 plugin 기본 설정
+"----------- plugin for vim
 
 Plugin 'vim-airline/vim-airline' 
 Plugin 'vim-airline/vim-airline-themes'
 " Vim 상태바 개선해주는 플러그인
-let g:airline_powerline_fonts = 1
-
+	
 Plugin 'airblade/vim-gitgutter'     
 " Git으로 변경된 부분 표시해주는 플러그인
 
@@ -186,30 +198,36 @@ Plugin 'ctrlpvim/ctrlp.vim'
 " 파일 찾기 플러그인
 
 Plugin 'tomasiser/vim-code-dark'
-" colorscheme 플러그인
+" colorscheme Plugin (code-dark)
 
-Plugin 'davidhalter/jedi-vim'   
-" python 자동완성 Plugin
-let g:jedi#show_call_signatures=0       " 자세히 설명하는 창을 보여준다 1=활성화, 0=비>활성화
-let g:jedi#popup_select_first="0"       " 자동완성시 자동팝업 등장 x
-let g:jedi#force_py_version=3           " 자동완성 3 = python3 , 2 = python2
+
+"----------- Plugin for python
+Plugin 'vim-python/python-syntax'
+" pyhon syntax 적용하는 Plugin
 
 Plugin 'hynek/vim-python-pep8-indent'   
 " python 자동 들여쓰기 Plugin
-filetype plugin indent on               " python 자동 들여쓰기 on
 
 Plugin 'nvie/vim-flake8'                
 " python 문법 검사 plugin
 " let g:syntastic_python_checkers=['flake8']        " ↓ 실행시 현재줄 주석 해제필요    
 " let g:syntastic_python_flake8_args='--ignore='    " 무시하고자 하는 errorcode
 
-"-----------------------------------개인 plugin 기본 설정 끝
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
 "-----------------------------------plugin 설정 끝
 
-colorscheme dark_plus
+"-----------plugin option
+용
+colorscheme codedark		" colorscheme 설정
+filetype plugin indent on     	" python 자동 들여쓰기 on
+
+let g:airline_powerline_fonts = 1 
+let g:airline_theme = 'codedark' " airline theme
+
+let g:python_highlight_all = 1  " python ayntax 적용
+
 ```
 
