@@ -155,8 +155,50 @@ Reference : https://github.com/VundleVim/Vundle.vim
 ### 내 설정
 
 ```
+" Vim with all enhancements
+source $VIMRUNTIME/vimrc_example.vim
+
+" Use the internal diff if available.
+" Otherwise use the special 'diffexpr' for Windows.
+if &diffopt !~# 'internal'
+  set diffexpr=MyDiff()
+endif
+function MyDiff()
+  let opt = '-a --binary '
+  if &diffopt =~ 'icase' | let opt = opt . '-i ' | endif
+  if &diffopt =~ 'iwhite' | let opt = opt . '-b ' | endif
+  let arg1 = v:fname_in
+  if arg1 =~ ' ' | let arg1 = '"' . arg1 . '"' | endif
+  let arg1 = substitute(arg1, '!', '\!', 'g')
+  let arg2 = v:fname_new
+  if arg2 =~ ' ' | let arg2 = '"' . arg2 . '"' | endif
+  let arg2 = substitute(arg2, '!', '\!', 'g')
+  let arg3 = v:fname_out
+  if arg3 =~ ' ' | let arg3 = '"' . arg3 . '"' | endif
+  let arg3 = substitute(arg3, '!', '\!', 'g')
+  if $VIMRUNTIME =~ ' '
+    if &sh =~ '\<cmd'
+      if empty(&shellxquote)
+        let l:shxq_sav = ''
+        set shellxquote&
+      endif
+      let cmd = '"' . $VIMRUNTIME . '\diff"'
+    else
+      let cmd = substitute($VIMRUNTIME, ' ', '" ', '') . '\diff"'
+    endif
+  else
+    let cmd = $VIMRUNTIME . '\diff'
+  endif
+  let cmd = substitute(cmd, '!', '\!', 'g')
+  silent execute '!' . cmd . ' ' . opt . arg1 . ' ' . arg2 . ' > ' . arg3
+  if exists('l:shxq_sav')
+    let &shellxquote=l:shxq_sav
+  endif
+endfunction
+
 "-----------------------------------vim 기본 설정 
-syntax on  " 구문 강조 (colorscheme에 의해 다시 정의됨)
+" syntax on  " 구문 강조 (colorscheme에 의해 다시 정의됨)
+filetype on
 set encoding=utf-8  " 한글 깨짐 방지
 set autowrite " 다른 파일로 넘어갈 때 자동 저장
 set autoindent " 자동으로 들여쓰기 설정
@@ -205,6 +247,8 @@ Plugin 'tomasiser/vim-code-dark'
 Plugin 'vim-python/python-syntax'
 " pyhon syntax 적용하는 Plugin
 
+Plugin 'HibernationNo1/vim-darkplus-python3'
+
 Plugin 'hynek/vim-python-pep8-indent'   
 " python 자동 들여쓰기 Plugin
 
@@ -220,14 +264,15 @@ filetype plugin indent on    " required
 "-----------------------------------plugin 설정 끝
 
 "-----------plugin option
-용
-colorscheme codedark		" colorscheme 설정
+colorscheme dark_plus_python		" colorscheme 설정
 filetype plugin indent on     	" python 자동 들여쓰기 on
 
 let g:airline_powerline_fonts = 1 
 let g:airline_theme = 'codedark' " airline theme
 
-let g:python_highlight_all = 1  " python ayntax 적용
-
+let g:python_highlight_class_vars = 1
+let g:python_highlight_builtins = 1
+let g:python_highlight_func_calls = 1
+let g:python_highlight_string_format = 1
 ```
 
