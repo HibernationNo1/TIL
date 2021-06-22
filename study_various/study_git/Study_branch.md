@@ -8,68 +8,6 @@ master branch: 시초의 branch
 
 ---
 
-## git flow
-
-- main branch : 프로젝트가 끝날 때 까지 항상 유지되는 branch
-
-  - master : 제품으로 출시(Launching)할 수 있는 branch
-
-    > branch name은 master/v 0.0.0 이런 식
-
-  - develop: 개발 brach. 여기서 feature, release가 분기되고 병합된다.
-
-    > branch name은 develop/v 0.0.0 이런 식
-
-- sub branch : 필요할때만 사용되고 소멸되는 branch
-
-  - feature : develop로 부터 분기되어 개별 기능을 개발하는 branch. 기능이 완료되면 다시 develop으로 병합된다.
-
-    > branch name은 feature - ~~~ 또는 feature/ 이런 식
-
-  - release: 기능 개발이 완료되어 출시 버전을 준비하는 branch. 주로 주석을 정리하거나 gitignore에 등록하고 readme를 정리하는 작업 등을 한다.
-
-    > branch name은 release/ v 0.0.0 이런 식
-
-  - hofix : 출시 버전에서 발생한 bug를 fix하는 branch로 유일하게 mastger에서 분기된다.
-
-    > branch name은 hofix/v 0.0.0 이런 식
-
-
-
-### model 구성
-
-![](https://media.vlpt.us/images/cos/post/57fa6718-f327-4ae8-b789-26259632e4fe/Simplified-version-of-the-gitflow-branching-model-adapted-from-8.png)
-
-
-
-#### GitKraken
-
-1. develop 에서 feature 만든 후 code 변경. 
-
-   > 각 feature은 파일 1개당 1개씩 하자
-
-2. 변경된 code를 up stage한 후 commit
-
-3. finish feature (변경사항)
-
-4. develop 에서 release 만든 후 주석 변경.  
-
-   > 각 release는  feature개당 1개씩
-   >
-   > finish feature (변경사항) 이후에 release해야함
-
-5. 변경된 주석을 up stage한 후 commit
-
-6. finish release (v 0.0.0)
-
-   >  release 만든 후 바로 변경사항 없이 finish release 해도 됨
-
-7. master에서 push
-
-   > finish release 안하면 develop에서 master로 marge가 안됨
-
-같은 파일의 내용에 대해서 각각의 feature 또는 release를 진행하면, 변경된 두 경우 중 어떤 경우를 marge할건지 물어본다. 그렇기 때문에 가능하면 각 branch마다 다른 file에 대해서 개발하자.
-
 
 
 
@@ -106,7 +44,7 @@ master branch: 시초의 branch
 
 
 
-###  branch 경우의 수
+##  branch 경우의 수
 
 #### - master branch를 사용하면서 프로젝트를 진행할 때
 
