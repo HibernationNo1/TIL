@@ -436,7 +436,8 @@ AveragePooling2D을 전체 feature map에 적용
 kernel size == feature map size 이기 때문에 반환되는 값은 scala임
 
 ```python
-x = tf.keras.layers.GlobalAveragePooling2D()(x)
+from tensorflow.keras.layers import GlobalAveragePooling2D
+x = GlobalAveragePooling2D()(x)
 ```
 
 > ex) 3 × 3 의 image에 GlobalAveragePooling2D 를 하면 값 1개만 나옴

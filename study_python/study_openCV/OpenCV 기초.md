@@ -4,6 +4,10 @@ OpenCV 함수 검색 웹사이트 https://docs.opencv.org/master/
 
 > 기본적으로 C++형태로 나옴
 
+```
+$ pip install opencv-python
+```
+
 
 
 ```python

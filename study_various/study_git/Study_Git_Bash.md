@@ -74,7 +74,12 @@
 
 - `git pull`: 'git fetch'와 'git merge'가 한 번에 이루어짐
 
-  
+  > `git pull` 을 해도 `Already up to data` 라고 뜨지만 working directory 는 안가져 올 때
+  >
+  > ```
+  > $ git fetch --all 
+  > $ git reset --hard origin/maste
+  > ```
 
 - `git restore 파일명`: 이전 변경사항 취소
   
