@@ -144,3 +144,34 @@ input array안의 elements에 대해서 min값 보다 작은 값들을 min값으
 np.clip(array, min, max)
 ```
 
+
+
+##### np.ix_()
+
+첫 번째 parameter는 row를, 두 번째 parameter는 column을 의미하는 index ndarray를 만든다.
+
+```python
+tmp = np.ix_(row_in, column_in)
+```
+
+out : tuple of ndarrays
+
+만일 세 번째 인자를 준다면, (x, y, z) 와 같이 3차원 index가 된다. (인자가 많아질수록 dimension도 높아짐)
+
+
+
+ex)
+
+```python
+a = np.arange(10).reshape(2, 5)
+# ndarray([[0, 1, 2, 3, 4],
+#          [5, 6, 7, 8, 9]])
+
+tmp = np.ix_([0, 1], [2, 4])   # row = 0, 1    column = 2, 4
+# tmp = (ndarray([[0],[1]]), ndarray([[2, 4]]))
+     
+print(a[tmp])  
+# array([[2, 4],
+#        [7, 9]])   (0, 1) row index,  (2, 4) column index를 뽑는데 사용 
+```
+
