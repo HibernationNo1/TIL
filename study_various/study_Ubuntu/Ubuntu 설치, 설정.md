@@ -170,6 +170,8 @@
       >
       > password updata successfully 뜰 거임  
    
+   
+   
 3. 언어팩 설치
 
    ```
@@ -203,6 +205,69 @@
    ```
 
    > en_US.UTF-8 에서 ko_KR.UTF-8로 변환
+
+   **추가**
+
+   virtualBox에서 os의 설정 -> 일반 -> 고급 의
+
+   - 클립보드 공유, 드래그 앤 드롭 을 **양방향** 으로 해야 window에서 복사한거 ubuntu안에서 붙여넣기 가능
+
+
+
+4. 한글 입력 키 설정( fcitx-hangul 설치)
+
+   1. fcitx-hangul 설치
+
+      ```
+      sudo apt-get update
+      sudo apt-get install fcitx-hangul
+      ```
+
+   2. 설정
+
+      setting(설정) -> Region & Language -> 
+
+      - input source에 korean 설정 후 해당 language setting의 keyboard input method system을 fcitx로 변경
+
+      또는
+
+      - input source에 korean 설정 후 manage installed Languages누른 후 install 진행
+      - 오른쪽 상탄 tap의 키보드 아이콘 클릭 후 현재 입력기 설정
+      - 입력 방법 : 한국어 추가
+      - 전역 설정 : Ctrl + space : hangul
+
+5. vscode 설치
+
+   1. 홈페이지에서 알맞는 모델 다운
+
+      > default로 install하지 말고 file을 다운
+
+   2. `.deb` file 실행
+
+      ```
+      $ cd ~/Downloads 
+      $ sudo dpkg -i code*.deb
+      ```
+
+      완료
+   
+   > **consolas** font download in ubuntu
+   >
+   > Referance : https://gist.github.com/sigoden/d01ad118da677f796bab01781b7eae23
+   >
+   > 그대로 따라한 후 font setting에 `"YaHei Consolas Hybrid"` 추가
+
+
+
+6. typora 설치
+
+   ```
+   $ wget -qO - https://typora.io/linux/public-key.asc | sudo apt-key add -
+   $ sudo add-apt-repository 'deb https://typora.io/linux ./'
+   $ sudo apt -y install typora
+   ```
+
+   
 
 
 
@@ -271,6 +336,8 @@
 
 ### manage Ubuntu
 
+#### 1. 내보내기, 가져오기
+
 VirtualBox의 내보내기, 가져오기를 통해 설치한 ubuntu를 여러개처럼 따로따로 사용할 수 있다.
 
 1. 내보내기
@@ -283,13 +350,57 @@ VirtualBox의 내보내기, 가져오기를 통해 설치한 ubuntu를 여러개
 
 
 
+#### 2. 용량 늘리기
+
+Ubuntu 가상머신 저장소, 파티션 용량 늘리는 법
+
+1. 가상머신 저장소 용량 늘리기
+
+   1. Ubuntu, VirtureBox 종료
+
+   2. modifyhd 명령어 실행
+
+      `"버추얼박스가 설치된 위치(경로)" modifyhd "용량을 조절할 가상머신 파일 위치(경로).vid" --resize 용량`
+
+      ```
+      "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" modifyhd "C:\Users\마이노\VirtualBox VMs\Ubuntu-Desktop 1\Ubuntu-Desktop-inital-disk002.vdi" --resize 20480 
+      ```
+
+      > 버추얼박스가 설치된 위치(경로) : `C:\Program Files\Oracle\VirtualBox\VBoxManage.exe`
+      >
+      > 용량을 조절할 가상머신 파일 위치(경로) : `C:\Users\마이노\VirtualBox VMs\Ubuntu-Desktop\Ubuntu-Desktop.vdi`
+      >
+      > 늘릴 용량 : 10G `10240` -> 20G `20480`
+
+2. 파티션 용량 늘리기
+
+   가상머신 저장소 용량을 늘렸으면, Ubuntu에서 실제 사용 가능한 용량이 커질 수 있도록 해야 한다.
+
+   1.  **GParted** 라이브러리를 설치 (dist 파티션 설청 프로그램)
+
+      ```
+      sudo apt-get install gparted 
+      ```
+
+      > 불필요한 패키지가 설치되어 있어서 용량이 부족하다는 메시지 때문에 설치가 안되면 `sudo apt autoremove`
+
+   2.  GParted 실행 (검색해서 열자)
+
+      main partition이 무엇인지 확인 후 resize하자
+
+      (내꺼 partition은 /dev/sda5, file System = ex4 인 것을 resize했다)
+
+      resize한 후 초록색 확인 버튼 눌러서 적용
+
+
+
 ### install Compiler
 
 Ubuntu에선 python colpiler는 default로 설치되어 있지만, C, C++은 따로 설치를 해 주어야 한다.
 
 - **python**
 
-   python terminal실행 (Compiler 가 아니고 terminal임)
+  python terminal실행 (Compiler 가 아니고 terminal임)
 
   ```
   $ python3
@@ -304,6 +415,14 @@ Ubuntu에선 python colpiler는 default로 설치되어 있지만, C, C++은 따
   ```
 
   > Compiler로 vim을 사용  `:wr`하면 저장 후 종료
+
+  - install pip
+
+    ```
+    $ apt-get install python3-pip
+    ```
+
+    > `$ pip install numpy`
 
 - **C, C++** install
 
