@@ -175,7 +175,7 @@ $ git flow release finish {version}
 
 ### example
 
-- 항상 `git granch`와 `git log`(`git log --pretty=format:"%h %s" --graph`) 를 통해 현재 위치와 log를 확인하고 `git switch`를 활용하자.
+- 항상 `git branch`와 `git log`(`git log --pretty=format:"%h %s" --graph`) 를 통해 현재 위치와 log를 확인하고 `git switch`를 활용하자.
 
 1. feature start
 
@@ -188,12 +188,13 @@ $ git flow release finish {version}
    ```
    $ git add {file name.type}
    $ git commit -m "commit title"
+   $ git push origin feature/{branch name}
    ```
 
 3. feature finish
 
    ```
-   $ git flow feature finish {branch name}
+   $ git flow feature finish {code}
    ```
 
 4. release start
@@ -207,6 +208,7 @@ $ git flow release finish {version}
    ```
    $ git add {file name.type}
    $ git commit -m "commit title"
+   $ git push origin release/{version}
    ```
 
 6. release finish
@@ -215,4 +217,11 @@ $ git flow release finish {version}
    $ git flow release finish {version}
    ```
 
-   
+7. master에서 push
+
+   ```
+   $ git push origin master
+   ```
+
+   > github에 올라간걸 확인할 수 있다.
+
