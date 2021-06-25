@@ -24,9 +24,45 @@
 - `이전에 사용한 명령어의 첫 문자 + Tap`: 이전에 사용한 명령어 자동완성
 
 - `mv 파일이름.확장자 name`: 해당 파일을 name이라는 폴더로 이동
-- 
+
+  
 
 ### 2. 깃 커밋 명령어
+
+- 처음 apt-get install git을 했을 때 (git을 새로운 환경에서 처음 사용할 때)
+
+  1. 이름과 이메일 설정
+
+     ```
+     $ git config --global user.name "Taeuk Noh"
+     $ git config --global user.email winter4958@gmail.com
+     ```
+
+  2. upstream 설정
+
+     처음 branch를 만들고 push를 하면 upstream을 설정하라고 한다.
+
+     우리는 local에서 branch를 만든 것이기 때문에 remote에 있는 git은 이 branch의 존재를 모르게 된다. upstream은 branch 자체를 git repository 서버인 origin으로 업로드 한다는 뜻이다.
+
+     ```
+     $ git push --set-upstream origin {branch name}
+     ```
+
+     > 이렇게 항상 upstream branch를 설정하라는 문구가 나오기 때문에 이러한 작업을 git의 config 설정으로 생략
+
+     ```
+     $ git config --global push.default current
+     ```
+
+  3. git 편집 에디터 설정
+
+     ```
+     $ git config --global core.editor "vim"
+     ```
+
+     >  nano에서 vim으로 git 편집 에디터를 바꿀 수 있다. rebase 등의 과정 시 vim 에디터로 편집할 수 있다.
+
+     
 
 - `git init`: 현재 디렉토리를 git으로 버전관리 시작하기
 
@@ -50,8 +86,9 @@
 
   - 실제 사용 -> `git commit -m "커밋 내용"`
 - `git reset 파일명`: Staging Area에서 제외시키는 명령어
+  
   - `git log`: 커밋을 포함한,  Remote Repository(github)로 업로드에 관한 모든 로그를 보여준다.
-
+  
 - `git push`: Local Repository에서 Remote Repository(github)로 업로드. 즉, 기본적으로 현재 분기를 추적 원격 지점으로 푸시
 
   -  `git push origin master`:  변경 내용을 `origin` 원격 저장소로 명시 적으로 푸시
@@ -78,7 +115,7 @@
   >
   > ```
   > $ git fetch --all 
-  > $ git reset --hard origin/maste
+  > $ git reset --hard origin/master
   > ```
 
 - `git restore 파일명`: 이전 변경사항 취소
