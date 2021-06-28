@@ -194,6 +194,26 @@ with train_summary_writer.as_default():
 
 
 
+##### image()
+
+Reference : https://www.tensorflow.org/api_docs/python/tf/summary/image
+
+mage의 summary를 write하기 위한 method
+
+```python
+with train_summary_writer.as_default():
+    tf.summary.image(name, data, step=None, description=None)
+```
+
+- `name` : write하고자 하는 data의 name
+
+- `data` : write하고자 하는 data
+
+- `step` : write하는 시점의 step
+- `description` : 해당 data에 대한 description (string)
+
+
+
 
 
 ## **exam**
