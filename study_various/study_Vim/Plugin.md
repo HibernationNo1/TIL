@@ -12,6 +12,14 @@ Reference : https://github.com/VundleVim/Vundle.vim
 
 #### Sep up Vundle
 
+> Linux라면 
+>
+> ```
+> sudo apt-get install vim git
+> ```
+>
+> 부터 해야됨
+
 1. clone
 
    ```
