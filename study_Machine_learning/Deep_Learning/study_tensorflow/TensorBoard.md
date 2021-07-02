@@ -35,12 +35,24 @@ $ pip install tensorboard
 ### execute
 
 ```
-$ tensorboard --log=log_directory
+$ tensorboard --logdir=log_directory
 ```
 
 > log_directory안에는 tensorboard에 기록한 data가 존재해야 한다.
 
 오류 없이 tensorboard를 실행하면  http://localhost:6006/ 과 같이 브라우져로 6006번 포트에 들어갈 수 있다.
+
+
+
+tensorboard 화면은 120초 단위로 확인해서 화면에 반영하기 때문에, 120초 마다 tensorboard가 updata된다고 이해하면 된다.
+
+단, 내가 원하는 초 단위로 tensorboard를 reroding 시킬 수 있다.
+
+```
+$ tensorboard --logdir=tensorboard_log --reload_interval=5
+```
+
+> 5초 단위로
 
 
 
