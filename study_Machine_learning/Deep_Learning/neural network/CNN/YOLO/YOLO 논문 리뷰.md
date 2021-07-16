@@ -30,7 +30,7 @@
 
 2. 간단한 YOLO pipeline 구조 설명
 3. Titan X GPU의 환경에서 초당 45개의 frame을 계산하는 빠른 속도를 자랑한다.
-4. YOLO는 siding window나 region proposal-based 과는 다르게 image의 전체 정보를 동시에 처리하기 때문에 image의 feature을 한 번에 파악할 수 있다.
+4. YOLO는 slicing window나 region proposal-based 과는 다르게 image의 전체 정보를 동시에 처리하기 때문에 image의 feature을 한 번에 파악할 수 있다.
 5. 자연 이미지 뿐만 아니라 art image에도 잘 동작함을 확인할 수 있다.
 
 5. 작은 작은 크기의 object에 대해서는 state-of-the-art detection model에 비해서 accuracy는 뒤떨어진다.
@@ -239,8 +239,3 @@
 
 
 
-각가그이 file에 대해서, code를 작성할 때 
-
-논문의 어느 부분을 보고 이렇게 작성했는지에 대한 분석
-
-논문을 올릴 때 code가 함께 올라가는지 질문
