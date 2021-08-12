@@ -199,3 +199,14 @@ tmp = tf.nn.l2_loss(
 - `tmp` : sum(t ** 2) / 2
 - `t` : Tensor,  Must be one of the following types: `half`, `bfloat16`, `float32`, `float64`.
 
+
+
+## tf.one_hot
+
+```python
+oh_labels = tf.one_hot(labels, 10)
+# 10개의 calss로 분할해서 one-hot
+```
+
+> class의 종류를 결정 후 분할
+
