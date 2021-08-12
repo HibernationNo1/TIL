@@ -433,3 +433,22 @@ output = Dense(units = 20, activation = 'sigmoid')(x)
 model = Model(inputs = input_tensor, outputs = output)
 ```
 
+
+
+```python
+class Softmax(Model):
+	def __init__(self, cell_size, num_classes):
+		super(Softmax, self).__init__()
+		input_tensor = Input(shape = (cell_size, cell_size, num_classes))
+		pred_P = Flatten()(input_tensor)
+		output = Dense(cell_size * cell_size * num_classes , activation = 'softmax')(pred_P)
+
+		model = Model(inputs = input_tensor, outputs=output)
+		self.model = model
+		# print model structure
+		self.model.summary()
+
+	def call(self, pred_P):
+		return self.model(pred_P)
+```
+

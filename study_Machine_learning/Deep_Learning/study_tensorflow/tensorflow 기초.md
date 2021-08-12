@@ -1,4 +1,4 @@
-                                                                           ### 1. 클래스
+# tensorflow 기초
 
 tensors에는 두 개의 클래스가 있다.
 

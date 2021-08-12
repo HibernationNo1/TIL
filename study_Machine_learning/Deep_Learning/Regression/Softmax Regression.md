@@ -59,7 +59,7 @@ P(C_K) = \frac{1}{e^{l(C_k)} + \sum_{j=1}^{K-1}e^{l(C_i)}} = \frac{1}{\sum_{j=1}
 $$
 그리고 이 값을 (6)에 대입하면
 $$
-p(C_i) = \frac{e^{l(C_i)}}{\sum_{j=1}^{K}e^{l(C_i)}} == Softmax(x_i)
+\frac{e^{x_i}}{\sum_{k=1}^{K}e^{x_i}} = Softmax(x_i)
 $$
 Softmax 수식이 나옴을 알 수 있다.
 

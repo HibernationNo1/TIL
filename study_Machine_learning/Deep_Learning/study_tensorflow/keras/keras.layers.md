@@ -646,8 +646,6 @@ Conv2D -> BN -> Activation Function
 
 
 
-
-
 어떤 효과가 있나?
 
 - performance improvements
@@ -663,7 +661,26 @@ Conv2D -> BN -> Activation Function
 ```python
 from tensorflow.keras.layers import BatchNormalization
 x = Conv2D(filter = 32, kernel_size = 3, padding = 'same')(input)
-x = BatchNormalization()(x)
+x = BatchNormalization(axis=-1, momentum=0.99, epsilon=0.001)(x)
+x = Activation('relu')(x)
+```
+
+- `axis` : Integer, 정규화되어야 하는 축을 의미한다.
+- `momentum` : 이동 평균(moving mean) 및 이동 분산(moving variance)에 대한 모멘텀을 의미한다.
+- `epsilon` : 0으로 나누기를 방지하기 위해 분산에 추가되는 작은 float값
+
+
+
+
+
+### Dropout
+
+for regularization 
+
+```python
+from tensorflow.keras.layers import Dropout
+x = Conv2D(filter = 32, kernel_size = 3, padding = 'same')(input)
+x = Dropout(0.2)(x)
 x = Activation('relu')(x)
 ```
 

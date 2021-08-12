@@ -199,7 +199,17 @@ train_ds = voc2007_test_split_data.concatenate(voc2012_train_split_data).concate
 
 ##### ds.filter()
 
+`ds.filter(function, iterable)` 의 형태로, `map()` 과 같은 동작으로 값이 ture인 경우만 추출한다.
+
+`Predicate(x)`를 파라미터로 받아서 `Predicate`가 **true**인 모든 요소를 포함하는 스트림을 반환하는 방법도 있다.
+
+
+
+ **predicate**
+
 argument로 받은 x가 specific 조건에 만족할 때만 x값을 return (element wise)
+
+specific 조건은 predicate 함수를 정의함으로써 설정한다.
 
 ```python
 def predicate(x):
@@ -211,16 +221,4 @@ train_data = train_data.filter(predicate)
 ```
 
 > x가 3보다 크면 return되는 True값에 따라 x값만 train_data에 할당
-
-
-
-- lambda 사용
-
-  ```python
-  dataset = dataset.filter(lambda x: x < 3)
-  ```
-
-  
-
-
 
