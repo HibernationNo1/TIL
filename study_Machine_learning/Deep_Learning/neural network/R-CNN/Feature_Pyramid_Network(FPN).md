@@ -78,9 +78,17 @@ feature map (M2, M3, M4, M5)로부터 feature map (P2, P3, P4, P5)을 계산한�
 
 - 계산 
 
-  M5에 3×3 conv연산을 수행해줌으로써 P5를 계산한다.
+  M5에 3×3 conv연산을 수행하고 channel은 128로 통일한다.
 
   > F2~F5는 upsampling과 이전 feature map의 addition과정을 통해 feature data가 학습에 맞지 않게 망가졌을 수 있기 때문이다.
+  
+  output shape(P2) = 64×64×128
+  
+  output shape(P3) = 32×32×128
+  
+  output shape(P4) = 16×16×128
+  
+  output shape(P5) = 8×8×128
 
 
 
