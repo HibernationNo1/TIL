@@ -30,7 +30,7 @@ Region Proposal Network(RPN)을 통해 ROI을 구하도록 그 방법을 바꾸�
 
 
 
-**동작 과정**
+#### Process
 
 ![](https://bloglunit.files.wordpress.com/2018/08/ec8aa4ed81aceba6b0ec83b7-2018-08-13-ec98a4ed9b84-2-30-31.png?w=633&h=200)
 
@@ -48,6 +48,20 @@ Region Proposal Network(RPN)을 통해 ROI을 구하도록 그 방법을 바꾸�
    2. FC layer의 output에 대해서 softmax를 진행한다.
 
 
+
+- 단점
+
+  backbone network의 output으로 1개의 feature map을 받는다.
+
+  이는 곧 backbone network의 각각의 layer에 의해 계산된 feature map 중 마지막 layer에 대한 feature map만 얻어낸 것이고, 중간 layer의 feature map은 사용하지 않게 된다.
+
+  이후 마지막 layer에 대한 feature map으로 다양한 크기의 object를 detection하기 위해 이 1개의 feature에 대해 여러 size의 anchor를 만들어 대응시켜야 한다.
+
+  - 개선방법 : 
+
+    backbone network의 각각의 layer에 의해 계산된 각각의 feature map에 1개의 anchor를 만들어 대응하는 방식을 사용해서 더욱 효율을 높힌다.
+
+    Region Proposal Network 이전에 Feature Pyramid Network을 사용 (Mask R-CNN에서 사용됨)
 
 
 
