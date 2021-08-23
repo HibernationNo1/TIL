@@ -24,7 +24,7 @@ Faster R-CNN부터는 Region Proposal의 동작이 Region Proposal Network(RPN)�
 
 
 
-동작
+**동작**
 
 1. 각각의 ROI를 (H, W)개수의 grid 형태 section으로 분할한다.
 
@@ -41,4 +41,14 @@ Faster R-CNN부터는 Region Proposal의 동작이 Region Proposal Network(RPN)�
    > 이런 경우 2개의 section은 2 × 2가 되어야 하고, 나머지 2개의 section은 3 × 2가 되어야 한다.
 
 2. 각각의 section에서 max pooling을 수행한다.
+
+
+
+**문제점**
+
+Quantization Problem 
+
+Feature map에서 ROI Feature map으로 계산을 진행할 떄 H, W가 정수값이여야 한다. 그렇기 때문에 Feature map에서의 ROI의 h, w를 H, W로 나눈 값인 h/H, w/W가 정수로 떨어지지 않으면 나머지 over size의 영역은 버리게 된다. 
+
+![](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FcKBVPm%2Fbtq4s3LQtv0%2FBQDhE6GGqZ92EmsiakQkU0%2Fimg.png)
 
