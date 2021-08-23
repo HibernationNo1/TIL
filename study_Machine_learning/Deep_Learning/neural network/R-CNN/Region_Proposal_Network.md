@@ -60,7 +60,7 @@ image ─ CNN ─  Intermediate Layer ┤
 
       > k * 4(x, y, w, h) 개의 값을 prediction
 
-   2. Intermediate feature에 대해 classification을 수행하여 object의 존재 여부에 대한 probability score를 계산한다.
+   2. Intermediate feature에 대해 Classification을 수행하여 object의 존재 여부에 대한 probability score를 계산한다.
 
       > k * 2(있을 확률, 없을 확률) 개의 score를 prediction
       >
