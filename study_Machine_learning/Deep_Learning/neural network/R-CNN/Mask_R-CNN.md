@@ -17,7 +17,7 @@ Faster R-CNN으로부터 달라진 점
 
 ​										   ┌  RPN  ┐				   ┌  FC  ┤
 
-image ─ ResNet ─ FPN  ┤  		  ├  ROI align ┤ 		└ Regression
+image ─ ResNet ─ FPN  ┤  		  ├  ROI Align ┤ 		└ Regression
 
 ​										   └    ─    ┘					└  Mask Branch
 
@@ -28,14 +28,6 @@ Mask R-CNN의 backbone network는 ResNet-101을 사용한다.
 > ResNet-101의 input size는 800~1024일 때 성능이 좋다고 알려져있다.
 
 
-
-
-
-
-
-ROI align
-
-mask branch
 
 
 
@@ -70,9 +62,38 @@ mask branch
 
    1. input인 P2, P3, P4, P5, P6에 대해 각각의 ratio의 anchor를 생성 후 대응시킨다.
    
-      > 5개의 feature map × 3개의 rario = 15개으 anchor
+      > feature map의 cell size × 3개의 rario = anchor의 총 개수
    
    2. anchor에 대해서 Non-maximum-suppression을 수행한다.
    
 5. **RoI align**
+
+   1. ROI영역에 대해 bilinear interpolation을 활용하여 max pooling을 계산하고 7×7의 pooled feature을 출력한다. 
+
+6. **mask branch**
+
+   
+
+
+
+
+
+### Loss Function
+
+$$
+Loss = L_{Bbox} + L_{Classification} + L_{Mask}
+$$
+
+$$
+L_{Bbox} :Regression\\ L_{Classification} : Softmax\ Cross \ Entropy \\
+L_{Mask} : Binary\ Cross\ Entropy
+$$
+
+
+
+#### L_mask
+
+mask loss는 pixel 단위로 object에 대한 masking을 binary로 수행하므로 BCE를 사용한다.
+
+이는 곧 주어진 groundtruth에 해당하는 Bbox의 class에 대한 loss만 계산하고 다른 class들에 대해서는 학습을 하지 않는다는 것이다.
 
