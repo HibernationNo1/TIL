@@ -124,7 +124,7 @@ while True:
 
 영상 파일을 저장하는 함수. (정상적으로 저장하면 Ture, 실패하면 False 반환)
 
-`cv2.imwrite(filename, img, params = None)`
+`cv2.imwrite(path, img, params = None)`
 
 `img` : 저장할 영상 데이터
 
@@ -221,8 +221,8 @@ cv2.waitKey()
   >
   > ```python
   > while True:
-  >     if cv2.waitKey() == 27:  # 27은 esc의 아스키 코드임
-  >         break
+  >         if cv2.waitKey() == 27:  # 27은 esc의 아스키 코드임
+  >             break
   > ```
 
 창이 띄워져 있는 상태에서 Ctrl+c를 누르면 그림이 클립보드에 복사된 상태로 창은 닫치게 된다.

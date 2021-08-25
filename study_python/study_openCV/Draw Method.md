@@ -102,7 +102,7 @@ cv2.rectangle(img, (50, 200, 150, 100), (0, 255, 0), 2)
 
 `cv2.putText(img, text, org, fontFace, fontScale, color, thickness = , lineType =, bottomLeftOrigin = )`
 
-`text` : 출력할 문자열
+`text` : 출력할 문자열. 
 
 `org` : text의 위치 좌측 하단 좌표
 
@@ -116,9 +116,9 @@ cv2.rectangle(img, (50, 200, 150, 100), (0, 255, 0), 2)
 >
 > `cv2.FONT_HERSHEY_COMPLEX` 등이 있음 
 
-`fontScale` : font size
+`fontScale` : font size. 	0.5~1을 먼저 해본 후 크기 결정하기
 
-`bottomLeftOrigin` : Ture or False. 보통 사용하는 default는 Ture.
+`bottomLeftOrigin` : Ture or False. 보통 사용하는 default는 True.
 
 문자열을 출력할 때는 `lineType = cv2.LINE_AA` 을 주는게 좋다.
 

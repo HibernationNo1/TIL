@@ -110,7 +110,7 @@ model4 = sm.FPN()		# from segmentation_models import FPN
 
 ##### method
 
-- `load_weights(path)`
+- `model.load_weights(filepath)`
 
   path상에 학습된 model이 있다면, 해당 model의 weight를 가져와 사용한다.
 
@@ -120,6 +120,26 @@ model4 = sm.FPN()		# from segmentation_models import FPN
   model = sm.Unet('resnet34',input_shape = (256, 256, 3), classes = 1, activation = 'sigmoid', encoder_weights='imagenet')
   
   model.load_weights(path_base_model + 'model_name')
+  ```
+
+- `model.predict(input_data)`
+
+  input data에 대해 model이 학습한 parameters를 기반으로 예측 결과를 반환한다.
+
+  > image mask에 대한 예측을 하는 model이라면 mask image를 반환
+
+  ```python
+  model = sm.Unet()
+  model.predict(img)
+  ```
+
+- `model.save()`
+
+  model을 save한다.
+
+  ```python
+  model = sm.Unet()
+  model.save()
   ```
 
   

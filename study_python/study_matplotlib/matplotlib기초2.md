@@ -462,19 +462,19 @@ ax.spines['right'].set_visible(False)
 
 ```python
 for spine_loc, spine in ax.spines.items():
-    if spine_loc in ['left', 'bottom']
-    spine.set_linewidth(3)
-    spine.set_alpha(0.5)
-	
-    if spine_loc in ['right', 'top']
-    spine.set_visible(False)
+	if spine_loc in ['left', 'bottom']:
+		spine.set_linewidth(3)
+		spine.set_alpha(0.5)
+			
+	if spine_loc in ['right', 'top']:
+		spine.set_visible(False)
 ```
 
 > using items()
 
 
 
-if you jsut want to see only img (no ticks, no spine)
+if you just want to see only img (no ticks, no spine)
 
 ```python
 fig, ax = plt.subplots(figsize = (5, 5))
