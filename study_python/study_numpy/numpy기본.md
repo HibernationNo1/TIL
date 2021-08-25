@@ -175,3 +175,47 @@ print(a[tmp])
 #        [7, 9]])   (0, 1) row index,  (2, 4) column index를 뽑는데 사용 
 ```
 
+
+
+
+
+##### np.histogram()
+
+data를 histogram으로 표현하는 함수
+
+```python
+hist, bins = np.histogram(data, bins= , range= )
+```
+
+- `data` : flatten shape의 data
+
+- `bins` : int, 히스토그램 각 차원의 크기(빈(bin)의 개수)를 나타내는 list
+
+  > `bons = [256]` 
+
+- `range` : float, 
+
+- `hist` : 계산된 histogram
+
+
+
+
+
+##### np.cumsum()
+
+ndarray의 누적합을 계산한다.
+
+>  n번 index의 누적합 결과 = 0~n까지의 element들의 합
+
+```python
+tmp = np.array([1, 2, 3, 4, 5, 6])
+
+res1 = np.cumsum(tmp)  # 1 3 6 10 15 21
+res2 = tmp.cumsum()
+```
+
+
+
+##### np.unique()
+
+인자로 받은 ndarray의 element에서 모든 고유 값을 검색하고 이러한 고유 값을 정렬한다.
