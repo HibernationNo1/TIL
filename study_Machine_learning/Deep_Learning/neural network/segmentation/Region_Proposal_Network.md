@@ -125,7 +125,7 @@ Anchor하나에 Delta가 하나씩 대응되며, Delta하나의 값의 구성은
 
 
 
-### Process_detail
+### Process_ditail
 
 1. **Generate Anchors**
 
@@ -181,7 +181,14 @@ Anchor하나에 Delta가 하나씩 대응되며, Delta하나의 값의 구성은
 
    
 
-### Loss Function
+
+
+## Loss Function
+
+$$
+Loss = L_{Bbox} + L_{Classification}
+$$
+
 
 $$
 L(\{p_i\}, \{t_i\}) = 
@@ -252,6 +259,3 @@ $$
   > \\+ smooth_{L_1}(log(\frac{w}{w_a}) - log(\frac{w^*}{w_a}))+ smooth_{L_1}(t_h = log(\frac{h}{h_a}) - log(\frac{h^*}{h_a}))
   > $$
 
-
-
-### Training

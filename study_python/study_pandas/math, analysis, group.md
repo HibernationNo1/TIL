@@ -108,12 +108,12 @@ foo라는 컬럼 안에 존재하는 모든 경우의 수를 볼 수 있다고 �
 
 
 
-#### df.shape()
+#### df.shape
 
 df의 shape을 return
 
 ```python
-print(df.shape())
+print(df.shape)
 ```
 
 
