@@ -201,6 +201,23 @@ tmp = tf.nn.l2_loss(
 
 
 
+
+
+#### tf.gether()
+
+```python
+params = tf.constant(['p0', 'p1', 'p2', 'p3', 'p4', 'p5'])
+indices = [2, 0, 2, 5]
+print(tf.gather(params, indices).numpy())
+# ['p2', 'p0', 'p2', 'p5']
+```
+
+
+
+![](https://www.tensorflow.org/images/Gather.png)
+
+
+
 ## tf.one_hot
 
 ```python
@@ -209,4 +226,8 @@ oh_labels = tf.one_hot(labels, 10)
 ```
 
 > class의 종류를 결정 후 분할
+
+
+
+
 
