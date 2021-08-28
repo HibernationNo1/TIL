@@ -81,19 +81,161 @@ Mask R-CNN의 backbone network는 ResNet-101을 사용한다.
 ### Loss Function
 
 $$
-Loss = L_{Bbox} + L_{Classification} + L_{Mask}
-$$
-
-$$
-L_{Bbox} :Regression\\ L_{Classification} : Softmax\ Cross \ Entropy \\
-L_{Mask} : Binary\ Cross\ Entropy
+Loss = L_{RPN} + L_{MRCNN}
 $$
 
 
 
-#### L_mask
+#### L_{RPN}
+
+$$
+Loss_{RPN} = L_{Bbox} + L_{Classification}
+$$
+
+$$
+L_{Bbox} :Regression\\ L_{Classification} : Categorical\ Cross \ Entropy
+$$
+
+##### L_{Bbox}
+
+`smooth_l1_loss`
+
+
+
+##### L_{Classification}
+
+`tf.keras.losses.sparse_categorical_crossentropy`
+
+
+
+
+
+#### L_{MRCNN}
+
+$$
+L_{MRCNN} = L_{Bbox} + L_{Classification} + L_{Mask}
+$$
+
+$$
+L_{Bbox} :Regression\\ L_{Classification} : Categorical\ Cross \ Entropy \\ L_{Mask} : Binary\ Cross\ Entropy
+$$
+
+
+
+##### L_{Bbox}
+
+`smooth_l1_loss`
+
+
+
+##### L_{Classification}
+
+`tf.nn.sparse_softmax_cross_entropy_with_logits`
+
+##### L_{Mask}
+
+`tf.keras.binary_crossentropy`
+
+
+
+
+
+
+
+
+
+
+
+###### L_Bbox
+
+$$
+L_{Bbox} = \lambda\frac{1}{N_{reg}}\sum_ip^*_iL_{reg}(t_i, t^*_i)
+$$
+
+
+
+- `N_{reg}` : anchor의 총 개수(feature map의 w × h × num_anchor)
+
+- `lambda` : Balancing parameter
+
+  > Ncls와 Nreg 차이로 발생하는 불균형을 방지하기 위해 사용된다. cls에 대한 mini-batch의 크기가 256(=Ncls)이고, 이미지 내부에서 사용된 모든 anchor의 location이 약 2,400(=Nreg)라 하면 lamda 값은 10 정도로 설정한다. (1~100 사이에서는 학습결과에 큰 변화가 없다)
+
+- `t_i` : Bbox에 대한 prediction  
+
+- `t^*_i` : Bbox에 대한 label
+
+- `L_{reg}` : smooth L1
+
+  `L_{reg}`에서는 predicted value, label 각각의 coordinate에 대해 다음과 같은 연산을 취한다.
+
+  - predicted value : `t_x`, `t_y`, `t_w`, `t_h`
+    $$
+    t_x = \frac{x - x_a}{w_a}, \ \ \ \ \ \ \ \ t_y = \frac{y - y_a}{h_a}\\
+    t_w = log(\frac{w}{w_a}), \ \ \ \ \ \ \ \ \ t_h = log(\frac{h}{h_a})
+    $$
+
+    - `x` : predicted x center coordinate (or `y`)
+    - `x_a` : x center coordinate of anchor box (or `y_a`)
+    - `w_a` : width of  anchor box (or `h_a`)
+
+  - label : `t^*_x`, `t^*_y`, `t^*_w`, `t^*_h`
+    $$
+    t^*_x = \frac{x^* - x_a}{w_a}, \ \ \ \ \ \ \ \ t^*_y = \frac{y^* - y_a}{h_a}\\
+    t^*_w = log(\frac{w^*}{w_a}), \ \ \ \ \ \ \ \ \ t^*_h = log(\frac{h^*}{h_a})
+    $$
+
+  이후 
+  $$
+  L_{reg}(t, t^*) = \sum_{i \in\{x, y, w, h\}} smooth_{L_1}(t_i - t^*_i)
+  $$
+  계산을 수행하게 되고, `smooth_L_1` 은 아래의 계산을 수행한다.
+  $$
+  smooth_{L_1}(x) = \left\{\begin{matrix} 0.5x^2 \ \ \ \ \ \ if\ \  |x| < 1\\ 
+  |x| - 0.5 \ \ \ \ \ otherwise \end{matrix}\right.
+  $$
+
+  > 예시 :: mini-batch 내의 anchor의 index == 1일 때
+  > $$
+  > L_{reg}(t_1, t^*_1) \\
+  > = smooth_{L_1}(t_x - t^*_x) + smooth_{L_1}(t_y - t^*_y) + smooth_{L_1}(t_w - t^*_w) + smooth_{L_1}(t_h - t^*_h)
+  > $$
+  >
+  > $$
+  > = smooth_{L_1}(\frac{x - x_a}{w_a} - \frac{x^* - x_a}{w_a}) + smooth_{L_1}(\frac{y - y_a}{h_a} - \frac{y^* - y_a}{h_a})
+  > \\+ smooth_{L_1}(log(\frac{w}{w_a}) - log(\frac{w^*}{w_a}))+ smooth_{L_1}(t_h = log(\frac{h}{h_a}) - log(\frac{h^*}{h_a}))
+  > $$
+
+
+
+
+
+###### L_Classification
+
+$$
+L_{Classification} = \frac{1}{N_{cls}}\sum_i L_{cls}(p_i, p^*_i)
+$$
+
+
+
+- `i` : mini-batch 내의 anchor의 index
+- `N_{cls}` : mini-batch의 크기
+- `p_i` : anchor `i`에 object가 존재할 probability에 대한 prediction
+- `p^*_i` :  anchor `i`에 object가 존재할 경우에 대한 label. (존재할 경우 1, 아닐 경우 0)
+- `L_{cls}` : log loss (binary cross entropy)
+
+
+
+
+
+###### L_mask
 
 mask loss는 pixel 단위로 object에 대한 masking을 binary로 수행하므로 BCE를 사용한다.
 
 이는 곧 주어진 groundtruth에 해당하는 Bbox의 class에 대한 loss만 계산하고 다른 class들에 대해서는 학습을 하지 않는다는 것이다.
+
+예를 들어, class가 class1, class2, class3 이 있고 classification에서 나온 결과 class 2에 대한 mask만 학습하고자 한다면
+
+class 2를 제외한 class의 mask는 제거하고, class 2의 mask형태에 대해서만 pixel학습을 한다.
+
+그렇게 때문에 class가 무엇인지 학습 할 필요가 없기 때문에 BCE를 사용하는 것이다.
 
