@@ -552,7 +552,7 @@ df.apped(new_df, ignore_index = True)
 #### df.to_csv
 
 ```python
-df.to_csv('file_name')
+df.to_csv('file_name.scv')
 ```
 
 

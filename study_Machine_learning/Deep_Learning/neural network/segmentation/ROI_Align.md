@@ -1,6 +1,6 @@
 # ROI Align
 
-ROI pooling의 Quantization Problem을 해결하기 위해 고안된 방법으로, bilinear interpolation을 사용해서 ROI영역을 각 section으로 나눔으로써 손실 특징값을 최소화한다.
+ROI pooling의 Quantization Problem을 해결하기 위해 고안된 방법으로, bilinear interpolation을 사용해서 ROI영역을 각 section의 값을 계산함으로써 손실 특징값을 최소화한다.
 
 
 

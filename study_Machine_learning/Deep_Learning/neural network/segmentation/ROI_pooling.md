@@ -48,7 +48,7 @@ Faster R-CNN부터는 Region Proposal의 동작이 Region Proposal Network(RPN)�
 
 Quantization Problem 
 
-Feature map에서 ROI Feature map으로 계산을 진행할 떄 H, W가 정수값이여야 한다. 그렇기 때문에 Feature map에서의 ROI의 h, w를 H, W로 나눈 값인 h/H, w/W가 정수로 떨어지지 않으면 나머지 over size의 영역은 버리게 된다. 
+Feature map에서 ROI Feature map으로 계산을 진행할 때 H, W가 정수값이여야 한다. 그렇기 때문에 Feature map에서의 ROI의 h, w를 H, W로 나눈 값인 h/H, w/W가 정수로 떨어지지 않으면 나머지 over size의 영역은 버리게 된다. 
 
 ![](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FcKBVPm%2Fbtq4s3LQtv0%2FBQDhE6GGqZ92EmsiakQkU0%2Fimg.png)
 
