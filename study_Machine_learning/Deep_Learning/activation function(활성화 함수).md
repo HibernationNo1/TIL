@@ -198,3 +198,17 @@ Softmax(소프트맥스)는 입력받은 값을 출력으로 0~1사이의 값으
 
 - 정리:  다중 클래스 분류 시 사용, 출력 노드의 활성화 함수로 많이 사용한다.
 
+
+
+
+
+### 6. Liear
+
+말 그대로 선형 activation function
+$$
+h(x) = c*x, \ \ \ \ c\ \ is constant
+$$
+입력 값에 특정 상수 값을 곱한 값을 출력으로 가지며, 다중 출력이 가능하다.
+
+- 선형함수의 미분값은 상수이기 때문에 backpropagation으로 인한 parameter updata가 안됨 
+
