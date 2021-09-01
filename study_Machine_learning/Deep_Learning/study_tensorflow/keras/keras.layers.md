@@ -671,6 +671,13 @@ x = Activation('relu')(x)
 
 
 
+```python
+x = BatchNormalization(axis=-1, momentum=0.99, epsilon=0.001)(x, training=True)
+```
+
+- `training=True` : 레이어는 현재 입력 배치의 평균 및 분산을 사용하여 입력을 정규화 한다.
+- `training=False` : 레이어는 훈련 중 학습 된 이동 통계의 평균 및 분산을 사용하여 입력을 정규화 한다.
+
 
 
 ### Dropout
@@ -682,5 +689,51 @@ from tensorflow.keras.layers import Dropout
 x = Conv2D(filter = 32, kernel_size = 3, padding = 'same')(input)
 x = Dropout(0.2)(x)
 x = Activation('relu')(x)
+```
+
+
+
+
+
+### Add
+
+두 input을 받아 element wise로 덧셈 후 return
+
+```python
+from tensorflow.keras.layers import Add
+
+input_shape = (2, 3, 4)
+x1 = tf.random.normal(input_shape)
+x2 = tf.random.normal(input_shape)
+y = Add()([x1, x2])
+print(y.shape) # (2, 3, 4)
+
+```
+
+
+
+### ZeroPadding2D
+
+```python
+from tensorflow.keras.layers import ZeroPadding2D
+p_size = 2
+ZeroPadding2D(padding = p_size)
+```
+
+
+
+
+
+### Lambda
+
+일반 Lambda를 사용하는 대신 tensorflow.keras.layers. Lambda를 사용하는 이유는 모델을 저장하고 검사하기 때문이다.
+
+```python
+from tensorflow.keras.layers import Lambda
+
+x = tf.ones(shape = (2, 4))
+tmp_layer = Lambda(
+    lambda t: tf.reshape(t, [tf.shape(t)[0], -1, 2]))(x)
+print(tmp_layer.shape) # (2, 3, 2)
 ```
 
