@@ -26,25 +26,88 @@ H(x)는 기존에 학습한 정보(x)와 추가적으로 학습한 정보(H(x))�
 
 ![](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fu7iAK%2FbtqBNkDoj6y%2F2Mxa3oVsS7SfoOzNZEZGU1%2Fimg.png)
 
-> - F(x)는 H(x)-x로 표현할 수 있으며 이를 잔차(Residual)라고 하고, F(x)가 최소가 되도록 학습이 되는 것을 Residual Learning이라고 한다.
->
-> - **identity block**
->
->   Conv+Batch_Norm+ReLU → Conv+Batch_Norm+ReLU → Conv+Batch_Norm + shortcut connection → ReLU
->
->   을 수행하는 block을 identity block이라고 한다.
->
->   ![](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fcrj5v9%2FbtqBOrWkyBD%2Fyxk3PchJlnl25RRXYJ1vg0%2Fimg.png)
->
-> - **convolution block**
->
->   convolution block은 identity block의 shortcut connection의 과정에 1x1 conv layer와 batch Normalization을 추가한 동작을 수행하는 layer이다.
->
->   ![](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbQtwY4%2FbtqBSPHVY9d%2FXLSNe8537wDXwnrXBAjJ70%2Fimg.png)
+> F(x)는 H(x)-x로 표현할 수 있으며 이를 잔차(Residual)라고 하고, F(x)가 최소가 되도록 학습이 되는 것을 Residual Learning이라고 한다.
+
+
+
+#### identity block
+
+Conv+Batch_Norm+ReLU → Conv+Batch_Norm+ReLU → Conv+Batch_Norm + shortcut connection → ReLU
+
+을 수행하는 block을 identity block이라고 한다.
+
+![](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fcrj5v9%2FbtqBOrWkyBD%2Fyxk3PchJlnl25RRXYJ1vg0%2Fimg.png)
+
+
+
+```python
+from tensorflow.keras.layers import Conv2D, BatchNormalization, Activation, Add
+
+# filters = [nb_filter1, nb_filter2, nb_filter3]
+def identity_block(input_tensor, filters):
+                                                  
+    nb_filter1, nb_filter2, nb_filter3 = filters
+                                                  
+    x = Conv2D(filters = nb_filter1, kernel_size = 1)(input_tensor)
+    x = BatchNormalization(axis=-1, momentum=0.99, epsilon=0.001)(x, training=True)
+    x = Activation('relu')(X)
+    
+    x = Conv2D(filters = nb_filter2, kernel_size = 3, padding='same')(x)
+    x = BatchNormalization(axis=-1, momentum=0.99, epsilon=0.001)(x, training=True)
+    x = Activation('relu')(X)              
+    
+    x = Conv2D(filters = nb_filter3, kernel_size = 1)(x)
+    x = BatchNormalization(axis=-1, momentum=0.99, epsilon=0.001)(x, training=True)
+
+    x = Add()([x, input_tensor])
+	x = Activation('relu')(X) 
+    return x
+```
 
 
 
 
+
+
+
+#### convolution block
+
+convolution block은 identity block의 shortcut connection의 과정에 1x1 conv layer와 batch Normalization을 추가한 동작을 수행하는 layer이다.
+
+![](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbQtwY4%2FbtqBSPHVY9d%2FXLSNe8537wDXwnrXBAjJ70%2Fimg.png)
+
+```python
+from tensorflow.keras.layers import Conv2D, BatchNormalization, Activation, Add
+
+# filters = [nb_filter1, nb_filter2, nb_filter3]
+def conv_block(input_tensor, filters, strides = 2):
+    nb_filter1, nb_filter2, nb_filter3 = filters
+    
+    x = Conv2D(filters = nb_filter1, kernel_size = 1, strides = strides)(input_tensor)
+    x = BatchNormalization(axis=-1, momentum=0.99, epsilon=0.001)(x, training=True)
+    x = Activation('relu')(X)
+
+    x = Conv2D(filters = nb_filter2, kernel_size = 3, padding='same')(x)
+    x = BatchNormalization(axis=-1, momentum=0.99, epsilon=0.001)(x, training=True)
+    x = Activation('relu')(X)     
+    
+    x = Conv2D(filters = nb_filter3, kernel_size = 1)(x)
+    x = BatchNormalization(axis=-1, momentum=0.99, epsilon=0.001)(x, training=True)
+    
+   	shortcut = KL.Conv2D(filters = nb_filter3, kernel_size = 1, strides=2)(input_tensor)
+    shortcut = BatchNormalization(axis=-1, momentum=0.99, epsilon=0.001)(shortcut, training=True)
+    
+    x = Add()([x, shortcut])
+	x = Activation('relu')(x) 
+    
+    return x       
+```
+
+
+
+
+
+### model_ResNet
 
 ResNet은 identity block, convolution block을 아래그림과 같이 쌓아서 구성한다
 
@@ -55,4 +118,49 @@ ResNet은 identity block, convolution block을 아래그림과 같이 쌓아서 
 각각의 ResNet의 구조는 아래와 같다
 
 ![](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FupZbe%2FbtqBOrva4eX%2FiNbnXbFPj1SKFfgZsDFFvk%2Fimg.png)
+
+
+
+```python
+from tensorflow.keras.layers import Conv2D, BatchNormalization, Activation, ZeroPadding2D, MaxPooling2D
+
+def resnet_graph(input_image, architecture):
+    assert architecture in ["resnet50", "resnet101"]
+    
+    # Stage 1
+    x = ZeroPadding2D(padding = 3)(input_image)
+    x = Conv2D(filters =64, kernel_size = 7, strides = 2)(x)
+    x = BatchNormalization(axis=-1, momentum=0.99, epsilon=0.001)(x, training=True)
+    x = Activation('relu')(x) 
+    x = MaxPooling2D(poolsize = 3, strides = 2, padding="same")(x)
+    C1 = x
+    
+    # Stage 2
+    x = conv_block(x, [64, 64, 256], strides = 1)
+    x = identity_block(x, [64, 64, 256])
+    x = identity_block(x, [64, 64, 256])
+    C2 = x
+    
+    # Stage 3
+    x = conv_block(x, [128, 128, 512])
+    x = identity_block(x, [128, 128, 512])
+    x = identity_block(x, [128, 128, 512])
+    x = identity_block(x, [128, 128, 512])
+    C3 = x
+    
+    # Stage 4
+    x = conv_block(x, [256, 256, 1024])
+    block_count = {"resnet50": 5, "resnet101": 22}[architecture]
+    for i in range(block_count):
+        x = identity_block(x, 3, [256, 256, 1024])
+    C4 = x
+    
+    # Stage 5
+    x = conv_block(x, [512, 512, 2048])
+    x = identity_block(x, [512, 512, 2048])
+    x = identity_block(x, [512, 512, 2048])
+    C5 = x
+    
+    return [C1, C2, C3, C4, C5]
+```
 

@@ -259,3 +259,54 @@ $$
   > \\+ smooth_{L_1}(log(\frac{w}{w_a}) - log(\frac{w^*}{w_a}))+ smooth_{L_1}(t_h = log(\frac{h}{h_a}) - log(\frac{h^*}{h_a}))
   > $$
 
+
+
+## code
+
+### RPN_Model
+
+```python
+from tensorflow.keras.models import Model
+from tensorflow.keras.layers import Input, Conv2D, Activation
+
+anchor_stride = 1
+anchor_ratios = [0.5, 1, 2]
+anchors_per_location = len(anchor_ratios)
+top_down_pyramid_size = 256
+
+
+class RPN_Model(Model):						
+    def __init__(self, anchor_stride, anchors_per_location, top_down_pyramid_size):
+        super(RPN_Model, self).__init__()  	
+		input_feature_map = Input(shape = (None, None, top_down_pyramid_size))
+        
+        # Intermediate layer
+        shared = Conv2D(filters =512, kernel_size = 3, padding='same', strides = anchor_stride, activation='relu')(input_feature_map)
+        
+        # cls layer
+        x = Conv2D(filters = 2*anchors_per_location, kernel_size = 1, padding='valid', activation='linear')(shared)
+        
+        # Reshape from [batch, anchors*2] to [batch, anchors, 2]
+        # [batch, anchors, [background, foreground]]
+        rpn_class_logits = Lambda(
+        lambda t: tf.reshape(t, [tf.shape(t)[0], -1, 2]))(x)
+        
+        # probability about background or foreground
+        rpn_probs = Activation('softmax')(rpn_class_logits)
+        
+        # reg layer
+        x = Conv2D(filters = 4*anchors_per_location, kernel_size = 1, padding='valid', activation='linear')(shared)
+        
+        # Reshape from [batch, anchors*4] to [batch, anchors, 4]
+        # [batch, anchors, [x, y, log(w), log(h)]]
+        rpn_bbox = Lambda(
+        lambda t: tf.reshape(t, [tf.shape(t)[0], -1, 4]))(x)
+        
+		output = [rpn_class_logits, rpn_probs, rpn_bbox]
+		self.model = Model(inputs = input_feature_map, outputs=output)
+        
+	def call(self, input_feature_map):
+    	return self.model(input_feature_map)
+
+```
+
