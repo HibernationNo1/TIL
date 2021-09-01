@@ -219,3 +219,53 @@ res2 = tmp.cumsum()
 ##### np.unique()
 
 인자로 받은 ndarray의 element에서 모든 고유 값을 검색하고 이러한 고유 값을 정렬한다.
+
+
+
+
+
+##### np.meshgrid()
+
+input으로 받은 `x`,` y`의 shape으로 grid cell을 만든 후 `res_x`, `res_y`으로 반환한다.
+
+이 때
+
+`res_x`는 `x`의 각 원소를 1-D로 concatenate후 2-D로 concatenate하고
+
+`res_y`는 `y`의 각 원소를 2-D로 concatenate후 1-D로 concatenate한다.
+
+```python
+x = [1, 2, 3]
+y = [6, 7, 8, 9, 10]
+res_x, res_y = np.meshgrid(np.array(x), np.array(y))
+print(res_x.shape) # (5, 3)  == print(res_y.shape)
+# == (y.shape, x.shape)
+
+print(res_x)
+print(res_y)
+```
+
+
+
+```
+print(res_x)
+[[1 2 3]
+ [1 2 3]
+ [1 2 3]
+ [1 2 3]
+ [1 2 3]]
+```
+
+```
+print(res_y)
+[[ 6  6  6]
+ [ 7  7  7]
+ [ 8  8  8]
+ [ 9  9  9]
+ [10 10 10]]
+```
+
+
+
+
+
