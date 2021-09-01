@@ -43,7 +43,7 @@ t1 = tf.cast(t1, dtype = tf.int16)
 
 
 
-## tf.math
+## math
 
 #### tf.minimun()
 
@@ -95,6 +95,16 @@ argument로 받아온 두 x, y값 중 (x>y)가 만족하면 True값을 return
 
 ```python
 tmp = tf.greater(x, y)
+```
+
+
+
+
+
+#### tf.exp()
+
+```python
+tf.exp(2)	# e^2
 ```
 
 

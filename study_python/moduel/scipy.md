@@ -75,3 +75,5 @@
 
 
 각 sub package마다 다양한 method를 포함하고 있다.
+
+### scipy.ndimage
