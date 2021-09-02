@@ -6,7 +6,7 @@ Non Maximum Suppression는 IOU가 threshold 이상의 score를 가진 다수의 
 
 
 
-##### 동작 과정
+#### 동작 과정
 
 1. confidence 가 0.6 낮은 bounding box를 제거한다
 2. class별로 confidence가 가장 높은 bounding box가 앞으로 오도록 전체 bounding box를 내림차순 정렬한다.
@@ -16,3 +16,24 @@ Non Maximum Suppression는 IOU가 threshold 이상의 score를 가진 다수의 
 6. 2~5번 과정을 전체 class에 대해서 진행한다.
 
 > 3~4번 과정이 non-*maximum* suppression algorithm이다
+
+
+
+##### tf.image.non_max_suppression
+
+```python
+selected_indices = tf.image.non_max_suppression(
+    boxes, scores, max_output_size, iou_threshold=0.5,
+    score_threshold=float('-inf'), name=None
+	)
+```
+
+- `boxes` : [y1, x1, y2, x2]
+- `scores` : probaility
+- `max_output_size` :
+- `iou_threshold`  : 
+- `score_threshold` : 
+
+- `selected_indices` : A 1-D integer `Tensor` of shape `[M]` , return value is indices
+
+  >  `M <= max_output_size`.
