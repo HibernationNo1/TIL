@@ -737,3 +737,45 @@ tmp_layer = Lambda(
 print(tmp_layer.shape) # (2, 3, 2)
 ```
 
+
+
+### UpSampling2D
+
+UpSampling2D는 케라스 기준 내부적으로 resize_images() 를 호출한다. 
+
+즉, 적은 해상도를 일부러 고해상도로 올리는것이다. 
+
+> 단순히 잡아 늘리는 역할으로 바로 Conv2D의 함수가 호출되어야 될 필요가 있음
+
+```python
+from tensorflow.keras.layers import UpSampling2D
+
+x = UpSampling2D(size = (2, 2))(x)
+```
+
+위 경우는 input의 1차원과 2차원을 각각 2배씩 늘려주는 동작
+
+> 7×7 > 14×14 > 28 ×28 
+
+
+
+
+
+### concatenate
+
+```python
+from tensorflow.keras.layers import concatenate
+
+x = concatenate(inputs= [], axis = )
+```
+
+
+
+```python
+x = np.arange(20).reshape(2, 2, 5)
+y = np.arange(20, 30).reshape(2, 1, 5)
+
+xx = concatenate([x, y], axis=1)
+print(xx.shape)	# (2, 3, 5)
+```
+
