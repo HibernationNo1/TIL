@@ -68,60 +68,7 @@ image ─ CNN ─  Intermediate Layer ┤
 
 
 
-##### Anchor box
 
-anchor box는 원본 image의 각 grid cell의 중심을 기준으로 생성하고, 각각의 비율에 대해 각각의 scale을 적용하여 정의한다.
-
-- **parameters for define Anchor**
-
-  scale : feature map에서의 anchor의 size
-
-  ratio : feature map에서의 anchor의 `width:height` ratio
-
-  stride : image를 기준으로 어느 정도 간격으로 Anchor를 생성할 것인지 나타내는 값
-
-  > 주로 image와 feature map의 크기의 비율(sub sampling ratio)값을 사용
-
-  - feature map에서의 Anchor_base_size를 결정하는 요인 == scale, ratio
-  - feature map의 size는 image의 w, h를 stride로 나눈 값이기 때문에, 이 것이 반영된 원본 image에서 Anchor의 크기는 Anchor_base_size + stride 이다.
-
-  > 예시 ::
-  >
-  > Fast R-CNN에서는 3개의 스케일[128, 256, 512]과 3개의 비율[1:1, 1:2, 2:1]을 사용하여 k=9개의 앵커를 사용하였다.
-  >
-  > ![](https://media.vlpt.us/images/suminwooo/post/49fa1d5a-d59c-4272-b43d-4af416134bf3/image.png)
-  >
-  > 원본 image의 크기가 600×800이고, sub-sampling ratio = 1/16일 때
-  >
-  > CNN에 의한 feature map은 38×50이다. (38, 50가 곧 stride)
-  >
-  > 그렇기에 Fast R-CNN에서는 각 cell마다 9개의 anchor box를 만들었다. (총 개수 17100 = 38×50×9 ) 
-
-  
-
-- **Generate Anchors**
-
-  a개의 scale과 b개의 ratio를 가진 Anchor box를 만든다고 할 때,  
-
-  이미지의 크기에 sub-sampling ratio를 곱한만큼의 grid cell을 그린 후 각각의 cell 기준으로 a×b개의 Anchor를 만든다.
-
-  Anchor하나의 값의 구성은 left top, right bottom의 x, y좌표를 표현하며 이는 각각 (x1, y1) (x2, y2)로 표현되기 때문에 (x1, y1, x2, y2)형식의 구조를 갖는다.
-
-
-
-##### Delta
-
-기본 Anchor의 크기와 위치를 조정하기 위한 값으로, model을 통해 학습되는 parameter이다.
-
-즉, object에 대한 (y, x, h, w)이다.
-
-Anchor하나에 Delta가 하나씩 대응되며, Delta하나의 값의 구성은 (deltaCenterY, deltaCenterX, deltaHeight, deltaWidth)형식의 구조를 갖는다.
-
-
-
-##### Probability
-
-각 Anchor 내부에 객체가 존재할 확률이다.
 
 
 

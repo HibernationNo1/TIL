@@ -56,9 +56,9 @@ $ tensorboard --logdir=tensorboard_log --reload_interval=5
 
 
 
-### method
+## method
 
-#### checkpoint namager
+### checkpoint namager
 
 ##### Checkpoint()
 
@@ -226,11 +226,9 @@ with train_summary_writer.as_default():
 
 
 
+#### exam
 
-
-## **exam**
-
-###### set checkpoint manager
+**set checkpoint manager**
 
 ```python
 checkpoint_path = 'saved_model'
@@ -250,7 +248,7 @@ if latest_ckpt:
 
 
 
-###### save checkpoint
+**save checkpoint**
 
 ```python
 save_checkpoint_steps = 50
@@ -262,7 +260,7 @@ if ckpt.step % save_checkpoint_steps == 0:
 
 
 
-###### write parameter
+**write parameter**
 
 ```python
 tensorboard_log_path = 'tensorboard_log'
@@ -290,4 +288,6 @@ with validation_summary_writer.as_default():
 	tf.summary.scalar('total_validation_noobject_loss ', total_validation_noobject_loss, step=int(ckpt.step))
 	tf.summary.scalar('total_validation_class_loss ', total_validation_class_loss, step=int(ckpt.step))
 ```
+
+
 
