@@ -75,6 +75,50 @@ np.where(ndarray != 'winter', 'True', 'False')
 
 
 
+##### np.argwhere()
+
+np.where()는 boolean을 return할때도 있지만 np.argwhere()는 조건에 맞는 값의 index를 반환하는것에만 집중
+
+```python
+np.where(조건)
+```
+
+```python
+x = np.arange(6).reshape(2,3)
+# array([[0, 1, 2],
+#       [3, 4, 5]])
+
+np.argwhere(x>1)
+# array([[0, 2],
+#       [1, 0],
+#       [1, 1],
+#       [1, 2]])
+```
+
+
+
+
+
+
+
+##### np.arange()
+
+[start, stop) 에서 step 의 크기만큼 일정하게 떨어져 있는 숫자들을 array 형태로 반환
+
+```python
+np.arange([start, ] stop, [step, ] dtype=None)
+```
+
+`step` default  = 1
+
+ex)
+
+```python
+np.arange(3, 7)  # [3, 4, 5, 6]
+```
+
+
+
 
 
 ##### np.squeeze()
@@ -268,4 +312,21 @@ print(res_y)
 
 
 
+
+##### np.broadcast_to()
+
+같은 배열을 여러개 복사해서 늘리는 함수
+
+```python
+x = np.array([1, 2, 3])
+np.broadcast_to(x, (2, 3))
+# [[1 2 3]
+#  [1 2 3]]
+
+x = np.array([1, 2, 3, 4])
+np.broadcast_to(x, (3, 4))
+# [[1 2 3 4]
+#  [1 2 3 4]
+#  [1 2 3 4]]
+```
 
