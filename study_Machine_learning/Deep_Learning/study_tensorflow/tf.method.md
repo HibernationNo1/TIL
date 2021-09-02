@@ -198,21 +198,6 @@ tf.argmax(predictions, axis = 1)
 
 
 
-#### tf.nn.l2_loss()
-
-```python
-tmp = tf.nn.l2_loss(
-    t, name=None
-)
-```
-
-- `tmp` : sum(t ** 2) / 2
-- `t` : Tensor,  Must be one of the following types: `half`, `bfloat16`, `float32`, `float64`.
-
-
-
-
-
 #### tf.gether()
 
 ```python
