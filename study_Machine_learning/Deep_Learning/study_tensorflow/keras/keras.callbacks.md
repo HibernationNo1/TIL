@@ -6,7 +6,7 @@ iteration 이 반복되다가 특정 particular condition이 맞으면 반복을
 
 
 
-### ModelCheckpoint()
+### ModelCheckpoint
 
 save file depedns on specific condition
 
@@ -78,7 +78,7 @@ loss_acc = model.fit(x = train_iamges, y = train_oh_labels, batch_szie = 128, ep
 
 
 
-### ReduceLROnPlateau()
+### ReduceLROnPlateau
 
 특정 epochs 횟수통안 performance가 개선 되지 않으면 learning rate를 동적으로 감소시킴
 
@@ -122,7 +122,7 @@ loss_acc = model.fit(x = train_iamges, y = train_oh_labels, batch_szie = 128, ep
 
 
 
-### EarlyStopping()
+### EarlyStopping
 
 specifical epochs 동안 performance가 개선되지 않을 시 learning을 조기에 stop 
 
@@ -184,4 +184,30 @@ elr_cb = EarlyStopping(monitor = 'val_loss', patienc = 20,
 
 loss_acc = model.fit(x = train_iamges, y = train_oh_labels, batch_szie = 128, epoch = 50, validation_data = (val_images, val_oh_labels), callbacks = [mcp_cb , rlr_cb, elr_cb])
 ```
+
+
+
+### TensorBoard
+
+Enable visualizations for TensorBoard.
+
+```python
+from tensorflow.keras.callbacks import TensorBoard
+
+callbacks = TensorBoard(log_dir='logs', histogram_freq=0, write_graph=True, write_images=False)
+```
+
+`log_dir` : path of directory
+
+`histogram_freq` : compute activation and weight histograms
+
+> If set to 0, histograms won't be computed.
+>
+> histograms을 그리는 경우는 잘 없음
+
+`write_graph` : whether to visualize the graph in TensorBoard. 
+
+> `write_graph=True` 일 경우 log file이 커질 수 있음
+
+`write_images` : whether to write model weights to visualize as image in TensorBoard.
 
