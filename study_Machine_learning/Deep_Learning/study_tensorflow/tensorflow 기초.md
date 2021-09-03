@@ -355,40 +355,7 @@ res3 = tf.reduce_sum(t1, axis = 2) # 3차원 방향으로 더한다.(z축)
 
 
 
-##### 3. tf.concat()
-
-Function that stack serveral matrices
-
-```python
-res = tf.concat(value, axis = )
-```
-
-`value` : the tuple containing the metrices to stack
-
-`axis` : stacking direction
-
-
-
-```python
-x1 = tf.constant([1, 2, 3])
-x2 = tf.constant([4, 5, 6])
-
-x = tf.concat((x1, x2), axis =0)
-print(x) 
-```
-
-> tf.Tensor([1 2 3 4 5 6], shape=(6,), dtype=int32)
-
-```python
-x1 = tf.constant([[1, 2, 3]])
-x2 = tf.constant([[4, 5, 6]])
-
-x = tf.concat((x1, x2), axis =0)
-print(x) 
-```
-
-> [[1 2 3]
->  [4 5 6]], shape=(2, 3), dtype=int32)
+##### 
 
 
 
