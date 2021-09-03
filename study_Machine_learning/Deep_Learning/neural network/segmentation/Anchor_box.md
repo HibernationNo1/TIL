@@ -148,7 +148,7 @@ def Set_p_n_anchor(anchors, gt_boxes):
     # They get overwritten below if a GT box is matched to them.
     # anchor방향으로 slicing
     anchor_iou_argmax = np.argmax(overlaps, axis=1)
-   anchor_iou_max = overlaps[np.arange(overlaps.shape[0]), anchor_iou_argmax]
+    anchor_iou_max = overlaps[np.arange(overlaps.shape[0]), anchor_iou_argmax]
     rpn_match[(anchor_iou_max < 0.3)] = -1
     
     # 2. Set an anchor for each GT box (regardless of IoU value).
@@ -249,79 +249,82 @@ positive anchor에 대해서  shift와 scale을 compute한다.
 
 ##### Delta
 
-Delta = (dy, dx, dh, dw)
+Box_1과 Box_2가 있고, 각각의 left-top, right down의 coordinate가 아래와 같다고 할 때
 $$
-dy = \frac{y_{GT} - y_{Anchor}}{h_{Anchor}} \\
-dx = \frac{x_{GT} - x_{Anchor}}{w_{Anchor}} \\
-dh = log\frac{h_{GT}}{h_{Anchor}}\\
-dw = log\frac{w_{GT}}{w_{Anchor}}
+Box_1 = [y_{B1-1}, x_{B1-1}, y_{B1-2}, x_{B1-2}] \\
+Box_2 = [y_{B2-1}, x_{B2-1}, y_{B2-2}, x_{B2-2}]
 $$
-y\_{GT}, x\_{GT} : center coordinate of GT
+right, width, y_center, x_center를 계산해서 구했다고 가정해보자.
+$$
+Box_1(h, w, x, y) = (h_{B1}, w_{B1}, x_{B1}, y_{B1}) \\
+Box_2(h, w, x, y) = (h_{B2}, w_{B2}, x_{B2}, y_{B2})
+$$
 
-y\_{Anchor}, x\_{Anchor} :  center coordinate of Anchor 
 
-h_{Anchor} : height of Anchor 
+그럼 Box1의 모양을 Box2에 대응시키는 변환값 Delta의 계산법은 아래와 같다
 
-w_{Anchor} : width of Anchor 
 
-h_{GT} : height of GT
 
-w_{GT} : width of GT
-
+**Delta = (dy, dx, dh, dw)**
+$$
+dy = \frac{y_{B2} - y_{B1}}{h_{B1}} \\
+dx = \frac{x_{B2} - x_{B1}}{w_{B1}} \\
+dh = log\frac{h_{B2}}{h_{B1}}\\
+dw = log\frac{w_{B2}}{w_{B1}}
+$$
 
 
 ```python
-def match_anchor_to_GT_boxes(rpn_match, gt_boxes, iou):
+def box_refinement_graph(box, gt_box):
     """
-    rpn_match : has subsampled
-    rpn_match.shape : [anchor_count] 
-    1 = positive anchor, -1 = negative anchor, 0 = neutral
-    
-   	gt_boxes : [instance_count, (y1, x1, y2, x2)]
-   	iou : [num_anchors,  num_gt_boxes]  
+    box를 gt_box의 좌표에 맞추도록 하는 변환값(delta)을 계산
+    box : [N1, (y1, x1, y2, x2)]
+    gt_box : [N2, (y1, x1, y2, x2)]
     """
-    anchor_iou_argmax = np.argmax(overlaps, axis=1)
     
-    # For positive anchors, compute shift and scale needed to transform them
-    # to match the corresponding GT boxes.
-    ids = np.where(rpn_match == 1)[0]
-    ix = 0  # index into rpn_bbox
+    box = tf.cast(box, tf.float32)
+    gt_box = tf.cast(gt_box, tf.float32)
     
-   	for i, a in zip(ids, anchors[ids]):
-        # Closest gt box (it might have IoU < 0.7)
-        gt = gt_boxes[anchor_iou_argmax[i]]
-        
-        # Convert coordinates to center plus width/height.
-        # GT Box
-    	gt_h = gt[2] - gt[0]
-        gt_w = gt[3] - gt[1]
-        gt_center_y = gt[0] + 0.5 * gt_h
-        gt_center_x = gt[1] + 0.5 * gt_w
-        # Anchor
-        a_h = a[2] - a[0]
-        a_w = a[3] - a[1]
-        a_center_y = a[0] + 0.5 * a_h
-        a_center_x = a[1] + 0.5 * a_w
-        
-        # Compute the bbox refinement that the RPN should predict.
-        rpn_bbox[ix] = [
-            (gt_center_y - a_center_y) / a_h,
-            (gt_center_x - a_center_x) / a_w,
-            np.log(gt_h / a_h),
-            np.log(gt_w / a_w),
-        ]
-        # Normalize
-        rpn_bbox[ix] /= RPN_BBOX_STD_DEV
-        ix += 1
-        
-   	return rpn_match, rpn_bbox
+    height = box[:, 2] - box[:, 0]
+    width = box[:, 3] - box[:, 1]
+    center_y = box[:, 0] + 0.5 * height
+    center_x = box[:, 1] + 0.5 * width
+    
+    gt_height = gt_box[:, 2] - gt_box[:, 0]
+    gt_width = gt_box[:, 3] - gt_box[:, 1]
+    gt_center_y = gt_box[:, 0] + 0.5 * gt_height
+    gt_center_x = gt_box[:, 1] + 0.5 * gt_width
+
+    dy = (gt_center_y - center_y) / height
+    dx = (gt_center_x - center_x) / width
+    dh = tf.log(gt_height / height)
+    dw = tf.log(gt_width / width)
+    
+    result = tf.stack([dy, dx, dh, dw], axis=1)
+    return result
 ```
 
 
 
-
-
 ### Apply Delta to Anchor
+
+위의 Delta를 Box1에 적용시키면 Box1을 Box2에 대응시킨, 새로운 Box1의 left-top, right down의 coordinate를 계산할 수 있다. 
+
+그리고 이 새로운 left-top, right down의 coordinate를 아래처럼 표현한다고 하면
+$$
+기존 Box_1 = [y_{1}, x_{1}, y_{2}, x_{2}]\\
+새로운\ Box_1 = [y_{B1-1}, x_{B1-1}, y_{B1-2}, x_{B1-2}]
+$$
+각각의 좌표를 구하는 식은 아래와 같다.  
+
+ **Box1에 Delta를 적용해서 새로운 Box1의 좌표를 구함**
+$$
+y_{B1-1} = y_1 + 0.5(y_2-y_1) + dy*(y_2-y_1) - 0.5e^{dh} \\
+x_{B1-1} = x_1 + 0.5(x_2-x_1) + dx*(x_2-x_1) - 0.5e^{dw} \\
+y_{B1-2} = y_1 + 0.5e^{dh}\\
+x_{B1-2} = x_1 + 0.5e^{dw}
+$$
+
 
 ```python
 def apply_box_deltas_graph(Anchor, deltas):
@@ -349,12 +352,4 @@ def apply_box_deltas_graph(Anchor, deltas):
     result = tf.stack([y1, x1, y2, x2], axis=1)
     return result
 ```
-
-
-$$
-y_1 = y_1 + 0.5(y_2-y_1) + dy*(y_2-y_1) - 0.5e^{log(dh)} \\
-x_1 = x_1 + 0.5(x_2-x_1) + dy*(x_2-x_1) - 0.5e^{log(dw)} \\
-y_2 = y_1 + 0.5e^{log(dh)}\\
-x_2 = x_1 + 0.5e^{log(dw)}
-$$
 
