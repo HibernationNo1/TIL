@@ -83,3 +83,13 @@ SparseCategoricalAccuracy()의 instance에 누적된 accuracy  값을 return하�
 acc(labels, predictions).result()
 ```
 
+
+
+### sparse_categorical_crossentropy
+
+```python
+from tensorflow.keras.metrics import sparse_categorical_crossentropy
+
+loss = sparse_categorical_crossentropy(y_true, y_pred, from_logits=False, axis=-1)
+```
+
