@@ -779,3 +779,141 @@ xx = concatenate([x, y], axis=1)
 print(xx.shape)	# (2, 3, 5)
 ```
 
+
+
+### TimeDistributed
+
+각 time step마다 cost를 계산해서 하위 layer로 전파하여 각 weight를 updata해주는 layer이다.
+
+![](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FckZi73%2Fbtq3mpK2XIO%2F2HTlTNwSY5LedYgaEallWk%2Fimg.png)
+
+여기서 time step이란 input data의 개수라고 이해하면 된다.
+
+> 예를 들어, input data가 1개이고, 그 shape이 [None, height, width, channel] 이면, output은 해당 input에 대한 결과값 [output]이다.
+>
+> 하지만 input data가 N개이고, 그 shape이 [None, N, height, width, channel] 이면 output은 각각의 data에 대한 결과값이 나와야 하기 때문에 [N, output]이 나와야 한다.
+
+이를 위해 TimeDistributed을 통해 rapping된 하위 layer의 input은 [None, N, height, width, channel] 의 모양이며(image가 input data라고 했을 때) 각각의 output은 
+
+[none, 1, size, size, channel]에 의한 cost로 인해 updata된 parameters로 얻어진 결과값
+
+[none, 2, size, size, channel]에 의한 cost로 인해 updata된 parameters로 얻어진 결과값
+
+...
+
+[none, N, size, size, channel]에 의한 cost로 인해 updata된 parameters로 얻어진 결과값
+
+이 될 수 있는 것이다.
+
+>  Mask R-CNN의 경우
+>
+> ROI pooling 이후 Shape: [batch, num_rois, POOL_SIZE, POOL_SIZE, channels] 의 data를 input으로 사용한다.
+>
+> 이는 곧 roi영역이 1이상이고, 각각의 roi영역에 대해서 inference를 하겠다는 의미이기 때문에
+>
+> TimeDistributed를 사용한다.
+
+
+
+```python
+from tensorflow.keras.layers import TimeDistributed, Conv2D
+
+# 하위 layer가 conv라고 했을 때
+x = TimeDistributed(Cov2D(filters, kernel_size, strides, padding, activation))(x)
+```
+
+
+
+
+
+### Reshape
+
+```python
+from tensorflow.keras.layers import Reshape
+
+x = Reshape(shape)(x)
+```
+
+`shape` : reshape의 결과로 기대하는 shape
+
+```python
+# x : [batch, num_rois, NUM_CLASSES * (dy, dx, dh, dw)]
+s = K.int_shape(x)
+# mrcnn_bbox : [batch, num_rois, NUM_CLASSES, (dy, dx, dh, dw)]
+mrcnn_bbox = Reshape((s[1], num_classes, 4), name="mrcnn_bbox")(x)
+```
+
+
+
+
+
+### Conv2DTranspose
+
+Conv2D가 input image에서 feature map을 계산한다고 하면, 
+
+Conv2DTranspose는 feature map에서 input image를 계산하는 과정이라고 이해하면 된다. (upsamping)
+
+그렇기 때문에 그 output은 input image와 동일한 공간 해상도를 생성한다.
+
+단, 이 연산으로 이전 input image값이 그대로 나오는 것은 아니다. 왜냐하면 역행렬을 곱하는 것이 아닌, 전치행렬을 곱하기 때문이다.
+
+```python
+from tensorflow.keras.layers import Conv2DTranspose
+x = Conv2DTranspose(filters, kernel_size, strides, padding, activation)(x)
+```
+
+
+
+**calculate step**
+
+input height, width = H\_{n-1}, W\_{n-1}
+
+output height, width = H\_{n}, W\_{n} 일 때
+
+
+
+1. s, k , p가 주어질 때,  `p'`를 계산한다. 
+
+   >  s = stride, k = kernel size, p = padding size
+   >
+   > `p'` = k-p-1
+
+2. Conv2DTranspose의 input에서 각 pixel사이에 z만큼의 0을 삽입한다.
+
+   > zeropadding이 아니다.  stride == 2일 때
+   >
+   > ■■■            ■□■□■
+   >
+   > ■■■  에서  □□□□□ 으로, 사이사이에 삽입하는 것이다.
+   >
+   > ■■■            ■□■□■
+   >
+   > ​                   □□□□□
+   >
+   > ​                   ■□■□■
+   >
+   > 이로 인해 size는
+   > $$
+   > (H_{n-1} - 1 ) × s , \ \ (W_{n-1} - 1 ) × s
+   > $$
+   > 가 된다.
+
+3. 2에서 변형된 map에 p'만큼의 zeropadding을 한다.
+
+4. 3에서 변형된 map에 stride 1인 일반적인 convolution을 수행한다.
+
+   이 때 H_n, W_n의 equation은 아래와 같다.
+   $$
+   H_n =(H_{n-1} - 1)(s) + k - 2p\\
+   W_n =(W_{n-1} - 1)(s) + k - 2p
+   $$
+   
+
+
+
+![](https://media.vlpt.us/images/hayaseleu/post/081aa7f0-68db-4844-a4ac-c402bf7a9d47/1_51F0QJN-0Ra0GzyKCEfsrQ.png)
+
+![](https://media.vlpt.us/images/hayaseleu/post/8547f631-521f-4e0d-96d9-7c80f50f6cf9/1.gif)
+
+![](https://media.vlpt.us/images/hayaseleu/post/0e5ede6b-c2ae-4e43-a626-782faf18aedf/4.gif)
+
