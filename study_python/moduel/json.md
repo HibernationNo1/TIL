@@ -77,6 +77,8 @@ class NpEncoder(json.JSONEncoder):
             return super(NpEncoder, self).default(obj)
 
 # code
-data = json.dumps(data, cls = NpEncoder)
+	with open(path_save_result_dataset + '\dataset.json', 'w', encoding='utf-8') as make_file:
+		json.dump(dataset_json, make_file, ensure_ascii=False, indent="\t", cls=NpEncoder)
+
 ```
 
