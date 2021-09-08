@@ -2,7 +2,9 @@
 
 
 
-### re.match
+### match
+
+패턴과 문자열이 일치하는 부분을 group 으로 묶어서 반환
 
 ```python
 import re
@@ -16,6 +18,23 @@ print(m.group(2)) # 09
 print(m.group(3)) # 01
 print(m.group(4)) # 16
 print(m.group(5)) # 44
+```
+
+
+
+### fullmatch
+
+패턴과 문자열이 완벽하게 일치하면 매칭 결과를 return
+
+일치하지 않으면 None 반환
+
+```python
+matchObj = re.fullmatch('a', 'a')
+print(matchObj)		
+# <_sre.SRE_Match object; span=(0, 1), match='a'>
+
+print(re.fullmatch('a', 'aba'))
+# None
 ```
 
 
