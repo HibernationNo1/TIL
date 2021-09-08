@@ -370,7 +370,7 @@ from tensorflow.keras.layers import MaxPooling2D
 
 **property**
 
-- `poolsize = ` 
+- `pool_size = ` 
 
 - `strides = ` 
 
@@ -643,6 +643,12 @@ Conv2D -> BN -> Activation Function
 > Scaling파라미터와 beta 파라미터는 학습시에 최종 결정된 값을 이용 
 
 
+
+batch normalization는 학습 가능한 parameter 두 개와 학습 불가능한 parameter두 개가 존재한다.
+
+학습 가능한 parameter : `gamma`, `beta`  라고 불림
+
+학습 불가능한 parameter : `Mean Moving Average`, `Variance Moving Average`
 
 
 
