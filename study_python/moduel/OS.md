@@ -92,3 +92,22 @@ GPU 를 과하지 않게 사용하기 위한 속성. 코드처음에 작성
 os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 ```
 
+
+
+
+
+#### name
+
+on.name의 return은 운영체제에 따라서 다르다
+
+`nt` : windows
+
+`posix` : linux
+
+```python
+if os.name == 'nt':
+    print("windows")
+elif os.name == 'posix':
+    print("linux")
+```
+
