@@ -205,19 +205,28 @@ output_list = model.output	# [detections, mrcnn_class, mrcnn_bbox, mrcnn_mask, r
 
 #### losses
 
-`model._losses`
+model instance에 list타입의 loss저장용 attribute
+
+- 접근 방법
+
+  ```python
+  if 100 in model.losses
+  ```
+
+  
+
+#### add_loss()
+
+model instance의 losses에 loss값을 더할때 사용
 
 ```python
-model._losses = []
+value_loss = 100
+model.add_loss(value_loss)
 ```
 
-model instance에 list타입의 loss저장 attribute를 생성
 
-해당 attribute에 접근할땐 `_`을 빼고 접근
 
-```python
-if 100 in model.losses
-```
+
 
 
 
@@ -225,7 +234,7 @@ if 100 in model.losses
 
 스칼라 아웃풋에 대한 name을 반환. initial은 [] (비어있음)
 
-name을 담아두는 container 용도로 사용함
+metrics의 name을 담아두는 container 용도로 사용함
 
 ```python
 loss_names = ["rpn_class_loss",  "rpn_bbox_loss",
@@ -235,6 +244,18 @@ print(model.metrics_names) 	# []   initial
 for name in loss_names:
 	model.metrics_names.append(name)
 ```
+
+
+
+#### add_metric
+
+model instance의 metrics에 metric값을 더할때 사용
+
+```python
+model.add_metric(loss, name=name, aggregation='mean')
+```
+
+
 
 
 
@@ -250,17 +271,6 @@ model.metrics_tensors.append(loss_value)
 ```
 
 
-
-
-
-#### add_loss()
-
-model instance에 loss를 더할때 사용
-
-```python
-value_loss = 100
-model.add_loss(value_loss)
-```
 
 
 
@@ -586,6 +596,10 @@ print(loss_accs.history['accuracy'])
 
 data를 통해 mode을 learning시키는 함수. 단, batch_size를 개발자가 generator로 생성해서 사용한다면 `fit()`대신 `fit_generator()`를 사용해야 한다.
 
+**fit_generator()의 기능은 이제 fit()에서 전부 지원되며, fit_generator()는 사라질 예정**
+
+단, 아직 generator를 인수로 받는 fit()에 대한 정보가 없음
+
 ```python
 model.fit_generator(
     train_generator,
@@ -719,7 +733,6 @@ simple ver
 ```python
 model = tf.keras.models.load_model(path)
 ```
-
 
 
 
