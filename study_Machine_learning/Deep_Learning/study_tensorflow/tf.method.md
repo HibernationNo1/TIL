@@ -1,3 +1,13 @@
+## tf.compat.v1
+
+tensorflow version.1의 code를 version.2의 환경으로 가져와서 사용할 때 생기는 오류를 방지하기 위한 모듈
+
+https://www.tensorflow.org/api_docs/python/tf/compat/v1
+
+
+
+
+
 ## tf.reduce
 
 텐서를 연산하는 함수

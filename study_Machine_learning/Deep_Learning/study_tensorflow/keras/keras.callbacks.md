@@ -211,3 +211,9 @@ callbacks = TensorBoard(log_dir='logs', histogram_freq=0, write_graph=True, writ
 
 `write_images` : whether to write model weights to visualize as image in TensorBoard.
 
+
+
+- TensorBoard접속 방법
+
+  작업한 py file 위치에서 `tensorboard --logdir logs/fit`
+
