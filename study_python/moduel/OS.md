@@ -84,7 +84,40 @@ os.listdir(os.getcwd())
 
 
 
-#### GPU ALLOW
+#### os.listdir()
+
+전달받은 path의 위치에 존재하는 모든 file과 directory를 list로 반환
+
+```python
+file_list = os.listdir(os.getcwd) 
+# 현재 위치의 모든 file과 directory를 list로 return
+```
+
+
+
+
+
+#### os.walk()
+
+전달받은 path의 하위에 존재하는 모든  file과 directory를 list로 반환
+
+```python
+(root, dirs, files) = os.walk(root_dir)
+```
+
+`root` : path의 list
+
+`dirs` : [root[0]에 위치한 directory들의 list,  root[1]에 위치한 directory들의 list, ...]
+
+`files` : [root[0]에 위치한 file들의 list,  root[1]에 위치한 file들의 list, ...]
+
+
+
+
+
+#### os.environ
+
+##### GPU ALLOW
 
 GPU 를 과하지 않게 사용하기 위한 속성. 코드처음에 작성
 
