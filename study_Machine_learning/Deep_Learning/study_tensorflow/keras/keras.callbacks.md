@@ -217,3 +217,7 @@ callbacks = TensorBoard(log_dir='logs', histogram_freq=0, write_graph=True, writ
 
   작업한 py file 위치에서 `tensorboard --logdir logs/fit`
 
+```
+tensorboard --logdir mask-rcnn/shapes20210912T2202/train
+```
+
