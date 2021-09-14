@@ -205,6 +205,8 @@ output_list = model.output	# [detections, mrcnn_class, mrcnn_bbox, mrcnn_mask, r
 
 #### losses
 
+`version = 2.0`
+
 model instance에 list타입의 loss저장용 attribute
 
 - 접근 방법
@@ -216,6 +218,8 @@ model instance에 list타입의 loss저장용 attribute
   
 
 #### add_loss()
+
+`version = 2.0`
 
 model instance의 losses에 loss값을 더할때 사용
 
@@ -231,6 +235,8 @@ model.add_loss(value_loss)
 
 
 #### metrics_names
+
+`version = 2.0`
 
 스칼라 아웃풋에 대한 name을 반환. initial은 [] (비어있음)
 
@@ -249,6 +255,8 @@ for name in loss_names:
 
 #### add_metric
 
+`version = 2.0`
+
 model instance의 metrics에 metric값을 더할때 사용
 
 ```python
@@ -260,6 +268,8 @@ model.add_metric(loss, name=name, aggregation='mean')
 
 
 #### metrics_tensors
+
+`version = 2.0`
 
 스칼라 아웃풋에 대한 tensor type의 값을 반환
 
