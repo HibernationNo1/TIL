@@ -330,3 +330,36 @@ np.broadcast_to(x, (3, 4))
 #  [1 2 3 4]]
 ```
 
+
+
+##### np.delete()
+
+index를 이용해서 인자로 받은 array의 특정 부분을 delete
+
+```python
+np.delete(arr, indices, axis = None)
+```
+
+`axis = None` 일 경우 arr를 1차원으로 변환된 flattened로 reshape 후 받은 index를 삭제한다. 
+
+
+
+```python
+a = np.arange(12).reshape(3,4)
+#[[ 0  1  2  3]
+# [ 4  5  6  7]
+# [ 8  9 10 11]]
+```
+
+```python
+print(np.delete(a, 5))
+# [ 0  1  2  3  4  6  7  8  9 10 11]  flattened에서 6번째 index 삭제
+```
+
+```python
+print(np.delete(a, 1, axis=1))
+# [[ 0  2  3]
+#  [ 4  6  7] 		axis = 1 기준 1번째 index 삭제
+#  [ 8 10 11]]
+```
+
