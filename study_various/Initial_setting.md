@@ -118,6 +118,8 @@ NVIDIA GTX-1060 3GB 기준
   시스템 환경 변수 > 환경 변수
 
   `cudart64_100.dll` 가 있는 path
+  
+  `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.0\bin`
 
 
 
