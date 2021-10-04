@@ -179,3 +179,23 @@ feature map에서의 ROI size는 145/32, 200/32  ==  4.53×6.25 가, top left �
 
  ![](https://miro.medium.com/max/700/0*h4cpIjHPjRx2dMRc.png)
 
+
+
+### code
+
+`tf.image.crop_and_resize` 를 사용
+
+```python
+pooled = tf.image.crop_and_resize(
+				feature_maps, boxes, box_indices, pool_shape,
+				method="bilinear")
+```
+
+`feature_maps` : input image
+
+`boxes` : ROI모음
+
+`box_indices` : boxes 중 사용하고자 하는 ROI의 index
+
+`pool_shape` : ROI Align 결과의 shape  [N, N]
+
