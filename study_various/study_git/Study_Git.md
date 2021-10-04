@@ -85,9 +85,35 @@
 - `git commit` : Staging Area에 있는 데이터만 Local Repository로 commit
 
   - 실제 사용 -> `git commit -m "커밋 내용"`
-- `git reset 파일명`: Staging Area에서 제외시키는 명령어
+- `git reset log_id`: Staging Area에서 제외시키는 명령어
   
   - `git log`: 커밋을 포함한,  Remote Repository(github)로 업로드에 관한 모든 로그를 보여준다.
+  
+  > **git commit 이후 (push 이전) 해당 commit을 취소하고자 할 때**
+  >
+  > ```
+  > $ git log
+  > ```
+  >
+  > log를 보며 commit id를 확인한다.
+  >
+  > ```
+  > commit 4c8b92a082c2a05d6b6ff42e03ce385b19c6c519
+  > Author: HibernationNo1 <winter4958@gmail.com>
+  > Date:   Sun Oct 3 20:23:04 2021 +0900
+  > 
+  >     add image
+  >     
+  > 이런식으로 나옴
+  > ```
+  >
+  > ```
+  > $ git reset --hard 4c8b92a082c2a05d6b6ff42e03ce385b19c6c519
+  > ```
+  >
+  > add image 라는 commit이 취소됨
+  >
+  > 단, 바로 이전의 commit이 아닌, 더욱 이전의 commit을 취소한다면 뒤의 commit까지 전부 취소된다.
   
 - `git push`: Local Repository에서 Remote Repository(github)로 업로드. 즉, 기본적으로 현재 분기를 추적 원격 지점으로 푸시
 
@@ -115,7 +141,7 @@
   >
   > ```
   > $ git fetch --all 
-  > $ git reset --hard origin/master
+  > $ git reset --hard 
   > ```
 
 - `git restore 파일명`: 이전 변경사항 취소
@@ -182,3 +208,4 @@ git config --global core.autocrlf true input
 ```
 git config --global core.safecrlf false
 ```
+
