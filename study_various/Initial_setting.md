@@ -133,3 +133,10 @@ cuDNN는 회원가입을 해야 다운로드 가능
 
 `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.4` 에 옮긴다.
 
+
+
+
+
+## VScode 설치 
+
+[여기](https://code.visualstudio.com/download)에서 install
