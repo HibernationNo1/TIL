@@ -60,21 +60,42 @@ Mask R-CNN의 backbone network는 ResNet-101을 사용한다.
 
 4. **Region Proposals by RPN**
 
-   1. input인 P2, P3, P4, P5, P6에 대해 각각의 ratio의 anchor를 생성 후 대응시킨다.
+   1. input인 P2, P3, P4, P5, P6으로부터 RPN model의 연산을 통해 각 featuremap 마다 rpn_class_logits, rpn_probs, rpn_bbox을 계산한다.
+
+5. **Proposal**
+
+   1. anchor를 생성한다.
+   2. rpn_bbox을 delta로 삼아 anchor에 대응시킨다.
+   3. Non-maximum-suppression을 진행해서 RPN ROI을 계산한다.
+   4. RPN ROI에 대해서 positive, negative ROI를 구분지은 후 ROI Subsampling을 통해 5:5비율로 구성한다.
+
+6. **Detection Target**
+
+   1. positive ROI를 gt_box의 좌표에 대응시키는 delta값을 계산한다. (학습될 delta값)
+   2. 
+
    
-      > feature map의 cell size × 3개의 rario = anchor의 총 개수
-   
-   2. anchor에 대해서 Non-maximum-suppression을 수행한다.
-   
-5. **RoI align**
 
-   1. ROI영역에 대해 bilinear interpolation을 활용하여 max pooling을 계산하고 7×7의 pooled feature을 출력한다. 
+7. **Loss**
 
-6. **mask branch**
+   1. **rpn class loss**
 
-   
+      rpn_class_logits와 input으로 받은 rpn match통해 rpn class loss를 계산한다.
 
+   2. **rpn bbox loss**
 
+      rpn_bbox와 input으로 받은 rpn match, rpn bbox를 통해 rpn bbox loss를 계산한다
+
+   3. **mrcnn class loss**
+
+      1. **RoI align**
+
+         1. P2부터 P3, P4, P5까지 각 level의 feature map에 대해 대응되는 ROI를 추려낸다.
+         2. 각 level의 ROI에 대해 bilinear interpolation을 활용하여 max pooling을 계산한다
+
+         
+
+1. **mask branch**
 
 
 
