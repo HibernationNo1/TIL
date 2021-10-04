@@ -63,3 +63,19 @@ from google.colab import drive
 drive.mount('/content/gdrive')
 ```
 
+
+
+##### python
+
+version이 3.7.11이고, 3.8.8로 바꿀 떄
+
+```shell
+!wget https://www.python.org/ftp/python/3.8.8/Python-3.8.8.tgz
+!tar xvfz Python-3.8.8.tgz
+!Python-3.8.8/configure
+!make
+!sudo make install
+```
+
+
+
