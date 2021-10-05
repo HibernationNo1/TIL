@@ -50,7 +50,7 @@ input image가 주어지면, label map으로 output한다.
 labeling method
 
 ```python
-retval, labels = cv2.connectedComponents(image, labels = None, connectivity = None, Itype = None)
+retval, labels = cv2.connectedComponents(image, labels = None, connectivity = None, ltype = None)
 ```
 
 - `image` : 8bit 1 channel image
@@ -61,7 +61,7 @@ retval, labels = cv2.connectedComponents(image, labels = None, connectivity = No
 
   > default = 8
 
-- `Itype` : labels의 type
+- `ltype` : labels의 type
 
   > `cv2.CV_32S` 또는 `cv2.CV_16S`
   >
@@ -75,14 +75,14 @@ retval, labels = cv2.connectedComponents(image, labels = None, connectivity = No
 
 
 
-#### cv2.onnectedComponentsWithStats()
+#### cv2.connectedComponentsWithStats()
 
 object 정보를 함께 return하는 labeling method 
 
 > cv2.connectedComponents 보다 많이 사용됨
 
 ```python
-retval, labels, stats, centroids = cv2.connectedComponentsWithStats(image, labels = None, stats = None, centroids = None, connectivity = None, Itype = None)
+retval, labels, stats, centroids = cv2.connectedComponentsWithStats(image, labels = None, stats = None, centroids = None, connectivity = None, ltype = None)
 ```
 
 - `image` : 8bit 1 channel image
@@ -113,7 +113,7 @@ retval, labels, stats, centroids = cv2.connectedComponentsWithStats(image, label
   >
   > 2 : 무게 중심의 x, y coordinate
 
-- `Itype` : labels의 type
+- `ltype` : labels의 type
 
   > `cv2.CV_32S` 또는 `cv2.CV_16S`
   >
