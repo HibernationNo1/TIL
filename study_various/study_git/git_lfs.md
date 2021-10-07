@@ -25,6 +25,8 @@ $ sudo apt install git-lfs
    $ git lfs install
    ```
 
+   .gitattributes file이 생성된다.
+
 2. **lfs로 관리할 file을 track에 등록** 
 
    ```
@@ -39,6 +41,16 @@ $ sudo apt install git-lfs
    > git rm --cahced <file path>
    > git lfs track <file path>
    > ```
+
+   .gitattributes file에 아래 문구를 추가
+
+   ```
+   *.h5 filter=lfs diff=lfs merge=lfs -text
+   ```
+
+   > 해당 위치 하위 모든 repository에서 h5형식의 모든 file에 lfs로 관리할 file로 등록한다.
+
+   
 
 3. **add, commit .gitattributes**
 
