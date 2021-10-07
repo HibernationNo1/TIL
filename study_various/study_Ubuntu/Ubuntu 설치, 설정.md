@@ -26,53 +26,115 @@
 
 ### set VirtualBox
 
-1. 가상머신 만들기
+1. Network 구성
 
-   VirtualBox 실행, 새로 만들기 
-   
-   > 종류 : Linux
-   >
-   > 버전 : Ubuntu (64-bit)
-   >
-   > - 64bit가 보이지 않을 땐 PC의 BIOS에서 가상화(Virtualization, TV) 기능을 킬 것
-   >
-   > 메모리 크기 : 전체 메모리의 4분의 1 정도
-   >
-   > VDI
-   >
-   > 동적 할당
-   
-2. 설정
+   Network추가하기 : 설정 - 네트워크 - 우측의 녹색 `+` 버튼
 
-   - 파일 - 환경설정 - 입력 - 가상머신 - 단축키 (호스트 키 조합의 단축키 `Right Control`을 `F11`로 변경)
+   - Network이름 : 자유롭게
 
-     > Linux에서 마우스가 못빠져나올때 F11누르면 해결되도록 설정
+   - Network CIDR : 10.0.2.0/24 그대로 (또는 10.100.0.0/24)
 
-   - 설정 - 저장소  - '저장 장치'의 `컨트롤러 : IDE`의 `비어있음` 클릭 후 우측 '속성'의 광학 드라이브에서 파란버튼 누른 후 `디스크에서 파일 선택` 에서 위 **Ubuntu 설치** 과정에서 다운받은 Ubuntu .iso 파일 선택
+   - IPv6지원 체크
+
+   - **port forwarding**
+
+     설치된 가상 운영체제 중 원하는 운영체제에 원격으로 접속할 수 있도록 설정
+
+     > 가상 OS에서 사용할 IP를 생각해두거나, defual로 그냥 사용
+
+     만들어진 Network의 `포트 포워딩`에서
+
+     - 특정 OS port
+
+       host port : `105`,  	gest port : `22`
+
+       local에서 105번 port로 접속하면 해당 OS로 접속할 수 있도록 설정
+
+       이름 : (자유롭게 설정)
+
+       프로토콜 : TCP
+
+       호스트IP : `127.0.0.1` (local에서 연결할 때)
+
+       게스트 IP : `10.0.2.15 ` (또는 나중에 OS에서 설정할 IP)  
+
+       > 하나 더 만든다고 할 때 
+       >
+       > host port만  `106`으로 만들어 추가 
+       >
+       > 단, port는 본체 OS에서 사용하지 않는 port인지 확인할 것 
+
+
+
+2. VirtualBox 실행, 새로 만들기 
+
+   종류 : Linux
+
+   버전 : Ubuntu (64-bit)
+
+   >  64bit가 보이지 않을 땐 PC의 BIOS에서 가상화(Virtualization, TV) 기능을 킬 것
+
+   메모리 크기 : 전체 메모리의 4분의 1 정도
+
+   `지금 새 가상 하드 디스크 만들기` : VDI, 동적 할당, 디스크 크기 원하는 만큼 할당
+
+
+
+3. 설정
+
+   - **port forwarding**
+
+     만들어진 Ubuntu 선택 후 설정 - 네트워크 - 고급 - 포트 포워딩
+
+     - web server port
+
+       host port : `80`,  	gest port : `80`
+
+       virtual machine안에서도 웹 서버를 자유롭게 이용할 수 있도록 설정
+
+     - SSH port
+
+       위 **Network 구성**의 port forwarding 과정에서 특정 OS port를 할당하지 않았을 때만 하기
+
+       host port : `22`,  	gest port : `22`
+
+       putty와 같은 원격 host protocol을 사용하여 virtual machine에 원격으로 접속할 수 있도록 설정
+
+   - **system**
+
+     만들어진 Ubuntu 선택 후 설정 - 시스템 
+
+     - 마더보드 - 부팅 순서 - 플로피 해제
+
+     - 프로세서 - 프로세서 개수 : 2개~원하는 만큼
+
+   - **repository**(저장소)
+
+     설정 - 저장소  - '저장 장치'의 `컨트롤러 : IDE`의 `비어있음` 클릭 후 우측 '속성'의 광학 드라이브에서 파란버튼 누른 후 `디스크에서 파일 선택` 에서 위 **Ubuntu 설치** 과정에서 다운받은 Ubuntu .iso 파일 선택
 
      > Ubuntu를 VirtualBox가 설치 된 드라이브(C 드라이브)에 넣은 것으로 이해하자.
 
-   - 설정 - 네트워크 - 고급 - `포트 포워딩` - 우측의 녹색 `+` 버튼 - 호스트 버튼 게스트 포트 두 값이 같게 22번, 80번 두 개 추가 후 확인
 
-     > 네트워크 설정. 
-     >
-     > 22번 : ssh포트
-     >
-     > 80번 : 웹 서버 포트
 
 ### install ubuntu in VirtualBox
 
 1. 시작
 
-   시동 - 디스크 선택 - **Ubuntu 설치** 과정에서 다운받은 Ubuntu .iso 파일 선택
+   시작 - 시동 디스크 선택 - **Ubuntu 설치** 과정에서 다운받은 Ubuntu .iso 파일 선택
 
    Ubuntu 설치 시작
 
    언어 선택 후 install ubuntu
 
+   한국어 키보드 설정 > 계속하기
+
    updatas and other software 옵션은 default
 
+   > 일반설치, ubuntu 설치 중 업데이트 다운로드 > 계속하기
+
    installation type 은 파티션을 나누는 부분. Erase disk and install ubuntu
+
+   > 디스크를 지우고 Ubuntu설치 > 계속하기
 
    거주지 - seoul
 
@@ -93,7 +155,54 @@
 
 ### set initial Ubuntu
 
-1. 게스트 확장 설치 진행 (window10과 통신을 하기 위해)
+1. root 계정 설정
+
+   Linux에는 두 개의 계정이 있다.
+
+   - 시스템 관리자(root)
+
+     ```
+     #  
+     ```
+
+   - 일반 사용자
+
+     ```
+     $
+     ```
+
+
+   > ubuntu는 사용자가 설정한 계정과 패스워드로 로그인을 하게 되는데, 이는 개별 계정으로 여러 제한사항이 있다.
+   >
+   > - apt-get으로 소프트웨어 package를 설치 불가
+   > - file에 access 권한이 없는 directory가 존재
+   > - 개별 권한으로 실행을 못하는 app가 있음
+   >
+   > 이런 권한을 획득하기 위해 'Super User Do'의 줄임말인 sudo 명령을 통해서 위 모든 권한을 가진 root계정으로 전환할 수 있음
+
+   1. **root 계정으로 전환**
+
+      ```
+      $ sudo -i
+      ```
+
+      > 이후부턴 `$`가 아닌, `root@computer'sname:~#`  으로 시작함
+
+   2. 최초 root 계정 암호 설정, password 입력 
+
+      ```
+      root@ ~~~ :~# passwd
+      ```
+
+      > new password : 설정할 root 비밀번호입력
+      >
+      > password updata successfully 뜰 거임  
+
+   
+
+
+
+2. 게스트 확장 설치 진행 (window10과 통신을 하기 위해)
 
    Oracle VM VirtualBox의 장치 - 게스트 확장 CD 이미지 삽입 - ps 입력 - 설치 완료
 
@@ -126,52 +235,14 @@
 
    
 
-2. root 계정 설정
+   그 외 오류로 안되면
 
-   Linux에는 두 개의 계정이 있다.
-   
-   - 시스템 관리자(root)
-   
-     ```
-     #  
-     ```
+   그냥 우측상단 화살표 클릭 - 설정 - 디스플레이 - 해상도  1280:960으로 변경
 
-   - 일반 사용자
 
-     ```
-     $
-     ```
 
-     
 
-   > ubuntu는 사용자가 설정한 계정과 패스워드로 로그인을 하게 되는데, 이는 개별 계정으로 여러 제한사항이 있다.
-   >
-   > - apt-get으로 소프트웨어 package를 설치 불가
-   > - file에 access 권한이 없는 directory가 존재
-   > - 개별 권한으로 실행을 못하는 app가 있음
-   >
-   > 이런 권한을 획득하기 위해 'Super User Do'의 줄임말인 sudo 명령을 통해서 위 모든 권한을 가진 root계정으로 전환할 수 있음
-   
-   1. **root 계정으로 전환**
-   
-      ```
-      $ sudo -i
-      ```
-   
-      > 이후부턴 `$`가 아닌, `root@computer'sname:~#`  으로 시작함
-   
-   2. 최초 root 계정 암호 설정, password 입력 
-   
-      ```
-      root@ ~~~ :~# passwd
-      ```
-   
-      > new password : 설정할 root 비밀번호입력
-      >
-      > password updata successfully 뜰 거임  
-   
-   
-   
+
 3. 언어팩 설치
 
    ```
@@ -236,101 +307,122 @@
       - 입력 방법 : 한국어 추가
       - 전역 설정 : Ctrl + space : hangul
 
-5. vscode 설치
 
-   1. 홈페이지에서 알맞는 모델 다운
 
-      > default로 install하지 말고 file을 다운
 
-   2. `.deb` file 실행
+5. 네트워크 구성
 
-      ```
-      $ cd ~/Downloads 
-      $ sudo dpkg -i code*.deb
-      ```
+   1. 네트워크 연결
 
-      완료
+      우측상단 화살표 클릭 - 설정 - 네트워크 - 설정모양 아이콘 클릭
+
+      IP주소 확인 가능(local의 사용 가능한 ip대역대 안에서 사용 가능한 ip가 자동으로 할당되어있음)
+
+      이 때 static IP를 설정할 경우(위 **set VirtualBox**의 `Network 구성` 과정에서 결정한 특정 IP를 할당할 경우)
+
+      해당 창의 위 Tap중 IPv4에서 자동 > 수동으로 변경 후 
+
+      주소 : 10.100.0.105 (위에서 예시로 결정한 것)
+
+      네트마스크 : 24 (CIDR값)
+
+      게이트웨이 : 10.100.0.1 (`Network 구성` 과정에서 설정한 대역값 10.100.0.105 의 가장 앞 번호 )
+
+      네임 서버(DNS) : 10.100.0.1 (게이트웨이와 동일)
+
+      적용 후 연결됨을 껏다 키면 바뀐거 확인 가능
+
+   2. host
+
+      1. 터미널에서 host name확인
+
+         ```
+         $ host name
+         ```
+
+      2. host name 변경
+
+         편집기 열어서
+
+         ```
+         $ sudo vi /etc/hostname
+         ```
+
+         pull conneted name으로 바꾸자
+
+         ```
+         hibernation-ubuntu.example.com
+         ```
+
+         > :wq 으로 저장까지
+
+      3. hosts file에 등록
+
+         ```
+         $ sudo vi /etc/hosts 
+         ```
+
+         여기서 
+
+         ```
+         127.0.0.1 	hibernation-ubuntu.example.com	# 을
+         10.100.0.105 	hibernation-ubuntu.example.com # 으로 변경
+         ```
+
    
-   > **consolas** font download in ubuntu
-   >
-   > Referance : https://gist.github.com/sigoden/d01ad118da677f796bab01781b7eae23
-   >
-   > 그대로 따라한 후 font setting에 `"YaHei Consolas Hybrid"` 추가
 
+   network check
 
+   - 외부 network와 통신이 잘 되는지 확인
 
-6. typora 설치
+     ```
+     $ ping -c 3 8.8.8.8
+     ```
 
-   ```
-   $ wget -qO - https://typora.io/linux/public-key.asc | sudo apt-key add -
-   $ sudo add-apt-repository 'deb https://typora.io/linux ./'
-   $ sudo apt -y install typora
-   ```
+     
 
    
 
 
 
-### start SSH
+**추가 설치 프로그램**
 
-1. ssh 설치
+- vscode 설치
 
-   1. 방화벽 off
+  1. 홈페이지에서 알맞는 모델 다운
 
-      ```
-      root@ ~~~ :~# systemctl stop ufw
-      ```
+     > default로 install하지 말고 file을 다운
 
-   2. ssh 시작
+  2. `.deb` file 실행
 
-      ```
-      root@ ~~~ :~# systemctl start ssh
-      ```
+     ```
+     $ cd ~/Downloads 
+     $ sudo dpkg -i code*.deb
+     ```
 
-      없다고 뜨면 설치
+     완료
 
-      ```
-      root@ ~~~ :~# apt install ssh
-      ```
+  > **consolas** font download in ubuntu
+  >
+  > Referance : https://gist.github.com/sigoden/d01ad118da677f796bab01781b7eae23
+  >
+  > 그대로 따라한 후 font setting에 `"YaHei Consolas Hybrid"` 추가
 
-      > `y` 
+- typora 설치
 
-   3. ssh가 잘 설치되었는지 확인
+  ```
+  $ wget -qO - https://typora.io/linux/public-key.asc | sudo apt-key add -
+  $ sudo add-apt-repository 'deb https://typora.io/linux ./'
+  $ sudo apt -y install typora
+  ```
 
-      ```
-      ps -ef | grep ssh
-      ```
+- curl, vim 설치
 
-      `00:00:00 sshd: /usr/sbin/sshd -D [listener]` 가 보인다면 접속 가능
+  ```
+  $ sudo apt-get install -y curl vim
+  ```
 
-2. putty로 ssh 시작
-
-   1. login
-
-      window 10에서 putty 실행 후 ip에 127.0.0.1 입력 후 확인, accept 클릭
-
-      `login as:` 가 뜨면 성공
-
-      ```
-      login as: hibernation
-      password : winter4958
-      ```
-
-      > 아이디 비번 입력해서 접속
-
-   2. VirtualBox와 양방향 setting
-
-      VirtualBox에서 장치 - 클립보드 공유 - 양방향 으로 setting
-
-      VirtualBox에서 장치 - 드래그 앤 드롭 - 양방향 으로 setting
-
-   이제 window10에서 putty를 통해 ssh로 ubuntu에서 작업이 가능하다.
-
-
-
-
-
-
+  
 
 
 
