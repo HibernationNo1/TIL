@@ -328,7 +328,15 @@
 
     
 
-  
+- **mv** : file옮기기 명령어
+
+  ```
+  $ mv file_path directory_path
+  ```
+
+  `file_path` : 옮기고자 하는 file의 path
+
+  `directory_path` : file을 옮기고자 하는 directory의 path
 
 
 
