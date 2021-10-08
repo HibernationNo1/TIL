@@ -133,8 +133,6 @@ root:~# systemctl enable docker
 
 
 
-#### 
-
 #### **container image**
 
 여러개의 layer로 구성된 container를 뜻한다.
@@ -153,15 +151,25 @@ layer란 하나의 역할을 가진 부품이라고 이해하면 된다.
 
 container image 안에는 또 layer별로 file이 따로따로 존재한다.
 
+- container image는 readonly이다.
 
 
-**container image와 contrainer의 차이 **
 
-Docker가 설치된 OS를 Docker host하고 하고, Docker Host에는 Docker를 실행하는 Dockerd가 있다.
+**container image와 container의 차이 **
+
+Docker가 설치된 OS를 **Docker host**라고 하고, Docker Host에는 Docker를 실행하는 Docker demon이 있다.
 
 그리고 container image는 하드디스크에 하나의 file형태로 저장이 되어있다.
 
-container image를 실행시키면 메모리에 container image가 할당되는데,  이 때 container image는 하나의 process로 running이 된다. 이 동작되는 container image를 **contrainer**라고 한다.
+**container image**를 실행시키면 메모리에 container image가 할당되는데,  이 때 container image는 하나의 process로 running이 된다. 이 동작되는 container image를 **running중인 container**라고 한다.
+
+또는 container hub에서 run명령어를 통해 application으로써 image를 실행하게 되면 그것 또한 '**running중인 container**' 이라고 한다. 
+
+ container image는 create를 통해 container가 될 때 container name을 가지게 된다.
+
+(image name은 hub에 쓰여있는 그 이름임) 
+
+- container를 통해 작업한 내용은 image에 반영되지 않는다.
 
 
 
@@ -213,7 +221,18 @@ kubernates를 사용해서 이러한 한계를 해결한다.
 
 
 
-#### distribution(배포)
+
+
+## how to use?
+
+### docker hub
+
+- official images : docker.com이 직접 관리하고 general하게 누구나 쓸 수 있도록 만들어짐
+- verified pubilsher : mysql등의 사 기업이 제공하는 container
+
+
+
+##### distribution(배포)
 
 docker file을 `docker build` command로 container image로 만들어 하드디스크에 저장했다면,
 
@@ -225,4 +244,76 @@ docker hub에 올리면 된다.
 $ docker login
 $ docker push <image_name>
 ```
+
+
+
+
+
+#### repository 
+
+docker hub의 나만의 repository를 이용할 수 있다.
+
+공개 repository에 image를 push하면 누구든 접근할 수 있지만, 나만의 private repository는 나만 접근할 수 있다.(하나까지는 무료로 사용 가능)
+
+repository 에 image를 push할 때는 `docker tag` 명령어를 통해 tag를 붙여준 후 push하도록 한다.
+
+1. public repository로 push하는 경우 : tag를 통해 username/image_name 
+
+   ```
+   $ docker tag hello-world taeuk/hellow-world
+   ```
+
+2. private repository로 push하는 경우 : tag를 통해 host name과 port number을 붙여야 한다.
+
+   ```
+   $ docker tag ubuntu localhost:5000/ubuntu
+   ```
+
+   ```
+   $ docker push localhost:5000/ubuntu
+   ```
+
+   
+
+
+
+###### private Registry
+
+사내의 container repository 라고 생각하면 된다. (외부 network가 안되는 공간에 사용하는 repository)
+
+**[Registry](https://hub.docker.com/_/registry)** : `run`을 통해 execution을 하게 되면, cintainer image를 저장하고 관리하는 container (docker hub에서 검색) 즉, private registry를 만들어준다. 
+
+이제 docker hub라는 container저장소 말고도, 내 PC안에 private한 container저장소가 만들어진 것.
+
+
+
+예시 : private repository에  image 저장
+
+1.  container를 download받아 run해주고
+
+   ```
+   $ docker run -d -p 5000:5000 --restart always --name registry registry:2
+   ```
+
+2. private repository에 저장하고자 하는 image를 pull한다. (예시로 ubuntu라고 하겠음)
+
+   ```
+   $ docker pull ubuntu
+   ```
+
+3. tag를 통해 host name과 port number를 붙여준다.
+
+   ```
+   $ docker tag ubuntu localhost:5000/ubuntu
+   ```
+
+   port number : 위에서 5000을 사용했다고 기재되어있음
+
+4. push 해준다.
+
+   ```
+   $ docker push localhost:5000/ubuntu
+   ```
+
+   
 
