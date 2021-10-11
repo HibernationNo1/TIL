@@ -2,23 +2,7 @@
 
 
 
-## Anaconda 설치
-
-[여기](https://www.anaconda.com/products/individual-d) 에서 설치
-
-
-
-
-
-## Install git 
-
-### window
-
-[여기](https://git-scm.com/downloads)에서 설치
-
-
-
-### Linux
+## git 
 
 ```
 $ apt-get install git
@@ -63,7 +47,148 @@ install후
 
    >  nano에서 vim으로 git 편집 에디터를 바꿀 수 있다. rebase 등의 과정 시 vim 에디터로 편집할 수 있다.
 
+
+
+
+- **repository가져오기**
+
+  - `$ git clone github_repository주소`:  
+    - 로컬에서의 git init에 해당되는 명령어
+    - `git remote add origin URL` 은 내가 직접 사용하는 내 계정의 URL을 관리할때 사용
+    - `git clone Url` 은 남이 하는 프로젝트를 이어받거나 내가 잠시 사용할때(또는 다른 PC에서 내 URL을 사용할때) 사용
+  - vscode사용
+
+  
+
+## Typora
+
+```
+$ wget -qO - https://typora.io/linux/public-key.asc | sudo apt-key add -
+$ sudo add-apt-repository 'deb https://typora.io/linux ./'
+$ sudo apt -y install typora
+```
+
+
+
+
+
+## Anaconda 
+
+[여기](https://www.anaconda.com/products/individual) 에서 설치
+
+1. `Anaconda3-2021.05-Linux-x86_64.sh` file다운로드 후, 해당 위치에서 무결성 확인
+
+   ```
+   sha256sum Anaconda3-2021.05-Linux-x86_64.sh
+   ```
+
+2. 설치
+
+   ```
+   bash Anaconda3-2021.05-Linux-x86_64.sh
+   ```
+
+   1. ```
+      Please, press ENTER to continue
+      >>> 
+      뜨면 Enter하고 다 읽어내린 후 
+      ```
+
+   2. ```
+      Do you accept the license terms? [yes|no]
+      Please answer 'yes' or 'no':'
+      >>> 
+      뜨면 Enter
+      ```
+
+   3. ```
+      Anaconda3 will now be installed into this location:
+      /home/hibernation/anaconda3
+      
+        - Press ENTER to confirm the location
+        - Press CTRL-C to abort the installation
+        - Or specify a different location below
+      
+      [/home/hibernation/anaconda3] >>> 
+      뜨면 새롭게 만들 directory의 name을 입력
+      ```
+
+   4. ```
+      Do you wish the installer to initialize Anaconda3
+      by running conda init? [yes|no]
+      
+      no를 입력하면 콘다는 쉘 스크립트를 수정하지 못한다. yes를 누른다
+      ```
+
+   5. path추가
+
+      ```
+      $ sudo gedit ~/.bashrc
+      ```
+
+      text 편집기가 열리면 맨 아래줄에 추가
+
+      ```
+      export PATH=~/anaconda3/bin:~/anaconda3/condabin:$PATH
+      ```
+
+      이후 terminer에서
+
+      ```
+      $ source ~/.bashrc
+      ```
+
+      (base뜨는지 확인)
+
+      ```
+      $ conda -V 
+      ```
+
+      version확인
+
    
+
+## vscode
+
+1. curl을 설치
+
+   ```
+   $ sudo apt-get install curl
+   ```
+
+2. 마이크로소프트 GPG 키를 다운로드하여 /etc/apt/trusted.gpg.d/ 경로에 복사
+
+   ```
+   $ sudo sh -c 'curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/trusted.gpg.d/microsoft.gpg'
+   ```
+
+3. Visual Studio Code를 다운로드 받기 위한 저장소를 추가
+
+   ```
+   $ sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
+   ```
+
+4. package가져오기
+
+   ```
+   $ sudo apt update
+   ```
+
+5. vscode설치
+
+   ```
+   $ sudo apt install code
+   ```
+
+   ```
+   $ code
+   ```
+
+   실행되는지 확인
+
+
+
+
 
 
 
@@ -98,17 +223,6 @@ print(pd.__version__)
 print(cv2.__version__)
 print(scipy.__version__)
 ```
-
-
-
-### linux
-
-```
-$ apt-get install python-pip
-$ apt-get install python-pip3
-```
-
-
 
 
 
