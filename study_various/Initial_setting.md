@@ -6,9 +6,72 @@
 
 [여기](https://www.anaconda.com/products/individual-d) 에서 설치
 
+
+
+
+
+## Install git 
+
+### window
+
+[여기](https://git-scm.com/downloads)에서 설치
+
+
+
+### Linux
+
+```
+$ apt-get install git
+```
+
+또는 
+
+[여기](https://git-scm.com/downloads)에서 설치
+
+
+
+install후
+
+1. 이름과 이메일 설정
+
+   ```
+   $ git config --global user.name "Taeuk Noh"
+   $ git config --global user.email winter4958@gmail.com
+   ```
+
+2. upstream 설정
+
+   처음 branch를 만들고 push를 하면 upstream을 설정하라고 한다.
+
+   우리는 local에서 branch를 만든 것이기 때문에 remote에 있는 git은 이 branch의 존재를 모르게 된다. upstream은 branch 자체를 git repository 서버인 origin으로 업로드 한다는 뜻이다.
+
+   ```
+   $ git push --set-upstream origin {branch name}
+   ```
+
+   > 이렇게 항상 upstream branch를 설정하라는 문구가 나오기 때문에 이러한 작업을 git의 config 설정으로 생략
+
+   ```
+   $ git config --global push.default current
+   ```
+
+3. git 편집 에디터 설정
+
+   ```
+   $ git config --global core.editor "vim"
+   ```
+
+   >  nano에서 vim으로 git 편집 에디터를 바꿀 수 있다. rebase 등의 과정 시 vim 에디터로 편집할 수 있다.
+
+   
+
+
+
 ## pip 설치
 
-[링크](https://bootstrap.pypa.io/get-pip.py)를 저장 후 해당 위치에서 명령어
+### window
+
+[링크](https://github.com/HibernationNo1/TIL/raw/master/image/get-pip.py)를 저장 후 해당 위치에서 명령어
 
 ```
 $ python get-pip.py
@@ -34,6 +97,15 @@ print(np.__version__)
 print(pd.__version__)
 print(cv2.__version__)
 print(scipy.__version__)
+```
+
+
+
+### linux
+
+```
+$ apt-get install python-pip
+$ apt-get install python-pip3
 ```
 
 
