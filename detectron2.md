@@ -23,7 +23,7 @@ $ conda activate detectron2
 install pytorch
 
 ```
-conda instal pytorch==1.6 torchvision cudatoolkit=10.1 -c pytorch
+conda install pytorch torchvision torchaudio cudatoolkit=11.1 -c pytorch -c conda-forge
 ```
 
 > 컴퓨터에 맞는 cudatoolkit=10.1 인지 확인
@@ -49,7 +49,7 @@ pip install "git+https://github.com/philferriere/cocoapi.git#egg=pycocotools&sub
 install detectron 2
 
 ```
-mkdir detectoron2
+mkdir detectron2
 cd detectron2
 ```
 
@@ -80,6 +80,14 @@ pip install -e .
 ``` 
 pip install opencv-python
 ```
+
+
+
+```
+pip install fvcore==0.1.1.post20200716
+```
+
+
 
 
 
