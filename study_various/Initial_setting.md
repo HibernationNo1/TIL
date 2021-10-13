@@ -236,7 +236,7 @@ NVIDIA GTX-1060 3GB 기준
 
   장치관리자 > 디스플레이 어뎁터
 
-- CUDA core 수 확인
+- [여기](https://www.studio1productions.com/Articles/NVidia-GPU-Chart.htm)서 CUDA core 수 확인
 
   ![](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2F49t3X%2FbtqyEA98R9n%2FxTxNRuRsrJeB8yW2UgHb10%2Fimg.png)
 
@@ -319,10 +319,3 @@ cuDNN는 회원가입을 해야 다운로드 가능
 
 `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.4` 에 옮긴다.
 
-
-
-
-
-## VScode 설치 
-
-[여기](https://code.visualstudio.com/download)에서 install
