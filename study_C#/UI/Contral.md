@@ -98,6 +98,20 @@ Layout의 padding, background와 같은 properties를 설정하는데 사용한�
 
 
 
+- image에 CornerRadius적용
+
+  ```
+  <Border Grid.Row="0" Height="150" CornerRadius="10, 10, 0, 0">
+  	<Border.Background>
+  		<ImageBrush Stretch="Fill" ImageSource="vscodejpg.jpg"  />
+  	</Border.Background>
+   </Border>
+  ```
+
+  > Border Grid.Row="0" 에 속한 ImageBrush는  CornerRadius="10, 10, 0, 0"를 따른다.
+  >
+  > 만일 <images>라면 CornerRadius를 따르지 않는다.
+
 
 
 ### property
@@ -136,7 +150,7 @@ Layout의 padding, background와 같은 properties를 설정하는데 사용한�
 
   
 
-#### 
+
 
 
 
@@ -147,7 +161,7 @@ Layout의 padding, background와 같은 properties를 설정하는데 사용한�
   - `center` 
   - `left`
   - `right`
-- VerticalAlignment : button의 수직 영역 지정
+- `VerticalAlignment`: button의 수직 영역 지정
 - `Background`
 
 
