@@ -88,6 +88,12 @@ Layout개념으로 flexible한 Grid영역을 define한다. (그릇)
 
 
 
+- `width`
+- `height`
+- `Margin` : contral의 위치 (x_min, y_min, width - x_max, height - y_max)
+
+
+
 
 
 #### Border
@@ -114,8 +120,6 @@ Layout의 padding, background와 같은 properties를 설정하는데 사용한�
 
 
 
-### property
-
 - `Padding`
 
 - `Background` : background 색상 
@@ -126,9 +130,93 @@ Layout의 padding, background와 같은 properties를 설정하는데 사용한�
   <Border CornerRadius="4,4,0,0">
   ```
 
-- 
 
 
+
+#### StackPanel
+
+여러개의 contral를 쌓는데 사용하는 layout
+
+```
+<StackPanel Orientation="Vertical">
+	<TextBlock Text = "어떤 종류의 커피를 드시겠습니까?" Margin="30, 30" FontSize="20"/>
+                <Button Margin="20">아이스 아메리카노</Button>
+                <Button Margin="20">카페모카</Button>
+                <Button Margin="10">돌체라떼</Button>
+                <Button Margin="10">카푸치노</Button>
+	</StackPanel>
+```
+
+
+
+- `Orientation` = Horizontal :  가로로 정렬,   = Vertical : 세로로 정렬
+
+  StackPanel 안에서는 주로 Margin을 통해 간격을 설정함
+
+
+
+#### WrapPanel
+
+StackPanel과 비슷하지만, 칸의 허용범위에 넘어가면 다음 칸으로 넘어가서 생성됨
+
+```
+<WrapPanel Orientation="Vertical">
+	<TextBlock Margin="30, 30" FontSize="20">어떤 종류의 커피를 드시겠습니까?</TextBlock>
+    <Button Margin="20">아이스 아메리카노</Button>
+    <Button Margin="20">카페모카</Button>
+</WrapPanel>
+```
+
+
+
+- `Orientation`
+
+
+
+#### ListView
+
+여러 값을 list형태로 나열할 때 사용
+
+
+
+- ` <ListView.View>`
+
+  ```
+  <ListView Grid.Column="1"  FontSize="30" >
+       <ListView.View>
+       	<GridView>
+       		<GridViewColumn Header="name" DisplayMemberBinding="{Binding name}" />
+       		<GridViewColumn Header="name" DisplayMemberBinding="{Binding name}"/>
+       		<GridViewColumn Header="name" DisplayMemberBinding="{Binding name}" />
+        		<GridViewColumn Header="name" DisplayMemberBinding="{Binding name}" />
+       	</GridView>
+       </ListView.View>
+  </ListView>
+  ```
+
+  > ListView선언 후 ListView.View를 통해 영역을 만들고 GridView로 영역에 grid 속성 적용하도록 만듬
+  >
+  > - GridViewColumn의 속성
+  >   - `Header` : 입력할 text
+  >   - `DisplayMemberBinding` : 불러올 data
+
+- `<ListViewItem>`
+
+  
+
+- `<ListView.ItemTemplate>`
+
+  
+
+  
+
+
+
+
+
+- `FontSize` 및 관련된것 있음
+
+- `Background`
 
 
 
@@ -137,6 +225,24 @@ Layout의 padding, background와 같은 properties를 설정하는데 사용한�
 ## Button
 
 #### Button
+
+- `Content` : button의 text표현
+
+- `HorizontalContentAlignment` : button의 수평 영역 지정
+  - `Stretch` : 영역의 전체 
+  - `center` 
+  - `left`
+  - `right`
+- `VerticalAlignment`: button의 수직 영역 지정
+- `Background`
+- `Click` : 버튼이 눌리면 호출할 (C code behind에서 작성된)함수를 할당
+- `FontSize`
+- `FontWeight`
+- `Foreground`
+
+
+
+
 
 - `Button.Resources` : button의 CornerRadius지정
 
@@ -148,21 +254,10 @@ Layout의 padding, background와 같은 properties를 설정하는데 사용한�
   </Button.Resources>
   ```
 
-  
 
 
 
 
-
-### property
-
-- `HorizontalContentAlignment` : button의 수평 영역 지정
-  - `Stretch` : 영역의 전체 
-  - `center` 
-  - `left`
-  - `right`
-- `VerticalAlignment`: button의 수직 영역 지정
-- `Background`
 
 
 
@@ -186,11 +281,34 @@ Layout의 padding, background와 같은 properties를 설정하는데 사용한�
 
 ## Text
 
+#### Textbox
+
+내용을 설명해주는 등 일반적인 효과 없는 text를 출력할 때 사용
+
+```
+<TextBox TextWrapping="Wrap" Text="TextBox"/>
+```
+
+
+
+- `Text`
+
+- `TextWrapping` : 
+
+
+
 #### TextBlock
 
+Textbox와 다른점 : 다양한 color, fontsize, fonttype 설정 등 문자의 rendering이 가능
+
+시각적으로 보는데 집중시킬 때 사용
+
+```
+<TextBlock Grid.Row="0" Text="Material Desing" FontSize="30" Foreground="White"
+                                       VerticalAlignment="Center" HorizontalAlignment="Left"/>
+```
 
 
-### property
 
 - `Text`
 - `HorizontalAlignment` : 수평위치
@@ -200,9 +318,33 @@ Layout의 padding, background와 같은 properties를 설정하는데 사용한�
 
 
 
+#### Label
+
+text대신 Content속성을 사용해서 text를 표현한다.
+
+TextBlock과의 차이점 : 단지 text가아니라 모든 종류의 contral을 직접 hosting이 가능하다.
+
+> 테두리 지정 가능
+>
+> 다른 contral rendering가능
+>
+> 
+
+```
+<Grid>
+	<Label Content="This is a Label control." />
+</Grid>
+```
+
+ 
+
+
+
 ## shape
 
-### rectangle
+### Rectangle
+
+draw rectangle
 
 
 
