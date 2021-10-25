@@ -1,5 +1,27 @@
 # built-in_function
 
+### iter()
+
+iterable한 instance를 Iterator class로 만들 수 있다.
+
+```python
+a = [1, 2, 3]
+
+print(type(a))  # list 출력
+a = iter(a)		# iterable한 a를 Iterator로 만듬
+print(type(a))  # list_iterator 출력
+```
+
+- `__iter__()` 을 통해 동일한 동작을 할 수 있다.
+
+  ```
+  a.__iter__()
+  ```
+
+  
+
+
+
 ### next()
 
  iterate한 container 를 인자로 받아 호출될 때마다 하나의 elements씩 리턴
@@ -12,6 +34,24 @@ print(next(iter)) # 3
 ```
 
 `iter` : iterate한 container
+
+- `__next__()` 는  `iter()`에 의해 만들어진 list_iterator에 대해 `next()`와 같은 동작을 할 수 있다.
+
+  ```python
+  a = [1, 2, 3]
+  a = iter(a)
+  print(a.__next__())	# 1
+  print(a.__next__()) # 2
+  print(a.__next__()) # 3
+  ```
+
+  
+
+  
+
+  
+
+
 
 
 
