@@ -176,6 +176,10 @@ for child in resnet.children():
 
 
 
+
+
+
+
 ### Conv2d
 
 ```python
@@ -304,7 +308,70 @@ layer = nn.Softmax(dim = )
 
 
 
-### CrossEntropyLoss
+
+
+### ReflectionPad2d
+
+padding을 적용한다. 단, zero padding과는 다르게, input tensor에 대해 각 element를 대각선 방향으로 반전배치하여 padding을 한다. 
+
+주로 GAN에서 사용된다.
+
+```python
+nn.ReflectionPad2d(padding)
+```
+
+- `padding` 
+
+  - int인 단일 값일 때
+
+    해당 숫자 만큼의 겹으로 pad 
+
+  - 4개의 element인 tuple일 때
+
+    (left, right, top, bottom) 순으로 pad의 겹을 결정한다.
+
+
+
+### InstanceNorm2d
+
+data 개별로 normalization을 진행한다.
+
+batch_norm과 다른 점 : batch_norm은 data의 batch단위로 mean와 std를 구하여 학습의 안정성을 높이지만, instance Norm은 image에 특화된 정규화 과정으로, image를 개별로 정규화 한다.
+
+input으로 4-dimension을 받는다 (batch, w,, h, c)
+
+```python
+nn.InstanceNorm2d(image)
+```
+
+
+
+
+
+### Sequetial
+
+여러 함수를 argument로 받고, 순서대로 호출한다.
+
+주로 class안에서 여러 layer를 한 번에 적어넣을때 사용한다.
+
+```python
+class ResidualBlock(nn.Module):
+    def __init__(self, in_features):
+        supter(ResidualBlock, self).__init__()
+        self.block = nn.Sequential(
+        nn.ReflectionPad2d(1),
+        nn.Conv2d(in_features, infeatures, 3),
+            ...
+        )
+     def forward(slef, x):
+        return self.block(x)
+```
+
+
+
+### Loss
+
+#### CrossEntropyLoss
 
 ```python
 criterion = nn.CrossEntropyLoss()
@@ -319,7 +386,30 @@ for ...
 
 
 
-#### loss.backward()
+### MSELoss
+
+mean square error 
+
+```python
+criterion = nn.MSELoss()
+```
+
+
+
+### L1Loss, L2Loss
+
+```python
+criterion = nn.L1Loss()
+criterion = nn.L2Loss()
+```
+
+
+
+
+
+
+
+##### loss.backward()
 
 ```python
 criterion = nn.CrossEntropyLoss()
@@ -334,7 +424,7 @@ loss function을 통해 gradient를 계산한다.
 
 
 
-#### loss.item()
+##### loss.item()
 
 ```
 for ...
@@ -346,4 +436,3 @@ for ...
 
 
 계산된 loss값을 반환
-
