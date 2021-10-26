@@ -20,7 +20,7 @@ import torch.utils.data
 batch size를 통해 mini batch를 구성하는 함수
 
 ```python
-import torch
+from torch.utils.data import DataLoader
 
 train_loader = torch.utils.data.DataLoader(dataset = train_data, batch_size = batch_size, shuffle = True)
 ```
@@ -48,7 +48,29 @@ train_loader = torch.utils.data.DataLoader(dataset = train_data, batch_size = ba
 
 
 
+#### Dataset
+
+Dataset을 상속받아 subclassing으로 custom dataset class를 만든다.
+
+```python
+from torch.utils.data import Dataset
+
+class CustomImageDataset(Dataset):
+    def __init__()
+    
+    def __getitem__()
+    
+    def __len__()
+```
+
+`def __init__()`
+
+`def __getitem__()`
+
+`def __len__()`
+
+위 세 개의 함수는 반드시 정의되어있어야 한다.
 
 
-##### 
 
+### 
