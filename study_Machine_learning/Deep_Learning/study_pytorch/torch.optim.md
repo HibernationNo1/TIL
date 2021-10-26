@@ -89,9 +89,10 @@ from forch.optim import lr_scheduler
 Epoch에 따라 Learning Rate를 변경하는 역할을 한다.
 
 ```python
-exp_lr_scheduler = lr_scheduler.StepLR(oprimizer, step_size, gamma)
+scheduler = lr_scheduler.StepLR(oprimizer, step_size, gamma)
 ```
 
+- `oprimizer` : oprimizer instance
 - `step_size` : int, 몇 Epoch마다 gamma를 lr에 곱할지를 결정
 - `gamma` : float, 몇의 값을 lr에 곱할지를 결정
 
@@ -102,6 +103,18 @@ exp_lr_scheduler = lr_scheduler.StepLR(oprimizer, step_size, gamma)
 StepLR 내부의 step에 1을 더하는 과정을 수행. `step_size`마다 gamma가 곱해진다.
 
 ```python
-exp_lr_scheduler.step()
+scheduler.step()
 ```
 
+
+
+#### LambdaLR
+
+미리 정의한 함수를 사용해 Learning Rate를 변경하는 역할을 한다.
+
+```python
+scheduler =lr_scheduler.LambdaLR(oprimizer, lr_lambda)
+```
+
+- `oprimizer` : oprimizer instance
+- `lr_lambda` : scheduling할 함수
