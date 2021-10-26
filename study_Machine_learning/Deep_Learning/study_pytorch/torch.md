@@ -16,6 +16,73 @@ is_cuda = torch.cuda.is_available()
 
 ### torch
 
+#### Tensor()
+
+`tf.constant` 와 같다.
+
+```python
+torch.Tensor([1, 2])
+```
+
+> `torch.Tensor` 는 CPU memory를,
+>
+> `torch.cuda.Tensor` 는 GPU memory를 사용한다.
+
+torch에서는 Tensor 선언시 사용할 수 있는 data type이 여러개가 있다. 
+
+- 32-bit floating Point : `FloatTensor`  주로 계산을 위한 data에 사용된다.
+
+- 64-bit floating Point : `DoubleTensor`
+
+- 16-bit floating Point : `HalfTensor`
+
+- 8-bit integer : `ByteTensor(unsigned)`, `CharTensor(signed)`  boolean을 사용시
+
+- 16-bit integer : `ShortTensor`
+
+- 32-bit integer : `IntTensor`
+
+- 64-bit integer : `LongTensor`   int형 숫자를 사용할 때 사용된다.
+
+>  `FloatTensor` 에서 `LongTensor`  로 바꿀 때
+>
+> ```python
+> x = torch.FloatTensor([1.0, 2.0])  # FloatTensor
+> x.type(torch.LongTensor)		# `LongTensor`  
+> ```
+>
+> `type` 을 사용하자.
+
+
+
+**requires_grad**
+
+torch.Tensor의 parameter중 하나인 requires_grad는 autograd에 모든 opration을 tracking해야 한다고 알려준다.
+
+>  tf.gradientTape이라고 생각하면 됨
+
+```python
+a = torch.Tensor([2., 3.], requires_grad = True)
+```
+
+
+
+
+
+#### randint()
+
+범위 내 integer element tensor를 생성한다.
+
+```python
+torch.randint(low = 0, high, size)
+```
+
+- `low` : inclusive한 최소값
+- `high` : exclusive한 최대값
+- `size`
+
+
+
 #### device()
 
 CUDA사용 여부를 결정
@@ -133,6 +200,10 @@ model = torch.load(path)
 ```
 
 - `path` : model의 path
+
+
+
+
 
 
 
