@@ -47,11 +47,18 @@ print(next(iter)) # 3
 
   
 
-  
-
-  
 
 
+
+### assert
+
+뒤의 조건이 True가 아니면 AssertError를 발생한다.
+
+```python
+assert 조건, str
+```
+
+`str` : 조건이 False일 때 출력하는 문구
 
 
 
@@ -84,4 +91,18 @@ target = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 result = filter(lambda x : x%2==0, target)
 print(list(result))  # [2, 4, 6, 8, 10]
 ```
+
+
+
+
+
+### callable()
+
+전달받은 object 인자가 호출 가능한지 여부를 판단한다.
+
+```python
+boolean = callable(object)
+```
+
+호출 가능하면 True, 아니면 False
 
