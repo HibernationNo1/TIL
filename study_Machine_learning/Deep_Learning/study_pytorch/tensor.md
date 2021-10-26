@@ -23,6 +23,40 @@ data를 CUDA에 최적화된 형태로 convert한다.
 
 
 
+#### squeeze
+
+```python
+tensor.squeeze() 
+```
+
+또는
+
+```python
+torch.squeeze(input, dim)
+```
+
+- `dim` : 1차원인 dimension을 명시 
+
+
+
+#### unsqueeze
+
+tf.expendim()과 같음
+
+```python
+tensor.unsqueeze(dim) 
+```
+
+또는
+
+```python
+torch.unsqueeze(input, dim)
+```
+
+- `dim` : 추가할 dimension을 명시
+
+
+
 #### view()
 
 tensor의 matrix모양을 변경하여 return한다.
