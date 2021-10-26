@@ -135,3 +135,51 @@ print(dir(tmp))
 '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', 'method1', 'method2', 'x', 'y']
 ```
 
+
+
+#### super()
+
+부모 class를 inherit했을 때, 부모 class의 method 또는 attribute를 사용하고 싶은 경우 사용
+
+`supter().부모클래스method`
+
+```python
+class foo(bar):
+    def __init__(self, name, hand):
+        super().__init__()
+```
+
+
+
+### custom sequence
+
+#### __init\_\_
+
+class의 instance가 생성될 때 바로 호출되는 method
+
+```python
+def __init__(self):
+```
+
+
+
+
+
+#### __getitem\_\_
+
+해당 method를 구현하면 instance의 index접근을 할 수 있다.
+
+```python
+def __getitme__(self, index):
+```
+
+
+
+#### __len\_\_
+
+해당 method를 구현하면 instance에  `len(instance)` 를 사용할 수 있게 된다.
+
+```python
+def __len__(self):
+```
+
