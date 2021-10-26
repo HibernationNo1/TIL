@@ -54,16 +54,6 @@ Image.new(mode, size, color = 0)
 
 ### <calss 'PIL'>
 
-#### show()
-
-` <calss 'PILJpegImagePligin.JpegImageFile'> ` type의 image를 보여준다.
-
-```python
-img.show()
-```
-
-
-
 #### meta data
 
 - `img.filename` 
@@ -71,6 +61,18 @@ img.show()
 - `img.size` : image file의 size
 - `img.mode` : image의 색상 모드 (RGB)
 - `img.width` ,  `img.height`
+
+
+
+
+
+#### show()
+
+` <calss 'PILJpegImagePligin.JpegImageFile'> ` type의 image를 보여준다.
+
+```python
+img.show()
+```
 
 
 
@@ -94,3 +96,15 @@ dst.paste(scr)
 
 - `dst`
 - `scr`
+
+
+
+흑백 image를 RBG image로 바꿀때 사용
+
+```python
+def to_rgb(image):
+    rgb_image = Image.new("RGB", image.size)
+    rgb_image.paste(image)
+    return rgb_image
+```
+
