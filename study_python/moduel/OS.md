@@ -6,6 +6,34 @@ import os
 
 
 
+
+
+#### system()
+
+argument로 받은 string을 linux 명령어로 수행한다.
+
+```python
+os.system("cd")
+```
+
+
+
+>  tmp.py라는 file이 아래와 같을 때
+>
+> ```python
+> import os
+> 
+> print("무한루프")
+> 
+> os.system('python tmp.py')
+> ```
+>
+> 무한루프가 돌아간다.
+>
+> 이를 이용해 다른 python file을 실행할 수 있다.
+
+
+
 #### getcwd()
 
 현재 작업하는 directory open
