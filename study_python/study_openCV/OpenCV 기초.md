@@ -213,6 +213,7 @@ cv2.waitKey()
   ```python
   cv2.imshow('image', img)
   cv2.waitKey(3000) # 3초 후 자동으로 창 닫힘
+    
 ```
 
   > return 값으로 입력된 키보드 값의 아스키 코드를 return한다.
@@ -221,8 +222,9 @@ cv2.waitKey()
   >
   > ```python
   > while True:
-  >         if cv2.waitKey() == 27:  # 27은 esc의 아스키 코드임
-  >             break
+  >      if cv2.waitKey() == 27:  # 27은 esc의 아스키 코드임
+  >          break
+  > cv2.destroyAllWindows()
   > ```
 
 창이 띄워져 있는 상태에서 Ctrl+c를 누르면 그림이 클립보드에 복사된 상태로 창은 닫치게 된다.
