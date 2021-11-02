@@ -2,6 +2,16 @@
 
 ## install
 
+#### WSL
+
+docker를 설치하기 전 WSL설치
+
+windows 사용시 설치 
+
+
+
+#### DOCKER
+
 https://docs.docker.com/
 
 - Docker Desktop for window 
@@ -16,11 +26,11 @@ https://docs.docker.com/
 
 **Download 후 직접설치**
 
-외부 network가 불가능할 때
+외부 network가 불가능할 때 또는 windows
 
 
 
-#### Repository를 이용해서 설치
+**Repository를 이용해서 설치**
 
 외부 network가 사용 가능할 때
 
@@ -87,7 +97,7 @@ $ sudo apt-get remove docker docker-engine docker.io containerd runc
 
 
 
-### setting
+### linux setting
 
 **계정에 docker 권한 부여**
 
@@ -130,6 +140,34 @@ root:~# systemctl enable docker
 > 컨테이너는 virtuar environment와 마찬가지로 어플리케이션을 관련 라이브러리 및 종속항목과 함께 패키지로 묶어 소프트웨어 서비스 구동을 위한 격리 환경을 마련하기 때문에, 컨테이너를 사용하면 개발자와 IT운영팀이 훨씬 작은 단위로 업무를 수행할 수 있으므로 그에 따른 이점이 많다.
 
 ![](https://media.vlpt.us/images/dlfehd54/post/6903aa86-b663-4c4a-8228-19402c8a6e5a/docker-containerized-appliction-blue-border_2.png)
+
+doker container는 virtual machine에 비해 가볍고 시작과 중지가 빠르다는 장점이 있다. 
+
+
+
+**doker container를 생성할 때 주로 주의해야 할 점**
+
+- 1 컨테이너당 1프로세스
+
+  도커 컨테이너는 애플리케이션과 해당 애플리케이션을 실행하기 위한 실행 환경을 패키징함으로써 애플리케이션을 쉽게 실행하기 위한 도구로, 해플리케이션에서 중요한 역할을 한다. 주변의 에코시스템도 이 사상을 바탕으로 만들어진 것이므로 이를 무시하고 도커 컨테이너에 여러 프로세를 시동하도록 만들면 주변 에코시스템과 맞지 않거나 관리가 힘들어진다.
+
+- 변경 불가능한 인프라 이미지로 생성한다.
+
+  변경 불가능한 인프라는 '환경을 변경할 떄 오래된 환경은 없애고 새로운 환경을 만든다.', '한번 만들어진 환경은 절대 변경되지 않게 한다.'라는 개념이다.
+
+  도커 컨테이너는 버전을 관리할 수 있으므로 컨테이너 이미지 안에 애플리케이션 실행 바이너리나 관련 리소스를 가능한 한 포함시켜 컨테이너 이미지를 변경 불가능한 상태로 만들어야 한다.
+
+- 경량의 도커 이미지로 생성한다.
+
+  컨테이너를 실행할 때 노드상에서 사용할 도커 이미지가 없다면 외부에서 이미지를 풀하여 가지고 와야 한다. 그러므로 도커 이미지는 가급적 경량인 상태로 만들어야 한다.
+
+- 실행 계정은 root이외의 사용자로 한다.
+
+  컨테이너 내부에서 프로세스를 기동하는 실행 계정 권한을 최소화한다. 특히 root사용자를 사용하면 큰 보안 사고로 이어질 수 있으므로 최대한 사용하지 않도록 한다.
+
+  
+
+
 
 
 
