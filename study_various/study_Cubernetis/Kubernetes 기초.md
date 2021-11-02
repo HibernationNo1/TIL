@@ -27,6 +27,10 @@
 
 **cuberctl** : 쿠버네티스 클러스터를 관리하는 CLI도구. manifest file의 정보를 바탕으로 쿠버네티스 마스터가 가진 API에 요청을 보내어 쿠버네티스를 관리한다.
 
+- kubeconfig : kubectl이 kubenetes master와 통신할 때 필요한 '접속 대상의 서버 정보', '인증 정보' 등을 담은 파일이다.
+
+
+
 **resource** : 쿠버네티스를 관리하기 위한 API. 쿠버네티스에 의해 리소스 등록을 비동기로 처리할 수 있다.
 
 
