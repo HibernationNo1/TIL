@@ -107,6 +107,18 @@ $ docker start container_name
 
 
 
+##### image ls
+
+```
+$ docker image ls
+```
+
+local에 존재하는 image에 대한 목록과 information을 알 수 있다.
+
+
+
+
+
 #### run
 
 `docker run` : container image를 docker hub로부터 가져다가 application으로써 실행한다.
