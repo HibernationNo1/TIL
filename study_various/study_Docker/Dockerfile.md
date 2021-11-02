@@ -14,6 +14,10 @@ dockerfile을 만든 후 dockerfile build 명령어를 실행해서 container를
 
 
 
+dockerfile의 기본적인 흐름은 FROM으로 지정한 기반 image에 RUN이나 COPY들의 명령을 사용해 패키지 설치나 파일 복사 등의 여러 가지 처리를 하여 이미지를 생성하는 것이다. 
+
+
+
 ### grammar
 
 ##### FROM
@@ -155,3 +159,6 @@ docker hub의 explore 에 보면 잘 만든 container image의  docker file 을 
 
 
 
+### Multi Stage
+
+docker multi stage build는 여러 container image를 사용하여 처리하고 결과물만 실행용 container image에 copy하는 구조다. 
