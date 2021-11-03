@@ -37,169 +37,143 @@ secret과 configmap은 모두 key-value형태의 데이터 구조로 되어 있�
 
 
 
+kubenetes에서 취급하는 resource는 namespace수준의 resource와 namepace에 속하지 않는 cluster수준의 resource 두 종류가 있다.
+
+cluster수준의 resource는 모든 namespace에서 공유하여 사용할 수 있다.
 
 
-### command
 
-- **create**
+## command
 
-  resource를 생성하는 명령어
+#### api-resources
+
+사용 가능한 resource목록을 가져온다.
+
+```
+$ kubectl api-resources
+```
+
+- namespace에 속하는 resource 확인
 
   ```
-  $ kubectl create -f [manifest_file]
+  $ kubectl api-resources --namespace=true
   ```
 
-  > 해당 리소스가 존재할 경우 에러 발생
+- namespace에 속하지 않는 resource 확인
+
+  > cluster수준의 resource
+
+  ```
+  $ kubectl api-resources --namespace=false
+  ```
+
+
+
+#### create
+
+resource를 생성하는 명령어
+
+```
+$ kubectl create -f [manifest_file]
+```
+
+> 해당 리소스가 존재할 경우 에러 발생
+>
+> `manifest_file` : recource정보를 담은 yaml형식의 file
+
+**기본적으로 create보다  `$ kubectl apply`가 더 편하고 안전하기 때문에 apply만 사용하자.**
+
+
+
+#### delete
+
+resource를 제거하는 명령어
+
+- manifest file 사용
+
+  ```
+  $ kubectl delete -f [manifest_file]
+  ```
+
+  > 해당 리소스가 존재하지 않을 경우 에러 발생
   >
   > `manifest_file` : recource정보를 담은 yaml형식의 file
 
-  **기본적으로 create보다  `$ kubectl apply`가 더 편하고 안전하기 때문에 apply만 사용하자.**
+- manifest file 사용 안할 때
 
-
-
-- **delete**
-
-  resource를 제거하는 명령어
-
-  - manifest file 사용
-
-    ```
-    $ kubectl delete -f [manifest_file]
-    ```
-
-    > 해당 리소스가 존재하지 않을 경우 에러 발생
-    >
-    > `manifest_file` : recource정보를 담은 yaml형식의 file
-
-  - manifest file 사용 안할 때
-
-    resource종류, resource이름 을 지정하여 삭제
-
-    ```
-    $ kubectl delete pod [pod_name]
-    ```
-
-    > `pod [pod_name]` : resource종류 중 pod 중에서 pad_name이라는 pod만 제거
-
-    ```
-    $ kubectl delete pod --all
-    ```
-
-    > pod라는 resource를 종류에 해당되는 것을 모두 제거
-
-  **--wait**
-
-  kubectl명령어 실행은 바로 완료되지만, kubenetes에 의한 실제 resource 처리는 비동기로 실행되기 때문에 바로 완료되지 않는다. 
-
-  `--wait` 옵션을 사용하면 resource의 삭제 완료를 기다렸다가 명령어 실행을 종료할 수 있다.
-
-  > delete명령이 끝난 후 `$ kubectl wait` 명령이 진행되는 것임
+  resource종류, resource이름 을 지정하여 삭제
 
   ```
-  $ kubectl delete -f sample-pod.yaml --wait
+  $ kubectl delete pod [pod_name]
   ```
 
-  > resource삭제 완료 대기
-
-  **--force**
-
-  resource를 강제로 즉시 삭제하는 옵션이다. 
+  > `pod [pod_name]` : resource종류 중 pod 중에서 pad_name이라는 pod만 제거
 
   ```
-  $ kubectl delete -f sample-pod.yaml --force
+  $ kubectl delete pod --all
   ```
 
-  
+  > pod라는 resource를 종류에 해당되는 것을 모두 제거
 
-- **apply**
+**--wait**
 
-  manifest file에 변경 사항이 있을 경우 resource updata를 하는 명령어
+kubectl명령어 실행은 바로 완료되지만, kubenetes에 의한 실제 resource 처리는 비동기로 실행되기 때문에 바로 완료되지 않는다. 
 
-  > manifest file에 변경 사항이 있을 경우 태그를 붙여 백업한다.
+`--wait` 옵션을 사용하면 resource의 삭제 완료를 기다렸다가 명령어 실행을 종료할 수 있다.
+
+> delete명령이 끝난 후 `$ kubectl wait` 명령이 진행되는 것임
+
+```
+$ kubectl delete -f sample-pod.yaml --wait
+```
+
+> resource삭제 완료 대기
+
+**--force**
+
+resource를 강제로 즉시 삭제하는 옵션이다. 
+
+```
+$ kubectl delete -f sample-pod.yaml --force
+```
+
+
+
+#### apply
+
+manifest file에 변경 사항이 있을 경우 resource updata를 하는 명령어
+
+> manifest file에 변경 사항이 있을 경우 태그를 붙여 백업한다.
+>
+> ```
+> $ cp -av sample-pod.yaml{, .lod}
+> ```
+>
+> `sample-pod.yaml` 라는 manifest file이 `$ kubectl create`에 의해 이미 등록되어 있는 상태에서 `sample-pod.yaml`에 변경이 있을 경우
+>
+> 변경된 `sample-pod.yaml` 라는 manifest file을 `sample-pod.yaml.old` 로 태그를 붙여 백업한다.
+
+- **diff**
+
+  두 개의 manifest file을 비교하여 변경 사항이 있는지 확인
+
+  ```
+  $ diff sample-pod.yaml.old sample-pod.yaml
+  ```
+
+  > `sample-pod.yaml.old` : 변경된 후 .old라는 태그가 붙여진 sample-pod.yaml file
   >
-  > ```
-  > $ cp -av sample-pod.yaml{, .lod}
-  > ```
-  >
-  > `sample-pod.yaml` 라는 manifest file이 `$ kubectl create`에 의해 이미 등록되어 있는 상태에서 `sample-pod.yaml`에 변경이 있을 경우
-  >
-  > 변경된 `sample-pod.yaml` 라는 manifest file을 `sample-pod.yaml.old` 로 태그를 붙여 백업한다.
+  > `sample-pod.yaml` : 변경되기 전 `$ kubectl create`에 의해 등록된 resource
 
-  - **diff**
+```
+$ kubectl applty -f sample-pod.yaml
+```
 
-    두 개의 manifest file을 비교하여 변경 사항이 있는지 확인
+> 기존에 등록된 `sample-pod.yaml`라는 파일에 변경사항이 있다면 업데이트
+>
+> 등록된 resource가 없는 경우 `$ kubectl create` 와 같은 동작을 한다.
 
-    ```
-    $ diff sample-pod.yaml.old sample-pod.yaml
-    ```
-
-    > `sample-pod.yaml.old` : 변경된 후 .old라는 태그가 붙여진 sample-pod.yaml file
-    >
-    > `sample-pod.yaml` : 변경되기 전 `$ kubectl create`에 의해 등록된 resource
-
-  ```
-  $ kubectl applty -f sample-pod.yaml
-  ```
-
-  > 기존에 등록된 `sample-pod.yaml`라는 파일에 변경사항이 있다면 업데이트
-  >
-  > 등록된 resource가 없는 경우 `$ kubectl create` 와 같은 동작을 한다.
-
-  kubenetes는 생성한 resource 상태를 내부에 기록한다. 한 번 기록된 resource의 field대부분은 변경 가능하지만, 변경 불가능한 field도 있다는 점을 기억하자.
-
-
-
-- **wait**
-
-  kubectl 명령어를 연속적으로 실행하여 resource를 조작할 때, 다음 명령령어를 실행하기 전에 그때까지 작업한 resource가 의도한 상태가 된 후 다음 명령어를 실행하도록 한다.
-
-  > pod를 예시로 들어본다. (pod외 어떠한 resource에 대해서도 똑같이 사용 가능)
-
-  - `--for` : 특정 상태를 지정
-
-    - `condition=Ready pod` : pod가 기동(ready)하는 상태
-
-      ```
-      $ kubectl wait --for=condition=Ready pod/sample-pod
-      ```
-
-      > sample-pod가 정상적으로 기동할 때 까지 대기
-
-    - `condition=PodScheduled pod` : pod가 PodScheduled 하는 상태
-
-      ```
-      $ kubectl wait --for=condition=PodScheduled pod --all
-      ```
-
-      > 모든 pod가 스케줄링 될 때 까지 대기 
-
-    - `delete pod` :  pod 가 삭제되는 상태
-
-      ```
-      $ kubectl wait --for=delete pod --all
-      ```
-
-      > 모든 pod가 삭제될 때 까지 대기
-
-  - `--timeout` : 기다리는 마지노선 시간. 할당한 시간까지 명령어 실행이 안되면 timeout한다.
-
-  ```
-  $ kubectl wait --for=delete pod --all --timeout=5s
-  ```
-
-  > 모든 pod가 삭제될 때 까지 pod마다 최대 5초씩 대기.
-
-  
-
-  ```
-  $ kubectl wait --for=condition=Ready -f manifest_file.yaml
-  ```
-
-  > manifest file을 지정하고 resource가 정상적으로 기동할 때 까지 대기
-
-  
-
-
+kubenetes는 생성한 resource 상태를 내부에 기록한다. 한 번 기록된 resource의 field대부분은 변경 가능하지만, 변경 불가능한 field도 있다는 점을 기억하자.
 
 
 
