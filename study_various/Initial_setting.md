@@ -24,7 +24,21 @@ linux기준임
 
    
 
+**command만 영문으로 바꾸기**
 
+1. ```
+   vi ~/.bachrc
+   ```
+
+   > bash 사용시
+
+2. ```
+   export LANG=en_US.UTF-8
+   ```
+
+   > 문구 추가 후 저장
+
+3. bash 재시작
 
 
 
@@ -81,7 +95,7 @@ install후
 
    ```
    $ git config --global user.name "Taeuk Noh"
-   $ git config --global user.email winter4958@gmail.com
+   $ git config --global user.email taeuk4958@gmail.com
    ```
 
 2. upstream 설정
@@ -316,6 +330,42 @@ $ sudo apt -y install typora
 
 
 
+
+
+**nvidia-dorker**
+
+GPU resource사용을 위해 필요
+
+```
+$ release="ubuntu"$(lsb_release -sr | sed -e "s/\.//g")
+$ sudo apt install sudo gnupg
+$ sudo apt-key adv --fetch-keys "http://developer.download.nvidia.com/compute/cuda/repos/"$release"/x86_64/7fa2af80.pub"
+$ sudo sh -c 'echo "deb http://developer.download.nvidia.com/compute/cuda/repos/'$release'/x86_64 /" > /etc/apt/sources.list.d/nvidia-cuda.list'
+$ sudo sh -c 'echo "deb http://developer.download.nvidia.com/compute/machine-learning/repos/'$release'/x86_64 /" > /etc/apt/sources.list.d/nvidia-machine-learning.list'
+
+$ sudo apt update
+```
+
+> 설치과정 중 sudo apt update에서 특정 file의 내용에 대한 에러가 나오면 
+>
+> ```
+> sudo -H gedit /etc/apt/sources.list.d/nvidia-cuda.list
+> ```
+>
+> 처럼 `sudo -H gedit`을 통해 파일 내용 확인 후 고쳐서 진행할것
+
+```
+$ apt-cache search nvidia
+$ sudo apt-get install -y nvidia-XXX # 
+$ sudo apt-get install -y dkms nvidia-modprobe
+```
+
+> nvidia-XXX 는 알맞는 버전 확인 후 설치하면 된다. [여기](https://laondev12.tistory.com/11) 확인
+
+
+
+
+
 **Uninstall old versions**
 
 ```
@@ -342,9 +392,11 @@ $ id
 
 
 
-## Kubenetes
+## Kubernetes
 
-#### Kind
+#### Kind, kubectl(windows)
+
+**Kind**
 
 ```
 $ curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.11.1/kind-linux-amd64
@@ -368,7 +420,7 @@ $ kind version
 
 
 
-#### kubectl
+**kubectl**
 
 ```
 $ curl -O https://storage.googleapis.com/kubernetes-release/release/v${VERSION}/bin/${OS_TYPE}/amd64/kubectl
@@ -405,6 +457,48 @@ $ kubectl version
    > ```
    > $ echo 'source <(kubectl completion bash)' >> ~/.bachrc
    > ```
+
+
+
+
+
+
+
+#### kubelet, kubeadm, kubectl(linux)
+
+kubelet, kubeadm, kubectl, docker 한 번에 설치
+
+1. 필요한 의존 package 설치
+
+   ```
+   $ sudo apt update && sudo apt install -y apt-transport-https curl
+   ```
+
+2. 저장소 등록 및 업데이트
+
+   ```
+   $ curl -s http://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+   ```
+
+   ```
+   $ cat << E0F | sudo tee /etc/apt/sources.list.d/kubernetes.list
+   > deb http://apt.kubernetes.io/ kubernetes-xenial main
+   > E0F
+   ```
+
+   ```
+   $ sudo apt update
+   ```
+
+3. kubernetes관련 package 설치
+
+   ```
+   $ sudo apt install -y kubelet=1.18.15-00 kubeadm=1.18.15-00 kubectl=1.18.15-00
+   ```
+
+4. 
+
+
 
 
 
