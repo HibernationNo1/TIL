@@ -1,5 +1,66 @@
 # Initial setting
 
+linux기준임
+
+**야간 모드**
+
+1. redshift 패키지 설치
+
+   ```
+   $ sudo apt-get install redshift redshift-gtk
+   ```
+
+2. 야간모드 적용
+
+   ```
+   $ redshift -O 4200
+   ```
+
+   해제
+
+   ```
+   $ redshift -x
+   ```
+
+   
+
+
+
+
+
+## chrom
+
+1. 크롬 브라우저 패키지 설치용 인증 키 
+
+   ```
+   $ wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+   ```
+
+2. 웹 브라우저 패키지를 다운받을 PPA를 cources.list.d에 추가
+
+   ```
+   $ sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+   ```
+
+3. ```
+   $ sudo apt-get update
+   ```
+
+4. 크롬 install
+
+   ```
+   $ sudo apt-get install google-chrome-stable
+   ```
+
+5. 크롬 설치를 위해 생성했던 파일 제거
+
+   ```
+   $ ls /etc/apt/sources.list.d/google*
+   $ sudo rm -rf /etc/apt/sources.list.d/google.list
+   ```
+
+   
+
 
 
 ## git 
@@ -79,13 +140,13 @@ $ sudo apt -y install typora
 1. `Anaconda3-2021.05-Linux-x86_64.sh` file다운로드 후, 해당 위치에서 무결성 확인
 
    ```
-   sha256sum Anaconda3-2021.05-Linux-x86_64.sh
+   $ sha256sum Anaconda3-2021.05-Linux-x86_64.sh
    ```
 
 2. 설치
 
    ```
-   bash Anaconda3-2021.05-Linux-x86_64.sh
+   $ bash Anaconda3-2021.05-Linux-x86_64.sh
    ```
 
    1. ```
@@ -98,7 +159,7 @@ $ sudo apt -y install typora
       Do you accept the license terms? [yes|no]
       Please answer 'yes' or 'no':'
       >>> 
-      뜨면 Enter
+      뜨면 yes 입력 후 Enter
       ```
 
    3. ```
@@ -187,6 +248,163 @@ $ sudo apt -y install typora
    실행되는지 확인
 
 
+
+
+
+## Docker
+
+['Docker for linux'](https://docs.docker.com/engine/install/ubuntu/)
+
+실제 Docker server를 운영
+
+**Repository를 이용해서 설치**
+
+외부 network가 사용 가능할 때
+
+1. 요구하는 program install
+
+   ```
+   $ sudo apt-get update
+   ```
+
+   ```
+   $ sudo apt-get install \
+       apt-transport-https \
+       ca-certificates \
+       curl \
+       gnupg \
+       lsb-release
+   ```
+
+   
+
+2. Docker의 인증서 저장
+
+   ```
+   $ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+   ```
+
+   
+
+3. URL등록
+
+   ```
+   $ echo \
+     "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+     $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+   ```
+
+4. install
+
+   ```
+   $ sudo apt-get update
+   ```
+
+   ```
+   $ sudo apt-get install docker-ce docker-ce-cli containerd.io
+   ```
+
+   
+
+5. check 
+
+   ```
+   $ sudo docker run hello-world
+   ```
+
+   tesk image를 다운로드
+
+
+
+**Uninstall old versions**
+
+```
+$ sudo apt-get remove docker docker-engine docker.io containerd runc
+```
+
+
+
+**계정에 docker 권한 부여**
+
+```
+root:~# usermod -a -G docker $USER
+```
+
+재부팅 후 확인
+
+```
+$ id
+```
+
+`997(docker)` 가 포함되어 있다면 권한 부여된 것
+
+
+
+
+
+## Kubenetes
+
+#### Kind
+
+```
+$ curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.11.1/kind-linux-amd64
+```
+
+```
+$ chmod +x ./kind
+```
+
+```
+$ sudo mv ./kind /usr/bin/kind
+```
+
+
+
+설치 확인
+
+```
+$ kind version
+```
+
+
+
+#### kubectl
+
+```
+$ curl -O https://storage.googleapis.com/kubernetes-release/release/v${VERSION}/bin/${OS_TYPE}/amd64/kubectl
+```
+
+```
+$ chmod +x kubectl
+```
+
+```
+$ sudo mv ./kubectl /usr/bin/kubectl$ 
+```
+
+
+
+설치 확인
+
+```
+$ kubectl version
+```
+
+
+
+환경설정
+
+1. shell 자동 완성 기능 (bash)
+
+   ```
+   $ source <(kubectl completion bash)
+   ```
+
+   > 다음 번 로그인할 떄 다른 shell을 기동했을 경우에도 자동 완성 기능을 활성화하려면 `~/.bashrc` 로 설정해야 한다.
+   >
+   > ```
+   > $ echo 'source <(kubectl completion bash)' >> ~/.bachrc
+   > ```
 
 
 
