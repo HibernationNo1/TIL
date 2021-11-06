@@ -332,65 +332,164 @@ $ sudo apt -y install typora
 
 
 
-**nvidia-dorker**
+- **nvidia-dorker**
 
-GPU resource사용을 위해 필요
+  GPU resource사용을 위해 필요
 
-```
-$ release="ubuntu"$(lsb_release -sr | sed -e "s/\.//g")
-$ sudo apt install sudo gnupg
-$ sudo apt-key adv --fetch-keys "http://developer.download.nvidia.com/compute/cuda/repos/"$release"/x86_64/7fa2af80.pub"
-$ sudo sh -c 'echo "deb http://developer.download.nvidia.com/compute/cuda/repos/'$release'/x86_64 /" > /etc/apt/sources.list.d/nvidia-cuda.list'
-$ sudo sh -c 'echo "deb http://developer.download.nvidia.com/compute/machine-learning/repos/'$release'/x86_64 /" > /etc/apt/sources.list.d/nvidia-machine-learning.list'
+  ```
+  $ release="ubuntu"$(lsb_release -sr | sed -e "s/\.//g")
+  $ sudo apt install sudo gnupg
+  $ sudo apt-key adv --fetch-keys "http://developer.download.nvidia.com/compute/cuda/repos/"$release"/x86_64/7fa2af80.pub"
+  $ sudo sh -c 'echo "deb http://developer.download.nvidia.com/compute/cuda/repos/'$release'/x86_64 /" > /etc/apt/sources.list.d/nvidia-cuda.list'
+  $ sudo sh -c 'echo "deb http://developer.download.nvidia.com/compute/machine-learning/repos/'$release'/x86_64 /" > /etc/apt/sources.list.d/nvidia-machine-learning.list'
+  
+  $ sudo apt update
+  ```
 
-$ sudo apt update
-```
+  > 설치과정 중 sudo apt update에서 특정 file의 내용에 대한 에러가 나오면 
+  >
+  > ```
+  > sudo -H gedit /etc/apt/sources.list.d/nvidia-cuda.list
+  > ```
+  >
+  > 처럼 `sudo -H gedit`을 통해 파일 내용 확인 후 고쳐서 진행할것
 
-> 설치과정 중 sudo apt update에서 특정 file의 내용에 대한 에러가 나오면 
->
-> ```
-> sudo -H gedit /etc/apt/sources.list.d/nvidia-cuda.list
-> ```
->
-> 처럼 `sudo -H gedit`을 통해 파일 내용 확인 후 고쳐서 진행할것
+  ```
+  $ apt-cache search nvidia
+  $ sudo apt-get install -y nvidia-driver-XXX # 
+  $ sudo apt-get install -y dkms nvidia-modprobe
+  ```
 
-```
-$ apt-cache search nvidia
-$ sudo apt-get install -y nvidia-XXX # 
-$ sudo apt-get install -y dkms nvidia-modprobe
-```
+  > nvidia-XXX 는 알맞는 버전 확인 후 설치하면 된다. [여기](https://laondev12.tistory.com/11) 확인
+  >
+  > > ```
+  > > $ sudo apt-get install -y nvidia-driver-470
+  > > ```
+  > >
+  > > 리눅스 GeForce GTX 1650 SUPER 기준
 
-> nvidia-XXX 는 알맞는 버전 확인 후 설치하면 된다. [여기](https://laondev12.tistory.com/11) 확인
+  ```
+  $ sudo reboot
+  ```
+
+  
+
+  
+
+  ```
+  $ sudo cat /proc/driver/nvidia/version | nvidia-smi
+  ```
+
+  
+
+  ```
+  $ curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
+  $ distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
+  $ curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+  $ sudo apt-get update
+  $ sudo apt-get install -y nvidia-docker2
+  ```
+
+  
+
+  demon.json에 추가
+
+  ```
+  $ sudo vi /etc/docker/deamon.json
+  	"default-runtime" :"nvidia",
+  	"runtimes" :{
+  		"nvidia" :{
+  			"path:" "/usr/bin/nvidia-container-runtime",
+  			"runtimeArgs" : []
+  		}
+  	}
+  :wq
+  ```
+
+  
+
+  **동작 확인**
+
+  container에서 이용가능안 GPU정보를 얻는다.
+
+  ```
+  $ sudo systemctl restart docker
+  $ sudo docker run --runtime=nvidia --rm nvidia/cuda:11.0-base nvidia-smi
+  ```
+
+  > 11.0-base 부분은 
+  >
+  > ```
+  > $ nvidia-smi
+  > ```
+  >
+  > 의 명령어를 통해 `CUDA Version:`  을 확인 후 알맞는 version기입 (11.4 이면 `11.0-base` 기입)
+
+  
+
+- **Uninstall old versions**
+
+  ```
+  $ sudo apt-get remove docker docker-engine docker.io containerd runc
+  ```
+
+  
 
 
 
+- **계정에 docker 권한 부여**
 
+  ```
+  root:~# usermod -a -G docker $USER
+  ```
 
-**Uninstall old versions**
+  재부팅 후 확인
 
-```
-$ sudo apt-get remove docker docker-engine docker.io containerd runc
-```
+  ```
+  $ id
+  ```
 
-
-
-**계정에 docker 권한 부여**
-
-```
-root:~# usermod -a -G docker $USER
-```
-
-재부팅 후 확인
-
-```
-$ id
-```
-
-`997(docker)` 가 포함되어 있다면 권한 부여된 것
+  `997(docker)` 가 포함되어 있다면 권한 부여된 것
 
 
 
+- kubernetes사용 할 계획이면 미리 세팅할 것
 
+  - Docker 데몬 드라이버 변경
+
+    Docker 데몬이 사용하는 드라이버를 cgroupfs 대신 systemd를 사용하도록 설정
+
+    1. ```
+       $ sudo chown $USER:docker /etc/docker
+       ```
+
+    2. Setup daemon
+
+       ```
+       $ sudo cat > /etc/docker/daemon.json <<EOF
+       {
+         "exec-opts": ["native.cgroupdriver=systemd"],
+         "log-driver": "json-file",
+         "log-opts": {
+           "max-size": "100m"
+         },
+         "storage-driver": "overlay2"
+       }
+       EOF
+       ```
+
+       ```
+       $ sudo mkdir -p /etc/systemd/system/docker.service.d
+       ```
+
+    3. Restart docker
+
+       ```
+       $ sudo systemctl daemon-reload
+       $ sudo systemctl restart docker
+       ```
+
+    
 
 ## Kubernetes
 
@@ -496,7 +595,15 @@ kubelet, kubeadm, kubectl, docker 한 번에 설치
    $ sudo apt install -y kubelet=1.18.15-00 kubeadm=1.18.15-00 kubectl=1.18.15-00
    ```
 
-4. 
+   kubeadm 의 version이 곧 kubernetes 의 version이다.
+
+4. 버전 고정
+
+   ```
+   $ sudo apt-mark hold kubelet kubeadm kubectl docker.io
+   ```
+
+   
 
 
 
@@ -506,7 +613,7 @@ kubelet, kubeadm, kubectl, docker 한 번에 설치
 
 ## pip 설치
 
-### window
+**windows**
 
 [링크](https://github.com/HibernationNo1/TIL/raw/master/image/get-pip.py)를 저장 후 해당 위치에서 명령어
 
@@ -540,7 +647,15 @@ print(scipy.__version__)
 
 ## GPU_CUDA설치
 
-### 1. check GPU
+### Ubuntu
+
+
+
+
+
+### windows
+
+**1. check GPU**
 
 NVIDIA GTX-1060 3GB 기준
 
@@ -568,7 +683,7 @@ NVIDIA GTX-1060 3GB 기준
 
 
 
-### 2. graphic driver 설치
+**2. graphic driver 설치**
 
  [여기](https://www.nvidia.co.kr/Download/index.aspx?lang=kr) 에서 graphic driver를 설치
 
@@ -584,7 +699,7 @@ NVIDIA GTX-1060 3GB 기준
 
 
 
-### 3. Download CUDA
+**3. Download CUDA**
 
 - 쿠다 version 확인
 
@@ -621,7 +736,7 @@ NVIDIA GTX-1060 3GB 기준
 
 
 
-### 4. Download cuDNN
+**4. Download cuDNN**
 
 cuDNN는 회원가입을 해야 다운로드 가능
 
