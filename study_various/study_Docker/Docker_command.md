@@ -1,20 +1,110 @@
 # Docker command
 
+## Docker container의 생명 주기
+
+1. **run**
+
+   ```
+   $ docker run image_name
+   ```
+
+   > 1. create
+   >
+   >    ```
+   >    $ docker create image_name
+   >    ```
+   >
+   >    > 생성된 container의 ID를 출력한다.
+   >
+   > 2. start
+   >
+   >    ```
+   >    $ docker start -a container_ID
+   >    ```
+   >
+   >    > `create` 명령어로 얻은 ID를 container_ID자리에 입력한다.
+   >    >
+   >    > - `-a` : container가 실행될때 output을 자세히 보여준다.
+
+2. **stopped**
+
+   1. stop
+
+      gracefully하게 중지한다.
+
+      ```
+      $ docker stop container_name
+      ```
+
+      - `container_name` 대신 ID를 사용해도 된다.
+
+   2. kill
+
+      imperative하게 중지시킨다.
+
+      ```
+      $ docker kill container_name
+      ```
+
+      - ```
+        docker ps -q
+        ```
+
+        모든 container를 kill
+
+3. **deleted**
+
+   1. delete container
+
+      ```
+      $ docker rm container_name
+      ```
+
+      실행중인 container는 중지한 후에 삭제 가능
+
+      - ```
+        $ docker ps -a -q
+        ```
+
+        중지된 container를 전부 삭제
+
+   2. delete image
+
+      ```
+      $ docker rmi image_name
+      ```
+
+   3. system prune
+
+      stop된 모든 container와 image, network를 모두 삭제
+
+      ```
+      $ docker system prune
+      ```
+
+      
+
+
+
+## Comman
+
+
+
 id에 docker 권한이 부여되어 있다고 가정
 
-##### version
+#### version
 
 `docker version` : version확인
 
 
 
-##### info
+#### info
 
 `docker info` : docker가 저장된 path등을 확인할 수 있다.
 
 
 
-##### search
+#### search
 
 `docker search` : docker hub에서  container image를 검색
 
@@ -28,7 +118,7 @@ docker hub에서 nginx라는 container image를 찾는다.
 
 
 
-##### pull
+#### pull
 
 `docker pull` :  docker hub에서  container image를 가져온다.
 
@@ -49,7 +139,7 @@ bbe0b7acc89c: Pull complete
 
 
 
-##### images
+#### images
 
 `docker images` : 하드웨어에 저장된 container image 확인
 
@@ -65,7 +155,7 @@ container image가 layer형식으로 저장되는 forder
 
 
 
-##### inspect 
+#### inspect 
 
 `docker inspect` : 하드웨어에 저장된 container image를 상세보기
 
@@ -77,7 +167,7 @@ _name 을 container name을 사용하거나 image name을 사용하는지에 따
 
 
 
-##### create
+#### create
 
 `docker create` : 하드웨어에 저장된 container image를 container로 만들어준다.
 
@@ -97,7 +187,7 @@ $ docker create --name container_name python
 
 
 
-##### start
+#### start
 
 `docker start` : `docker create` 로 인해 하드웨어상에 running중이지 않은 container를 running상태로 실행한다.(application으로써 실행)
 
@@ -107,7 +197,7 @@ $ docker start container_name
 
 
 
-##### image ls
+#### image ls
 
 ```
 $ docker image ls
@@ -117,17 +207,30 @@ local에 존재하는 image에 대한 목록과 information을 알 수 있다.
 
 
 
+```
+$ docker run image ls
+```
+
+image를 가져와 container로 실행하고, container안에서 `ls` 명령어를 실행한다.
+
+> image안에 ls를 실행할 수 있는 file이 없으면, 오류
+
 
 
 #### run
 
-`docker run` : container image를 docker hub로부터 가져다가 application으로써 실행한다.
+`docker run` : 
+
+1. 명시한 image가 PC의 image cache 보관 장소에 있는지 확인한다. 있으면 container를 실행시켜 application으로써 실행한다.
+2. 없으면 docker hub로부터 가져다가 application으로써 실행한다.
 
 (pull + create + start 동작)
 
 ```
 $ docker run (<옵션>) <이미지 식별자> (<명령어>) (<인자>)
 ```
+
+> `(<명령어>)` : 이 자리는 원래 image가 가지고 있는 시작 명령어를 무시하고 여기에 있는 command를 실행하게 한다.
 
 ```
 $ docker run -d --name web  -p 80:80 nginx:latest
@@ -137,7 +240,13 @@ $ docker run -d --name web  -p 80:80 nginx:latest
 
 `-d` : background mode로 실행
 
-`-p80:80` : 80번 port로 실행
+`-p 80:80` : local host의 80번 port를 container의 80번 port로 연결
+
+이를 port를 mapping한다고 한다.
+
+> `-p` : port option
+>
+> `-p 49160 : 8080`라고 적으면, `http://localhost:49160` 을 입력하면 container속 8080번 port로 연결하게 된다.
 
 
 
@@ -157,7 +266,7 @@ docker hub에 잇는 image를 사용하고자 한다면 해당 page에서 알려
 
 
 
-**volume mount option**
+##### **volume mount option**
 
 - `-v` : 원하는 경로의 directory를 container의 특정 경로에 공유
 
@@ -167,7 +276,7 @@ docker hub에 잇는 image를 사용하고자 한다면 해당 page에서 알려
   >
   > 공유되는 path : `/home/workspace`라고 할 때
   >
-  > `-v C:\docker_result:/home/workspace` : `C:\docker_result`  에 저장된 data는 container의 ` /home/workspace` 에도 저장된다.
+  > `-v C:\docker_result:/home/workspace` 의 의미 =  `C:\docker_result`  에 저장된 file은 container의 ` /home/workspace` 에도 저장된다.
   >
   > 또는 
   >
@@ -186,10 +295,18 @@ docker hub에 잇는 image를 사용하고자 한다면 해당 page에서 알려
   ```
   $ docker run --shm-size=8G -v C:\docker_result:/home/workspace:ro python
   ```
+  
+  ```
+  $ docker run -v $(pwd):/usr/src/app hibernation/segmentation_inference
+  ```
+  
+  > container의` /usr/src/app` 라는 위치에서 현재 명령어를 입력한 user의 위치에 있는 files를 mount한다.
+  >
+  > `hibernation/segmentation_inference` : container name
 
 
 
-**resource option**
+##### **resource option**
 
 - `-m` : container가 사용할 최대 memory양을 지정
 
@@ -209,7 +326,7 @@ docker hub에 잇는 image를 사용하고자 한다면 해당 page에서 알려
 
 
 
-##### ps
+#### ps
 
 `docker ps` : 현재 container 들의 상태를 확인
 
@@ -225,15 +342,41 @@ CONTAINER ID   IMAGE          COMMAND                  CREATED          STATUS  
 
 ```
 
-`web` 이라는 이름으로 container가 실행되고 있음을 알 수 있다.
+- `CONTAINER ID` : container고유한 ID 해쉬값
+
+- `IMAGE` : container 생성시 사용한 docker image
+
+- `COMMAND` : container 시작 시 실행될 명령어
+
+  대부분 image에 내장되어 있으므로 별도 설정이 필요없다
+
+- `CREATED` : container가 생성된 시간
+
+- `STATUS` container의 상태
+
+  - `Up` : 실행중
+  - `Exited` : 종료
+  - `Pause` : 일시정지
+
+- `PORTS` : container가 개방한 port와 host에 연결한 port.
+
+- `NAMES` : container의 고유한 이름
+
+  > container 생성 시 `--name` 옵션으로 이름을 설정하지 않으면 docker engine이 임의로 형용사와 명사를 조합해 설정
 
 
+
+```
+$ docker ps --format 'table{{.Names}}\table{{.Image}}'
+```
+
+> Names와 Image라는 항목만 보여준다.
 
 ```
 $ docker ps -a
 ```
 
-
+> Exited상태의 container도 보여준다.
 
 
 
@@ -249,7 +392,7 @@ $ curl localhost:80
 
 
 
-##### top
+#### top
 
 `docker top` : 특정 container에서 어떤 것이 동작중인지를 출력
 
@@ -259,7 +402,7 @@ $ docker top container_name
 
 
 
-##### logs
+#### logs
 
 `docker logs` : 특정 container의 log확인
 
@@ -269,21 +412,43 @@ $ docker log container_name
 
 
 
-##### exec
+#### exec
 
 `docker exec`  : running중인 container에 추가 명령어 실행을 할 수 있도록 한다.
 
 ```
-$ docker exec container_name /bin/bash
+$ docker exec -it {cintainer name/ID} {명령어}
 ```
 
-> bash를 추가 실행하여 사용자가 접근할 수 있도록 한다.
+
+
+- 명령어를 여러 번 입력해야 할 경우, container 안에서 bash를 열어 사용하자.
+
+  ```
+  $ docker exec container_name /bin/bash
+  ```
+
+  > bash를 추가 실행하여 사용자가 접근할 수 있도록 한다.
+
+  또는
+
+  ```
+  $ docker exec -it container_name sh
+  ```
+
+  이 때 terminal환경에서 빠져 나오려면 Ctrl+D를 입력해야 한다.
 
 
 
+- `docker run`으로 사용하는 명령어와 다른 점
+
+  run은 새로운 container를 만들어서 실행한다
+
+  exec는 이미 실행중인 container에 명령어를 전달한다.
 
 
-##### container
+
+#### container
 
 `docker container` : container 과 images를 확인
 
@@ -293,7 +458,7 @@ $ docker container ls -a
 
 
 
-##### stop
+#### stop
 
 `docker stop` : running중인 container를 멈춘다.
 
@@ -305,7 +470,7 @@ $ docker stop web
 
 
 
-##### rm, rmi
+#### rm, rmi
 
 `docker rm` : container를 삭제한다.
 
@@ -339,7 +504,7 @@ $ docker rmi nginx
 
 
 
-#####  build
+####  build
 
 `docker build` : dockerfile을 build하는 command
 
@@ -355,7 +520,7 @@ $ docker build -t hellojs:latest .
 
 
 
-##### login
+#### login
 
 `docker login` : docker hub에 login
 
@@ -371,7 +536,7 @@ Login Succeeded
 
 
 
-##### push
+#### push
 
 `docker push` : contrainer image를 docker hob에 push (distribution)
 
@@ -381,7 +546,7 @@ $ docker push <tag>/<image_name>
 
 
 
-##### tag
+#### tag
 
 `docker tag` : image에 나만의 tag를 붙여주는 command
 
