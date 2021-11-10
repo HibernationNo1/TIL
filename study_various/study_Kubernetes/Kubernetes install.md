@@ -10,7 +10,7 @@
 
 
 
-#### Google Kubernetes Engine
+#### Google Kubernetes Engine(cloud)
 
 GKE cluster만들기
 
@@ -91,46 +91,25 @@ GKE cluster만들기
 
 
 
+#### Kind, kubectl(windows)
 
-#### Kind
-
-도커 컨테이너를 여러 개 기동하고 그 컨테이너를 쿠버네티스 노드로 사용하는 것으로, 여러 대로 구성된 쿠버네티스 클러스터를 구축한다.
-
-
-
-1. WSL설치
-
-2. Docker Desktop for windows설치
-
-3. Docker Desktop for windows의 preference에서 kubernetes에
-
-   Enable Kubernetes 선택 (활성화)
-
-   > 왼쪽 하단에 docker running과 kubenetes running이 떠야 한다.
-
-
-
-**직접 설치**
-
-[여기](https://kind.sigs.k8s.io/docs/user/quick-start/) 에서 OS에 맞게 절차대로 다운로드 후 exe file 실행
-
-
-
-**명령어로 설치**(windows)
+**Kind**
 
 ```
-$ curl.exe -Lo kind-windows-amd64.exe https://kind.sigs.k8s.io/dl/v0.10.0/kind-windows-amd64
+$ curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.11.1/kind-linux-amd64
 ```
 
-이후 
-
 ```
-$ Move-Item .\kind-windows-amd64.exe c:\some-dir-in-your-PATH\kind.exe
+$ chmod +x ./kind
 ```
 
-> C:바로 위의 some-dir-in-your-PATH로 옮긴다.
+```
+$ sudo mv ./kind /usr/bin/kind
+```
 
-설치 됐는지 확인
+
+
+설치 확인
 
 ```
 $ kind version
@@ -138,72 +117,81 @@ $ kind version
 
 
 
-**명령어로 설치**(linux)
+**kubectl**
 
 ```
-$ curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.10.0/kind-linux-amd64
-$ chmod +x ./kind
+$ curl -O https://storage.googleapis.com/kubernetes-release/release/v${VERSION}/bin/${OS_TYPE}/amd64/kubectl
 ```
 
-
-
-
-
-### kubctl
-
-**직접 설치**(window)
-
 ```
-$ curl -LO "https://dl.k8s.io/release/v1.22.0/bin/windows/amd64/kubectl.exe"
+$ chmod +x kubectl
 ```
 
-설치됐는지 버전 확인
-
 ```
-$ kubectl version --client
+$ sudo mv ./kubectl /usr/bin/kubectl$ 
 ```
 
 
 
+설치 확인
+
+```
+$ kubectl version
+```
 
 
-**명령어 설치**
 
-1. OS지정
+환경설정
 
-   ```
-   $ OS_TYPE="windows"
-   ```
-
-   > `$ OS_TYPE="linux"`
-
-2. version지정
+1. shell 자동 완성 기능 (bash)
 
    ```
-   $ VERSION="1.18.16"
+   $ source <(kubectl completion bash)
    ```
 
-   쿠버네티스 버전을 입력
+   > 다음 번 로그인할 떄 다른 shell을 기동했을 경우에도 자동 완성 기능을 활성화하려면 `~/.bashrc` 로 설정해야 한다.
+   >
+   > ```
+   > $ echo 'source <(kubectl completion bash)' >> ~/.bachrc
+   > ```
 
-3. kubectl 설치
+
+
+
+
+
+
+#### kubelet, kubeadm, kubectl(linux)
+
+kubelet, kubeadm, kubectl, docker 한 번에 설치
+
+1. 필요한 의존 package 설치
 
    ```
-   $ curl -O https://storage.googleapis.com/kubernetes-release/release/v${VERSION}/bin/${OS_TYPE}/amd64/kubectl
-   $ chmod +x kubectl
-   $ sudo mv kubectl /user/ITC/bin/kubectl
+   $ sudo apt update && sudo apt install -y apt-transport-https curl
    ```
 
-4. 환경설정
+2. 저장소 등록 및 업데이트
 
-   1. shell 자동 완성 기능 (bash)
+   ```
+   $ curl -s http://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+   ```
 
-      ```
-      $ source <(kubectl completion bash)
-      ```
+   ```
+   $ cat << E0F | sudo tee /etc/apt/sources.list.d/kubernetes.list
+   > deb http://apt.kubernetes.io/ kubernetes-xenial main
+   > E0F
+   ```
 
-      > 다음 번 로그인할 떄 다른 shell을 기동했을 경우에도 자동 완성 기능을 활성화하려면 `~/.bashrc` 로 설정해야 한다.
-      >
-      > ```
-      > $ echo 'source <(kubectl completion bash)' >> ~/.bachrc
-      > ```
+   ```
+   $ sudo apt update
+   ```
+
+3. kubernetes관련 package 설치
+
+   ```
+   $ sudo apt install -y kubelet=1.18.15-00 kubeadm=1.18.15-00 kubectl=1.18.15-00
+   ```
+
+   
 

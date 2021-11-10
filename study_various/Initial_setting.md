@@ -1,5 +1,80 @@
 # Initial setting
 
+linux기준임
+
+**야간 모드**
+
+1. redshift 패키지 설치
+
+   ```
+   $ sudo apt-get install redshift redshift-gtk
+   ```
+
+2. 야간모드 적용
+
+   ```
+   $ redshift -O 4200
+   ```
+
+   해제
+
+   ```
+   $ redshift -x
+   ```
+
+   
+
+**command만 영문으로 바꾸기**
+
+1. ```
+   vi ~/.bachrc
+   ```
+
+   > bash 사용시
+
+2. ```
+   export LANG=en_US.UTF-8
+   ```
+
+   > 문구 추가 후 저장
+
+3. bash 재시작
+
+
+
+## chrom
+
+1. 크롬 브라우저 패키지 설치용 인증 키 
+
+   ```
+   $ wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+   ```
+
+2. 웹 브라우저 패키지를 다운받을 PPA를 cources.list.d에 추가
+
+   ```
+   $ sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+   ```
+
+3. ```
+   $ sudo apt-get update
+   ```
+
+4. 크롬 install
+
+   ```
+   $ sudo apt-get install google-chrome-stable
+   ```
+
+5. 크롬 설치를 위해 생성했던 파일 제거
+
+   ```
+   $ ls /etc/apt/sources.list.d/google*
+   $ sudo rm -rf /etc/apt/sources.list.d/google.list
+   ```
+
+   
+
 
 
 ## git 
@@ -20,7 +95,7 @@ install후
 
    ```
    $ git config --global user.name "Taeuk Noh"
-   $ git config --global user.email winter4958@gmail.com
+   $ git config --global user.email taeuk4958@gmail.com
    ```
 
 2. upstream 설정
@@ -79,13 +154,13 @@ $ sudo apt -y install typora
 1. `Anaconda3-2021.05-Linux-x86_64.sh` file다운로드 후, 해당 위치에서 무결성 확인
 
    ```
-   sha256sum Anaconda3-2021.05-Linux-x86_64.sh
+   $ sha256sum Anaconda3-2021.05-Linux-x86_64.sh
    ```
 
 2. 설치
 
    ```
-   bash Anaconda3-2021.05-Linux-x86_64.sh
+   $ bash Anaconda3-2021.05-Linux-x86_64.sh
    ```
 
    1. ```
@@ -98,7 +173,7 @@ $ sudo apt -y install typora
       Do you accept the license terms? [yes|no]
       Please answer 'yes' or 'no':'
       >>> 
-      뜨면 Enter
+      뜨면 yes 입력 후 Enter
       ```
 
    3. ```
@@ -190,11 +265,355 @@ $ sudo apt -y install typora
 
 
 
+## Docker
+
+['Docker for linux'](https://docs.docker.com/engine/install/ubuntu/)
+
+실제 Docker server를 운영
+
+**Repository를 이용해서 설치**
+
+외부 network가 사용 가능할 때
+
+1. 요구하는 program install
+
+   ```
+   $ sudo apt-get update
+   ```
+
+   ```
+   $ sudo apt-get install \
+       apt-transport-https \
+       ca-certificates \
+       curl \
+       gnupg \
+       lsb-release
+   ```
+
+   
+
+2. Docker의 인증서 저장
+
+   ```
+   $ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+   ```
+
+   
+
+3. URL등록
+
+   ```
+   $ echo \
+     "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+     $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+   ```
+
+4. install
+
+   ```
+   $ sudo apt-get update
+   ```
+
+   ```
+   $ sudo apt-get install docker-ce docker-ce-cli containerd.io
+   ```
+
+   
+
+5. check 
+
+   ```
+   $ sudo docker run hello-world
+   ```
+
+   tesk image를 다운로드
+
+
+
+
+
+- **nvidia-dorker**
+
+  GPU resource사용을 위해 필요
+
+  ```
+  $ release="ubuntu"$(lsb_release -sr | sed -e "s/\.//g")
+  $ sudo apt install sudo gnupg
+  $ sudo apt-key adv --fetch-keys "http://developer.download.nvidia.com/compute/cuda/repos/"$release"/x86_64/7fa2af80.pub"
+  $ sudo sh -c 'echo "deb http://developer.download.nvidia.com/compute/cuda/repos/'$release'/x86_64 /" > /etc/apt/sources.list.d/nvidia-cuda.list'
+  $ sudo sh -c 'echo "deb http://developer.download.nvidia.com/compute/machine-learning/repos/'$release'/x86_64 /" > /etc/apt/sources.list.d/nvidia-machine-learning.list'
+  
+  $ sudo apt update
+  ```
+
+  > 설치과정 중 sudo apt update에서 특정 file의 내용에 대한 에러가 나오면 
+  >
+  > ```
+  > sudo -H gedit /etc/apt/sources.list.d/nvidia-cuda.list
+  > ```
+  >
+  > 처럼 `sudo -H gedit`을 통해 파일 내용 확인 후 고쳐서 진행할것
+
+  ```
+  $ apt-cache search nvidia
+  $ sudo apt-get install -y nvidia-driver-XXX # 
+  $ sudo apt-get install -y dkms nvidia-modprobe
+  ```
+
+  > nvidia-XXX 는 알맞는 버전 확인 후 설치하면 된다. [여기](https://laondev12.tistory.com/11) 확인
+  >
+  > > ```
+  > > $ sudo apt-get install -y nvidia-driver-470
+  > > ```
+  > >
+  > > 리눅스 GeForce GTX 1650 SUPER 기준
+
+  ```
+  $ sudo reboot
+  ```
+
+  
+
+  
+
+  ```
+  $ sudo cat /proc/driver/nvidia/version | nvidia-smi
+  ```
+
+  
+
+  ```
+  $ curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
+  $ distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
+  $ curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+  $ sudo apt-get update
+  $ sudo apt-get install -y nvidia-docker2
+  ```
+
+  
+
+  demon.json에 추가
+
+  ```
+  $ sudo vi /etc/docker/deamon.json
+  	"default-runtime" :"nvidia",
+  	"runtimes" :{
+  		"nvidia" :{
+  			"path:" "/usr/bin/nvidia-container-runtime",
+  			"runtimeArgs" : []
+  		}
+  	}
+  :wq
+  ```
+
+  
+
+  **동작 확인**
+
+  container에서 이용가능안 GPU정보를 얻는다.
+
+  ```
+  $ sudo systemctl restart docker
+  $ sudo docker run --runtime=nvidia --rm nvidia/cuda:11.0-base nvidia-smi
+  ```
+
+  > 11.0-base 부분은 
+  >
+  > ```
+  > $ nvidia-smi
+  > ```
+  >
+  > 의 명령어를 통해 `CUDA Version:`  을 확인 후 알맞는 version기입 (11.4 이면 `11.0-base` 기입)
+
+  
+
+- **Uninstall old versions**
+
+  ```
+  $ sudo apt-get remove docker docker-engine docker.io containerd runc
+  ```
+
+  
+
+
+
+- **계정에 docker 권한 부여**
+
+  ```
+  root:~# usermod -a -G docker $USER
+  ```
+
+  재부팅 후 확인
+
+  ```
+  $ id
+  ```
+
+  `997(docker)` 가 포함되어 있다면 권한 부여된 것
+
+
+
+- kubernetes사용 할 계획이면 미리 세팅할 것
+
+  - Docker 데몬 드라이버 변경
+
+    Docker 데몬이 사용하는 드라이버를 cgroupfs 대신 systemd를 사용하도록 설정
+
+    1. ```
+       $ sudo chown $USER:docker /etc/docker
+       ```
+
+    2. Setup daemon
+
+       ```
+       $ sudo cat > /etc/docker/daemon.json <<EOF
+       {
+         "exec-opts": ["native.cgroupdriver=systemd"],
+         "log-driver": "json-file",
+         "log-opts": {
+           "max-size": "100m"
+         },
+         "storage-driver": "overlay2"
+       }
+       EOF
+       ```
+
+       ```
+       $ sudo mkdir -p /etc/systemd/system/docker.service.d
+       ```
+
+    3. Restart docker
+
+       ```
+       $ sudo systemctl daemon-reload
+       $ sudo systemctl restart docker
+       ```
+
+    
+
+## Kubernetes
+
+#### Kind, kubectl(windows)
+
+**Kind**
+
+```
+$ curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.11.1/kind-linux-amd64
+```
+
+```
+$ chmod +x ./kind
+```
+
+```
+$ sudo mv ./kind /usr/bin/kind
+```
+
+
+
+설치 확인
+
+```
+$ kind version
+```
+
+
+
+**kubectl**
+
+```
+$ curl -O https://storage.googleapis.com/kubernetes-release/release/v${VERSION}/bin/${OS_TYPE}/amd64/kubectl
+```
+
+```
+$ chmod +x kubectl
+```
+
+```
+$ sudo mv ./kubectl /usr/bin/kubectl$ 
+```
+
+
+
+설치 확인
+
+```
+$ kubectl version
+```
+
+
+
+환경설정
+
+1. shell 자동 완성 기능 (bash)
+
+   ```
+   $ source <(kubectl completion bash)
+   ```
+
+   > 다음 번 로그인할 떄 다른 shell을 기동했을 경우에도 자동 완성 기능을 활성화하려면 `~/.bashrc` 로 설정해야 한다.
+   >
+   > ```
+   > $ echo 'source <(kubectl completion bash)' >> ~/.bachrc
+   > ```
+
+
+
+
+
+
+
+#### kubelet, kubeadm, kubectl(linux)
+
+kubelet, kubeadm, kubectl, docker 한 번에 설치
+
+1. 필요한 의존 package 설치
+
+   ```
+   $ sudo apt update && sudo apt install -y apt-transport-https curl
+   ```
+
+2. 저장소 등록 및 업데이트
+
+   ```
+   $ curl -s http://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+   ```
+
+   ```
+   $ cat << E0F | sudo tee /etc/apt/sources.list.d/kubernetes.list
+   > deb http://apt.kubernetes.io/ kubernetes-xenial main
+   > E0F
+   ```
+
+   ```
+   $ sudo apt update
+   ```
+
+3. kubernetes관련 package 설치
+
+   ```
+   $ sudo apt install -y kubelet=1.18.15-00 kubeadm=1.18.15-00 kubectl=1.18.15-00
+   ```
+
+   kubeadm 의 version이 곧 kubernetes 의 version이다.
+
+4. 버전 고정
+
+   ```
+   $ sudo apt-mark hold kubelet kubeadm kubectl docker.io
+   ```
+
+   
+
+
+
+
+
 
 
 ## pip 설치
 
-### window
+**windows**
 
 [링크](https://github.com/HibernationNo1/TIL/raw/master/image/get-pip.py)를 저장 후 해당 위치에서 명령어
 
@@ -228,7 +647,15 @@ print(scipy.__version__)
 
 ## GPU_CUDA설치
 
-### 1. check GPU
+### Ubuntu
+
+
+
+
+
+### windows
+
+**1. check GPU**
 
 NVIDIA GTX-1060 3GB 기준
 
@@ -256,7 +683,7 @@ NVIDIA GTX-1060 3GB 기준
 
 
 
-### 2. graphic driver 설치
+**2. graphic driver 설치**
 
  [여기](https://www.nvidia.co.kr/Download/index.aspx?lang=kr) 에서 graphic driver를 설치
 
@@ -272,7 +699,7 @@ NVIDIA GTX-1060 3GB 기준
 
 
 
-### 3. Download CUDA
+**3. Download CUDA**
 
 - 쿠다 version 확인
 
@@ -309,7 +736,7 @@ NVIDIA GTX-1060 3GB 기준
 
 
 
-### 4. Download cuDNN
+**4. Download cuDNN**
 
 cuDNN는 회원가입을 해야 다운로드 가능
 
