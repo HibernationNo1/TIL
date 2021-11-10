@@ -23,7 +23,7 @@ data를 CUDA에 최적화된 형태로 convert한다.
 
 
 
-#### squeeze
+#### squeeze()
 
 ```python
 tensor.squeeze() 
@@ -39,7 +39,7 @@ torch.squeeze(input, dim)
 
 
 
-#### unsqueeze
+#### unsqueeze()
 
 tf.expendim()과 같음
 
