@@ -440,11 +440,19 @@ $ docker exec -it {cintainer name/ID} {명령어}
 
 
 
+- Exited container에서 사용하는 법
+
+  ```
+  $ docker run -it container_name bash
+  ```
+
 - `docker run`으로 사용하는 명령어와 다른 점
 
   run은 새로운 container를 만들어서 실행한다
 
   exec는 이미 실행중인 container에 명령어를 전달한다.
+
+
 
 
 
@@ -501,6 +509,22 @@ $ docker rmi nginx
 > 
 > $ docker rmi nginx				# 이후 다시 삭제
 > ```
+
+- 에러
+
+  1. ```
+     Error response from daemon: conflict: unable to remove repository reference "hibernation/segmentation_inference:last" (must force) - container c03865d6b33f is using its referenced image 2e6d8b6b409a
+     ```
+
+     `2e6d8b6b409a` 가`c03865d6b33f` 를 사용중이라고 뜬다.
+
+     ```
+     $ docker container rm c03865d6b33f
+     ```
+
+     
+
+
 
 
 

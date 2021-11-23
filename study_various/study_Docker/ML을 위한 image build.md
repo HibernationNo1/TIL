@@ -9,6 +9,8 @@ ls 	┬ detectron2 (dir)
 	│
 	├ models_2021_11_11.pth
 	│
+	├ test_image (dir)
+	│
 	├ requirements.txt 	   
 	│
 	├ inference.py
@@ -68,6 +70,14 @@ ls 	┬ detectron2 (dir)
    CMD ["python", "inference.py"]		# cmd에서 python train.py 라는 명령어가 실행됨
    ```
 
+   >- `RUN apt-get update` 가 안되면
+   >
+   >  ```
+   >  RUN apt-get -o Acquire::Max-FutureTime=86400 update	
+   >  ```
+   >
+   >  으로 실행해보기
+
    
 
 2. **build**
@@ -79,38 +89,47 @@ ls 	┬ detectron2 (dir)
    > - `.` 반드시 표기해야함
    >
    >   현재 location의 directory에 위치한다는 뜻
-   >   
-   > - 
+   >
+   > - 15분정도 걸림
+   >
+   > ```
+   > Use 'docker scan' to run Snyk tests against images to find vulnerabilities and learn how to fix them
+   > ```
+   >
+   > 뜨면 된거
 
 
 
 3. **run**
 
-   1. initial running일 때
+   bind mount
 
-      ```
-      $ docker run hibernation/segmentation_inference:0.0.1
-      ```
+   ```
+   $ docker run -v C:\Users\ITC\Desktop\Noh_TaeUk\code\docker\build\test_image:/usr/src/app/test_image hibernation/segmentation_inference:0.0.1
+   ```
 
-   2. initial running이 아닐 때
+   > `C:\Users\ITC\Desktop\Noh_TaeUk\code\docker\build\test_image` 라는 위치안에 있는 모든 file을 container안의 `/usr/src/app/test_image` 에 복사
+   >
+   > - linux에선 path명령어가 바뀔 수 있음
 
-      ```
-      $ docker run -v $(pwd):/usr/src/app hibernation/segmentation_inference
-      ```
 
-      > windows에서는` $(pwd):/usr/src/app` 대신 `%cd%:/usr/src/app`
-      >
-      > 명령어를 입력하는 위치의 file을 mount한다.(source code의 변경점이 있다면 바로 반영됨)
+
+4. **cp**
+
+   ```
+   $ docker cp a94bb6d9d558:/usr/src/app/result_image C:\Users\ITC\Desktop\Noh_TaeUk\code\docker\build
+   ```
+
+   result_image라는 dir을 아예 가져온다.
 
 
 
 - ```
-  $ docker exec -it hibernation/segmentation_inference:0.0.1 sh
+  $ docker exec -it hibernation/segmentation_inference:0.0.1 bash
   ```
 
-  
-
-
-
+- ```
+  $ docker run -it hibernation/segmentation_inference:0.0.1 bash
+  ```
 
 

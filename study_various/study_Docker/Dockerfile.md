@@ -169,6 +169,8 @@ COPY ./ ./		# 현재 위치의 모든 파일을 copy
 
 `WORKDIR` : container build시 commend가 execution될 작업 directory를 설정
 
+> RUN, CMD, ADD, COPY등이 이루어질 기본 디렉토리를 설정
+
 ```
 WORKDIR /usr/src/app
 ```
@@ -238,6 +240,8 @@ Dockerfile 에서 위와 같이 생성한 VOLUMS은 호스트OS의 /var/lib/dock
 `CMD` : container 동작 시 auto로 execution할 servise나 script지정
 
 - `RUN`과의 차이점 : `RUN`은 build될때 실행되고, `CMD`는 명령어가 실행될때 동작한다.
+
+- `CMD`가 존재할 경우 가장 마지막 `CMD`만 실행
 
 
 

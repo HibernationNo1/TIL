@@ -1,5 +1,15 @@
 # torch
 
+### install
+
+```
+$ conda install pytorch torchvision torchaudio cudatoolkit=11.1 -c pytorch -c conda-forge
+```
+
+
+
+
+
 ### cuda
 
 ##### is_available
