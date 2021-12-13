@@ -28,6 +28,10 @@ windows 10 version : 20H1, 20H2, 21H1 혹은 그 이상이여야 함
 
 4. WSL설치
 
+   ```
+   $ wsl --install
+   ```
+
    ['정식 설치 가이드'](https://docs.microsoft.com/ko-kr/windows/wsl/install#step-4---download-the-linux-kernel-update-package) 에서 wsl_update_x64.msi 다운
 
 5. 기본적으로 사용할 WSL 버전을 2로 변경
@@ -40,6 +44,10 @@ windows 10 version : 20H1, 20H2, 21H1 혹은 그 이상이여야 함
 
    설치가 끝나고앱이 실행되면 터미널이 하나 열리고 설치가 자동적으로 진행 >> 끄지 말고 기다릴 것
 
+   > 설치 간 터미널창에 `Installing. this may take few minutes…` 라고 뜸
+   >
+   > 설치 후 사용할 user name과 password를 지정하는 입력창이 나타남
+   >
    > 앱이 자동으로 실행되지 않는다면 windows + S키 입력 후 ubuntu를 검색해서 실행
 
 7. 우분투 실행
@@ -85,3 +93,29 @@ $ wsl bash
 ```
 
 실행 후 부터는 WSL2 Linux shell 프롬프트
+
+
+
+### Vmmem
+
+docker기반 WSL을 사용하면 Vmmem이라는 prosses가 메모리를 과점유하는 경우가 있다.
+
+- 방법 1. 
+
+  Vmmem의 memory점유 최대치 설정
+
+  `c:\User\SOMEUSER` 에서
+
+  `.wslconfig` file 생성
+
+  ```
+  [wsl2] 
+  memory=4GB 
+  swap=0 
+  localhostForwarding=true
+  ```
+
+  - memory : 허용하는 momry점유 최대치
+
+  
+
