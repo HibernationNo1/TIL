@@ -1,5 +1,9 @@
 # Docker 입문
 
+{:toc}
+
+
+
 ## install
 
 #### WSL
@@ -43,7 +47,7 @@ https://docs.docker.com/
        lsb-release
    ```
 
-2. Docker의 인증서 저장
+2. Dorker와 암호화된 통신을 하기 위해 docker공식 GPG키 추가
    
    ```
    $ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
@@ -51,13 +55,17 @@ https://docs.docker.com/
 
 3. URL등록
    
+   apt로 docker를 설치하기 위해 docker stable ripository 추가
+   
+   > CPU가 x86_64또는 amd64계열인 경우 아래 명령어
+   
    ```
    $ echo \
-     "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+     "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
      $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
    ```
-
-4. install
+   
+4. install docker-ce, docekr-ce-cli, dontainerd.io
    
    ```
    $ sudo apt-get update
@@ -81,10 +89,36 @@ https://docs.docker.com/
 $ sudo apt-get remove docker docker-engine docker.io containerd runc
 ```
 
-- **nvidia-dorker**
-  
+#### NVIDIA DOCKER
+
+1. Add the package repositories
+
+   ```
+   $ distributions=$(. /etc/os-release;echo $ID$VERSION_ID)
+   $ curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
+   $ curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+   $ sudo apt-get update & sudo apt-get install -y nvidia-container-toolkit
+   $ sudo systemctl restart docker
+   ```
+
+2. change docker commend permission
+
+   ```
+   $ sudo usermod -aG docker $USER
+   ```
+
+3. reboot
+
+   ```
+   $ sudo reboot
+   ```
+
+
+
+- old way 
+
   GPU resource사용을 위해 필요
-  
+
   ```
   $ release="ubuntu"$(lsb_release -sr | sed -e "s/\.//g")
   $ sudo apt install sudo gnupg
@@ -94,75 +128,77 @@ $ sudo apt-get remove docker docker-engine docker.io containerd runc
   
   $ sudo apt update
   ```
-  
+
   > 설치과정 중 sudo apt update에서 특정 file의 내용에 대한 에러가 나오면 
-  > 
+  >
   > ```
   > sudo -H gedit /etc/apt/sources.list.d/nvidia-cuda.list
   > ```
-  > 
+  >
   > 처럼 `sudo -H gedit`을 통해 파일 내용 확인 후 고쳐서 진행할것
-  
+
   ```
   $ apt-cache search nvidia
   $ sudo apt-get install -y nvidia-driver-XXX # 
   $ sudo apt-get install -y dkms nvidia-modprobe
   ```
-  
+
   > nvidia-XXX 는 알맞는 버전 확인 후 설치하면 된다. [여기](https://laondev12.tistory.com/11) 확인
-  > 
+  >
   > > ```
   > > $ sudo apt-get install -y nvidia-driver-470
   > > ```
-  > > 
+  > >
   > > 리눅스 GeForce GTX 1650 SUPER 기준
-  
+
   ```
   $ sudo reboot
   ```
 
-```
-$ sudo cat /proc/driver/nvidia/version | nvidia-smi
-```
+  ```
+  $ sudo cat /proc/driver/nvidia/version | nvidia-smi
+  ```
 
-```
-$ curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
-$ distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
-$ curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
-$ sudo apt-get update
-$ sudo apt-get install -y nvidia-docker2
-```
+  ```
+  $ curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
+  $ distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
+  $ curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+  $ sudo apt-get update
+  $ sudo apt-get install -y nvidia-docker2
+  ```
 
-  demon.json에 추가
+    demon.json에 추가
 
-```
-$ sudo vi /etc/docker/deamon.json
-    "default-runtime" :"nvidia",
-    "runtimes" :{
-        "nvidia" :{
-            "path:" "/usr/bin/nvidia-container-runtime",
-            "runtimeArgs" : []
-        }
-    }
-:wq
-```
+  ```
+  $ sudo vi /etc/docker/deamon.json
+      "default-runtime" :"nvidia",
+      "runtimes" :{
+          "nvidia" :{
+              "path:" "/usr/bin/nvidia-container-runtime",
+              "runtimeArgs" : []
+          }
+      }
+  :wq
+  ```
 
-  **동작 확인**
+    **동작 확인**
 
-  container에서 이용가능안 GPU정보를 얻는다.
+    container에서 이용가능안 GPU정보를 얻는다.
 
-```
-$ sudo systemctl restart docker
-$ sudo docker run --runtime=nvidia --rm nvidia/cuda:11.0-base nvidia-smi
-```
+  ```
+  $ sudo systemctl restart docker
+  $ sudo docker run --runtime=nvidia --rm nvidia/cuda:11.0-base nvidia-smi
+  ```
 
-> 11.0-base 부분은 
-> 
-> ```
-> $ nvidia-smi
-> ```
-> 
-> 의 명령어를 통해 `CUDA Version:`  을 확인 후 알맞는 version기입 (11.4 이면 `11.0-base` 기입)
+  > 11.0-base 부분은 
+  >
+  > ```
+  > $ nvidia-smi
+  > ```
+  >
+  > 의 명령어를 통해 `CUDA Version:`  을 확인 후 알맞는 version기입 (11.4 이면 `11.0-base` 기입)
+
+
 
 ### linux setting
 
