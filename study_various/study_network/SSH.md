@@ -48,6 +48,18 @@ root@ ~~~ :~# systemctl start ssh
 
 
 
+### ssh_config
+
+위치 : `/etc/ssh/ssh_config` 
+
+해당 파일에서 port부분을 변경할 수 있다.
+
+```
+$ sudo vi /etc/ssh/ssh_config
+```
+
+
+
 
 
 ## putty
