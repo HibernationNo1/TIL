@@ -1,5 +1,9 @@
 # Docker command
 
+{:toc}
+
+
+
 ## Docker container의 생명 주기
 
 1. **run**
@@ -113,6 +117,14 @@ $ docker search nginx
 ```
 
 docker hub에서 nginx라는 container image를 찾는다.
+
+
+
+#### restart
+
+```
+$ sudo systemctl restart docker
+```
 
 
 
