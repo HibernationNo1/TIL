@@ -10,6 +10,8 @@
 
 ### CUDA Toolkit 
 
+#### windows
+
 **1.  check GPU**
 
 1. 그래픽카드 확인
@@ -89,7 +91,104 @@
 
    `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.0\bin`
 
+#### linux
+
+1. GPU확인
+
+   ```
+   $ nvidia-smi -L
+   ```
+
+   [여기](https://www.studio1productions.com/Articles/NVidia-GPU-Chart.htm)서 CUDA core 수 확인  (4352)
+
+2. CUDA Compute Capability확인
+
+   [여기](https://www.wikiwand.com/en/CUDA) (7.5)
+
+3. graphic driver 설치
+
+   1. 사용 가능한 graphic driver확인
+
+      ```
+      $ ubuntu-drivers devices
+      ```
+
+   2. 사용 가능한 driver중 하나 설치
+
+      ```
+      $ sudo apt install nvidia-driver-460		# 예시임
+      ```
+
+   3. 확인
+
+      ```
+      nvidia-smi
+      ```
+
+      `Diver Version`: 확인. 적용 안되어있으면 `sudo reboot`
+
+4. download cuda coolkit
+
+   [여기](https://developer.nvidia.com/cuda-toolkit-archive)서 알맞는 version 선택
+
+   선택하면 명령어를 알려줌. 따라서 설치
+
+   1. install과정에서 `Abort`와 `Continue` 선택은 `Continue` 선택
+
+   2. 다음과 같은 error가 난다면 gcc가 설치 안된 상태
+
+      ```
+       Failed to verify gcc version. See log at /var/log/cuda-installer.log for details.
+      ```
+
+      이럴땐 필수 프로그램 install
+
+      ```
+      $ sudo apt-get install build-essential 
+      ```
+
+   3. `accept/declin/quit` 뜨면 accept입력
+
+   4. CUDA Installer에서 
+
+      `Driver`에서 체크 해제 후 `install`에서 엔터
+
+5. CUDA Toolkit 환경 변수 추가 
+
+   ```
+   $ sudo sh -c "echo 'export PATH=$PATH:/usr/local/cuda-11.2/bin' >> /etc/profile"
+   $ sudo sh -c "echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda-11.2/lib64' >> /etc/profile"
+   $ sudo sh -c "echo 'export CUDADIR=/usr/local/cuda-11.2' >> /etc/profile"
+   $ source /etc/profile
+   ```
+
+   > cuda version 잘 확인할 것
+
+6. check 
+
+   ```
+   nvcc -V
+   ```
+
+   
+
+- remove CUDA
+
+  ```
+  $ sudo rm -rf /usr/local/cuda*
+  $ export PATH=$PATH:/usr/local/cuda-11.0/bin
+  $ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda-11.0/lib64
+  $ export CUDADIR=/usr/local/cuda-11.0
+  
+  ```
+
+  
+
+  
+
 ### cuDNN
+
+#### windows
 
 **Download cuDNN**
 
@@ -100,6 +199,75 @@ cuDNN는 회원가입을 해야 다운로드 가능
 다운받은 file(`bin`, `include`, `lib`)을 
 
 `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.4` 에 옮긴다.
+
+#### linux
+
+[여기](https://developer.nvidia.com/cudnn)에서 로그인 후 다운로드
+
+```
+$ cd 다운로드 위치
+```
+
+
+
+1. 압축 풀어서 파일 복사
+
+   ```
+   $ tar xvzf cudnn-11.2-linux-x64-v8.1.0.77.tgz
+   ```
+
+   > `cudnn-11.2-linux-x64-v8.1.0.77.tgz` 을 다운받았을 때의 명령어
+
+   ```
+   $ sudo cp cuda/include/cudnn* /usr/local/cuda/include
+   $ sudo cp cuda/lib64/libcudnn* /usr/local/cuda/lib64
+   $ sudo chmod a+r /usr/local/cuda/include/cudnn.h /usr/local/cuda/lib64/libcudnn*
+   ```
+
+2. link 할당
+
+   ```
+   $ sudo ln -sf /usr/local/cuda-11.2/targets/x86_64-linux/lib/libcudnn_adv_train.so.8.1.0 /usr/local/cuda-11.2/targets/x86_64-linux/lib/libcudnn_adv_train.so.8
+   $ sudo ln -sf /usr/local/cuda-11.2/targets/x86_64-linux/lib/libcudnn_ops_infer.so.8.1.0  /usr/local/cuda-11.2/targets/x86_64-linux/lib/libcudnn_ops_infer.so.8
+   $ sudo ln -sf /usr/local/cuda-11.2/targets/x86_64-linux/lib/libcudnn_ops_infer.so.8.1.0  /usr/local/cuda-11.2/targets/x86_64-linux/lib/libcudnn_ops_infer.so.8
+   $ sudo ln -sf /usr/local/cuda-11.2/targets/x86_64-linux/lib/libcudnn_ops_infer.so.8.1.0  /usr/local/cuda-11.2/targets/x86_64-linux/lib/libcudnn_ops_infer.so.8
+   $ sudo ln -sf /usr/local/cuda-11.2/targets/x86_64-linux/lib/libcudnn_ops_infer.so.8.1.0  /usr/local/cuda-11.2/targets/x86_64-linux/lib/libcudnn_ops_infer.so.8
+   $ sudo ln -sf /usr/local/cuda-11.2/targets/x86_64-linux/lib/libcudnn_ops_infer.so.8.1.0  /usr/local/cuda-11.2/targets/x86_64-linux/lib/libcudnn_ops_infer.so.8
+   ```
+
+3. 새로 추가된 library를 system에서 찾을 수 있도록 설정
+
+   ```
+   $ sudo idconfig
+   ```
+
+4. 확인
+
+   1. root dir로 이동
+
+      ```
+      cd ~
+      ```
+
+   2. ```
+      ldconfig -N -v $(sed 's/:/ /' <<< $LD_LIBRARY_PATH) 2>/dev/null | grep libcudnn
+      ```
+
+      아래처럼 알맞는 version이 보여야 함
+
+      ```
+      libcudnn_adv_train.so.8 -> libcudnn_adv_train.so.8.1.0
+      libcudnn_adv_infer.so.8 -> libcudnn_adv_infer.so.8.1.0
+      libcudnn_ops_infer.so.8 -> libcudnn_ops_infer.so.8.1.0
+      libcudnn.so.8 -> libcudnn.so.8.1.0
+      libcudnn_ops_train.so.8 -> libcudnn_ops_train.so.8.1.0
+      libcudnn_cnn_train.so.8 -> libcudnn_cnn_train.so.8.1.0
+      libcudnn_cnn_infer.so.8 -> libcudnn_cnn_infer.so.8.1.0
+      ```
+
+      > 예시는 8.1.0임
+
+   
 
 
 
