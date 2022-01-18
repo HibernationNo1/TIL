@@ -1,5 +1,11 @@
 # Swin Transformer
 
+{:toc}
+
+원문 : https://arxiv.org/pdf/2103.14030.pdf
+
+
+
 #### Abstract
 
 저자는 language와 image영역 사이의 큰 변환값을 차이를 해결하기 위해 Shifed windows방법을 제안합니다. Shifed windows는 cross-window연결과 동시에 self-attention계산을 겹치지 않는 local windows로 진행함으로써 높은 효율을 보여줍니다. 이러한 계층적 architectrure은 image 크기에 대해 linear한 연산량을 가지며 다양한 scale에 대해서 model의 높은 유연성을 가지고 있습다.  Swin Transformer은 semantic segmentation과 object detection과 같은 dense predction task와, image classification을 포함한 광대한 영역에서 image task에 대한 호환 기능을 제공합니다.
@@ -159,9 +165,38 @@ window기반의 self-attention module은 windows간의 연결이 약해 modeling
 
 ![](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdTsZLP7jlYRDimGCwOc_yWVr8K4T9coECpwmjaCOuM8pwIK-GTxf3ZRnW40nwF8aO9jY&usqp=CAU)
 
-첫 번째 module은 top-left pixel로부터 시작하는 regularly  window 분할 전략을 사용하는데, 이는 8 × 8 크기의 feature map은 4 × 4의 크기의 window를 2 × 2 모양으로 분할한다(이 때의 M = 4). 다음 module은 regularly하게 분할된 windows를 (M/2, M/2)만큼 이동하여 이전 layer의 windows구성에서 이동된 만큼을 적용한다.
+첫 번째 module은 top-left pixel로부터 시작하는 regularly  window 분할 전략을 사용하는데, 이는 8 × 8 크기의 feature map은 4 × 4의 크기의 window를 2 × 2 모양으로 분할한다(이 때의 M = 4). 다음 module은 regularly하게 분할된 windows를 (M/2, M/2)만큼 이동하여 이전 layer의 windows구성에 적용한다. (대각선 이동) 이러한 shifted window 분할 접근법으로 인한 연속적인 Swin Transformer의 계산은 아래와 같이 표현된다.
+$$
+\hat{z}^{l} =  W-MSA(LN(z^{l-1})) + z^{l-1}, \ \ \ \ \ \ \ \ \ (1)\\
+z^{l} = MLP(LN(\hat{z}^{l})) + \hat{z^{l}}, \ \ \ \ \ \ \ \ \ (2)\\
+\hat{z}^{l+1} = SW-MSA(LN(z^{l})) + z^{l}, \ \ \ \ \ \ \ \ \ (3)\\
+z^{l+1} = MLP(LN(\hat{z}^{l+1})) + \hat{z}^{l+1} \ \ \ \ \ \ \ \ \ (4)
+$$
+(1)번은 block 'l' 에 대한 (S)W-MSA module 의 output feature을,
+
+(2)번은 block 'l' 에 대한 MLP module의 output feature을 나타낸다.
+
+> W-MSA은 일반적인 window 분할 구성을 사용한 multi-head self-attention이며
+>
+> SW-MSA는 shifted window 분할 구성을 사용한 multi-head self-attention이다.
+
+shift window 분할 접근방법은 이전 layer안의 근접한(그리고 겹치지 않은) window간의 연결을 가능하게 했으며, 이는 image classification, object detection, and semantic segmentation 과 같은 분야에 더욱 효율적이다.
 
 
+
+##### Efficient batch computation for shifted configuration
+
+shifted window 분할의 문제점은 더 많은 window가 그 결과값으로 생성된다는 것이다. 이는 [f/M] × [w/M]의 크기에서 ([f/M] + 1) ×([w/M] + 1)의 크기로 window가 늘어나는 것인데, 이 때 몇몇의 window는 M × M보다 더 작은 사이즈의 window가 된다. 가장 근본적인 문제 해결방법은 M × M보다 더 작은 사이즈의 window에 pad를 적용해 M × M으로 만들고, attention계산을 진행할 때 pad가 적용된 영역은 mask영역에서 제외한다. 만일 window의 개수가 적은 경우 (2 × 2 처럼), pad에 의한 증가량은 상당하다. 
+
+![](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbfY1G2%2Fbtq6RMW4EiY%2FmWabryoM0v8F2lr47Nw5B1%2Fimg.png)
+
+저자는 위 문제점을 해결하기 위해 더욱 효율적으로 계산하는 방법인 좌상단 방향으로 이동하는 cyclic-shifting을 제안한다. 위 그림을 보면 알 수 있듯, window의 좌상단 이동 이후 자리잡은 여러개의 sub-windows는 feature map의 영역을 벗어난다. 이렇게 벗어난 영역에 mask를 씌워서 self-attention 계산이 이루어지지 않도록 한다.
+
+cyclic-shift은 다수의 windows를 일반적인 window 분할 방법처럼 유지하기 때문에 효율적이다.  
+
+
+
+##### Relative position bias
 
 
 
