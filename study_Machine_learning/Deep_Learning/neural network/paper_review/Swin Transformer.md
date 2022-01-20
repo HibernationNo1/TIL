@@ -6,9 +6,35 @@
 
 
 
-#### Abstract
+## Key Point
 
-저자는 language와 image영역 사이의 큰 변환값을 차이를 해결하기 위해 Shifed windows방법을 제안합니다. Shifed windows는 cross-window연결과 동시에 self-attention계산을 겹치지 않는 local windows로 진행함으로써 높은 효율을 보여줍니다. 이러한 계층적 architectrure은 image 크기에 대해 linear한 연산량을 가지며 다양한 scale에 대해서 model의 높은 유연성을 가지고 있습다.  Swin Transformer은 semantic segmentation과 object detection과 같은 dense predction task와, image classification을 포함한 광대한 영역에서 image task에 대한 호환 기능을 제공합니다.
+- Swin Transformer는 계층적인 구조를 가졌기 때문에 linear한 연산량 가지고 있다.
+
+  > image가 커져도 그 사이즈의 증가량에 따른 일차원적인 연상 증가량을 가지고 있다.
+
+- Patch Merging을 통해 다양한 스케일을 고려한다.
+
+- window를 여러 patch로 분할하며, 각각의 patch안에서 locally한 self-attention을 진행한다.
+
+  > 연상량을 줄임
+
+- window shift를 수행할 때, 이동한 window를 이전 window layer에 연결한다.
+
+  > 모델링 성능이 향상되고 실제 처리시간이 줄어든다.
+
+- shifted window를 통해 각 window간의 연결을 cross-window방법으로 수행한다.
+
+  
+
+
+
+
+
+## Paper Interpretation
+
+### Abstract
+
+저자는 language와 image영역 사이의 큰 변환값을 차이를 해결하기 위해 Shifed windows방법을 제안한다.. Shifed windows는 cross-window연결과 동시에 self-attention계산을 겹치지 않는 local windows로 진행함으로써 높은 효율을 보여준다. 이러한 계층적 architectrure은 image 크기에 대해 linear한 연산량을 가지며 다양한 scale에 대해서 model의 높은 유연성을 가지고 있다.  Swin Transformer은 semantic segmentation과 object detection과 같은 dense predction task와, image classification을 포함한 광대한 영역에서 image task에 대한 호환 기능을 제공한다.
 
 [code](https://github.com/microsoft/Swin-Transformer)
 
@@ -16,21 +42,19 @@
 
 ###  Introduction
 
-기존의 Transformer기반의 model은 고정된 scale의 token을 활용했습니다. 이는 vision에 알맞지 않습니다.  또한 vision영역과 language의 차이는, 글자의 단어에 비해 pixel의 해상도가 훤씬 높다는 것입니다.  vision영역의 semantic segmentation는 pixel level의 dense prediction을 필요로 하며 이는 2차원의 연산량를 가진 self-attention을 활용한 높은 해상도에서의 Transformer는 다루기 힘듭니다. 이를 해결하기 위해 저자는 Swin Transformer라 불리는 범용의 Transformer backbone을 제안합니다. Swin Transformer는 계층적 feature map으로 구성되어 있으며 image size에 linear한 연산량을 가지고 있습니다. 
+기존의 Transformer기반의 model은 고정된 scale의 token을 활용한다. 이는 vision에 알맞지 않다.  또한 vision영역과 language의 차이는, 글자의 단어에 비해 pixel의 해상도가 훤씬 높다.  vision영역의 semantic segmentation는 pixel level의 dense prediction을 필요로 하며 이는 2차원의 연산량를 가진 self-attention을 활용한 높은 해상도에서의 Transformer는 다루기 힘들다. 이를 해결하기 위해 저자는 Swin Transformer라 불리는 범용의 Transformer backbone을 제안한다. Swin Transformer는 계층적 feature map으로 구성되어 있으며 image size에 linear한 연산량을 가지고 있다. 
 
 
 
 ![](https://production-media.paperswithcode.com/social-images/unHHISomtzDKWczC.png)
 
-위 그림에서 볼 수 있듯, Swin Transformer은 작은 patch로 이루어진 layer부터 이웃한 patch를 병합하여 더 큰 patch를 가진 바로 위의 layer과 같이 점점 큰 patch로 이루어진 feature map으로 이루어진 계층적 표현으로 이루어져 있습니다.  이러한 계층적 feature map으로 Swin Transformer은 FPN또는 U-Net과 같은 dense prediction의 기술을 보다 편리하게 활용할 수 있습니다. linear한 연산량은 image를 겹치지 않은 상태로 여러 partition으로 나눔으로써 self-attention을 locally하게 수행할 수 있게 해 줍니다. (이 때 각각의 window안의 수많은 patch는 고정이기 때문에 연산량은 image size에 따라 linear하게 됩니다.) 이러한 merits는  Swin Transformer를 vision영역에서 범용적으로 사용 가능한 backbone으로 사용할 수 있게 해 줍니다.
+위 그림에서 볼 수 있듯, Swin Transformer은 작은 patch로 이루어진 layer부터 이웃한 patch를 병합하여 더 큰 patch를 가진 바로 위의 layer과 같이 점점 큰 patch로 이루어진 feature map으로 이루어진 계층적 표현으로 이루어져 있다.  이러한 계층적 feature map으로 Swin Transformer은 FPN또는 U-Net과 같은 dense prediction의 기술을 보다 편리하게 활용할 수 있다. image를 겹치지 않은 상태로 여러 partition으로 나눔으로써 self-attention을 locally하게 수행할 수 있으며, linear한 연산량을 가지게 된다. (이 때 각각의 window안의 수많은 patch는 고정이기 때문에 연산량은 image size에 따라 linear하게 됩니다.) 이러한 merits는  Swin Transformer를 vision영역에서 범용적으로 사용 가능한 backbone으로 사용할 수 있게 해 준다.
 
 
 
 ![](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdTsZLP7jlYRDimGCwOc_yWVr8K4T9coECpwmjaCOuM8pwIK-GTxf3ZRnW40nwF8aO9jY&usqp=CAU)
 
- Swin Transformer의 핵심 요소는 연속되는 self-attention layer사이에서 진행되는 window partition shift입니다. 이는 window를 이전 앞선 layer에 연결시키며, 이는 상당한 모델링 성능 향상을 제공합니다. 이러한 전략은 실제 처리시간을 줄이는데도 효과적입니다. shifted window사 window안의 여러 patch는 같은 key set을 가지고 있고, 이 patch의 요청은 hardware에서 memory접근에 더욱 용이하게 합니다. 이전의 sliding window 방식은 각각의 patch가 각기 다른 key set을 가지고 있었음에도 low latency였는데, shifted window는 이보다도 빠릅니다. 
-
-
+ Swin Transformer의 핵심 요소는 연속되는 self-attention layer사이에서 진행되는 window partition shift이다. 이는 window를 이전 앞선 layer에 연결시키며, 이는 상당한 모델링 성능 향상을 제공한다. 이러한 전략은 실제 처리시간을 줄이는데도 효과적이다. shifted window사 window안의 여러 patch는 같은 key set을 가지고 있고, 이 patch의 요청은 hardware에서 memory접근에 더욱 용이하게 한다. 이전의 sliding window 방식은 각각의 patch가 각기 다른 key set을 가지고 있었음에도 low latency였는데, shifted window는 이보다도 빠르다. 
 
 
 
@@ -197,6 +221,49 @@ cyclic-shift은 다수의 windows를 일반적인 window 분할 방법처럼 유
 
 
 ##### Relative position bias
+
+저자는 self-attention계산에 사용되는 유사성 계산을 진행할 때  relative position bias를 각각의 head에 포함시켰다.
+$$
+B \in \mathbb{R}^{M^{2} \times {M^{2}}} \\
+Attention(Q, K, V) = SoftMax(QK^{K}/ \sqrt{d} + B)V
+$$
+
+> M : window안의 patch 개수
+>
+> Q : query metrix
+>
+> L : key metrix
+>
+> V : value metrix
+>
+> d : quert/key midension
+
+또한 relative position은 [-M + 1 , M - 1] 범위의 각 축에 속하기 때문에, bias를 아래 식과 같이 파라미터화 했다.
+$$
+\hat{B} \in \mathbb{R}^{(2M -1) \times (2M -1)}
+$$
+
+> B는 \hat{B}의 token이다.
+
+저자는 이러한 bias를 absolute position embeding 역할로 사용하였으며, 이 bias가 없는것과 비교하는 과정을 통해 이러한 bias가 상당히 중요함을 확인했다. 
+
+
+
+#### 3. Architecture Variants
+
+저자는 ViT-B/DeiT-B model과 비슷한 사이즈과 계산량을 가진 Swin-B라는 model을 구현했다. 
+
+그리고 그 외의 model을 소개한다.
+
+- Swin-T : 기존 model사이즈의 0.25만큼 작은 변형 model
+
+- Swin-S : 기존 model사이즈의 0.5만큼 작은 변형 model
+
+- Swin-L : 기존 model사이즈의 2.0만큼 큰 변형 model
+
+  자세한언 논문 5페이지 확인
+
+
 
 
 
