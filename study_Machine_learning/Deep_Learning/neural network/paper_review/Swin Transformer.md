@@ -267,10 +267,3 @@ $$
 
 
 
-respect : 존경, ~에 대해
-
-sophisticate : 정교하다.
-
-query : 요청
-
-displace : 옮기다, 바꾸다
