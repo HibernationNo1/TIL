@@ -135,6 +135,41 @@ $ sudo apt -y install typora
 
 [여기](https://www.anaconda.com/products/individual) 에서 설치
 
+- Install for : `All User` 선택
+
+  >  내 PC내 설치를 할 경우 관리자 권한이 부여되기 때문
+
+- 설치 경로 : 직접 설정 `D:Anaconda3`
+
+  > 기본으로 할 경우 install 완료 후 해당 path를 확인하고자 할 때 path내 ProgramData가 보이지 않는 경우가 있기 때문
+
+- Advaned Options : Register Anaconda3 as the system python 선택
+
+- 설치 후 환경변수 추가
+
+  1. 원도우 검색 > `고급 시스템 설정 보기` > 고급 > 환경 변수 > 시스템 변수 안의 `path` 더블클릭 
+  2. 새로만들기 (아래 5개 추가)
+     - `D:\Anaconda3\Library\bin`
+     - `D:\Anaconda3\Library\mingw-w64\bin`
+     - `D:\Anaconda3\Scripts`
+     - `D:\Anaconda3`
+
+- 설치 후 vs code와 anaconda연동하기
+
+  1. vscode에서 Extensions를 통해 python과 Code Runner를 설치 
+
+  2. `ctrl + shift + p` 를 누른 후 `Python: Select Interpreter` 선택
+
+  3. 목록 중 `'base : conda'` 선택
+
+  4. vscode 좌측 상단 file>preferences>setting 에서 `shell window` 검색
+
+     terminal, Integrated, defaul profile : windows 에서
+
+     bash 선택
+
+
+
 
 
 **linux**
