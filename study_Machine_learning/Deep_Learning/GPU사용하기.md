@@ -407,7 +407,9 @@ ECC ON/Off 명령어
 
 
 
+#### uninstall
 
+https://cho000023.tistory.com/74 참고
 
 
 
