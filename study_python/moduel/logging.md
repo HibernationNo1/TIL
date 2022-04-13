@@ -1,5 +1,7 @@
 # logging
 
+
+
  logging은 소프트웨어가 작동 중일 때 발생하는 여러 ‘예외 사건’을 추적한다.
 
 예외 사건을 레벨에 따라 중요도를 결정하여 구분한다.
@@ -42,3 +44,15 @@ level을 인자로 받는다. 정상 작동중인 level이면 `True`를, 아니�
 
 
 
+### create_logger
+
+예외 사건에 대한 log를 저장한다.
+
+```python
+from logger import create_logger
+logger = create_logger(output_dir=config.OUTPUT, dist_rank=dist.get_rank(), name=f"{config.MODEL.NAME}")
+```
+
+- output_dir : log를 저장할 dir path
+- dist_rank : 사용된 GPU의 rank (단일 GPU라면 dist_rank = 0)
+- name : `create_logger` 안의 `getLogger`의 argument로 사용될 name
