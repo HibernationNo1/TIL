@@ -1,10 +1,46 @@
 # torch
 
+{:toc}
+
+
+
+
+
 ### install
 
-```
-$ conda install pytorch torchvision torchaudio cudatoolkit=11.1 -c pytorch -c conda-forge
-```
+cudatoolkit의 version에 맞는 pytorch를 설치해야 한다. 그렇지 않으면 
+
+`torch.cuda.is_available()` 이 Flase을 반환한다.
+
+- conda
+
+  ```
+  $ conda install pytorch==1.8.0 torchvision==0.9.0 torchaudio==0.8.0 cudatoolkit=11.1 -c pytorch -c conda-forge
+  ```
+
+  > 제거는 `pip uninstall pytorch`
+  >
+  > cudatoolkit version은 `nvcc -V` 명령어 사용
+
+  - ex
+
+    ```
+    $ conda install pytorch torchvision torchaudio cudatoolkit=11.3 -c pytorch
+    ```
+
+    > pytorch version명시 안하면 cudatoolkit의 version에 알맞게 알아서 설치
+    >
+    > cudatookit 11.5를 사용할 때 위 명령어 사용
+    >
+    > `torch.cuda.is_available()` True반환 확인
+
+  
+
+- conda 가 아닐 때
+
+  ```
+  pip install torch==1.7.1+cu110 torchvision==0.8.2+cu110 -f https://download.pytorch.org/whl/torch_stable.html
+  ```
 
 
 
@@ -21,6 +57,36 @@ is_cuda = torch.cuda.is_available()
 ```
 
 > CUDA를 통해  GPU를 사용할 수 있으면 `True`반환, 아니면 `False`반환
+
+
+
+##### device_count
+
+모든 gpu를 사용할 때(gpu 개수 확인)
+
+```python
+num_gpus = torch.cuda.device_count()
+init_process_group(backend='nccl', init_method='env://')
+```
+
+- `backend` 
+
+  > - Use the NCCL backend for distributed **GPU** training
+  > - Use the Gloo backend for distributed **CPU** training.
+
+
+
+
+
+##### set_device
+
+여러개의 GPU를 사용할 때, 몇 번째 GPU를 사용할지 결정
+
+```python
+torch.cuda.set_device(gpu_idx)
+```
+
+> `gpu_idx` : gpu의 index (0~)
 
 
 
