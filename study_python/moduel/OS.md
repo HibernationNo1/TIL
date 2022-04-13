@@ -145,9 +145,21 @@ file_list = os.listdir(os.getcwd)
 
 #### os.environ
 
+운영 체제에 등록되어 있는 모든 완경 변수에 접근이 가능
+
+ex) 환경 변수 `HOME` 에 저장되어 있는 값에 접근
+
+```python
+print(os.environ['HOME'])
+```
+
+
+
+
+
 ##### GPU ALLOW
 
-GPU 를 과하지 않게 사용하기 위한 속성. 코드처음에 작성
+GPU 를 과하지 않게 사용하기 위한 속성. 코드처음에 작성 (tensorflow사용시)
 
 ```python
 os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
@@ -172,3 +184,17 @@ elif os.name == 'posix':
     print("linux")
 ```
 
+
+
+
+
+#### rename()
+
+```python
+old_file_path = os.path.join(file_path, old_file_name)
+new_file_path = os.path.join(file_path, new_file_path)
+
+os.rename(old_file_path, new_file_path)
+```
+
+> file path 는 같아야 하며, file name만 다른 경우
