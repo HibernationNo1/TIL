@@ -68,7 +68,9 @@ YAML형식을 file로 parameter를 저장한다.
    	# 등등..
    ```
 
-   
+   > 이 때 `_C` 의 안에는 정의되어 있지 않지만, config.taml에 정의해놓은 경우는 에러 발생
+   >
+   > 모든 config는`_C`를 기준으로 계획하자
 
 3. 위에서 정의한 _C의 instance를 생성하고, yaml file을 통해 updata를 진행한다.
 
