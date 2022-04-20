@@ -32,18 +32,6 @@
 
 
 
-### logger
-
-#### isEnabledFor
-
-```python
-logger.isEnabledFor(logging.INFO)
-```
-
-level을 인자로 받는다. 정상 작동중인 level이면 `True`를, 아니면 `False`을 반환
-
-
-
 ### create_logger
 
 예외 사건에 대한 log를 저장한다.
@@ -56,3 +44,30 @@ logger = create_logger(output_dir=config.OUTPUT, dist_rank=dist.get_rank(), name
 - output_dir : log를 저장할 dir path
 - dist_rank : 사용된 GPU의 rank (단일 GPU라면 dist_rank = 0)
 - name : `create_logger` 안의 `getLogger`의 argument로 사용될 name
+
+
+
+#### logger
+
+##### isEnabledFor
+
+```python
+logger.isEnabledFor(logging.INFO)
+```
+
+level을 인자로 받는다. 정상 작동중인 level이면 `True`를, 아니면 `False`을 반환
+
+
+
+##### info
+
+`print()`와 같은 역할을 하지만, **년-월-일 시:분:초 사용자,  어느 file의 몇 line**인지 표시하며 출력한다.
+
+```python
+logger.info("test!")
+```
+
+> ```
+> [2022-04-20 17:43:13 ITC](main.py 93): INFO test!
+> ```
+
