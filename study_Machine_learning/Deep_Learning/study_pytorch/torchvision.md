@@ -27,17 +27,37 @@ train_data = datasets.MNIST(root = './data', train = True, download = True,
 from torchvision.datasets import ImageFolder
 ```
 
-dataset을 불러오는 method
+개인 images를 load한 후 pytorch dataset 객체로 변환하는 method
 
 ```python
-ImageFolder(root, transform)
+train_dataset = ImageFolder(root, transform)
 ```
 
-- `root` : image data가 모여있는 dir의 path
+- `root` : `.jpg,.jpeg,.png,.ppm,.bmp,.pgm,.tif,.tiff,.webp` 와 같은 images가 모여있는 dir의 path (dataset의 최상위 dir)
 
+  >  root  = `./dataset` 
+  >
+  > 일 때 dir map은 아래와 같다
+  >
+  > ```
+  > dataset ┬ dir_0   ┬   1.jpg
+  > 		│         ├   2.jpg
+  > 		├ dir_1   ...
+  > 		│         └   N.jpg
+  > 		...
+  > 		│
+  > 		└ dir_N
+  > ```
+  >
+  > 이 때 dir_0부터 dir_N은 각각 한 개의 class를 의미한다. (dog, cat 등등...)
+  >
+  > 그렇기 때문에 한 개의 image에 한 개의 class를 담은 dataset만 가져오는게 가능하다.
+  >
+  >  한 개의 image에 다수의 class를 담은 image를 사용하려면 `from torch.utils.data import Dataset` 를 사용하자.
+  
 - `transform` : augmentation방법을 지정
 
-  > Compose를 통해 정의한 augmentation방법 list를 가져온다.
+  > torchvision.transforms를 통해 정의한 augmentation방법 list를 가져온다.
 
 > e.g.
 >
@@ -63,7 +83,9 @@ ImageFolder(root, transform)
 >                              	transform = data_transforms[x]) for x in ['train', 'val']}
 > ```
 
+> 만일 dataset(images)의 size가 일관되어있지 않다면 (어떤건 [1024, 1024], 어떤건 [512, 512]) 반드시 `transforms.Resize()` 를 통해 images의 size를 통일해주어야 `DataLoader`를 통해 가져올때 에러가 발생하지 않는다.
 
+이후 `from torch.utils.data import DataLoader` 를 통해 image를 하나씩 가지고오는 작업을 해야 한다.
 
 
 
@@ -108,21 +130,11 @@ from torchvision import models
 
 ### transforms
 
+data를 조작하고 학습에 적합하게 만드는 class
+
 ```python
 import torchvision.transforms as transforms
 ```
-
-
-
-#### Compose
-
-image의 pre processing과 augmentation등의 과정에서 사용되는 method
-
-```python
-tranceforms.Compose([...])
-```
-
-
 
 
 
@@ -195,6 +207,19 @@ transforms.Normalize([R_m, G_m, B_m],[R_s, G_s, B_s] )
 `[R_m, G_m, B_m]` : [red channel의 mean, green channel의 mean, blue channel의 mean]
 
 `[R_s, G_s, B_s] ` :  [red channel의 std, green channel의 std, blue channel의 std]
+
+
+
+#### Compose
+
+transform의 method를 여러개 호출해야 하는 경우, 하나로 묶어주는 method
+
+```python
+torchvision_transform = transforms.Compose([ 
+   transforms.ToTensor(), 
+   transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)) 
+])
+```
 
 
 
