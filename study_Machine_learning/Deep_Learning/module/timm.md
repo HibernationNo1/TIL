@@ -119,3 +119,21 @@ if mixup_active:
 
   > 보통 1000 할당
 
+
+
+### models
+
+#### layers
+
+##### to_2tuple
+
+인자로 받는 값을 2 element의 tuple로 return 
+
+```python
+from timm.models.layers import to_2tuple
+
+img_size = 224
+img_size = to_2tuple(img_size)
+print(img_size) # (224, 224)
+```
+
