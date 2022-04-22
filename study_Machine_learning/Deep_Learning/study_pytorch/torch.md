@@ -312,3 +312,53 @@ torch.sum(input, dim)
 
   True일 경우 1을 반환
 
+
+
+#### permute()
+
+tensor의 size위치를 바꾼다.
+
+```python
+x = torch.randn(2, 3, 5)
+x.size()							# 	torch.Size([2, 3, 5])
+torch.permute(x, (2, 0, 1)).size()	# 	torch.Size([5, 2, 3])
+```
+
+> size[2] 가 size[0] 으로,
+>
+> size[0]이 size[1]로,
+>
+> size[1]이 size[2]로
+
+
+
+#### contiguous()
+
+연속적인 메모리 tensor를 return한다.
+
+```python
+a = torch.randn(2, 3, 4)	# a.size() [2, 3, 4]
+a.stride()	# (12, 4, 1) 
+# 0차원에서 1차원으로 넘어가려면 12개의 원소를 지나야 하고
+# 1차원에서 2차원으로 넘어가려면 4개의 원소를 지나야 한다.
+
+a = a.transpose(0, 1)		# a.size() [3, 2, 4]
+b = torch.randn(3, 2, 4)	# a와 같은 size의 tensor를 만든다
+
+# a.stride() = (4, 12, 1)
+# b.stride() = (8, 4, 1)	
+## a, b tensor의 shape은 같지만 stride가 다르다.
+```
+
+> a.stride()가 변화한 이유 : 텐서 a의 형태가 변화될때 실제로 해당 원소에 접근할때는(메모리에서는 원소들의) 위치가 변화되지 않았고 접근 인덱스만 변화되었기 때문
+>
+> (만약 텐서의 형태가 바뀔때마다 메모리에 있는 그래도 배치하려면 재 할당을 해주어야 하는데 이러한 연산이 잦으면 오히려 성능을 떨어뜨리는 원인이 될수있다.)
+>
+> 이 때 a는 비 연속적인 tensor가 되는데, `contiguous()` 메서드는 다음과 같이 이러한 a와 같은 비연속적인 텐서를 연속적으로 만들어주는 역할을 한다.
+>
+> ```python
+> a = a.contiguous()
+> a.stride()		# (8, 4, 1)
+> ```
+>
+> 
