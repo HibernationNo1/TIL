@@ -98,6 +98,19 @@ param.requires_grad = True 	# 학습시 paramaters updata
 
 
 
+#### named_parameters()
+
+model에 등록된 parameter를 iterator로 return
+
+```python
+model = Model()
+
+for n, param in model.named_parameters():
+    print(f"Parameter Name: {n}, shape {papram.shape}")
+```
+
+
+
 
 
 #### train()
@@ -176,7 +189,45 @@ for child in resnet.children():
 
 
 
+### ModuleList
 
+여러 layer를 list형태로 담을 때 사용. (일반 python list의 속성들을 그대로 가지고 있다.)
+
+```python
+import torch
+import torch.nn as nn
+
+class TMP(nn.Module):
+    def __init__(self, fc_input_size, fc_hidden_sizes, num_classes):
+        super(TMP, self).__init__()
+        
+        fcs = [nn.Sequential(
+                nn.Linear(fc_input_size, fc_hidden_size),
+                nn.ReLU(),
+        		nn.Linear(fc_hidden_size, num_classes)
+        for fc_hidden_size in fc_hidden_sizes)]
+        
+        self.layers1 = nn.ModuleList(fcs)
+        self.layers2 = fcs
+```
+
+> `self.layers2` : 일반 python list
+>
+> `self.layers1` : nn.ModuleList 객체
+>
+> 차이점 : nn.ModuleList 객체인 `self.layers1` 만 model parameter에 등록이 되기 때문에 추후 `model.parameters()` 로 model의 parameter를 전달할 때 list내부의 element를 사용할 수 있다.
+>
+> (반드시 `nn.ModuleList()` 를 사용해야 함)
+>
+> ```python
+> # 확인방법
+> model = TMP(fc_input_size = 4, fc_hidden_sizes(8, 8), num_calsses = 3)
+> 
+> for n, param in model.named_parameters():
+>     print(f"Parameter Name: {n}, shape {papram.shape}")
+> ```
+>
+> 
 
 
 
@@ -214,13 +265,22 @@ droup = nn.Dropout2d(p)
 >
 > - `x` : input data
 >
-> - `p` : drop out할 node의 ratio
+> - `p` : drop out할 node의 rate
 >
 > - `training = self.training` : training mode일 때와 evaluation mode일 때 각각 다르게 적용되기 위해 존재.
 >
 >   >  self.training이라는 variable은 model.train() 또는 model.eval() 함수를 호출하여 모드를 바꿀때마다, self.training이 True 또는 False로 바뀐다.
 
 
+
+- **Dropout**
+
+  ```python
+  drop_rate = 0.0
+  self.pos_drop = nn.Dropout(p=drop_rate)
+  ```
+
+  
 
 
 
@@ -239,6 +299,20 @@ fc = nn.Linear(in_features, out_features, bias = True)
 - `bias` : `False`일 경우 bias추가 안함
 
 
+
+### LayerNorm
+
+input의 batch size에 대해 normelize를 적용한다.
+
+```python
+# Image Example  
+Batch, C, H, W = 20, 5, 10, 10
+input = torch.randn(Batch, C, H, W)		# input.size() : [20, 5, 10, 10]
+layer_norm = nn.LayerNorm([C, H, W])	# [C, H, W]에만 normalize적용하는 layer instnace
+output = layer_norm(input)
+```
+
+![](https://pytorch.org/docs/stable/_images/layer_norm.jpg)
 
 
 
@@ -436,3 +510,16 @@ for ...
 
 
 계산된 loss값을 반환
+
+
+
+
+
+### Parameter()
+
+parameter값 만을 return (layer가 아님)
+
+```python
+tmp = nn.Parameter(torch.randn([3, 3, 3]))
+```
+
