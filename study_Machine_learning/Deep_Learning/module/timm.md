@@ -137,3 +137,32 @@ img_size = to_2tuple(img_size)
 print(img_size) # (224, 224)
 ```
 
+
+
+##### trunc_normal_
+
+tensor에 Truncated normal initailization을 적용한다.
+
+```python
+from timm.models.layers import trunc_normal_
+trunc_normal_(x, mean = 0, std = 1)
+```
+
+- x : tensor
+- mean : mean (default = 0)
+- std : srandard deviation
+
+
+
+##### DropPath
+
+Dropout과의 차이점 : Dropout은 random한 index에 대해서 element 단위로 out을 적용하지만, DropPath는 batch 단위로 out을 적용한다.
+
+```python
+from timm.models.layers import DropPath
+trunc_normal_(x, mean = 0, std = 1)
+
+self.drop_path = DropPath(drop_path) if drop_path > 0. else nn.Identity()
+```
+
+- `drop_path` : (float) batch중에서 dropout을 적용할 비율
