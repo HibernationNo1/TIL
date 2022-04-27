@@ -51,11 +51,19 @@ assert amp is not None, "amp not installed!"
    optimizer = build_optimizer(config, model)
    
    # build한 model과 optimizer를 argument로 삼아 amp.initialize를 호출한다.
-   if config.AMP_OPT_LEVEL != "O0":	# 이 때 opt_level = "01" 이도록 한다.
+   if AMP_OPT_LEVEL != "O0":	
    	model, optimizer = amp.initialize(model, optimizer, opt_level=config.AMP_OPT_LEVEL)
    ```
 
-   > `build_model`와 `build_optimizer` 는 custum funtion
+   > - AMP_OPT_LEVEL :
+   >
+   >   `O0`: apex를 사용하지 않는 경우
+   >
+   >   `O1`, `O2`: apex를 제대로 사용하기 위한 정밀도 lavel로, 둘 다 시도한 후 model에 가장 적합한 값을 사용한다.
+   >
+   >    `O3` : 제대로된 구현을 사용하진 않게 되지만, 속도 기준선을 설정하는데 유용하다. (보통 사용 안함) 
+   >
+   > - `build_model`와 `build_optimizer` 는 custum funtion
 
 2. 학습 중에 with문을 통해 loss와 optimizer를  amp.scale_loss로 호출한 후  scaled_loss으로 명명한다.
 
