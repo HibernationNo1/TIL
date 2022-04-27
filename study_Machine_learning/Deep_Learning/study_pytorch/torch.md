@@ -314,6 +314,14 @@ torch.sum(input, dim)
 
 
 
+
+
+
+
+### tensor
+
+
+
 #### permute()
 
 tensor의 size위치를 바꾼다.
@@ -329,6 +337,10 @@ torch.permute(x, (2, 0, 1)).size()	# 	torch.Size([5, 2, 3])
 > size[0]이 size[1]로,
 >
 > size[1]이 size[2]로
+
+
+
+
 
 
 
@@ -360,5 +372,50 @@ b = torch.randn(3, 2, 4)	# a와 같은 size의 tensor를 만든다
 > a = a.contiguous()
 > a.stride()		# (8, 4, 1)
 > ```
+>
+
+
+
+#### view()
+
+numpy 에서의 reshape과 같은 동작을 한다.
+
+
+
+
+
+#### masked_fill()
+
+특정 조건이 맞는 element에 원하는 값을 할당한다.
+
+```python
+a = torch.randn(1000, 100, 100)
+a.masked_fill(a != 0, float(-100.0)).masked_fill(a == 0, float(0.0))
+```
+
+> 0이 아닌 경우 -100을, 0인 경우 0.0의 값을 할당
+
+
+
+
+
+#### shape
+
+tensor의 shape을 return
+
+
+
+#### requires_grad
+
+tensor의 모든 연산을 추적하는지에 대한 여부(bool)
+
+```python
+model = Model()
+
+for name, param in model.named_parameters():
+    print(f"Parameter Name: {name},     shape: {param.shape}         param.requires_grad : {param.requires_grad}")
+```
+
+> 만일 `param.requires_grad` 가 `False`이면 frozen weights 인 것.
 >
 > 
