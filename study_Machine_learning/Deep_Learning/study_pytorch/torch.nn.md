@@ -133,8 +133,8 @@ model에 등록된 parameter를 iterator로 return
 ```python
 model = Model()
 
-for n, param in model.named_parameters():
-    print(f"Parameter Name: {n}, shape {papram.shape}")
+for name, param in model.named_parameters():
+    print(f"Parameter Name: {name}, shape {papram.shape}")
 ```
 
 
@@ -219,6 +219,33 @@ for child in resnet.children():
 
 
 
+#### cuda()
+
+cuda toolkit을 적용
+
+```python
+model = build_model(config) # nn.Module을 상속받아 만든 model
+model.cuda()	
+```
+
+
+
+
+
+#### str(model)
+
+model의 각 parameters를 출력한다.
+
+```python
+logger = create_logger(output_dir=OUTPUT, dist_rank=dist_rank, name=f"{NAME}")
+
+logger.info(str(model))
+```
+
+
+
+
+
 ### Parameter()
 
 parameter값 만을 return (layer가 아님)
@@ -226,4 +253,6 @@ parameter값 만을 return (layer가 아님)
 ```python
 tmp = nn.Parameter(torch.randn([3, 3, 3]))
 ```
+
+
 
