@@ -10,6 +10,36 @@ APEX 패키지에는 mixed precision training과 distributed training 기능이 
 
 installation은 위 링크에서 확인
 
+또는
+
+```
+$ git clone https://github.com/NVIDIA/apex
+$ cd apex
+$ python setup.py install --cuda_ext --cpp_ext
+```
+
+> - error
+>
+>   ```
+>   Microsoft Visual C++ 14.0 or greater is required. Get it with "Microsoft C++ Build Tools": https://visualstudio.microsoft.com/visual-cpp-build-tools/
+>   ```
+>
+>   https://visualstudio.microsoft.com/visual-cpp-build-tools/ 에서 tool 다운받아야 함
+>
+>   
+>
+> 
+>
+> cuda toolkit 10.2 에서 됨을 확인 (그 이상 version에서 issue발생)
+>
+> 
+
+
+
+
+
+
+
 code초반부에 아래 문구를 넣어서 apex사용이 가능한지 확인할 것.
 
 ```python
@@ -64,6 +94,37 @@ assert amp is not None, "amp not installed!"
    >    `O3` : 제대로된 구현을 사용하진 않게 되지만, 속도 기준선을 설정하는데 유용하다. (보통 사용 안함) 
    >
    > - `build_model`와 `build_optimizer` 는 custum funtion
+   >
+   > ```
+   > # 출력
+   > Selected optimization level O1:  Insert automatic casts around Pytorch functions and Tensor methods.
+   > 
+   > Defaults for this optimization level are:
+   > enabled                : True
+   > opt_level              : O1
+   > cast_model_type        : None
+   > patch_torch_functions  : True
+   > keep_batchnorm_fp32    : None
+   > master_weights         : None
+   > loss_scale             : dynamic
+   > Processing user overrides (additional kwargs that are not None)...
+   > After processing overrides, optimization options are:
+   > enabled                : True
+   > opt_level              : O1
+   > cast_model_type        : None
+   > patch_torch_functions  : True
+   > keep_batchnorm_fp32    : None
+   > master_weights         : None
+   > loss_scale             : dynamic
+   > ```
+   >
+   > - warning 발생시
+   >
+   >   ```
+   >   Warning:  multi_tensor_applier fused unscale kernel is unavailable, possibly because apex was installed without --cuda_ext --cpp_ext. Using Python fallback.  Original ImportError was: ModuleNotFoundError("No module named 'amp_C'")
+   >   ```
+   >
+   >   
 
 2. 학습 중에 with문을 통해 loss와 optimizer를  amp.scale_loss로 호출한 후  scaled_loss으로 명명한다.
 
