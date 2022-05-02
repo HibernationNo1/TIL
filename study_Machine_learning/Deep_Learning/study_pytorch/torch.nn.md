@@ -28,7 +28,7 @@ import torch.nn as nn
 
 
 
-### Module
+## Module
 
 model을 구현할 때 inherited해서 sub-classing하는데 사용된다. 
 
@@ -110,19 +110,29 @@ model의 parameters를 iterator로 return한다.
 
 ```python
 for param in model.parameters():
-            param.requires_grad = False
+    if not param.requires_grad :
+        print(f"최적화 적용 안하는 layer")
+    print(f" layer의 parameter 개수 : {param.numel()}")
 ```
 
 
 
 ##### requires_grad
 
-parameters에 대해서 freeze할지 말지에 대한 여부를 담고 있다. (boolean)
+parameter에 대해서 최적화 대상인지 아닌지에 대한 여부를 담고 있다. (boolean)
 
 ```python
-param.requires_grad = False  # freeze
-param.requires_grad = True 	# 학습시 paramaters updata
+if param.requires_grad == False:  # freeze
+if param.requires_grad == True :	# 학습시 paramaters updata
 ```
+
+
+
+##### numel()
+
+parameter의 tensor개수를 return한다.
+
+
 
 
 
@@ -148,6 +158,19 @@ model.train()
 ```
 
 model instance를 train mode로 실행할 것을 명시한다.
+
+- `mode` :  True일때 train mode, False일때 evaluation mode
+
+  > defult = `true` 
+
+> DDP로 인해 만들어진 ddp_model에도 똑같이 사용할 수 있다.
+>
+> ```python
+> from torch.nn.parallel import DistributedDataParallel as DDP
+> 
+> ddp_model = DDP(model, device_ids=[LOCAL_RANK], broadcast_buffers=False)
+> ddp_model.train()
+> ```
 
 
 
@@ -256,3 +279,45 @@ tmp = nn.Parameter(torch.randn([3, 3, 3]))
 
 
 
+
+
+## parallel
+
+#### DistributedDataParallel()
+
+```python
+from torch.nn.parallel import DistributedDataParallel as DDP
+```
+
+GPU분산 training을 할때 사용
+
+`torch.distributed.init_process_group` 로 인해 학습할 process가 초기화되어있야 한다.
+
+```python
+from torch.nn.parallel import DistributedDataParallel as DDP
+
+LOCAL_RANK = 0
+
+model = build_model(config)
+model.cuda()
+
+ddp_model = DDP(model, device_ids=[LOCAL_RANK], broadcast_buffers=False)
+```
+
+- `device_ids` : 사용할 GPU의 rank (type = list)
+- `broadcast_buffers` : forward function실행 시 DDP의 module을 buffer에 동기화하는 flag
+
+
+
+> TODO : 한 대의 PC에 여러대의 GPU를 설치했을 시의 코드 추가하기
+
+
+
+##### model
+
+create module to be paralleized
+
+```python
+model = DDP(model, device_ids=[config.LOCAL_RANK], broadcast_buffers=False)
+model_without_ddp = model.module
+```
