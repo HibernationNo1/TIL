@@ -24,5 +24,19 @@
 
       `D:\anaconda3\Library\bin` 추가
 
-   
 
+
+
+#### freeze
+
+```
+$ pip freeze > requirements.txt
+```
+
+
+
+#### install -r
+
+```python
+pip install -r requirements.txt
+```
