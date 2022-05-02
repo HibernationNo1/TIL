@@ -91,6 +91,32 @@
 
    `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.0\bin`
 
+   > 이후 pytorch를 install할때 알맞는 tookit version에 맞춰 명령어를 입력해야함
+   >
+   > [여기](https://pytorch.org/) 서 명령어 검색 가능
+   
+5. check cuda toolkit version
+
+   ```
+   $ nvcc --version
+   ```
+
+   ```
+   nvcc: NVIDIA (R) Cuda compiler driver
+   Copyright (c) 2005-2021 NVIDIA Corporation
+   Built on Thu_Nov_18_09:52:33_Pacific_Standard_Time_2021
+   Cuda compilation tools, release 11.5, V11.5.119
+   Build cuda_11.5.r11.5/compiler.30672275_0
+   ```
+
+   > 11.5가 설치된 모습
+   >
+   > (CUDA 10.2, cuDNN 7.6.5가 가장 범용적인 version)
+
+
+
+
+
 #### linux
 
 1. GPU확인
