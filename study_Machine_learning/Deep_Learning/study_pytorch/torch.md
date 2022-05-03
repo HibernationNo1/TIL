@@ -8,34 +8,72 @@
 
 ### install
 
+pip를 통해 torch를 따로 install 후 
+
 cudatoolkit의 version에 맞는 pytorch를 설치해야 한다. 그렇지 않으면 
 
 `torch.cuda.is_available()` 이 Flase을 반환한다.
 
+> cudatoolkit, cudnn, ndivia driver 설치 후 pytorch와 cudatoolkit을 명령어를 통해 install해야 한다.
+>
+> 알맞는 명령어는 [여기](https://pytorch.org/) 에서 찾기.
+>
+> - requirements.txt 예시
+>
+>   ```
+>   opencv-python
+>   Pillow
+>   pytz
+>   PyYAML
+>   timm
+>   yacs
+>   termcolor
+>   
+>   torch==1.10.1
+>   torchvision==0.11.2
+>   torchaudio==0.10.1
+>   
+>   ### cudatoolkit, torch
+>   # conda install pytorch==1.10.1 torchvision==0.11.2 torchaudio==0.10.1 cudatoolkit=10.2 -c pytorch
+>   
+>   ### apex
+>   # $ git clone https://github.com/NVIDIA/apex
+>   # $ cd apex
+>   # $ python setup.py install --cuda_ext --cpp_ext 
+>
+
 - conda
 
   ```
-  $ conda install pytorch==1.8.0 torchvision==0.9.0 torchaudio==0.8.0 cudatoolkit=11.1 -c pytorch -c conda-forge
+  $ conda install pytorch==1.8.0 torchvision==0.9.0 torchaudio==0.8.0 cudatoolkit=11.2 -c pytorch -c conda-forge
   ```
 
   > 제거는 `pip uninstall pytorch`
   >
   > cudatoolkit version은 `nvcc -V` 명령어 사용
+  >
+  > `conda-forge` 는 cudatoolkit이 11.3 이상 version일때만
 
   - ex
 
     ```
-    $ conda install pytorch torchvision torchaudio cudatoolkit=11.3 -c pytorch
+    $ conda install pytorch==1.10.1 torchvision==0.11.2 torchaudio==0.10.1 cudatoolkit=11.5 -c pytorch conda-forge
     ```
 
     > pytorch version명시 안하면 cudatoolkit의 version에 알맞게 알아서 설치
     >
     > cudatookit 11.5를 사용할 때 위 명령어 사용
     >
-    > `torch.cuda.is_available()` True반환 확인
-
+    > - pytorch와 torchvision이 이미 install되어 있다면 아래 명령어만 실행
+    >
+    >   ```
+    >   $ conda install pytorch torchvision torchaudio cudatoolkit=11.5 -c pytorch
+    >   ```
+    >
+    >   `torch.cuda.is_available()` True반환 확인
   
-
+  
+  
 - conda 가 아닐 때
 
   ```
@@ -417,5 +455,20 @@ for name, param in model.named_parameters():
 ```
 
 > 만일 `param.requires_grad` 가 `False`이면 frozen weights 인 것.
->
-> 
+
+
+
+#### numel()
+
+tensor의 elements개수를 return
+
+```python
+for param in model.parameters():
+    print(f" layer의 parameter 개수 : {param.numel()}")
+```
+
+```python
+n_parameters = sum(p.numel() for p in model.parameters() if p.requires_grad)
+print(f"총 parameter개수 : {n_parameters}")
+```
+
