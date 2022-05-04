@@ -110,6 +110,14 @@ elif os.name == 'posix':
 > windows 에서는 `backend="gloo"`
 >
 > linux에서는 `backend="nccl"`
+>
+> - 특정 cuda toolkit에서만 정상 작동
+>
+>   ```
+>   $ conda install pytorch==1.10.1 torchvision==0.11.2 cudatoolkit=10.2 -c pytorch
+>   ```
+>
+>   > 그 외 version에서는 `RuntimeError: No rendezvous handler for env://` 라는 error가 뜸
 
 
 

@@ -361,7 +361,9 @@ criterion = nn.CrossEntropyLoss()
 for ...
 	output = model(data)
     loss = criterion(output, target)
-# 또는 
+	
+    loss.backward()
+    
 ```
 
 - `output` : model의 inference값
@@ -369,7 +371,7 @@ for ...
 
 
 
-### MSELoss
+#### MSELoss
 
 mean square error 
 
@@ -379,14 +381,12 @@ criterion = nn.MSELoss()
 
 
 
-### L1Loss, L2Loss
+#### L1Loss, L2Loss
 
 ```python
 criterion = nn.L1Loss()
 criterion = nn.L2Loss()
 ```
-
-
 
 
 

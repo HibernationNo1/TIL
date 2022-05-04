@@ -64,7 +64,7 @@
 
 #### 1. Overall Architecture
 
-![](https://media.arxiv-vanity.com/render-output/4986850/x1.png)
+![](https://blog.kakaocdn.net/dn/bHlXa3/btq5ItREk6M/DVYePCAb7lc1JHHhKvekL1/img.png)
 
 > 위 그림은 간단한 version의 Swin Transformer architecture임 (version. T )
 
