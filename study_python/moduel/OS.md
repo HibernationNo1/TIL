@@ -47,7 +47,9 @@ print(tmp)	# D:\Project\tmp\.venv
 
 
 
-#### path.join()
+#### path
+
+##### join()
 
 경로를 병합하여 새 경로 생성
 
@@ -62,6 +64,16 @@ tmp2 = os.path.join(os.getcwd(), 'test_name1')
 
 tmp3 = os.path.join(tmp1, 'test_name2')
 # D:\Project\tmp\.venv\test_name2
+```
+
+
+
+##### getmtime
+
+특정 file의 마지막 수정 시간을 sec으로 가져온다.
+
+```python
+lates_modification_time_sec = os.path.getmtime(path)
 ```
 
 
@@ -102,17 +114,9 @@ os.path.isdir('test_name1')
 
 
 
-#### listdir()
-
-경로 위 모든 directory list를 return한다.
-
-```python
-os.listdir(os.getcwd())
-```
 
 
-
-#### os.listdir()
+#### .listdir()
 
 전달받은 path의 위치에 존재하는 모든 file과 directory를 list로 반환
 
@@ -125,7 +129,7 @@ file_list = os.listdir(os.getcwd)
 
 
 
-#### os.walk()
+#### walk()
 
 전달받은 path의 하위에 존재하는 모든  file과 directory를 list로 반환
 
@@ -143,7 +147,7 @@ file_list = os.listdir(os.getcwd)
 
 
 
-#### os.environ
+#### environ
 
 운영 체제에 등록되어 있는 모든 완경 변수에 접근이 가능
 
