@@ -63,24 +63,35 @@ train_dataset = ImageFolder(root, transform)
 >
 > ```python
 > data_transforms = {
->     'train' : transforms.Compose([
->         transforms.Resize([1024, 1024]),
->         transforms.RandomHorizontalFlip(),
->         transforms.RandomVerticalFlip(),
->         transforms.RandomCrop(1024),
->         transforms.ToTensor(),
->         transforms.Normalize([R_m, G_m, B_m],[R_s, G_s, B_s])
->     ]),
->     'val' : transforms.Compose([
->         transforms.Resize([1024, 1024]),
->         transforms.RandomCrop(1024),
->         transforms.ToTensor(),
->         transforms.Normalize([R_m, G_m, B_m],[R_s, G_s, B_s])
->     ])
+> 'train' : transforms.Compose([
+>   transforms.Resize([1024, 1024]),
+>   transforms.RandomHorizontalFlip(),
+>   transforms.RandomVerticalFlip(),
+>   transforms.RandomCrop(1024),
+>   transforms.ToTensor(),
+>   transforms.Normalize([R_m, G_m, B_m],[R_s, G_s, B_s])
+> ]),
+> 'val' : transforms.Compose([
+>   transforms.Resize([1024, 1024]),
+>   transforms.RandomCrop(1024),
+>   transforms.ToTensor(),
+>   transforms.Normalize([R_m, G_m, B_m],[R_s, G_s, B_s])
+> ])
 > }
 > 
-> image_datasets = {x: ImageFolder(root = os.path.join(data_dir, x),
->                              	transform = data_transforms[x]) for x in ['train', 'val']}
+> # image_datasets = {x: ImageFolder(root = os.path.join(data_dir, x),
+> #                   transform = data_transforms[x]) for x in ['train', 'val']}
+> 
+> dataset = datasets.ImageFolder(root = os.path.join(data_dir, x), transform=data_transforms["train"])
+> 
+> print(f"dataset.classes : {dataset.classes}")
+> print(f"dataset.class_to_idx : {dataset.class_to_idx}")
+> print(f"dataset.imgs : {dataset.imgs}")
+>     
+> for train_data in dataset:
+>     img, label = train_data
+>     print(f"label : {label}")
+>     print(f"img.shape : {img.shape}")
 > ```
 
 > 만일 dataset(images)의 size가 일관되어있지 않다면 (어떤건 [1024, 1024], 어떤건 [512, 512]) 반드시 `transforms.Resize()` 를 통해 images의 size를 통일해주어야 `DataLoader`를 통해 가져올때 에러가 발생하지 않는다.
