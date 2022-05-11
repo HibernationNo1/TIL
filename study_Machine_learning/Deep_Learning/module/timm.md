@@ -129,6 +129,23 @@ if mixup_active:
 
 
 
+##### mixup_fn
+
+```python
+# samples.shape == [batch_size, channel, height, width]
+# targets.shape == [batch_size]
+
+if mixup_fn is not None:
+    after_samples, after_targets = mixup_fn(samples, targets)   # len(semples) 이 2의 배수여야 함 ( % 2 !=0)
+
+# after_samples.shape == [batch_size, channel, height, width]
+# after_targets.shape == [batch_size, num_class]
+```
+
+
+
+
+
 **Using**
 
 data를 GPU에 올려 학습준비를 마친 후 mixup function적용
