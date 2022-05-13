@@ -156,7 +156,7 @@ $ sudo apt -y install typora
 
 - 설치 후 vs code와 anaconda연동하기
 
-  1. vscode에서 Extensions를 통해 python과 Code Runner를 설치 
+  1. vscode에서 Extensions를 통해 python extenstion(Python, Python for VSCode, Python Extension Pack)과 Code Runner를 설치 
 
   2. `ctrl + shift + p` 를 누른 후 `Python: Select Interpreter` 선택
 
