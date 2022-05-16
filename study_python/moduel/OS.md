@@ -68,7 +68,7 @@ tmp3 = os.path.join(tmp1, 'test_name2')
 
 
 
-##### getmtime
+##### getmtime()
 
 특정 file의 마지막 수정 시간을 sec으로 가져온다.
 
@@ -77,6 +77,32 @@ lates_modification_time_sec = os.path.getmtime(path)
 ```
 
 
+
+##### basename()
+
+path상의 base name을 return.
+
+```python
+os.path.basename('/foo/bar/') # return bar
+```
+
+
+
+##### splitext()
+
+`name.format` 또는 `path/name.format` 에서 `.format`과 그 외의 text를 분리한다.
+
+```python
+splitext('foo.bar.exe')			# ('foo.bar', '.exe')
+splitext('/foo/bar.exe')		# ('/foo/bar', '.exe')
+splitext("test_config.py")		# ('test_config', '.py')
+```
+
+
+
+#### abspath()
+
+`abspath('dir_name')`과 `os.path.join(os.getcwd(), 'dir_name')`는 같은 동작을 한다.
 
 
 
