@@ -49,3 +49,20 @@ input image에서 가장 큰(작은) value와 해당 value를 가진 pixel locat
 min_value, max_value, min_loc, max_loc = cv2.minMaxLoc(image)
 ```
 
+
+
+
+
+### 그 외
+
+#### cv2.setNumThreads()
+
+OpenCV의 연산을 parallel하게 진행할때 사용.
+
+input = 0 이면 모든 function이 기존과 같이 sequentially하게 동작하지만, input > 0 인 경우 tread 최적화를 적용한다.
+
+```python
+opencv_num_threads = 0 	# or 2
+cv2.setNumThreads(opencv_num_threads)
+```
+
