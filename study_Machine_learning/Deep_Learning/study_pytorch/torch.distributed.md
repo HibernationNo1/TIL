@@ -183,3 +183,16 @@ if cfg.distributed: # 2개 이상의 gpu가 있을 때 True
 >
 > 주로 2개 이상의 GPU가 PC에 있을 때,  사용자가 선택 한 GPU를 사용할 수 있는지 확인하는데 사용한다.
 
+
+
+#### broadcast
+
+input으로 받는 tensor에 Broadcasts를 적용
+
+```python
+import torch
+import torch.distributed as dist
+
+dist.broadcast(random_num, src=0)
+```
+
