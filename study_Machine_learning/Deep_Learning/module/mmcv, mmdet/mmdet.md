@@ -212,5 +212,13 @@ model = build_detector(
 ```
 
 - `cfg.model` : model에 대한 config
+
 - `train_cfg` : teain mode에 대한 config
+
 - `test_cfg` : test mode에 대한 config
+
+- `model` 
+
+  ` type(model)` : `<class 'mmdet.models.detectors.mask_rcnn.MaskRCNN'> `형식의 정의된 model class
+
+  
