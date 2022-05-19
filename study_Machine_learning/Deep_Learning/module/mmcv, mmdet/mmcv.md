@@ -4,6 +4,8 @@
 
 ### Config
 
+#### fromfile
+
 python code file형식의 config file로부터 정보를 취합하여 config instance를 생성한다.
 
 ```python
@@ -165,7 +167,7 @@ cfg.work_dir = args.work_dir	# 예시
 
 
 
-#### merge_from_dict()
+##### merge_from_dict()
 
 config instance에 merge한다. 
 
@@ -177,7 +179,7 @@ cfg.merge_from_dict(args.cfg_options)
 
 
 
-#### dump()
+##### dump()
 
 인자로 받은 path에 file 생성
 
@@ -186,6 +188,41 @@ cfg.dump(osp.join('work_dir', osp.basename('config.py')))
 ```
 
 > `work_dir` 안에 `config.py` 저장
+
+
+
+##### pretty_text
+
+config를 읽기 좋게 반환
+
+```python
+print(f"{cfg.pretty_text}")
+```
+
+
+
+
+
+##### pop()
+
+특정 값만 return
+
+```python
+samples_per_gpu = cfg.data.pop('samples_per_gpu')
+```
+
+> cinfig의 data table안에 있는 `samples_per_gpu`라는 key의 값을 return
+
+
+
+### ConfigDict
+
+config를 담을 Dict객체
+
+```python
+from mmcv import ConfigDict
+tmp_dict = ConfigDict()
+```
 
 
 
@@ -200,16 +237,6 @@ mmcv.mkdir_or_exist(osp.abspath('work_dir'))
 ```
 
 
-
-
-
-### pretty_text
-
-config를 읽기 좋게 반환
-
-```python
-print(f"{cfg.pretty_text}")
-```
 
 
 
@@ -278,7 +305,7 @@ print(MMDetection)		# 2.24.1+240d7a3
 
 ### Registry
 
-mmcv에서 OpenMMLab의 대부분의 project의 dataset, model 및 moduel을 관리할때 사용하는 것으로, 
+mmcv에서 OpenMMLab의 대부분의 project의 dataset, model 및 세부 layer moduel을 관리할때 사용하는 것으로, 
 
 string문자열을 통해 class를 찾고 instance화 한다.
 
@@ -339,8 +366,58 @@ MODELS = Registry('models', parent=MMCV_MODELS)
 dict type의 config정보를 바탕으로 module을 build함
 
 ```python
-from mmcv.utils import build_from_cfg
+def build_from_cfg(cfg, registry, default_args=None):
+    """Build a module from config dict.
 
+    Args:
+        cfg (dict): Config dict. It should at least contain the key "type".
+        registry (:obj:`Registry`): The registry to search the type from.
+        default_args (dict, optional): Default initialization arguments.
+
+    Returns:
+        object: The constructed object.
+    """
+    # check config type
+    if not isinstance(cfg, dict):
+        raise TypeError(f'cfg must be a dict, but got {type(cfg)}')
+    if 'type' not in cfg:
+        if default_args is None or 'type' not in default_args:
+            raise KeyError(
+                '`cfg` or `default_args` must contain the key "type", '
+                f'but got {cfg}\n{default_args}')
+    if not isinstance(registry, Registry):
+        raise TypeError('registry must be an mmcv.Registry object, '
+                        f'but got {type(registry)}')
+    if not (isinstance(default_args, dict) or default_args is None):
+        raise TypeError('default_args must be a dict or None, '
+                        f'but got {type(default_args)}')
+    
+    args = cfg.copy()
+	
+    if default_args is not None:
+        for name, value in default_args.items():
+            args.setdefault(name, value)
+    
+    obj_type = args.pop('type')	
+    # obj_type 예시 : MaskRCNN, CrossEntropyLoss, Normal, CocoDataset ...
+    # 온갖게 다 들어오며, 이런 방식으로 모든 module을 관리한다.
+    if isinstance(obj_type, str):
+        obj_cls = registry.get(obj_type)    	# 여기서 
+        # print(f"obj_cls : {obj_cls}")   # 세부 code가 어디에 있는지 위치를 알 수 있음.
+        if obj_cls is None:
+            raise KeyError(
+                f'{obj_type} is not in the {registry.name} registry')
+    elif inspect.isclass(obj_type):
+        obj_cls = obj_type
+    else:
+        raise TypeError(
+            f'type must be a str or valid type, but got {type(obj_type)}')
+     
+    try:
+        return obj_cls(**args)  # 기대하는 최종 return
+    except Exception as e:
+        # Normal TypeError does not print class name.
+        raise type(e)(f'{obj_cls.__name__}: {e}')
 ```
 
 
@@ -348,6 +425,18 @@ from mmcv.utils import build_from_cfg
 
 
 #### build()
+
+**build_func을 return**
+
+```python
+def build(self, *args, **kwargs):
+   return self.build_func(*args, **kwargs, registry=self)
+```
+
+- `self.build_func()의 return값 예시` : `self._module_dict['MaskRCNN'](config) `
+- `args` : config
+
+
 
 input config의 정보를 토대로 특정 class를 build한다.
 
@@ -420,6 +509,21 @@ def build_detector(cfg, train_cfg=None, test_cfg=None):
 
 
 
+### get_logger()
+
+인자로 받는 name의 logger를 생성
+
+```python
+logger = get_logger(name='mmdet', log_file=log_file, log_level=log_level)
+```
+
+- `name` : logger의 namespace
+- `log_file` : init log information file이 있을 경우 할당 (default = None)
+- `log_level` : log의 카테고리. 
+  -  `log_level = 'INFO'`
+
+
+
 ## runner
 
 ### get_dist_info()
@@ -433,6 +537,186 @@ rank, world_size = get_dist_info()
 ```
 
 > single gpu일 때 `rank = 0, world_size = 1`
+
+
+
+
+
+### build_runner()
+
+training, validation과 같은 process를 진행하기 위한 runner를 build
+
+```python
+from mmcv.runner import build_runner
+
+runner = build_runner(
+    cfg.runner,
+    default_args=dict(
+        model=model,
+        optimizer=optimizer,
+        work_dir=cfg.work_dir,
+        logger=logger,
+        meta=meta))
+    
+```
+
+- `cfg.runner` : configuration for run
+
+  e.g.
+
+  ```python
+  cfg.runner : {'type': 'EpochBasedRunner', 'max_epochs': 12}
+  ```
+
+- `default_args` : dict, 
+
+  - `model` : build된 model instance
+
+  - `optimizer` : build된 optimizer instance
+
+  - `work_dir` : path of directory 
+
+  - `logger` : instance of logger
+
+    ```python
+    from mmdet.utils import get_root_logger
+    logger = get_root_logger(log_level=cfg.log_level)	# 예시임
+    ```
+
+  - `meta` : meta information (dict)
+
+
+
+#### timestamp
+
+현재 시간을 담은 runner class attribute
+
+```python
+runner.timestamp = timestamp
+print(f"timestamp : {timestamp}")	# 20220519_164937
+```
+
+
+
+#### register_training_hooks()
+
+다양한 동작이 구현된 여러 hook을 담은 method로, 입력 args(config정보)에 method들이 call된다.
+
+```python
+runner.register_training_hooks(
+        lr_config = cfg.lr_config,
+        optimizer_config = cfg.optimizer_config,
+        checkpoint_config = cfg.checkpoint_config,
+        log_config = cfg.log_config,
+        momentum_config = cfg.get('momentum_config', None),
+    	timer_config = 
+        custom_hooks_config=cfg.get('custom_hooks', None))
+```
+
+- `lr_config` : learning rate 관련 configuration
+
+  ```python
+  {
+   'policy': 'step',
+   'warmup': 'linear',
+   'warmup_iters': 1000,
+   'warmup_ratio': 0.001,
+   'step': [8, 11]
+  }
+  ```
+
+  > dict형식이 아니라 custom hook function이여도 괜찮지만, mvcc를 사용하는 경우에는 dict형식으로 사용하자.
+
+- `optimizer_config` : optimizer 관련 configuration 
+
+  e.g. `optimizer_config : {'grad_clip': None}`
+
+- `checkpoint_config` : 
+
+  e.g.
+
+  ```
+  {'interval': 1, 
+   'meta': 
+   	{'mmdet_version': '2.24.1240d7a3',
+   	'CLASSES': ('person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train', 'truck', 'boat', 'traffic light', 'fire hydrant', 'stop sign', 'parking meter', 'bench', 'bird', 'cat', 'dog', 'horse', 'sheep', 'cow', 'elephant', 'bear', 'zebra', 'giraffe', 'backpack', 'umbrella', 'handbag', 'tie', 'suitcase', 'frisbee', 'skis', 'snowboard', 'sports ball', 'kite', 'baseball bat', 'baseball glove', 'skateboard', 'surfboard', 'tennis racket', 'bottle', 'wine glass', 'cup', 'fork', 'knife', 'spoon', 'bowl', 'banana', 'apple', 'sandwich', 'orange', 'broccoli', 
+  'carrot', 'hot dog', 'pizza', 'donut', 'cake', 'chair', 'couch', 'potted plant', 'bed', 'dining table', 'toilet', 'tv', 'laptop', 'mouse', 'remote', 'keyboard', 'cell phone', 'microwave', 'oven', 'toaster', 'sink', 'refrigerator', 'book', 'clock', 'vase', 'scissors', 'teddy bear', 'hair drier', 'toothbrush')
+  	}
+  }
+  ```
+
+  
+
+- `log_config` : ` log_config : {'interval': 50, 'hooks': [{'type': 'TextLoggerHook'}]}`
+
+  key값 `type` 을 통해 사전에 정의된 log를 위한 특정 Hook을 registry에서 호출
+
+- `momentum_config` : 연구하기 이전까진 `None`할당. 
+
+- `timer_config` : `{'type': 'IterTimerHook'}`
+
+  key값 `type` 을 통해 사전에 정의된 timer를 위한 특정 Hook을 registry에서 호출
+
+  None값을 할당해도 defualt가 `dict(type='IterTimerHook')` 이다.
+
+- `custom_hooks_config` : `[{'type': 'NumClassCheckHook'}]`
+
+  key값 `type` 을 통해 사전에 정의된 특정 Hook을 registry에서 호출
+
+```python
+def register_training_hooks(self,
+                            lr_config,
+                            optimizer_config=None,
+                            checkpoint_config=None,
+                            log_config=None,
+                            momentum_config=None,
+                            timer_config=dict(type='IterTimerHook'),
+                            custom_hooks_config=None):
+    """Register default and custom hooks for training.
+
+        Default and custom hooks include:
+
+        +----------------------+-------------------------+
+        | Hooks                | Priority                |
+        +======================+=========================+
+        | LrUpdaterHook        | VERY_HIGH (10)          |
+        +----------------------+-------------------------+
+        | MomentumUpdaterHook  | HIGH (30)               |
+        +----------------------+-------------------------+
+        | OptimizerStepperHook | ABOVE_NORMAL (40)       |
+        +----------------------+-------------------------+
+        | CheckpointSaverHook  | NORMAL (50)             |
+        +----------------------+-------------------------+
+        | IterTimerHook        | LOW (70)                |
+        +----------------------+-------------------------+
+        | LoggerHook(s)        | VERY_LOW (90)           |
+        +----------------------+-------------------------+
+        | CustomHook(s)        | defaults to NORMAL (50) |
+        +----------------------+-------------------------+
+
+        If custom hooks have same priority with default hooks, custom hooks
+        will be triggered after default hooks.
+        """
+    # 대부분 registry에서 class호출
+    self.register_lr_hook(lr_config)
+    self.register_momentum_hook(momentum_config)
+    self.register_optimizer_hook(optimizer_config)
+    self.register_checkpoint_hook(checkpoint_config)
+    self.register_timer_hook(timer_config)
+    self.register_logger_hooks(log_config)
+    self.register_custom_hooks(custom_hooks_config)
+```
+
+
+
+
+
+#### run()
+
+```python
+runner.run(data_loaders = data_loaders,
+           workflow = cfg.workflow)
+```
 
 
 
