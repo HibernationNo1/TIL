@@ -78,17 +78,30 @@ data_loader_train = torch.utils.data.DataLoader(
 
 
 
-> ```python
-> train_features, train_labels = next(iter(data_loader_train))
-> print(f"train_features: {train_features.size()}")  # torch.Size([batch_size, channel, height, width])
-> print(f"label : {train_labels.size()}")		# torch.Size([32])
-> ```
+**data 확인**
 
-- `torch.utils.data.DataLoader` 의 return값에 `next(iter())`  를 적용하면 [`data`, `labels`]를 return하며, `data`는 mini batch로 구성된 input data
+1.  ```python
+    train_features, train_labels = next(iter(data_loader_train))
+    print(f"train_features: {train_features.size()}")  # torch.Size([batch_size, channel, height, width])
+    print(f"label : {train_labels.size()}")		# torch.Size([32])
+    ```
 
-  `labels`은 mini batch로 구성된 label이다.
-  
-  
+   - `torch.utils.data.DataLoader` 의 return값에 `next(iter())`  를 적용하면 [`data`, `labels`]를 return하며, `data`는 mini batch로 구성된 input data
+
+   - `labels`은 mini batch로 구성된 label이다.
+
+2. ```python
+   for data_batch in data_loader_train:
+       train_features, train_labels = data_batch
+   ```
+
+   
+
+
+
+
+
+
 
 #### sampler.set_epoch
 
@@ -226,7 +239,6 @@ class CustomImageDataset(Dataset):
 > from data import custom_dataset
 > train_dataset = custom_dataset.CustomImageDataset(config, transform=torchvision_transform)
 > ```
-
 
 
 
