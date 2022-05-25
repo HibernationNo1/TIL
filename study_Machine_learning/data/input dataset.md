@@ -1,18 +1,22 @@
 # input dataset
 
+
+
+## coco dataset
+
 train dataset은 `images`, `annotations`, `categories` 세 개의 키로 나눈다.
 
 **`images`** : 각각 image의 information (list)
 
 **`images[0]`**
 
-- `file_name`
+- `file_name`  : str
 
-- `height`
+- `height` : int
 
-- `width`
+- `width` : int
 
-- `image_id`
+- `id` : int (image_id)
 
 
 
@@ -20,12 +24,23 @@ train dataset은 `images`, `annotations`, `categories` 세 개의 키로 나눈�
 
 **`annotations[0]`**
 
-- `segmentation`
-- `iscrowd`
-- `image_id`
-- `bbox`
-- `category_id`
-- `object_id`
+- `segmentation` : list(float)
+
+  > [[x_1, y_1, x_2, y_2, ...., x_n, y_n]]
+
+- `iscrowd` : int (0 or 1)
+
+- `image_id` : int
+
+- `bbox` : list(float)
+
+  > `[left_top_y, left_top_x, y_value, x_value]`,
+  >
+  > `(right_bottom_y = left_top_y + y_value, right_bottom_x = left_top_x + x_value)`
+
+- `category_id` : int 
+
+- `id` : int  (conment id, 의미 없음)
 
 
 
@@ -33,9 +48,9 @@ train dataset은 `images`, `annotations`, `categories` 세 개의 키로 나눈�
 
 **`categories[0]`**
 
-- `supercategory`
-- `object_id`
-- `name`
+- `supercategory` : str
+- `id` : int (category_id)
+- `name` : str
 
 
 
