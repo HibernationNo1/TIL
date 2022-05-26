@@ -100,9 +100,25 @@ splitext("test_config.py")		# ('test_config', '.py')
 
 
 
-#### abspath()
+##### abspath()
 
 `abspath('dir_name')`과 `os.path.join(os.getcwd(), 'dir_name')`는 같은 동작을 한다.
+
+```python
+os.path.abspath("dir_name")
+```
+
+
+
+##### isdir()
+
+dir이 존재하면 return True, else False
+
+```python
+os.path.isdir("dir_path")
+```
+
+
 
 
 
@@ -142,7 +158,7 @@ os.path.isdir('test_name1')
 
 
 
-#### .listdir()
+#### listdir()
 
 전달받은 path의 위치에 존재하는 모든 file과 directory를 list로 반환
 
