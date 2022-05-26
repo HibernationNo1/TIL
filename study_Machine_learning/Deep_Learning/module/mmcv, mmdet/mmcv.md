@@ -718,7 +718,15 @@ runner.run(data_loaders = data_loaders,
            workflow = cfg.workflow)
 ```
 
+- `data_loaders` : list[:obj:`DataLoader`] 
 
+  `DataLoader` : object of  `torch.utils.data.dataloader.DataLoader`
+
+- `workflow` : (phase, epochs) 를 element로 가진 list
+
+  E.g.
+
+  `[('train', 2), ('val', 1)]` : 2 epoch는 training을 하고 1epoch는 validation을 진행하며 이를 반복한다.
 
 
 
