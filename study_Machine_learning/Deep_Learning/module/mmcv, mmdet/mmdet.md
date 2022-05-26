@@ -192,13 +192,15 @@ set_random_seed(seed, deterministic=deterministic)
 
 
 
+### train_detector
+
+
+
 
 
 ## models
 
-
-
-#### build_detector
+### build_detector
 
 mmcv의 Registry를 통해 model, loss등의 module을 build한다
 
@@ -222,3 +224,89 @@ model = build_detector(
   ` type(model)` : `<class 'mmdet.models.detectors.mask_rcnn.MaskRCNN'> `형식의 정의된 model class
 
   
+
+#### init_weights()
+
+호출시 model의 parameters가 `build_detector` 의 입인 config의 구성으로 initialize된다.
+
+
+
+
+
+## datasets
+
+### build_dataset()
+
+dataset을 build할때 사용되는 method
+
+```python
+datasets = [build_dataset(cfg.data.train)]
+```
+
+> `cfg.data.train`  : training을 위한 config
+>
+> ```
+> # cfg.data.train
+> {'type': 
+>  'CocoDataset',
+>  'ann_file': 'data/coco/annotations/instances_train2017.json',
+>  'img_prefix': 'data/coco/train2017/',
+>  'pipeline': 
+>  	[
+>      {'type':
+>         'LoadImageFromFile'
+>         },
+>      {'type': 
+>         'LoadAnnotations',
+>         'with_bbox': True,
+>         'with_mask': True
+>         },
+>      {'type':
+>         'Resize',
+>         'img_scale': (1333, 800),
+>         'keep_ratio': True
+>         },
+>      {'type':
+>         'RandomFlip',
+>         'flip_ratio': 0.5
+>         },
+>      {'type':
+>         'Normalize',
+>         'mean': [123.675, 116.28, 103.53],
+>         'std': [58.395, 57.12, 57.375],
+>         'to_rgb': True
+>         }, 
+>      {'type':
+>         'Pad',
+>         'size_divisor': 32
+>         }, 
+>      {'type': 
+>         'DefaultFormatBundle'
+>         },
+>      {'type':
+>         'Collect',
+>         'keys': ['img', 'gt_bboxes', 'gt_labels', 'gt_masks']
+>         }
+>   	]
+> }
+> ```
+
+
+
+custom dataset이면 `mmcv.utils.registry`의 `build_from_cfg`를 반환한다. 
+
+```python
+from mmcv.utils import Registry, build_from_cfg
+
+cfg = cfg.data.train
+DATASETS = Registry('dataset')
+
+dataset = build_from_cfg(cfg, DATASETS, default_args = None)
+
+```
+
+
+
+### build_dataloader()
+
+Build PyTorch DataLoader
