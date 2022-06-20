@@ -310,3 +310,27 @@ dataset = build_from_cfg(cfg, DATASETS, default_args = None)
 ### build_dataloader()
 
 Build PyTorch DataLoader
+
+```python
+# type(dataset) : list, 	len(dataset) = 1
+#  
+# dataset[0] : CustomDataset Train dataset with number of images 1894, and instance counts:
+# +------------+-------+------------+-------+----------+-------+----------+-------+-----------+-------+
+# | category   | count | category   | count | category | count | category | count | category  | count |
+# +------------+-------+------------+-------+----------+-------+----------+-------+-----------+-------+
+# | 0 [flower] | 4892  | 1 [midrid] | 5640  | 2 [leaf] | 5583  | 3 [stem] | 10682 | 4 [fruit] | 1580  |
+# |            |       |            |       |          |       |          |       |           |       |
+# | 5 [cap]    | 1569  |            |       |          |       |          |       |           |       |
+# +------------+-------+------------+-------+----------+-------+----------+-------+-----------+-------+
+
+# train_loader_cfg : 
+# {'samples_per_gpu': 1, 'workers_per_gpu': 1, 'num_gpus': 1, 'dist': False, 'seed': 670038930, 'runner_type': 'EpochBasedRunner', 'persistent_workers': False}
+data_loaders = [build_dataloader(ds, **train_loader_cfg) for ds in dataset]
+
+# type(data_loaders) : [<torch.utils.data.dataloader.DataLoader object at 0x00000281CF927430>], <class 'list'>
+
+for i, data_batch in enumerate(self.data_loader):
+    # type(data_batch) : dict()
+    # data_batch.keys() : ['img_metas', 'img', 'gt_bboxes', 'gt_labels', 'gt_masks']
+```
+
