@@ -110,12 +110,13 @@ os.path.abspath("dir_name")
 
 
 
-##### isdir()
+##### isdir(), isfile()
 
-dir이 존재하면 return True, else False
+dir(file)이 존재하면 return True, else False
 
 ```python
 os.path.isdir("dir_path")
+os.path.isfile("file_path")
 ```
 
 
