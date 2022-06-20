@@ -180,6 +180,8 @@ $ sudo apt -y install typora
    $ sha256sum Anaconda3-2021.05-Linux-x86_64.sh
    ```
 
+   > Anaconda3-2022.05-Linux-x86_64.sh 파일 명 확인
+   
 2. 설치
    
    ```
@@ -221,14 +223,16 @@ $ sudo apt -y install typora
    5. path추가
       
       ```
-      $ sudo gedit ~/.bashrc
+      $ sudo vi ~/.bashrc
       ```
       
       text 편집기가 열리면 맨 아래줄에 추가
       
       ```
-      export PATH=~/anaconda3/bin:~/anaconda3/condabin:$PATH
+      $ export PATH="~/anaconda3/bin:~/anaconda3/condabin:$PATH"
       ```
+      
+      > 예시로, `home/hibernation/workspace/tmp` 의 위치에서 `$ bash Anaconda3-2021.05-Linux-x86_64.sh` 를 했어도 위 명령어 그대로 입력
       
       이후 terminer에서
       
@@ -236,7 +240,9 @@ $ sudo apt -y install typora
       $ source ~/.bashrc
       ```
       
-      (base뜨는지 확인)
+      >  (base)뜨는지 확인
+      >
+      > (base) 없애려면 ` $ conda deactivate`
       
       ```
       $ conda -V 
