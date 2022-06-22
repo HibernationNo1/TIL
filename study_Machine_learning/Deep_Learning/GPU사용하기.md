@@ -8,116 +8,148 @@
 
 ## 1. install
 
-### CUDA Toolkit 
-
 #### windows
 
-**1.  check GPU**
+##### graphic driver
 
-1. 그래픽카드 확인
+**1. check GPU**
 
-   장치관리자 > 디스플레이 어뎁터
+NVIDIA GTX-1060 3GB 기준
 
-2. [여기](https://www.studio1productions.com/Articles/NVidia-GPU-Chart.htm)서 CUDA core 수 확인
+- 그래픽카드 확인
 
-   > 예시
-   >
-   > ![](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2F49t3X%2FbtqyEA98R9n%2FxTxNRuRsrJeB8yW2UgHb10%2Fimg.png)
-   >
-   > NVIDIA GTX-1060 3GB는 코어 1152임을 확인
-   >
-   > CUDA Cores = **1152**
+  장치관리자 > 디스플레이 어뎁터
 
-3. 성능 확인
+- [여기](https://www.studio1productions.com/Articles/NVidia-GPU-Chart.htm)서 CUDA core 수 확인
 
-   GPU이름으로 검색 후 CUDA Compute Capability확인
+  ![](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2F49t3X%2FbtqyEA98R9n%2FxTxNRuRsrJeB8yW2UgHb10%2Fimg.png)
 
-   > NVIDIA GTX-1060이라면 
-   >
-   > [여기](https://www.wikiwand.com/en/CUDA) 서 ctrl + f로 `1060` 검색  (또는 [여기](https://en.wikipedia.org/wiki/CUDA))
-   >
-   > ![](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2F0b42E%2FbtqyGmpmz1S%2FCoqplHiiDHOyphS9sBOVe0%2Fimg.png)
-   >
-   > CUDA Compute Capability = **6.1**
+  NVIDIA GTX-1060 3GB는 코어 1152임을 확인
+
+  CUDA Cores = **1152**
+
+- 성능 확인
+
+  [여기](https://www.wikiwand.com/en/CUDA) 서 ctrl + f로 `1060` 검색  (또는 [여기](https://en.wikipedia.org/wiki/CUDA))
+
+  6.1임을 확인
+
+  ![](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2F0b42E%2FbtqyGmpmz1S%2FCoqplHiiDHOyphS9sBOVe0%2Fimg.png)
+
+  CUDA Compute Capability = **6.1**
 
 **2. graphic driver 설치**
 
-1.  [여기](https://www.nvidia.co.kr/Download/index.aspx?lang=kr) 에서 graphic driver를 설치
+ [여기](https://www.nvidia.co.kr/Download/index.aspx?lang=kr) 에서 graphic driver를 설치
 
-   > 제품유형 : GeForce
-   >
-   > 시리즈 : GeForce 10 Series
-   >
-   > 계열 : GeForce GTX 1060
-   >
-   > windows 10 64-bit
-   >
-   > 다운로드 타입 : Game -Ready 드라이버 : 일반 사용자용,  sutido 드라이버 : 작업툴에서 성능발휘
+> 제품유형 : GeForce
+>
+> 시리즈 : GeForce 10 Series
+>
+> 계열 : GeForce GTX 1060
+>
+> windows 10 64-bit
+>
+> 다운로드 타입 : Game -Ready 드라이버 : 일반 사용자용,  sutido 드라이버 : 작업툴에서 성능발휘
 
-**3. Download CUDA**
+##### CUDA toolkit
 
-1. 쿠다 version 확인
+**1. Download CUDA**
 
-   > NVIDIA GTX-1060이라면
-   >
-   > ![](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbeO6bC%2FbtqyGvNswxK%2FNDZCW4KvK2zKZp2ejkkuH0%2Fimg.png)
-   >
-   > CUDA Compute Capability = **6.1** 이기에 SDK = 10.0~10.1 임을 확인
+- 쿠다 version 확인
 
-2. 자신의 version에 맞게 다운
+  ![](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbeO6bC%2FbtqyGvNswxK%2FNDZCW4KvK2zKZp2ejkkuH0%2Fimg.png)
 
-   [여기](https://developer.nvidia.com/cuda-toolkit-archive)서 알맞는 version 선택
+  CUDA Compute Capability = **6.1** 이기에 SDK = 10.0~10.1 임을 확인
 
-   > ![](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fzq3zP%2FbtqyFZ2v0R5%2FpUShfkRCyKo3NvMuc8p2W0%2Fimg.png)
-   >
-   > - network는 internet을 통해 여러 번 다운받는 것
-   > - local은 한 번에 받는 것 (internet이 일정하게 문제 없다면 이걸로 받기)
-   >
-   > visual studio가 설치되어 있어야함
-   >
-   > [여기](https://visualstudio.microsoft.com/ko/thank-you-downloading-visual-studio/?sku=Community&rel=16) 에서 community 2019다운
+- 자신의 version에 맞게 다운
 
-3. 경로 지정 후 설치 (default로 지정함)
+  [여기](https://developer.nvidia.com/cuda-toolkit-archive)서 알맞는 version 선택![](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fzq3zP%2FbtqyFZ2v0R5%2FpUShfkRCyKo3NvMuc8p2W0%2Fimg.png)
 
-   > `C:\Users\마이노\AppData\Local\Temp\CUDA`
+  - network는 internet을 통해 여러 번 다운받는 것
+  - local은 한 번에 받는 것 (internet이 일정하게 문제 없다면 이걸로 받기)
 
-4. 환경 변수 추가 및 확인
+  visual studio가 설치되어 있어야함
 
-   경로를 default로 했으면 환경 변수 자동으로 추가됨
+  [여기](https://visualstudio.microsoft.com/ko/thank-you-downloading-visual-studio/?sku=Community&rel=16) 에서 community 2019다운
 
-   시스템 환경 변수 > 환경 변수
+- 경로 지정 후 설치 (default로 지정함)
 
-   `cudart64_100.dll` 가 있는 path
+  `C:\Users\마이노\AppData\Local\Temp\CUDA`
 
-   `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.0\bin`
+- 환경 변수 추가 및 확인
 
-   > 이후 pytorch를 install할때 알맞는 tookit version에 맞춰 명령어를 입력해야함
-   >
-   > [여기](https://pytorch.org/) 서 명령어 검색 가능
-   
-5. check cuda toolkit version
+  경로를 default로 했으면 환경 변수 자동으로 추가됨
+
+  시스템 환경 변수 > 환경 변수
+
+  `cudart64_100.dll` 가 있는 path
+
+  `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.0\bin`
+
+- check cuda toolkit version
+
+  ```
+  $ nvcc --version
+  ```
+
+  ```
+  nvcc: NVIDIA (R) Cuda compiler driver
+  Copyright (c) 2005-2021 NVIDIA Corporation
+  Built on Thu_Nov_18_09:52:33_Pacific_Standard_Time_2021
+  Cuda compilation tools, release 11.5, V11.5.119
+  Build cuda_11.5.r11.5/compiler.30672275_0
+  ```
+
+  > 11.5가 설치된 모습
+  >
+  > (CUDA 10.2, cuDNN 7.6.5가 가장 범용적인 version)
+
+
+
+**2. conda install**
+
+1. 가상환경 만들며 install
 
    ```
-   $ nvcc --version
+   $ conda create -n env_name python=3.8 pytorch torchvision cudatoolkit=11.7 -c pytorch -c conda-forge -y
    ```
 
+2. 명령어
+
    ```
-   nvcc: NVIDIA (R) Cuda compiler driver
-   Copyright (c) 2005-2021 NVIDIA Corporation
-   Built on Thu_Nov_18_09:52:33_Pacific_Standard_Time_2021
-   Cuda compilation tools, release 11.5, V11.5.119
-   Build cuda_11.5.r11.5/compiler.30672275_0
+   $ conda install pytorch torchvision torchaudio cudatoolkit=11.3 -c pytorch
    ```
 
-   > 11.5가 설치된 모습
-   >
-   > (CUDA 10.2, cuDNN 7.6.5가 가장 범용적인 version)
+   > 또는 [여기](https://pytorch.org/get-started/locally/) 
+
+
+
+cudatoolkit의 version에 따라 `torch.cuda.is_available()` 의 `False`, `True`여부가 달라지니 반드시 확인
+
+
+
+##### cuDNN
+
+**Download cuDNN**
+
+> Tensorflow사용 시 필요
+
+cuDNN는 회원가입을 해야 다운로드 가능
+
+[여기](https://developer.nvidia.com/cudnn)에서 로그인 후 다운로드
+
+다운받은 file(`bin`, `include`, `lib`)을 
+
+`C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.4` 에 옮긴다.
 
 
 
 
 
 #### linux
+
+##### graphic driver
 
 1. GPU확인
 
@@ -153,33 +185,35 @@
 
       `Diver Version`: 확인. 적용 안되어있으면 `sudo reboot`
 
-4. download cuda coolkit
+   
 
-   [여기](https://developer.nvidia.com/cuda-toolkit-archive)서 알맞는 version 선택
+##### CUDA toolkit
 
-   선택하면 명령어를 알려줌. 따라서 설치
+[여기](https://developer.nvidia.com/cuda-toolkit-archive)서 알맞는 version 선택
 
-   1. install과정에서 `Abort`와 `Continue` 선택은 `Continue` 선택
+선택하면 명령어를 알려줌. 따라서 설치
 
-   2. 다음과 같은 error가 난다면 gcc가 설치 안된 상태
+1. install과정에서 `Abort`와 `Continue` 선택은 `Continue` 선택
 
-      ```
-       Failed to verify gcc version. See log at /var/log/cuda-installer.log for details.
-      ```
+2. 다음과 같은 error가 난다면 gcc가 설치 안된 상태
 
-      이럴땐 필수 프로그램 install
+   ```
+    Failed to verify gcc version. See log at /var/log/cuda-installer.log for details.
+   ```
 
-      ```
-      $ sudo apt-get install build-essential 
-      ```
+   이럴땐 필수 프로그램 install
 
-   3. `accept/declin/quit` 뜨면 accept입력
+   ```
+   $ sudo apt-get install build-essential 
+   ```
 
-   4. CUDA Installer에서 
+3. `accept/declin/quit` 뜨면 accept입력
 
-      `Driver`에서 체크 해제 후 `install`에서 엔터
+4. CUDA Installer에서 
 
-5. CUDA Toolkit 환경 변수 추가 
+   `Driver`에서 체크 해제 후 `install`에서 엔터
+
+1. CUDA Toolkit 환경 변수 추가 
 
    ```
    $ sudo sh -c "echo 'export PATH=$PATH:/usr/local/cuda-11.2/bin' >> /etc/profile"
@@ -190,7 +224,7 @@
 
    > cuda version 잘 확인할 것
 
-6. check 
+2. check 
 
    ```
    nvcc -V
@@ -212,21 +246,7 @@
 
   
 
-### cuDNN
-
-#### windows
-
-**Download cuDNN**
-
-cuDNN는 회원가입을 해야 다운로드 가능
-
-[여기](https://developer.nvidia.com/cudnn)에서 로그인 후 다운로드
-
-다운받은 file(`bin`, `include`, `lib`)을 
-
-`C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.4` 에 옮긴다.
-
-#### linux
+##### cuDNN
 
 [여기](https://developer.nvidia.com/cudnn)에서 로그인 후 다운로드
 
