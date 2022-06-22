@@ -625,7 +625,11 @@ print(scipy.__version__)
 
 ### Ubuntu
 
+
+
 ### windows
+
+#### graphic driver
 
 **1. check GPU**
 
@@ -667,7 +671,9 @@ NVIDIA GTX-1060 3GB 기준
 > 
 > 다운로드 타입 : Game -Ready 드라이버 : 일반 사용자용,  sutido 드라이버 : 작업툴에서 성능발휘
 
-**3. Download CUDA**
+#### CUDA toolkit
+
+**1. Download CUDA**
 
 - 쿠다 version 확인
   
@@ -700,7 +706,35 @@ NVIDIA GTX-1060 3GB 기준
   
   `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.0\bin`
 
-**4. Download cuDNN**
+
+
+**2. conda install**
+
+1. 가상환경 만들며 install
+
+   ```
+   $ conda create -n env_name python=3.8 pytorch torchvision cudatoolkit=11.7 -c pytorch -c conda-forge -y
+   ```
+
+2. 명령어
+
+   ```
+   $ conda install pytorch torchvision torchaudio cudatoolkit=11.3 -c pytorch
+   ```
+
+   > 또는 [여기](https://pytorch.org/get-started/locally/) 
+
+
+
+cudatoolkit의 version에 따라 `torch.cuda.is_available()` 의 `False`, `True`여부가 달라지니 반드시 확인
+
+
+
+#### cuDNN
+
+**Download cuDNN**
+
+> Tensorflow사용 시 필요
 
 cuDNN는 회원가입을 해야 다운로드 가능
 
@@ -709,3 +743,4 @@ cuDNN는 회원가입을 해야 다운로드 가능
 다운받은 file(`bin`, `include`, `lib`)을 
 
 `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.4` 에 옮긴다.
+
