@@ -49,7 +49,7 @@ parser.add_argumen("--exam")
   > - `store_const` : `add_argument()`에서 미리 지정되어 있는 `const=`에 해당하는 값이 저장된다. `const=`는 반드시 써 주어야 한다.
   >
   >   ```
-  >   parser.add_argumen("--exam", action = store_const, const = "foo")
+  >   parser.add_argumen("--exam", action = 'store_const', const = "foo")
   >   ```
   >
   > - `store_true` : 해당 인자가 명령어에 포함될 경우 True를 할당. 아니면 False 
