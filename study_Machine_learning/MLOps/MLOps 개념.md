@@ -6,15 +6,51 @@ MLOps의 핵심은 머신러닝 학습 주기 관리의 표준화 및 간소화�
 
 
 
-#### 사전 지식
+### MLOps구성 요소
 
-Machine Learning system은 다음과 같은 상황에서 학습과 모델을 배포한다.
+#### data
 
-- **요청 시** : 요청이 있을 땐 pipeline을 임시로 수동 실행한다.
-- **일정 기준** : label이 지정된 새 data는 매일, 매주 또는 매월 updata되기 때문에 일정 기준에 따라 model의 재학을 trigger 한다.
-- **학습 data update** : 새로운 data가 들어오는 경우 model의 재학습을 trigger한다.
-- **model performance 저하 시** : performance저하가 눈에 띄는 경우 모델을 재학습한다.
-- **data distribution의 중요한 변화 시(concept Drift)** : 온라인 model의 전체 performance를 평가하기는 어렵지만 prediction을 수행하는 데 사용되는 feature의 data distribution에 큰 변화가 있으면, model이 오래되었다는 것을 뜻한다.
+1. 데이터 수집 파이프라인 
+
+   관련 기술 : `Sqoop`, `Flume`, `Kafka`, `Flink`, `Spark Streaming`, `Airflow`
+
+2. 데이터 저장
+
+   관련 기술 : `MySQL`, `Hadoop`, `Amazon S3`, `MinlO`
+
+3. 데이터 관리
+
+   관련 기술 : `TFDV`, `DVC`, `Feast`, `Amundsen`
+
+#### model
+
+1. 모델 개발
+
+   관련 기술 : `Jupyter Hub`, `Docker`, `Kubeflow`, `Optuna`, `Ray`, `Katib`
+
+2. 모델 버전 관리
+
+   관련 기술 : `Git`, `MLflow`, `Github Action`, `Jenkins`
+
+3. 모델 학습 스케줄링 관리
+
+   관련 기술 : `Grafana`, `Kubernetes`
+
+#### serving
+
+1. 모델 패키징
+
+   관련 기술: `Docker`, `Flask`, `FaskAPI`, `BentoML`, `Kubeflow`, `TFServing`, `seldon-core`
+
+2. 서빙 모니터링
+
+   관련 기술 : `Prometheus`, `Grafana`, `Thanos`
+
+3. 파이프라인 매니징
+
+   관련 기술 : `Kubeflow`, `argo workflows`, `Airflow`
+
+
 
 
 
