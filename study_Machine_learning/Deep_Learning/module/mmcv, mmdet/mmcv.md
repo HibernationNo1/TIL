@@ -509,6 +509,58 @@ def build_detector(cfg, train_cfg=None, test_cfg=None):
 
 
 
+### insert registry ★
+
+registry에 특정 module(class)을 등록할 때
+
+`models` 라는 directory안에 module의 category별로 dir을 하나 더 만든다.
+
+그리고 각각의 dir안에서 `__init__.py`를 만들어 registry에 포함시킬 class를 `all`에 str로 적어놓는다.
+
+```
+models	- backbones
+			- __init__.py
+			- test.py
+		- dense_heads
+		- detectors
+		- losses
+		- necks
+		- plugins
+		- roi_heads
+		- seg_heads
+		- utils
+```
+
+
+
+**`test.py`**
+
+```python
+
+@BACKBONES.register_module()		
+class Test():
+    
+```
+
+>`@BACKBONES.register_module()` 데코레이터 필수
+
+
+
+**`__init__.py`**
+
+```python
+from .test import Test
+__all__ = [
+    'Test'
+]
+```
+
+이렇게 하면 registry의 backbones category에 Test라는 class가 추가된다.
+
+
+
+
+
 ### get_logger()
 
 인자로 받는 name의 logger를 생성
