@@ -2,12 +2,12 @@
 
 
 
-##### np.expand_dim()
+##### np.expand_dims()
 
 dimension을 1 expand한다.
 
 ```python
-np.expand_dim(data, axis = )
+np.expand_dims(data, axis = )
 ```
 
 > `data` : input data
@@ -16,10 +16,10 @@ np.expand_dim(data, axis = )
 >
 > ```python
 > data.shape # (28, 28)
-> np.expand_dim(data, axis = 0) # data.shape = (1, 28, 28)
-> np.expand_dim(data, axis = 1) # data.shape = (28, 1, 28)
-> np.expand_dim(data, axis = 2) # data.shape = (28, 28, 1)
-> np.expand_dim(data, axis = -1) # data.shape = (28, 28, 1)
+> np.expand_dims(data, axis = 0) # data.shape = (1, 28, 28)
+> np.expand_dims(data, axis = 1) # data.shape = (28, 1, 28)
+> np.expand_dims(data, axis = 2) # data.shape = (28, 28, 1)
+> np.expand_dims(data, axis = -1) # data.shape = (28, 28, 1)
 > #  맨 끝 차원 추가
 > ```
 

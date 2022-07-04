@@ -224,7 +224,7 @@ root:~# systemctl enable docker
 
 ## introduce
 
-### **container란?**
+### container란?
 
 호스트 OS상에 논리적인 구획(컨테이너)을 만들고, 어플리케이션을 작동시키기 위해 필요한 라이브러리나 어플리케이션 등을 하나로 모아, 마치 별도의 서버인 것처럼 사용할 수 있게 만든 것
 
@@ -260,7 +260,7 @@ doker container는 virtual machine에 비해 가볍고 시작과 중지가 빠�
   
   컨테이너 내부에서 프로세스를 기동하는 실행 계정 권한을 최소화한다. 특히 root사용자를 사용하면 큰 보안 사고로 이어질 수 있으므로 최대한 사용하지 않도록 한다.
 
-#### **container image**
+#### container image
 
 여러개의 layer로 구성된 container를 뜻한다.
 
