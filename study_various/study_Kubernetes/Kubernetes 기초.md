@@ -4,10 +4,36 @@
 
 
 
+- Pod
+
+  쿠버네티스는 Pod단위로 스케줄링, 로드밸런싱, 스케일링 등의 관리 작업을 수행한다.
+
+  > 쿠버네이트에 어떤 application을 배포하고 싶다면 최소 Pod로 구성해야 한다.
+
+  하나의 Pod는 한 개의 container 혹은 여러개의 contrainer로 이루어져 있으며, Pod내부의 여러 container는 자원을 공유한다. 
+
+
+
+
+
 쿠버네티스는 하나의 클러스터를 의미하기도 하며, 쿠버네티스 마스터와 쿠버네티스 노드로 구성되어 있다.
 
-- cubernetis node : 쿠버네티스에서 실제 컨테이너가 가동하는 노드(host가 되는 물리 머신이나 가상 머신) 
-- cubernetis master : cubernetis node를 관리하는 node
+클러스터는 하나 이상의 서버를 묶어 구축을 하게 되는데, 이를 통해 사용자는 여러 서버를 하나의 PC환경처럼 사용할 수 있게 된다.
+
+- cubernetis node(worker node) : 쿠버네티스에서 실제 컨테이너가 가동하는 노드(host가 되는 물리 머신이나 가상 머신) 
+
+  > worker node의 구성 요소
+  >
+  > kubelet : control plane으로부터 명령을 받고, 자신의 상태를 control plane으로 전달하는 역할을 하는 component
+
+- cubernetis master(control plane) : cubernetis node를 관리하고 모니터링하며, Client로부터 요청이 오면 그 요청에 맞는 worker node를 scheduling해서 해당 node로 요청을 전달한다.
+
+  > control plane의 구성 요소
+  >
+  > - API server : client로부터 오는 요청을 받는 component
+  > - controller manager
+  > - etcd(persistence store) : client로부터 오는 요청 key value형식으로 저장하는 component
+  > - ...
 
 
 
