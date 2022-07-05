@@ -6,7 +6,11 @@
 
 ## Docker container의 생명 주기
 
+
+
 1. **run**
+
+   contrainer가 없을 경우 image를 create하고 start
 
    ```
    $ docker run image_name
@@ -153,7 +157,7 @@ bbe0b7acc89c: Pull complete
 
 #### images
 
-`docker images` : 하드웨어에 저장된 container image 확인
+`docker images` : 하드웨어(local)에 저장된 container image 를 list로 출력
 
 ```
 $ docker images
@@ -164,6 +168,14 @@ $ docker images
 ```
 
 container image가 layer형식으로 저장되는 forder
+
+
+
+```
+$ docker images | grep tmp_images
+```
+
+> `tmp_images` 라는 이름의 image만 출력
 
 
 
@@ -250,8 +262,6 @@ $ docker run -d --name web  -p 80:80 nginx:latest
 
 `--name web` : web이라는 이름으로 container실행`
 
-`-d` : background mode로 실행
-
 `-p 80:80` : local host의 80번 port를 container의 80번 port로 연결
 
 이를 port를 mapping한다고 한다.
@@ -259,6 +269,8 @@ $ docker run -d --name web  -p 80:80 nginx:latest
 > `-p` : port option
 >
 > `-p 49160 : 8080`라고 적으면, `http://localhost:49160` 을 입력하면 container속 8080번 port로 연결하게 된다.
+
+
 
 
 
@@ -272,9 +284,23 @@ docker hub에 잇는 image를 사용하고자 한다면 해당 page에서 알려
 
 
 
+
+
+##### basic option
+
+- `-d` : background mode로 실행
+
+  > contrainer에서 나오더라도 계속 실행이 되어있도록
+
+- `-p` : port option (port를 사용함을 명시)
+
 - `--shm-size` : 메모리 부족을 방지하기 위해 container에 메모리 공유
 
   > `--shm-size = 8G`
+
+- `-it` : container를 실행시킴과 동시에 interactive한 terminal로 접속
+-  `--name` : container id대신, 구분하기 쉽도록 지정하는 이름
+- `/bin/bash` : container를 실행시킴과 동시에 실행할 commend (bash 사용)
 
 
 
@@ -340,7 +366,7 @@ docker hub에 잇는 image를 사용하고자 한다면 해당 page에서 알려
 
 #### ps
 
-`docker ps` : 현재 container 들의 상태를 확인
+`docker ps` : 현재 실행중인 docker container의 list를 상태를 포함하여 출력
 
 running중인, stop되어있는 container를 확인할 수 있다.
 
@@ -388,7 +414,7 @@ $ docker ps --format 'table{{.Names}}\table{{.Image}}'
 $ docker ps -a
 ```
 
-> Exited상태의 container도 보여준다.
+> Exited상태의 container도 보여준다. (실행 되었던)
 
 
 
@@ -422,11 +448,15 @@ $ docker top container_name
 $ docker log container_name
 ```
 
+- `-f` : log를 계속해서 출력함
+
 
 
 #### exec
 
 `docker exec`  : running중인 container에 추가 명령어 실행을 할 수 있도록 한다.
+
+- container 내부에서 하면 명령
 
 ```
 $ docker exec -it {cintainer name/ID} {명령어}
@@ -490,7 +520,7 @@ $ docker stop web
 
 
 
-#### rm, rmi
+#### rm
 
 `docker rm` : container를 삭제한다.
 
@@ -501,6 +531,18 @@ $ docker rm container_name
 `container_name` 이라는 이름의 container가 삭제됨
 
 container image가 삭제된게 아님!
+
+
+
+#### rmi
+
+docker의 image를 삭제한다
+
+```
+$ docker rmi container_name
+```
+
+
 
 
 
