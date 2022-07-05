@@ -1,26 +1,30 @@
 # Dockerfile
 
-개발한 program과 execution environment을 모두 container로 만든다.
+docker image를 만드는 file.
 
-dockerfile은 text file로 Top-Down해석 방식을 사용하며 container image를 create할 수 있는 고유의 지시어(instruction)를 가짐
-
-> FROM
->
-> COPY
->
-> CMD와 같은 instruction이 존재함
-
-dockerfile을 만든 후 dockerfile build 명령어를 실행해서 container를 build한다.
+특정 execution environment을 packaging한다.
 
 
 
-dockerfile의 기본적인 흐름은 FROM으로 지정한 기반 image에 RUN이나 COPY들의 명령을 사용해 패키지 설치나 파일 복사 등의 여러 가지 처리를 하여 이미지를 생성하는 것이다. 
+
+
+
 
 
 
 ### How to create Image?
 
 #### 1. create Dockerfile
+
+```
+$ touch Dockerfile
+```
+
+> 이름 반드시 Dockerfile 이여야 함
+
+
+
+
 
 1. write base image
 
@@ -128,11 +132,31 @@ dockerfile에서 가장 먼저 나오는 단어
 
 `RUN` : container build할 때 `FROM`에서 정의한 base image에서 execution할 commands를 할당
 
-> ```
-> RUN apt-get updata\
-> 	apt-get install tensorflow
-> 	# 처럼
-> ```
+```
+RUN pip install torch
+	pip install -r requirements.txt
+```
+
+
+
+
+
+##### CMD
+
+`CMD` : container 동작 시 auto로 execution할 servise나 script지정
+
+- `RUN`과의 차이점 : `RUN`은 build될때 실행되고, `CMD`는 명령어가 실행될때 동작한다.
+
+- `CMD`가 존재할 경우 가장 마지막 `CMD`만 실행 (하나의 CMD만 실행)
+
+```
+CMD python main.py
+
+# 또는 
+CMD ["echo", "Hellow world"]
+```
+
+
 
 
 
@@ -141,8 +165,8 @@ dockerfile에서 가장 먼저 나오는 단어
 `COPY` : container build시 host file을 container로 copy
 
 ```
-COPY requirements.txt requirements.txt
-# requirements.txt을 requirements.txt라는 이름으로 container 현재 위치에 copy
+COPY tmp_1/requirements.txt tmp_2/requirements.txt
+# tmp_1/requirements.txt을 tmp_2에 requirements.txt라는 이름으로 container copy
 
 RUN mkdir /code
 COPY inference.py ./code
@@ -170,6 +194,8 @@ COPY ./ ./		# 현재 위치의 모든 파일을 copy
 `WORKDIR` : container build시 commend가 execution될 작업 directory를 설정
 
 > RUN, CMD, ADD, COPY등이 이루어질 기본 디렉토리를 설정
+>
+> 해당 dir이 없다면 create
 
 ```
 WORKDIR /usr/src/app
@@ -233,15 +259,16 @@ Dockerfile 에서 위와 같이 생성한 VOLUMS은 호스트OS의 /var/lib/dock
 
 `EXPOSE` : container 동작 시 외부에서 using할 port 지정
 
+```
+EXPOSE <port> # 또는
+EXPOSE <port>/<protocol>
+```
+
+```
+EXPOSE 8080
+```
 
 
-##### CMD
-
-`CMD` : container 동작 시 auto로 execution할 servise나 script지정
-
-- `RUN`과의 차이점 : `RUN`은 build될때 실행되고, `CMD`는 명령어가 실행될때 동작한다.
-
-- `CMD`가 존재할 경우 가장 마지막 `CMD`만 실행
 
 
 
@@ -286,4 +313,46 @@ docker multi stage build는 여러 container image를 사용하여 처리하고 
   > `hibernation/segmentation_inference` : container name
   >
   > 위 명령어는 변경점이 있는 source code가 위치한 곳에서 실행해야 한다.
+
+
+
+
+
+## 예시
+
+```
+$ touch Dockerfile
+```
+
+
+
+```
+FROM ubuntu:18.04
+
+RUN apt-get update
+
+CMD ["echo", "Hellow world"]
+```
+
+
+
+```
+$ docker build -t test:v1.0.0 .
+```
+
+
+
+```
+$ docker run test:v1.0.0
+```
+
+
+
+**결과**
+
+`echo` 명령으로 인한 출력
+
+```
+Hellow world
+```
 
