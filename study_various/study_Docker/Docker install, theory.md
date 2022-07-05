@@ -6,88 +6,67 @@
 
 ## install
 
-#### WSL
 
-docker를 설치하기 전 WSL설치
-
-> windows 사용시 설치 
 
 #### DOCKER
 
-https://docs.docker.com/
+[공식 문서](https://docs.docker.com/engine/install/ubuntu/)
 
-- [Install Docker Desktop on Windows | Docker Documentation](https://docs.docker.com/desktop/windows/install/)
-  
-  실제 Docker server를 운영하기 보다는 Docker appilcation 개발자들이 사용하는 platform
+**Install using the repository**
 
-- ['Docker for linux'](https://docs.docker.com/engine/install/ubuntu/)
-  
-  실제 Docker server를 운영
+1. install docker의 prerequisite packge
 
-**Download 후 직접설치**
-
-외부 network가 불가능할 때 또는 windows
-
-**Repository를 이용해서 설치**
-
-외부 network가 사용 가능할 때
-
-1. 요구하는 program install
-   
-   ```
-   $ sudo apt-get update
-   ```
-   
    ```
    $ sudo apt-get install \
-       apt-transport-https \
        ca-certificates \
        curl \
        gnupg \
        lsb-release
    ```
 
-2. Dorker와 암호화된 통신을 하기 위해 docker공식 GPG키 추가
-   
+2. GPH key추가
+
    ```
-   $ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+   $ sudo mkdir -p /etc/apt/keyrings
+   $ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
    ```
 
-3. URL등록
-   
-   apt로 docker를 설치하기 위해 docker stable ripository 추가
-   
-   > CPU가 x86_64또는 amd64계열인 경우 아래 명령어
-   
+3. repository를 follow하도록 설정
+
    ```
    $ echo \
-     "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+     "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
      $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
    ```
-   
-4. install docker-ce, docekr-ce-cli, dontainerd.io
-   
+
+   > arm기반의 cpu인 경우 위 명령어 대신 다른 명령어 사용(검색하기)
+
+4. install Docker Engine (최신 version)
+
    ```
    $ sudo apt-get update
-   ```
-   
-   ```
-   $ sudo apt-get install docker-ce docker-ce-cli containerd.io
+   $ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
    ```
 
-5. check 
-   
+   > 특정 version의 docker engine을 install하고자 한다면 공식 문서 참고
+
+5. check
+
    ```
    $ sudo docker run hello-world
    ```
-   
-   tesk image를 다운로드
+
+   `Hello from Docker!` 이 포함된 출력문이 나오면 된것
+
+
 
 **Uninstall old versions**
 
 ```
-$ sudo apt-get remove docker docker-engine docker.io containerd runc
+$ sudo apt-get remove docker docker-ce docker-ce-cli containerd.io docker-compose-plugin
 ```
+
+
 
 #### NVIDIA DOCKER
 
