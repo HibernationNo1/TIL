@@ -14,6 +14,8 @@ https://www.virtualbox.org/wiki/Downloads
 
 
 
+
+
 ### setting
 
 - **Right Control**
@@ -76,9 +78,21 @@ VirtualBox 실행, 새로 만들기
 
 - 64bit가 보이지 않을 땐 PC의 BIOS에서 가상화(Virtualization, TV) 기능을 킬 것
 
-메모리 크기 : 전체 메모리의 4분의 1 정도
+메모리 크기 : 전체 메모리의 4분의 1 정도 (가능하면 8GB 이상)
 
-`지금 새 가상 하드 디스크 만들기` : VDI, 동적 할당, 디스크 크기 원하는 만큼 할당
+`지금 새 가상 하드 디스크 만들기` : 10GB할당 (최소), VDI, 동적 할당, 디스크 크기 원하는 만큼 할당(10GB 이상)
+
+
+
+iso는 [여기](https://releases.ubuntu.com/)서 다운 (가능하면 20.04)
+
+시작 > 시동 디스크 선택 > 다운받은 iso 파일
+
+
+
+
+
+
 
 
 
@@ -132,3 +146,70 @@ VirtualBox 실행, 새로 만들기
 
 Virtual machine의 세 줄 tap 클릭 - 스냅샷 - 상단 찍기 버튼
 
+
+
+### manage Ubuntu
+
+#### 1. 내보내기, 가져오기
+
+VirtualBox의 내보내기, 가져오기를 통해 설치한 ubuntu를 여러개처럼 따로따로 사용할 수 있다.
+
+1. 내보내기
+
+   VirtualBox에서 ubuntu 전원 꺼짐 상태로, 파일 - 가상 시스템 내보내기 -  설치한 ubuntu 선택하고 다음 - 원하는 위치
+
+2. 가져오기
+
+   파일 - 가상 시스템 가져오기 -  이전에 내보내기 한 ubuntu 선택 
+
+
+
+#### 2. 스펙 업그레이드
+
+- CPU core개수 
+
+  가상머신 > 설정 > 시스템 > 프로세서
+
+  
+
+
+
+Ubuntu 가상머신 저장소, 파티션 용량 늘리는 법
+
+1. 가상머신 저장소 용량 늘리기
+
+   1. Ubuntu, VirtureBox 종료
+
+   2. modifyhd 명령어 실행
+
+      `"버추얼박스가 설치된 위치(경로)" modifyhd "용량을 조절할 가상머신 파일 위치(경로).vid" --resize 용량`
+
+      ```
+      "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" modifyhd "C:\Users\마이노\VirtualBox VMs\Ubuntu-Desktop 1\Ubuntu-Desktop-inital-disk002.vdi" --resize 20480 
+      ```
+
+      > 버추얼박스가 설치된 위치(경로) : `C:\Program Files\Oracle\VirtualBox\VBoxManage.exe`
+      >
+      > 용량을 조절할 가상머신 파일 위치(경로) : `C:\Users\마이노\VirtualBox VMs\Ubuntu-Desktop\Ubuntu-Desktop.vdi`
+      >
+      > 늘릴 용량 : 10G `10240` -> 20G `20480`
+
+2. 파티션 용량 늘리기
+
+   가상머신 저장소 용량을 늘렸으면, Ubuntu에서 실제 사용 가능한 용량이 커질 수 있도록 해야 한다.
+
+   1. **GParted** 라이브러리를 설치 (dist 파티션 설청 프로그램)
+
+      ```
+      sudo apt-get install gparted 
+      ```
+
+      > 불필요한 패키지가 설치되어 있어서 용량이 부족하다는 메시지 때문에 설치가 안되면 `sudo apt autoremove`
+
+   2. GParted 실행 (검색해서 열자)
+
+      main partition이 무엇인지 확인 후 resize하자
+
+      (내꺼 partition은 /dev/sda5, file System = ex4 인 것을 resize했다)
+
+      resize한 후 초록색 확인 버튼 눌러서 적용
