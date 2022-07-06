@@ -118,6 +118,18 @@
 
 ### install ubuntu in VirtualBox
 
+- 화면 크기
+
+  가상 머신 선택 > 설정 > 디스플레이 > 크래픽 컨드롤러를 `VMSVGA` 에서 `VboxVGA`으로 선택 
+
+  > 가상머신 창을 반응형으로 변경
+  >
+  > 이 때 ubuntu가 정상작동이 안되며 검은화면만 계속 될 경우 다시 `VMSVGA` 로 변경 >> 화면 크기 자동조절 됨
+
+
+
+
+
 1. 시작
 
    시작 - 시동 디스크 선택 - **Ubuntu 설치** 과정에서 다운받은 Ubuntu .iso 파일 선택
@@ -196,61 +208,52 @@
 
       > new password : 설정할 root 비밀번호입력
       >
-      > password updata successfully 뜰 거임  
+      > password updata successfully 뜰 거임  녀애 
 
    
-
-
 
 2. 게스트 확장 설치 진행 (window10과 통신을 하기 위해)
 
-   Oracle VM VirtualBox의 장치 - 게스트 확장 CD 이미지 삽입 - ps 입력 - 설치 완료
+   windows와 ubuntu사이의 붙여넣기가 적용되지 않는 경우
+
+   실행중인 가상환경 창(Oracle VM VirtualBox)의 장치 탭 - 게스트 확장 CD 이미지 삽입 선택
 
    > cd룸에 cd넣은거라고 생각하면 됨
-
-   ubuntu 바탕화면의 왼쪽에 cv아이콘 누른 후 VBoxLinuxAdditions.run 실행
-
-   > VBoxLinuxAdditions.run은 VirtualBox 크기에 맞춰 Ubuntu 화면도 크기가 조절되게 해주는 file
    >
-   > `gcc make perl dkms` 이 없어서 설치가 되지 않는다면
+   > - (VERR_PDM_MEDIA_LOCKED)에러 뜨면 이미 삽입되어있어서 락이 걸려있다는 내용 >> 다시 설정 필요함
    >
-   > ```
-   > $ sudo apt-get update
-   > $ sudo apt-get install build-essential gcc make perl dkms
-   > ```
+   >   해당 가상머신 종료 후 VirtualBox 메인화면의 가상머신 선택 > 설정 - 저장소 VBoxGuestAdditions.iso 가 있음 (꺼내가 다시 넣어야 인식됨)
    >
-   > sudo로 gcc설치 후 
+   > - 우측 속성칸 '광학 드라이브(D)' 의 선택버튼 옆 파란색 버튼 클릭 > `가상 드라이브에서 디스크 꺼내기` 클릭 
    >
-   > ```
-   > sudo ./VBoxLinuxAdditions.run
-   > ```
-   >
-   > 파일 위치에서 직접 실행, 이후 reboot
-
-   apt과정에서 오류가 발생한다면 
-
-   ```
-   # apt -get updata
-   ```
-
+   > - 다시 가상머신 on > 장치 > 게스트 확장 CD 이미지 삽입 선택, >> 실행 (인증 후 terminal 뜨고 진행하다 완료)
    
-
-   그 외 오류로 안되면
-
-   그냥 우측상단 화살표 클릭 - 설정 - 디스플레이 - 해상도  1280:960으로 변경
-
-
+   창 뜨면 실행(run) 
+   
+    인증 후 terminal 뜨고 진행하다 완료
+   
+   터미널 마지막에 
+   
+   ```
+   Press Return to close this window...
+   ```
+   
+   뜨면 완료
+   
+   
 
 
 
 3. 언어팩 설치
 
+   한글 언어팩 설치 안될경우만 해당
+   
    ```
    # nl /etc/default/locale
    ```
 
    을 입력하면 각 기능에 어떤 언어가 사용되어 표현되는지 확인할 수 있다.
-
+   
    > en_US.UTF-8 : 영어 
    >
    > ko_KR.UTF-8 : 한글
@@ -258,37 +261,43 @@
    위 언어를 다른 언어로 바꾸려면 해당 언어팩이 있어야 한다.
 
    1. 한글 언어팩
-
+   
       ```
       # apt -y install language-pack-ko
       ```
 
    2. 영어 언어팩
-
+   
       ```
       # apt -y install language-pack-en
       ```
 
    언어 변환
-
+   
    ```
-   # updata-locale LANG=ko_KR.UTF-8 LC_MESSAGES=POSIX
+   # update-locale LANG=ko_KR.UTF-8 LC_MESSAGES=POSIX
    ```
 
    > en_US.UTF-8 에서 ko_KR.UTF-8로 변환
 
+   이후 MV logout후 다시 login
+
+   
+   
    **추가**
-
-   virtualBox에서 os의 설정 -> 일반 -> 고급 의
-
+   
+   virtualBox에서 가상머신의 설정 -> 일반 -> 고급 의
+   
    - 클립보드 공유, 드래그 앤 드롭 을 **양방향** 으로 해야 window에서 복사한거 ubuntu안에서 붙여넣기 가능
 
 
 
 4. 한글 입력 키 설정( fcitx-hangul 설치)
 
-   1. fcitx-hangul 설치
+   `Ctrl + space`  으로 한글 전환이 안될 경우(기본적으로 `Ctrl + space` 만 가능)
 
+   1. fcitx-hangul 설치
+   
       ```
       sudo apt-get update
       sudo apt-get install fcitx-hangul
@@ -301,7 +310,7 @@
       - input source에 korean 설정 후 해당 language setting의 keyboard input method system을 fcitx로 변경
 
       또는
-
+   
       - input source에 korean 설정 후 manage installed Languages누른 후 install 진행
       - 오른쪽 상탄 tap의 키보드 아이콘 클릭 후 현재 입력기 설정
       - 입력 방법 : 한국어 추가
@@ -385,108 +394,403 @@
 
 
 
-**추가 설치 프로그램**
+### install  
 
-- vscode 설치
+##### chrome
 
-  1. 홈페이지에서 알맞는 모델 다운
+```
+$ wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+$ sudo apt install ./google-chrome-stable_current_amd64.deb
+```
 
-     > default로 install하지 말고 file을 다운
 
-  2. `.deb` file 실행
 
-     ```
-     $ cd ~/Downloads 
-     $ sudo dpkg -i code*.deb
-     ```
+##### vscode 
 
-     완료
+1. [홈페이지](https://code.visualstudio.com/download)에서 알맞는 모델 다운
 
-  > **consolas** font download in ubuntu
+   > default로 install하지 말고 file을 다운
+
+2. `.deb` file 실행
+
+   ```
+   $ cd ~/Downloads 
+   $ sudo dpkg -i code*.deb
+   ```
+
+   완료
+
+> **consolas** font download in ubuntu
+>
+> Referance : https://gist.github.com/sigoden/d01ad118da677f796bab01781b7eae23
+>
+> 그대로 따라한 후 font setting에 `"YaHei Consolas Hybrid"` 추가
+
+
+
+##### typora 
+
+```
+$ wget -qO - https://typora.io/linux/public-key.asc | sudo apt-key add -
+$ sudo add-apt-repository 'deb https://typora.io/linux ./'
+$ sudo apt -y install typora
+```
+
+
+
+##### curl, vim
+
+```
+$ sudo apt-get install -y curl vim
+```
+
+> 다른 text편집할때 vim으로 하려면 반드시 설치
+
+
+
+##### git 
+
+```
+$ sudo apt-get install git
+$ git --version
+
+$ git config --global user.name "HibernationNo1"
+$ git config --global user.mail "winter4958@gmail.com"
+```
+
+
+
+##### anaconda
+
+[여기](https://repo.anaconda.com/archive/) 에서 아래 버전 선택해서 다운
+
+[Anaconda3-2021.05-Linux-x86_64.sh](https://repo.anaconda.com/archive/Anaconda3-2021.05-Linux-x86_64.sh)
+
+- download 
+
+  ```
+  $ wget https://repo.anaconda.com/archive/Anaconda3-2021.05-Linux-x86_64.sh
+  ```
+
+  > 년도에 따라 version 알맞게 사용. 	21.05가 현재까진 범용적
+
+- start install process
+
+  ```
+  $ sudo bash Anaconda3-2021.05-Linux-x86_64.sh
+  ```
+
+  ```
+  Please, press ENTER to continue
+  >>> 
+  뜨면 Enter하고 다 읽어내린 후 
+  ```
+
+  ```
+  Do you accept the license terms? [yes|no]
+  Please answer 'yes' or 'no':'
+  >>> 
+  뜨면 yes 입력 후 Enter
+  ```
+
+  ```
+  Anaconda3 will now be installed into this location:
+  /home/hibernation/anaconda3
+  
+    - Press ENTER to confirm the location
+    - Press CTRL-C to abort the installation
+    - Or specify a different location below
+  
+  [/home/{user_name}/anaconda3] >>> 
+  뜨면 새롭게 만들 directory의 name을 입력 (걍 anaconda3으로 )
+  # 이 때 입력 후 바로 뜨는 문구 `PREFIX=/home/ainsoft/anaconda3` 를 아래 기억
+  ```
+
+  ```
+  Do you wish the installer to initialize Anaconda3
+  by running conda init? [yes|no]
+  
+  no를 입력하면 콘다는 쉘 스크립트를 수정하지 못한다. yes를 누른다
+  ```
+
+- 설치 확인
+
+  bashrc 실행
+
+  ```
+  $ sudo source ~/.bashrc
+  ```
+
+  > (base)뜨는지 확인
   >
-  > Referance : https://gist.github.com/sigoden/d01ad118da677f796bab01781b7eae23
+  > 안뜨면 `conda init`을 해야 함 (그 전에 `conda -V`을 통해 `conda : command not found` 가 뜨는지 확인)
   >
-  > 그대로 따라한 후 font setting에 `"YaHei Consolas Hybrid"` 추가
+  > ```
+  > $ conda init bash
+  > ```
+  >
+  > bash사용
 
-- typora 설치
-
-  ```
-  $ wget -qO - https://typora.io/linux/public-key.asc | sudo apt-key add -
-  $ sudo add-apt-repository 'deb https://typora.io/linux ./'
-  $ sudo apt -y install typora
-  ```
-
-- curl, vim 설치
+  check version
 
   ```
-  $ sudo apt-get install -y curl vim
+  $ conda -V 
+  ```
+
+  > 만일 `conda : command not found` 가 뜨면
+  >
+  > - path추가
+  >
+  >   ```
+  >   $ sudo vi ~/.bashrc
+  >   ```
+  >
+  >   text 편집기가 열리면 맨 아래줄에 추가
+  >
+  >   ```
+  >   export PATH="/home/{username}/ananconda3/bin:$PATH"
+  >   ```
+  >
+  >   > 위 설치 도중 만났던 PREFIX값에 + '/bin:$PATH' 
+  >
+  >   - 이후 terminer에서
+  >   
+  >     ```
+  >     $ source ~/.bashrc
+  >     ```
+  >   
+  >     > (base)뜨는지 확인
+  >     >
+  >     > (base) 없애려면 ` $ conda deactivate`
+  >   
+  >     ```
+  >     $ conda -V 
+  >     ```
+  >   
+  >   그래도 안되면 아래 명령어 실행
+  >   
+  >   ```
+  >   $ export PATH=~/anaconda3/bin:$PATH
+  >   ```
+  >   
+  >   ```
+  >   $ conda -V
+  >   ```
+  >   
+  >   
+
+
+
+##### docker
+
+[공식 문서](https://docs.docker.com/engine/install/ubuntu/)
+
+**Install using the repository**
+
+1. install docker의 prerequisite packge
+
+   ```
+   $ sudo apt-get install \
+       ca-certificates \
+       curl \
+       gnupg \
+       lsb-release
+   ```
+
+2. GPH key추가
+
+   ```
+   $ sudo mkdir -p /etc/apt/keyrings
+   $ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+   ```
+
+3. repository를 follow하도록 설정
+
+   ```
+   $ echo \
+     "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+     $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+   ```
+
+   > arm기반의 cpu인 경우 위 명령어 대신 다른 명령어 사용(검색하기)
+
+4. install Docker Engine (최신 version)
+
+   ```
+   $ sudo apt-get update
+   $ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+   ```
+
+   > 특정 version의 docker engine을 install하고자 한다면 공식 문서 참고
+   >
+   > - uninstall
+   >
+   >   ```
+   >   $ sudo apt-get remove docker docker-ce docker-ce-cli containerd.io docker-compose-plugin
+   >   ```
+   >
+   >   
+
+5. check
+
+   ```
+   $ sudo docker run hello-world
+   ```
+
+   `Hello from Docker!` 이 포함된 출력문이 나오면 된것
+
+6. 권한 설정
+
+   root user가 아닌, host의 기본 user에게도 권한을 주기 위해 
+
+   새로운 터미널 띄운 후 
+
+   ```
+   $ sudo usermod -a -G docker $USER
+   $ sudo service docker restart
+   ```
+
+   이후 MV logout후 다시 login
+
+   ```
+   $ docker ps
+   ```
+
+   > 출력 확인
+   >
+   > ```
+   > CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+   > ```
+
+
+
+##### Kubernetes(minikube)
+
+- minikube
+
+  [공식](https://minikube.sigs.k8s.io/docs/start/)
+
+  CPU 2core 이상, Memory 2GB이상, Disk : 20GB이상
+
+  ```
+  $ curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+  $ sudo install minikube-linux-amd64 /usr/local/bin/minikube
+  ```
+
+  check
+
+  ```
+  $ minikube version
+  ```
+
+- kubectl
+
+  [공식](https://kubernetes.io/ko/docs/tasks/tools/install-kubectl-linux/)
+
+  - 최신 릴리스 다운로드
+
+    ```
+    $ curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+    ```
+
+    바이너리 검증(optional)
+
+    ```
+    $ curl -LO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+    $ echo "$(<kubectl.sha256)  kubectl" | sha256sum --check
+    ```
+
+    > 검증 성공시 아래처럼 출력
+    >
+    > ```
+    > kubectl: OK
+    > ```
+
+  - 특정 version download
+
+    ```
+    $ sudo -LO "https://dl.k8s.io/release/v1.22.1/bin/linux/amd64/kubectl
+    ```
+
+    
+
+  install kubectl
+
+  ```
+  $ sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+  ```
+
+  
+
+  check
+
+  ```
+  $ kubectl version --client
+  ```
+
+  > ```
+  > Client Version: version.Info{Major:"1", Minor:"24", GitVersion:"v1.24.2", GitCommit:"f66044f4361b9f1f96f0053dd46cb7dce5e990a8", GitTreeState:"clean", BuildDate:"2022-06-15T14:22:29Z", GoVersion:"go1.18.3", Compiler:"gc", Platform:"linux/amd64"}
+  > ```
+  >
+  > 위 처럼 떠도 정상 (kubenetes server와 client의 version이 모두 출력하는 과정에서, host에서 kubenetes server를 생성하지 않았기 때문에 뜨는 문구)
+  >
+  > 이를 해결하기 위해 minukube 를 실행하여 kubenetes server를 설치
+
+- kubenetes server
+
+  ```
+  $ minikube start --driver=docker
+  ```
+
+  check
+
+  ```
+  $ minikube status
+  ```
+
+  ```
+  minikube
+  type: Control Plane
+  host: Running
+  kubelet: Running
+  apiserver: Running
+  kubeconfig: Configured
+  ```
+
+  여기서 다시 아래 명령어를 입력하면
+
+  ```
+  $ kubectl version 
+  ```
+
+  ```
+  Client Version: version.Info{Major:"1", Minor:"24", GitVersion:"v1.24.2", GitCommit:"f66044f4361b9f1f96f0053dd46cb7dce5e990a8", GitTreeState:"clean", BuildDate:"2022-06-15T14:22:29Z", GoVersion:"go1.18.3", Compiler:"gc", Platform:"linux/amd64"}
+  Kustomize Version: v4.5.4
+  Server Version: version.Info{Major:"1", Minor:"24", GitVersion:"v1.24.1", GitCommit:"3ddd0f45aa91e2f30c70734b175631bec5b5825a", GitTreeState:"clean", BuildDate:"2022-05-24T12:18:48Z", GoVersion:"go1.18.2", Compiler:"gc", Platform:"linux/amd64"}
+  
+  ```
+
+  minikube 내부에 default로 생성되는 pod들이 정상적으로 생성됐는지 확인
+
+  ```
+  $ kubectl get pod -n kube-system
+  ```
+
+   
+
+- uninstall
+
+  ```
+  $ minikube delete
   ```
 
   
 
 
 
-### manage Ubuntu
-
-#### 1. 내보내기, 가져오기
-
-VirtualBox의 내보내기, 가져오기를 통해 설치한 ubuntu를 여러개처럼 따로따로 사용할 수 있다.
-
-1. 내보내기
-
-   VirtualBox에서 ubuntu 전원 꺼짐 상태로, 파일 - 가상 시스템 내보내기 -  설치한 ubuntu 선택하고 다음 - 원하는 위치
-   
-2. 가져오기
-
-   파일 - 가상 시스템 가져오기 -  이전에 내보내기 한 ubuntu 선택 
 
 
-
-#### 2. 용량 늘리기
-
-Ubuntu 가상머신 저장소, 파티션 용량 늘리는 법
-
-1. 가상머신 저장소 용량 늘리기
-
-   1. Ubuntu, VirtureBox 종료
-
-   2. modifyhd 명령어 실행
-
-      `"버추얼박스가 설치된 위치(경로)" modifyhd "용량을 조절할 가상머신 파일 위치(경로).vid" --resize 용량`
-
-      ```
-      "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" modifyhd "C:\Users\마이노\VirtualBox VMs\Ubuntu-Desktop 1\Ubuntu-Desktop-inital-disk002.vdi" --resize 20480 
-      ```
-
-      > 버추얼박스가 설치된 위치(경로) : `C:\Program Files\Oracle\VirtualBox\VBoxManage.exe`
-      >
-      > 용량을 조절할 가상머신 파일 위치(경로) : `C:\Users\마이노\VirtualBox VMs\Ubuntu-Desktop\Ubuntu-Desktop.vdi`
-      >
-      > 늘릴 용량 : 10G `10240` -> 20G `20480`
-
-2. 파티션 용량 늘리기
-
-   가상머신 저장소 용량을 늘렸으면, Ubuntu에서 실제 사용 가능한 용량이 커질 수 있도록 해야 한다.
-
-   1.  **GParted** 라이브러리를 설치 (dist 파티션 설청 프로그램)
-
-      ```
-      sudo apt-get install gparted 
-      ```
-
-      > 불필요한 패키지가 설치되어 있어서 용량이 부족하다는 메시지 때문에 설치가 안되면 `sudo apt autoremove`
-
-   2.  GParted 실행 (검색해서 열자)
-
-      main partition이 무엇인지 확인 후 resize하자
-
-      (내꺼 partition은 /dev/sda5, file System = ex4 인 것을 resize했다)
-
-      resize한 후 초록색 확인 버튼 눌러서 적용
-
-
-
-### install Compiler
+#### install Compiler
 
 Ubuntu에선 python colpiler는 default로 설치되어 있지만, C, C++은 따로 설치를 해 주어야 한다.
 
