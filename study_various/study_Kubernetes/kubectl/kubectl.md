@@ -22,19 +22,17 @@ kubeconfig에서 구체적으로 설정이 이루어지는 부분은 clusters, u
 
 4. kubectl 설치
    
-   **직접 설치**
+   ```
+   $ curl -LO "https://dl.k8s.io/release/v1.22.0/bin/windows/amd64/kubectl.exe"
+   ```
    
-   - windows
-     
-     ```
-     $ curl -LO "https://dl.k8s.io/release/v1.22.0/bin/windows/amd64/kubectl.exe"
-     ```
-     
-     설치됐는지 버전 확인
-     
-     ```
-     $ kubectl version --client
-     ```
+   설치됐는지 버전 확인
+   
+   ```
+   $ kubectl version --client
+   ```
+
+
 
 ### initial
 
@@ -108,10 +106,10 @@ $ kubectl create -f [manifest_file]
 
 resource를 제거하는 명령어
 
-- manifest file 사용
+- manifest file(.yaml file) 사용
   
   ```
-  $ kubectl delete -f [manifest_file]
+  $ kubectl delete -f [manifest_file path]
   ```
   
   > 해당 리소스가 존재하지 않을 경우 에러 발생
@@ -156,9 +154,31 @@ resource를 강제로 즉시 삭제하는 옵션이다.
 $ kubectl delete -f sample-pod.yaml --force
 ```
 
+
+
 #### apply
 
 manifest file에 변경 사항이 있을 경우 resource updata를 하는 명령어
+
+또는 pod를 생성할때 사용한다.
+
+```
+$ kubectl applty -f <yaml_file_path>
+```
+
+> ```
+> $ kubectl applty -f <sample-pod.yaml>
+> ```
+>
+> `sample-pod.yaml` 라는 resource를 가진 pod생성
+>
+> 기존에 등록된 `sample-pod.yaml`라는 파일에 변경사항이 있다면 업데이트
+>
+> 등록된 resource가 없는 경우 `$ kubectl create` 와 같은 동작을 한다.
+
+kubenetes는 생성한 resource 상태를 내부에 기록한다. 한 번 기록된 resource의 field대부분은 변경 가능하지만, 변경 불가능한 field도 있다는 점을 기억하자.
+
+
 
 > manifest file에 변경 사항이 있을 경우 태그를 붙여 백업한다.
 > 
@@ -182,15 +202,9 @@ manifest file에 변경 사항이 있을 경우 resource updata를 하는 명령
   > 
   > `sample-pod.yaml` : 변경되기 전 `$ kubectl create`에 의해 등록된 resource
 
-```
-$ kubectl applty -f sample-pod.yaml
-```
 
-> 기존에 등록된 `sample-pod.yaml`라는 파일에 변경사항이 있다면 업데이트
-> 
-> 등록된 resource가 없는 경우 `$ kubectl create` 와 같은 동작을 한다.
 
-kubenetes는 생성한 resource 상태를 내부에 기록한다. 한 번 기록된 resource의 field대부분은 변경 가능하지만, 변경 불가능한 field도 있다는 점을 기억하자.
+
 
 #### wait
 
@@ -338,6 +352,8 @@ $ kubectl edit pod sample-pod
 
 > kind : pod 중  name : sample-pod 인 것을 편집기로 편집 시작
 
+
+
 #### set
 
 manefest file을 updata하지 않고 일부 설정값(또는 이 설정값을 가진 특정 resource)만 간단히 동작 상태를 변경할 수 있다.
@@ -357,26 +373,40 @@ manefest file을 updata하지 않고 일부 설정값(또는 이 설정값을 �
 $ kubectl set image pod sample-pod nginx-container=nginx:1.16
 ```
 
+
+
 #### get
 
 resource정보를 가져오는 명령어
 
+current namespace의 pod목록을 조회하는 명령어
+
+> namespace: kubenetes에서 리소스를 격리하는 논리적인 단위 
+
 **서식** : `kubectl get resource종류 resource명`
 
 ```
-$ kubectl get pods 
+$ kubectl get pod 
 ```
 
 > pod 목록 가져오기
 
 ```
-$ kubectl get pods sample-pod
+$ kubectl get pod sample-pod
 ```
 
 > sample-pod라는 이름의 특정 pod가져오기
+>
+> ```
+> $ kubectl get pod <pod-name>
+> ```
+>
+> ```
+> $ kubectl describe get pod <pod-name>
+> ```
 
 ```
-$ kubectl get pods -l label=val1, label2 --show-labels
+$ kubectl get pod -l label=val1, label2 --show-labels
 ```
 
 > labels에 label=val1의 key-value값과 label2가 포함된 pod를 label을 표시하여 출력
@@ -393,31 +423,43 @@ $ kubectl get all
 
 > all 카테고리에 속하는 resource목록을 출력
 
+``` 
+$ kubectl get pod -A
+```
+
+> 모든 namespace의 pod을 조회
+
+
+
 **`-o`** : 출력 옵션
 
 - `-o wide` : 더 상세히 표시
   
   ```
-  $ kubectl get pods -o wide
+  $ kubectl get pod -o wide
   ```
 
 - `-o yaml` : 아주 상세히 표시
   
   ```
-  $ kubectl get pods -o yaml
+  $ kubectl get pod -o yaml
   ```
   
   ```
-  $ kubectl get pods sample-pod -o yaml 
+  $ kubectl get pod sample-pod -o yaml 
   ```
 
 - `-o jsonpath="{}"` : 특정 값 검색
   
   ```
-  $ kubectl get pods -o jsonpath="{.metadata.name}"
+  $ kubectl get pod -o jsonpath="{.metadata.name}"
   ```
   
   > 모든 pod의 matadata.name을 출력
+
+
+
+
 
 #### describe
 
@@ -485,26 +527,28 @@ pod내부의 container에서 명령어 실행
 
 **`-it`** : `-i` : 표준 입출력을 패스스루 , `-t` :가상 터미널 생성 
 
-**서식** : `kubectl exet -it resource명 -- /bin/command명령어`
+**서식** : `kubectl exec -it resource명 -- /bin/command명령어`
 
 ```
-$ kubectl exet -it sample-pod -- /bin/ls
+$ kubectl exec -it sample-pod -- /bin/ls
 ```
 
 > `sample-pod` 라는 pod안의 container에서 bin/ls실행
 
 ```
-$ kubectl exet -it sample-pod  -c sample-container -- /bin/ls
+$ kubectl exec -it sample-pod  -c sample-container -- /bin/ls
 ```
 
 > `sample-pod` 라는 pod안의 `sample-container` 라는 container에서 bin/ls실행
 
 ```
-$ kubectl exet -it sample-pod -- /bin/bash
+$ kubectl exec -it sample-pod -- /bin/bash
 root@sample-pod:/#
 ```
 
 > pod 내부의 container에서 bin/bash실행
+
+
 
 #### logs
 
