@@ -786,6 +786,64 @@ $ git config --global user.mail "winter4958@gmail.com"
 
   
 
+##### Seldon Core
+
+1. start kubernetes (minikube)
+
+   ```
+   $ minikube start --driver=docker --cpus='4' --memory='4g'
+   ```
+
+2. install Helm
+
+   [공식](https://helm.sh/docs/intro/install/)
+
+   [여기](https://github.com/helm/helm/tags) 에서 원하는 version을 선택 후 뜨는 page에서
+
+   `Installation and Upgrading` 아래 binary file들의 link를 확인할 수 있다.
+
+   `linux amd64` 를 왼쪽 클릭 > 링크 주소 복사 
+
+   ```
+   $ wget https://get.helm.sh/helm-v3.5.4-linux-amd64.tar.gz
+   ```
+
+   > 예시v 3.5.4
+
+   ```
+   $ tar -zxvf helm-v3.5.4-linux-amd64.tar.gz
+   ```
+
+   ```
+   linux-amd64/
+   linux-amd64/helm
+   linux-amd64/LICENSE
+   linux-amd64/README.md
+   ```
+
+   binary PATH로 이동
+
+   ```
+   $ sudo mv linux-amd64/helm /usr/local/bin/helm
+   ```
+
+   > `linux-amd64/helm` 에서 `/usr/local/bin/helm` 으로
+
+   check
+
+   ```
+   $ helm version
+   ```
+
+   > [uninstall](https://helm.sh/docs/faq/uninstalling/) :
+   >
+   > ```
+   > $ which helm			# /some/path/to/helm
+   > $ rm /some/path/to/helm
+   > ```
+
+   여기까지 완
+
 
 
 
