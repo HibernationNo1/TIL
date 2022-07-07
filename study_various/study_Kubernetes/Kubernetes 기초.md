@@ -47,6 +47,19 @@
 
 > container는 하나의 process와 거의 같은 아주 작은 resource다. 또한 pod도 여러 container로 이루어진 작은 resource다. cluster는 pod와 같이 작은 resource를 대량으로 처리한다.
 
+**Custom Resource(CR)** : 쿠버네티스의 API확장판. 
+
+user가 직접 정의한 resource(pod, Deployment, Service 와 같은 것이 아닌, 개발자가 직접 정의)
+
+이러란 CR을 쿠버네티스의 API를 사용해서 관리하고 싶은 경우에 CR의 lifecycle과 동작을 관리할 controller를 구현 후 cluster에 배포해야 한다.
+
+- CR을 cluster에 등록하는 방법에는 Custom Resource Definition(CRD) 방식과 API Aggregation(AA)방식 두 가지가 있다.
+  - CRD 방식은 CR을 관리할 Custom Controller를 구현하고 배포하여 사용하게 되며 controller는 대부분 operator pattern으로 개발된다.
+
+> 요약 : 배포된 custom controller에 의해 관리되는 resource이다.
+>
+> Custom Resource을 개발하기 위해서는 Operator로 개발해야 한다.
+
 
 
 **NameSpace** : 가상적인 쿠버네티스 클러스터 분리 기능. 완전한 분리 개념은 아니기 때문에 용도는 제한되지만, 하나의 쿠버네티스 클러스터를 여러 팀에서 사용하거나 서비스 환경/스테이징 환경/개발 환경으로 구분하는 경우 사용할 수 있다.
@@ -75,17 +88,36 @@
 
 
 
-
-관리형 서비스나 구축 도구로 구축된 경우 대부분의 쿠버네티스 클러스터는 Role-Based Access Contal(RBAC)가 기본값으로 활성화되어 있다.
-
-
-
 **stateless** : client와 server관계에서, server가 client의 상태를 보존하지 않음을 의미
 
 - 장점 : server의 확장성이 높기 때문에 대량의 트래픽 발생 시에도 대처를 수월하게 할 수 있다.
 - 단점 : client의 요청에 상대적으로 stateful보다 더 많은 data가 소모된다.
 
 **stateful** : server가 client의 상태를 보존함을 의미
+
+
+
+관리형 서비스나 구축 도구로 구축된 경우 대부분의 쿠버네티스 클러스터는 Role-Based Access Contal(RBAC)가 기본값으로 활성화되어 있다.
+
+
+
+**Operator pattern**
+
+- **controller** : Desired State와 Current State를 비교하여, Current State를 Desired State에 일치시키도록 지속적으로 동작하는 무한 loof
+
+- **Operator** : Controller pattern을 사용하여 사용자의 application을 자동화하는 것
+
+  > 주로 Custom resource의 Current/Desired State를 지속적으로 관찰하고 일치시키도록 동작하는 역할을 위해 사용된다.
+  >
+  > seldon-core, kubeflow 등을 포함한 쿠버네티스 생태계에서 동작하는 많은 module이 이러한 Operator로 개발되어 있다.
+
+
+
+**Helm** : 쿠버네티스 module의 package managing tool
+
+하나의 kubernetes module은 다수의 resource(.yaml format)를 포함하고 있는 경우가 많은데, 이러한 resource들을 템플릿화 해서 여러개를 하나처럼 관리할 수 있게 도와주는 도구
+
+> Ubuntu의 package managing tool인 apt, python의 package managing tool인 pip와 비슷한 역할
 
 
 
