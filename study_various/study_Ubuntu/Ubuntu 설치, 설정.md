@@ -548,7 +548,7 @@ $ git config --global user.mail "winter4958@gmail.com"
   >   text 편집기가 열리면 맨 아래줄에 추가
   >
   >   ```
-  >   export PATH="/home/{username}/ananconda3/bin:$PATH"
+  >   export PATH="/home/ainsoft/ananconda3/bin:$PATH"
   >   ```
   >
   >   > 위 설치 도중 만났던 PREFIX값에 + '/bin:$PATH' 
@@ -687,7 +687,7 @@ $ git config --global user.mail "winter4958@gmail.com"
 
   [공식](https://kubernetes.io/ko/docs/tasks/tools/install-kubectl-linux/)
 
-  - 최신 릴리스 다운로드
+  - 최신 릴리스 다운로드 (최신 릴리스는 연동 안되는 tools이 많다.)
 
     ```
     $ curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
@@ -707,11 +707,13 @@ $ git config --global user.mail "winter4958@gmail.com"
     > ```
 
   - 특정 version download
-
+    
     ```
-    $ sudo -LO "https://dl.k8s.io/release/v1.22.1/bin/linux/amd64/kubectl
+    $ sudo curl -LO https://dl.k8s.io/release/v1.19.3/bin/linux/amd64/kubectl
     ```
 
+    > `v1.19.3` 가 범용적
+    
     
 
   install kubectl
@@ -778,71 +780,21 @@ $ git config --global user.mail "winter4958@gmail.com"
 
    
 
-- uninstall
+- uninstall minikube
 
   ```
   $ minikube delete
   ```
 
+- uninstall k8s(kubernetes)
+
+  ```
+  $ sudo rm /usr/local/bin/kubectl
+  ```
+
   
 
-##### Seldon Core
 
-1. start kubernetes (minikube)
-
-   ```
-   $ minikube start --driver=docker --cpus='4' --memory='4g'
-   ```
-
-2. install Helm
-
-   [공식](https://helm.sh/docs/intro/install/)
-
-   [여기](https://github.com/helm/helm/tags) 에서 원하는 version을 선택 후 뜨는 page에서
-
-   `Installation and Upgrading` 아래 binary file들의 link를 확인할 수 있다.
-
-   `linux amd64` 를 왼쪽 클릭 > 링크 주소 복사 
-
-   ```
-   $ wget https://get.helm.sh/helm-v3.5.4-linux-amd64.tar.gz
-   ```
-
-   > 예시v 3.5.4
-
-   ```
-   $ tar -zxvf helm-v3.5.4-linux-amd64.tar.gz
-   ```
-
-   ```
-   linux-amd64/
-   linux-amd64/helm
-   linux-amd64/LICENSE
-   linux-amd64/README.md
-   ```
-
-   binary PATH로 이동
-
-   ```
-   $ sudo mv linux-amd64/helm /usr/local/bin/helm
-   ```
-
-   > `linux-amd64/helm` 에서 `/usr/local/bin/helm` 으로
-
-   check
-
-   ```
-   $ helm version
-   ```
-
-   > [uninstall](https://helm.sh/docs/faq/uninstalling/) :
-   >
-   > ```
-   > $ which helm			# /some/path/to/helm
-   > $ rm /some/path/to/helm
-   > ```
-
-   여기까지 완
 
 
 
