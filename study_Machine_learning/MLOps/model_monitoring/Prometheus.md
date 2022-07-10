@@ -72,7 +72,7 @@ open source monitoring system
 
 ##### install
 
-k8s환경, helm 필요
+k8s환경, helm 필요  ( 2022-07-10 ubuntu 20.04 설치 실패 (install kube-prometheus-stack 과정에서 특정 container saerch실패))
 
 1. start kubernetes (minikube)
 
