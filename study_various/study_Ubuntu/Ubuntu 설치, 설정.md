@@ -426,6 +426,25 @@ $ sudo apt install ./google-chrome-stable_current_amd64.deb
 >
 > 그대로 따라한 후 font setting에 `"YaHei Consolas Hybrid"` 추가
 
+**또는**
+
+```
+$ sudo sh -c 'curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/trusted.gpg.d/microsoft.gpg'
+```
+
+> Curl있어야함
+
+```
+$ sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
+$ sudo apt update
+```
+
+```
+$ sudo apt install code
+```
+
+
+
 
 
 ##### typora 
@@ -712,7 +731,16 @@ $ git config --global user.mail "winter4958@gmail.com"
     $ sudo curl -LO https://dl.k8s.io/release/v1.19.3/bin/linux/amd64/kubectl
     ```
 
-    > `v1.19.3` 가 범용적
+    > `v1.21.0` 가 추후 kubeflow를 위해 좋다
+    
+    바이너리 검증(optional)
+    
+    ```
+    $ curl -LO "https://dl.k8s.io/v1.19.3/bin/linux/amd64/kubectl.sha256"
+    $ echo "$(<kubectl.sha256)  kubectl" | sha256sum --check
+    ```
+    
+    
     
     
 
@@ -792,9 +820,350 @@ $ git config --global user.mail "winter4958@gmail.com"
   $ sudo rm /usr/local/bin/kubectl
   ```
 
-  
 
 
+##### kubeflow
+
+[공식](https://www.kubeflow.org/docs/started/installing-kubeflow/), [github](https://github.com/kubeflow/manifests)
+
+Prerequisites : `Kubernetes` (up to `1.21`) , `kustomize` (version `3.2.0`) 
+
+**Install the Kubeflow Manifests manually**
+
+kustomzie V3 기반으로  manifests file을 관리한다.
+
+> kustomzie : helm과 비슷한 역할을 하며, 여러개의 yaml file을들 쉽게 관리하기 위한 도구이다.
+>
+> 여러 resource드르이 configuration을 템플릿과 커스터마이제션한 부분으로 나누어서 관리할 수 있다.
+
+1. kustomize 설정
+
+   [여기](https://github.com/kubernetes-sigs/kustomize/) 에서 현재 k8s version에 맞는 kustomize version을 확인하고 download binary
+
+   ```
+   $ kubectl version
+   ```
+
+   > kustomize 3.2.0에 알맞는 version확인
+
+   [여기](https://github.com/kubernetes-sigs/kustomize/releases/tag/v3.2.0)의 **Asset** 아래 `kustomize_3.2.0_darwin_amd64` 의 링크 복사 (arm이면 arm꺼 복사)
+
+   > 링크 없어지면 [releases](https://github.com/kubernetes-sigs/kustomize/releases?page) 에서 3.2.0 찾은 후 진행
+
+   ```
+   $ sudo wget https://github.com/kubernetes-sigs/kustomize/releases/download/v3.2.0/kustomize_3.2.0_linux_amd64
+   ```
+
+   > 만약`.tar.gz` format밖에 없다면 압축 풀고 진행
+   >
+   > ```
+   > $ gzip -d kustomize_v3.2.0_linux_amd64.tar.gz
+   > $ tar -xvf kustomize_v3.2.0_linux_amd64.tar
+   > ```
+
+   file의 mode 변경 (실행 가능하도록)
+
+   ```
+   $ sudo chmod +x kustomize_3.2.0_linux_amd64
+   ```
+
+   압축 풀고 file위치 변경
+
+   ```
+   $ sudo mv kustomize_3.2.0_linux_amd64 /usr/local/bin/kustomize
+   ```
+
+   check(새 terminal 열고)
+
+   ```
+   $ kustomize version
+   ```
+
+   ```
+   Version: {KustomizeVersion:3.2.0 GitCommit:a3103f1e62ddb5b696daa3fd359bb6f2e8333b49 BuildDate:2019-09-18T16:26:36Z GoOs:linux GoArch:amd64}
+   ```
+
+   > uninstall : `sudo rm /usr/local/bin/kustomize`
+
+2. start kubenetes 
+
+   ```
+   $ minikube start --driver=docker \
+    --cpus='4' --memory='7g' \
+    --kubernetes-version=v1.19.3 \
+    --extra-config=apiserver.service-account-signing-key-file=/var/lib/minikube/certs/sa.key \
+    --extra-config=apiserver.service-account-issuer=kubernetes.dafault.svc
+   ```
+
+   > `--extra-config` : token Request활성화 관련 설정
+   >
+   > `--kubernetes-version=v1.19.3` : version정확히 명시해야됨
+   >
+   > version잘못 명시하면 다시 install
+   >
+   > ```
+   > $ minikube stop
+   > $ minikube delete
+   > $ minikube delete --all
+   > ```
+
+   check
+
+   ```
+   $ kubectl get sc
+   ```
+
+   ```
+   NAME                 PROVISIONER                RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
+   standard (default)   k8s.io/minikube-hostpath   Delete          Immediate           false                  15s
+   
+   ```
+
+   
+
+3. git clone [kubeflow/manifests](https://github.com/kubeflow/manifests)
+
+   ```
+   $ cd ~/hibernation			# git clone할 임의의 위치
+   $ git clone https://github.com/kubeflow/manifests.git
+   $ cd manifests
+   ```
+
+   > ```
+   > $ git checkout tags/v1.4.0 
+   > ```
+   >
+   > 위 명령어를 통해 특정 version으로 checkout하면 `manifests/apps/pipeline/upstream/env/` 의 cert-manager dir이 사라지는  현상 발생 
+
+   check
+
+   ```
+   $ git log
+   ```
+
+   > 마지막 commit확인
+
+4. kubeflow의 individual components install ([github](https://github.com/kubeflow/manifests) 에 다 있음. 가능하면 해당 link에서 보고 install)
+
+   > 각각 yaml file을 build이후 kubectl apply -f를 진행하게 되는, 이는 모두 순서대로 해야한다. 특정 kubeflow version을 설치한다면, 대한 version에 대한 tag로 이동하여 해당 version에 맞는 명령어를 입력해야 한다.
+
+   1. cert-manager
+
+      ```
+      $ kustomize build common/cert-manager/cert-manager/base | kubectl apply -f -
+      $ kustomize build common/cert-manager/kubeflow-issuer/base | kubectl apply -f -
+      ```
+
+      check
+
+      ```
+      $ kubectl get pod -n cert-manager
+      ```
+
+   2. istio
+
+      ```
+      $ kustomize build common/istio-1-14/istio-crds/base | kubectl apply -f -
+      $ kustomize build common/istio-1-14/istio-namespace/base | kubectl apply -f -
+      $ kustomize build common/istio-1-14/istio-install/base | kubectl apply -f -
+      ```
+
+      > kubeflow version에 따라 istio의 version이 다를 수 있으니 확인할 것
+
+      ```
+      $ kubectl get pod -n istio-system 
+      ```
+
+   3. Dex
+
+      ```
+      $ kustomize build common/dex/overlays/istio | kubectl apply -f -
+      ```
+
+   4. OIDC AuthService
+
+      ```
+      $ kustomize build common/oidc-authservice/base | kubectl apply -f -
+      ```
+
+   5. Knative
+
+      > 설치 안됨 
+      >
+      > ```
+      > unable to recognize "STDIN": no matches for kind "PodDisruptionBudget" in version "policy/v1"
+      > unable to recognize "STDIN": no matches for kind "PodDisruptionBudget" in version "policy/v1"
+      > ```
+      >
+      > 
+
+      ```
+      $ kustomize build common/knative/knative-serving/overlays/gateways | kubectl apply -f -
+      $ kustomize build common/istio-1-14/cluster-local-gateway/base | kubectl apply -f -
+      ```
+
+   6. Kubeflow Namespace
+
+      ```
+      $ kustomize build common/kubeflow-namespace/base | kubectl apply -f -
+      ```
+
+      check
+
+      ```
+      $ kubectl get namespace   # Kubeflow라는 namespace생성되어야함
+      ```
+
+   7. Kubeflow Roles
+
+      ```
+      $ kustomize build common/kubeflow-roles/base | kubectl apply -f -
+      ```
+
+   8. Kubeflow Istio Resources
+
+      ```
+      $ kustomize build common/istio-1-14/kubeflow-istio-resources/base | kubectl apply -f -
+      ```
+
+      > kubeflow version에 따라 istio의 version이 다를 수 있으니 확인할 것
+
+   9. Kubeflow Pipelines
+
+      ```
+      $ kustomize build apps/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user | kubectl apply -f -
+      ```
+
+      > If your container runtime is not docker, use pns executor instead:
+      >
+      > ```
+      > $ kustomize build apps/pipeline/upstream/env/platform-agnostic-multi-user-pns | kubectl apply -f -
+      > ```
+
+      만약 아래와 같은 error가 떳다면
+
+      ```
+      unable to recognize "STDIN": no matches for kind "CompositeController" in version "metacontroller.k8s.io/v1alpha1"
+      ```
+
+      위 설치 명령어 다시 입력
+
+   10. KServe
+
+       Install the KServe component
+
+       ```
+       $ kustomize build contrib/kserve/kserve | kubectl apply -f -
+       ```
+
+       > ```
+       > anable to recognize "STDIN": no matches for kind "ClusterServingRuntime" in version "serving.kserve.io/v1alpha1"
+       > ```
+       >
+       > 가 뜬다면 위 명령어 한번 더 입력
+
+       Install the Models web app
+
+       ```
+       $ kustomize build contrib/kserve/models-web-app/overlays/kubeflow | kubectl apply -f -
+       ```
+
+   11. Katib
+
+       ```
+       $ kustomize build apps/katib/upstream/installs/katib-with-kubeflow | kubectl apply -f -
+       ```
+
+   12. Central Dashboard
+
+       ```
+       $ kustomize build apps/centraldashboard/upstream/overlays/kserve | kubectl apply -f -
+       ```
+
+   13. Admission Webhook
+
+       ```
+       $ kustomize build apps/admission-webhook/upstream/overlays/cert-manager | kubectl apply -f -
+       ```
+
+   14. Notebooks
+
+       Install the Notebook Controller official Kubeflow component
+
+       ```
+       $ kustomize build apps/jupyter/notebook-controller/upstream/overlays/kubeflow | kubectl apply -f -
+       ```
+
+       Install the Jupyter Web App official Kubeflow component
+
+       ```
+       # kustomize build apps/jupyter/jupyter-web-app/upstream/overlays/istio | kubectl apply -f -
+       ```
+
+   15. Profiles + KFAM
+
+       ```
+       $ kustomize build apps/profiles/upstream/overlays/kubeflow | kubectl apply -f -
+       ```
+
+   16. Volumes Web App
+
+       ```
+       $ kustomize build apps/volumes-web-app/upstream/overlays/istio | kubectl apply -f -
+       ```
+
+   17. Tensorboard
+
+       Install the Tensorboards Web App official Kubeflow component
+
+       ```
+       $ kustomize build apps/tensorboard/tensorboards-web-app/upstream/overlays/istio | kubectl apply -f -
+       ```
+
+       Install the Tensorboard Controller official Kubeflow component
+
+       ```
+       $ kustomize build apps/tensorboard/tensorboard-controller/upstream/overlays/kubeflow | kubectl apply -f -
+       ```
+
+   18. training operator
+
+       ```
+       $ kustomize build apps/training-operator/upstream/overlays/kubeflow | kubectl apply -f -
+       ```
+
+   19. User Namespace
+
+       ```
+       $kustomize build common/user-namespace/base | kubectl apply -f -
+       ```
+
+5. 모든 pod 구동
+
+   ```
+   $ kubectl get po -A -w
+   ```
+
+   > 길게는 몇십분까지 걸림
+
+6. kubeflow 접속
+
+   1. 새로운 terminal에서 port forwarding
+
+      ```
+      $ kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80
+      ```
+
+      > user 접속 정보 관련 설정을 변경하지 않는 경우의 default접속 정보는 아래와 같다
+      >
+      > - ID : user@example.com
+      > - PW : 12341234
+
+      이 terminal은 항상 열고있어야한다.
+
+   2. 접속
+
+      `localhost:8080` 으로 접속 후 login
 
 
 
