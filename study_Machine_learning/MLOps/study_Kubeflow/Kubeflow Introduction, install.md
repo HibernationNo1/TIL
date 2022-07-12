@@ -121,7 +121,7 @@ kustomzie V3 기반으로  manifests file을 관리한다.
    $ kubectl version
    ```
 
-   > `GitVersion:"v1.21.0"` 임을 확인.   >> kustomize version은 4.0.5
+   > kustomize 3.2.0에 알맞는 version확인
 
    [여기](https://github.com/kubernetes-sigs/kustomize/releases/tag/v3.2.0)의 **Asset** 아래 `kustomize_3.2.0_darwin_amd64` 의 링크 복사 (arm이면 arm꺼 복사)
 
@@ -166,13 +166,23 @@ kustomzie V3 기반으로  manifests file을 관리한다.
 
    ```
    $ minikube start --driver=docker \
-    --cpus='4' --memory='10g' \
-    --kubernetes-version=v1.21.0 \
+    --cpus='4' --memory='7g' \
+    --kubernetes-version=v1.19.3 \
     --extra-config=apiserver.service-account-signing-key-file=/var/lib/minikube/certs/sa.key \
     --extra-config=apiserver.service-account-issuer=kubernetes.dafault.svc
    ```
 
    > `--extra-config` : token Request활성화 관련 설정
+   >
+   > `--kubernetes-version=v1.19.3` : version정확히 명시해야됨
+   >
+   > version잘못 명시하면 다시 install
+   >
+   > ```
+   > $ minikube stop
+   > $ minikube delete
+   > $ minikube delete --all
+   > ```
 
    check
 
@@ -254,6 +264,15 @@ kustomzie V3 기반으로  manifests file을 관리한다.
       ```
 
    5. Knative
+
+      > 설치 안됨 
+      >
+      > ```
+      > unable to recognize "STDIN": no matches for kind "PodDisruptionBudget" in version "policy/v1"
+      > unable to recognize "STDIN": no matches for kind "PodDisruptionBudget" in version "policy/v1"
+      > ```
+      >
+      > 
 
       ```
       $ kustomize build common/knative/knative-serving/overlays/gateways | kubectl apply -f -
@@ -393,7 +412,7 @@ kustomzie V3 기반으로  manifests file을 관리한다.
    19. User Namespace
 
        ```
-       $ User Namespace
+       $kustomize build common/user-namespace/base | kubectl apply -f -
        ```
 
 5. 모든 pod 구동
@@ -409,7 +428,7 @@ kustomzie V3 기반으로  manifests file을 관리한다.
    1. 새로운 terminal에서 port forwarding
 
       ```
-      $ kubeflow prot-forward svc/istio-ingressgateway -n istio-system 8080:80
+      $ kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80
       ```
 
       > user 접속 정보 관련 설정을 변경하지 않는 경우의 default접속 정보는 아래와 같다
@@ -422,4 +441,6 @@ kustomzie V3 기반으로  manifests file을 관리한다.
    2. 접속
 
       `localhost:8080` 으로 접속 후 login
+
+
 
