@@ -109,9 +109,11 @@
 - uninstall
 
   ```
+  $ minikube stop
   $ minikube delete
+  $ minikube delete --all
   ```
-
+  
   
 
 
