@@ -50,4 +50,24 @@
 
 
 
+katib component확인
+
+```
+$ kubectl get deploy -n kubeflow |grep katib
+```
+
+```
+katib-controller                     
+katib-db-manager                      
+katib-mysql                           
+katib-ui  
+```
+
+- `katib-controller` : katib와 관련된 CR(Experiments(AutoML), Suggestion, Trial 등)을 관리하고 이전 작업과 지금 작업에 대해 status가 다르면 맞춰주는 component
+- `katib-mysql  ` : katib관련 resource를 관리하는 DB
+- `katib-db-manager ` : `katib-mysql` 에 접근할 수 있도록 하는 component
+- `katib-ui ` : `katib-db-manager`를 거쳐서 `katib-mysql`에 저장된 정보를 바탕으로 frontend를 랜더링
+
+
+
 **강의 더 보기 (kubeflow katib)실습, 또는 katib관련 다른 강의. 또는 공식 문서 확인**
