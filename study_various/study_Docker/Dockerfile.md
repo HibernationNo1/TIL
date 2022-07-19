@@ -226,6 +226,24 @@ $ docker run -it container_name sh
 
 
 
+##### ARG
+
+image build를 위해 dockerfile내에서 사용하기 위한 값을 선언할 때 사용
+
+docker build명령어에 --build-arg으로 전달하거나 덮어쓸 수 있음
+
+```
+ARG PYTORCH="1.11.0"
+ARG CUDA="11.3"
+ARG CUDNN="7"
+
+FROM pytorch/pytorch:${PYTORCH}-cuda${CUDA}-cudnn${CUDNN}-devel
+```
+
+
+
+
+
 ##### **ENV**
 
 `ENV` : environment variable을 지정
