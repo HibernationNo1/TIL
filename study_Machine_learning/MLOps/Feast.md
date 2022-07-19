@@ -47,7 +47,7 @@ feature store tool, operational data system for managing and serving machine lea
   0개 이상의 Entitis, 1개 이상의 Features, 그리고 1개의 Data Source로 이루어져 있다.
 
   - Feature
-  - Entity
+  - Entity : `key : list` 형태의 dict type
   - Data Source
 
 
@@ -96,7 +96,7 @@ Online Store의 feature저장 방식은 data원천의 저장 방식을 그대로
 
 
 
-
+### Feature Store
 
 **Create a feature repository**
 
@@ -122,7 +122,7 @@ __init__.py  data  example.py  feature_store.yaml
   >
   > ![](https://1650793599-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2F63geyz0MgpJmggxj7jnT%2Fuploads%2Fgit-blob-b2961c773e43f78f59e993ebde00b25a3ff7aca7%2Fscreen-shot-2021-08-23-at-2.35.18-pm.png?alt=media)
 
-- `example.py` : demo data의 feature 정의
+- `example.py` : demo data의 feature 정의 : **feature store 정의**
 
   ```python
   # This is an example feature definition file
@@ -135,6 +135,7 @@ __init__.py  data  example.py  feature_store.yaml
   # Read data from parquet files. Parquet is convenient for local development mode. For
   # production, you can use your favorite DWH, such as BigQuery. See Feast documentation
   # for more info.
+  # data source로부터 data를 읽어오는 code. 
   driver_hourly_stats = FileSource(
       path="/content/feature_repo/data/driver_stats.parquet",
       timestamp_field="event_timestamp",
@@ -145,11 +146,13 @@ __init__.py  data  example.py  feature_store.yaml
   # fetch features.
   # Entity has a name used for later reference (in a feature view, eg)
   # and join_key to identify physical field name used in storages
+  # 사용할 feature들의 대표 ID
   driver = Entity(name="driver", value_type=ValueType.INT64, join_keys=["driver_id"], description="driver id",)
   
   # Our parquet files contain sample data that includes a driver_id column, timestamps and
   # three feature column. Here we define a Feature View that will allow us to serve this
   # data to our model online.
+  # 위 FileSource에서 가져온 data source에서 구체적인 feature를 정의한다.
   driver_hourly_stats_view = FeatureView(
       name="driver_hourly_stats",
       entities=["driver"],  # reference entity by name
@@ -158,9 +161,9 @@ __init__.py  data  example.py  feature_store.yaml
           Field(name="conv_rate", dtype=Float32),
           Field(name="acc_rate", dtype=Float32),
           Field(name="avg_daily_trips", dtype=Int64),
-      ],
+      ],		# feature정의
       online=True,
-      source=driver_hourly_stats,
+      source=driver_hourly_stats,		# data source
       tags={},
   )
   
@@ -198,7 +201,10 @@ $ feast apply
 Created entity driver
 Created feature view driver_hourly_stats
 Created feature service driver_activity
+
 Created sqlite table feature_repo_driver_hourly_stats
 ```
 
 이렇게 해서 하나의 registry가 등록이 된다.
+
+> `feature_store.yaml`에서 설정된 값에 따라 추가적인 file생성

@@ -630,7 +630,7 @@ $ docker push <tag>/<image_name>
 
 ```
 $ docker images		# 어떤 image가 있는지 check
-$ docker tag hello-world taeuk/hellow-world		# hello-world 라는 image가 있고, 여기세 taeuk이라는 tag를 달아준다.
+$ docker tag hello-world taeuk/hellow-world		# hello-world 라는 image가 있고, 여기에 taeuk이라는 tag를 달아준다.
 $ docker images		# taeuk/hellow-world 라는  image가 추가된걸 확인할 수 있음
 ```
 

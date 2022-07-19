@@ -68,7 +68,7 @@
 
 ### Volume
 
-namespace에 속한 PVC라는 resource를 관리할 수 있다.
+namespace에 속한 PVC resource를 관리할 수 있다.
 
 `New Volume` 
 

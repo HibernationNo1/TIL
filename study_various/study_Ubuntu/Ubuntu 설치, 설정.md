@@ -532,6 +532,26 @@ $ git config --global user.mail "winter4958@gmail.com"
   no를 입력하면 콘다는 쉘 스크립트를 수정하지 못한다. yes를 누른다
   ```
 
+- path추가
+
+  ```
+  $ sudo vi ~/.bashrc
+  ```
+
+  text 편집기가 열리면 맨 아래줄에 추가
+  
+  ```
+  export PATH="/home/ainsoft/ananconda3/bin:$PATH"
+  ```
+
+  > 위 설치 도중 만났던 PREFIX값에 + '/bin:$PATH' 
+  
+  ```
+  $ export PATH=~/anaconda3/bin:$PATH
+  ```
+  
+  
+  
 - 설치 확인
 
   bashrc 실행
@@ -549,54 +569,17 @@ $ git config --global user.mail "winter4958@gmail.com"
   > ```
   >
   > bash사용
+  >
+  > > (base) 없애려면 ` $ conda deactivate`
 
   check version
-
+  
   ```
   $ conda -V 
   ```
-
+  
   > 만일 `conda : command not found` 가 뜨면
   >
-  > - path추가
-  >
-  >   ```
-  >   $ sudo vi ~/.bashrc
-  >   ```
-  >
-  >   text 편집기가 열리면 맨 아래줄에 추가
-  >
-  >   ```
-  >   export PATH="/home/ainsoft/ananconda3/bin:$PATH"
-  >   ```
-  >
-  >   > 위 설치 도중 만났던 PREFIX값에 + '/bin:$PATH' 
-  >
-  >   - 이후 terminer에서
-  >   
-  >     ```
-  >     $ source ~/.bashrc
-  >     ```
-  >   
-  >     > (base)뜨는지 확인
-  >     >
-  >     > (base) 없애려면 ` $ conda deactivate`
-  >   
-  >     ```
-  >     $ conda -V 
-  >     ```
-  >   
-  >   그래도 안되면 아래 명령어 실행
-  >   
-  >   ```
-  >   $ export PATH=~/anaconda3/bin:$PATH
-  >   ```
-  >   
-  >   ```
-  >   $ conda -V
-  >   ```
-  >   
-  >   
 
 
 
@@ -706,7 +689,7 @@ $ git config --global user.mail "winter4958@gmail.com"
 
   [공식](https://kubernetes.io/ko/docs/tasks/tools/install-kubectl-linux/)
 
-  - 최신 릴리스 다운로드 (최신 릴리스는 연동 안되는 tools이 많다.)
+  - 최신 릴리스 다운로드 (**최신 릴리스는 연동 안되는 tools이 많다.)**
 
     ```
     $ curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
@@ -731,7 +714,7 @@ $ git config --global user.mail "winter4958@gmail.com"
     $ sudo curl -LO https://dl.k8s.io/release/v1.19.3/bin/linux/amd64/kubectl
     ```
 
-    > `v1.21.0` 가 추후 kubeflow를 위해 좋다
+    > `v1.19.3` 가 추후 kubeflow를 위해 좋다
     
     바이너리 검증(optional)
     
@@ -740,24 +723,21 @@ $ git config --global user.mail "winter4958@gmail.com"
     $ echo "$(<kubectl.sha256)  kubectl" | sha256sum --check
     ```
     
-    
-    
-    
-
+  
   install kubectl
-
+  
   ```
   $ sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
   ```
-
   
-
+  
+  
   check
-
+  
   ```
   $ kubectl version --client
   ```
-
+  
   > ```
   > Client Version: version.Info{Major:"1", Minor:"24", GitVersion:"v1.24.2", GitCommit:"f66044f4361b9f1f96f0053dd46cb7dce5e990a8", GitTreeState:"clean", BuildDate:"2022-06-15T14:22:29Z", GoVersion:"go1.18.3", Compiler:"gc", Platform:"linux/amd64"}
   > ```
@@ -765,7 +745,7 @@ $ git config --global user.mail "winter4958@gmail.com"
   > 위 처럼 떠도 정상 (kubenetes server와 client의 version이 모두 출력하는 과정에서, host에서 kubenetes server를 생성하지 않았기 때문에 뜨는 문구)
   >
   > 이를 해결하기 위해 minukube 를 실행하여 kubenetes server를 설치
-
+  
 - kubenetes server
 
   ```
@@ -836,7 +816,7 @@ kustomzie V3 기반으로  manifests file을 관리한다.
 >
 > 여러 resource드르이 configuration을 템플릿과 커스터마이제션한 부분으로 나누어서 관리할 수 있다.
 
-1. kustomize 설정
+1. **kustomize** install
 
    [여기](https://github.com/kubernetes-sigs/kustomize/) 에서 현재 k8s version에 맞는 kustomize version을 확인하고 download binary
 
@@ -1097,7 +1077,7 @@ kustomzie V3 기반으로  manifests file을 관리한다.
        Install the Jupyter Web App official Kubeflow component
 
        ```
-       # kustomize build apps/jupyter/jupyter-web-app/upstream/overlays/istio | kubectl apply -f -
+       $ kustomize build apps/jupyter/jupyter-web-app/upstream/overlays/istio | kubectl apply -f -
        ```
 
    15. Profiles + KFAM
@@ -1135,7 +1115,7 @@ kustomzie V3 기반으로  manifests file을 관리한다.
    19. User Namespace
 
        ```
-       $kustomize build common/user-namespace/base | kubectl apply -f -
+       $ kustomize build common/user-namespace/base | kubectl apply -f -
        ```
 
 5. 모든 pod 구동
