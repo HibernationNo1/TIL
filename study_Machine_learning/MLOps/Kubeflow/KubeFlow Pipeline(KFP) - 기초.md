@@ -30,13 +30,25 @@
 
   
 
-일반적인 ML의 pipeline
+**kubeflow pipeline을 작성하는 방법**
 
-1. data create
-2. data Analyzer
-3. data Transformer
-4. Trainer
-5. Predictor
+1. 경량화 컴포넌트를 작성하는방법 (reate_component_from_fun를 사용)
+
+   - 장점 : 
+
+     하나의 함수가 하나의 컴포넌트가 되는 방식으로, 하나의 파이썬 파일만으로 모든 컴포넌트를 작성할 수 있어 수정이 빠르고 작성이 간편하다.
+
+   - 단점 :
+
+     딥러닝과 같이 코드가 많은 경우에는 오히려 가독성이 떨어진다.
+
+     하나의 함수가 개별적인 컴포넌트이기 때문에 컴포넌트에 사용되는 라이브러리를 함수안에서 설치할 버전을 명시하고 import를 해주어야 한다.
+
+     .py 파일에 한글이 있으면 yaml파일로 작성이 되지 않는다.
+
+   
+
+2. 컴포넌트별로 일반적인 딥러닝 파이썬코드를 작성하고 도커 이미지로 빌드 한 후 간단하게 파이프라인에서 연결만 시켜주는 방법
 
 
 
@@ -111,7 +123,7 @@ $ kubectl get pod -n kubeflow
 
 #### create_component_from_func
 
-function을 하나의 component로 만들 수 있다.
+경량화 component를 만들때 사용하며, function을 하나의 component로 만들 수 있다.
 
 ```python
 from kfp.components import create_component_from_func
@@ -125,16 +137,32 @@ decorator로도 사용할 수 있으며, function으로 호출할 시 여러 opt
 
   ```python
   tmp = create_component_from_func(
-          finc =tmp_function, 
+          func =tmp_function, 
           base_image = 'python:3.8',
-          output_comonent_file="tmp.component.yaml",
+          output_component_file="tmp.component.yaml",
   		packages_toinstall=['numpy = 1.22.4', 'tqdm = 4.64.0'])
   ```
 
   - `finc` : component로 바꾸고자 하는 python function
+  
   - `base_image` : component는 k8s pod로 생성되며, 해당 pod 의 image를 설정 (optional)
+  
+    > - custom image를 사용하려면 docker file을 작성해서 docker hub에 push
+    >
+    >   ```
+    >   $ docker build -t {image_name} {Dockerfile위치}
+    >   $ docker tag {image_name}:latest {dockerhub name}/{image_name}:{version}
+    >   $ docker push {dockerhub name}/{image_name}:{version}
+    >   ```
+    >
+    >   `base_image = '{dockerhub name}/{image_name}:{version}'`
+    >
+    > 이 때 docker file에서 `RUN pip install` 을 통해 package를 설치 가능
+  
   - `output_comonent_file` : component를 yaml로 compile하여 재사용하기 쉽게 관리 가능
+  
   - `packages_toinstall` : base image에는 없지만 python code에 필요한 의존성 package
+  
   - `type(tmp) : ContainerOP`
 
 
@@ -207,9 +235,35 @@ k8s의 동일한 namespace에 Secret을 미리 생성해둔 뒤, 해당 secret�
 
 
 
-이외에도 대부부느이 k8s resource를 사용할 수 있다. [Documentation](https://www.kubeflow.org/docs/)
+이외에도 대부분의 k8s resource를 사용할 수 있다. [Documentation](https://www.kubeflow.org/docs/)
 
 
+
+#### ContainerOp
+
+이젠 안씀
+
+#### func_to_container_op
+
+경량화 component를 만들때 사용하며, function을 하나의 component로 만들 수 있다.
+
+`create_component_from_func` 와 같은 동작. `create_component_from_func`가 제대로 동작 안할 때 사용
+
+```python
+func_to_container_op(
+        finc =tmp_function, 
+        base_image = 'python:customized',
+        output_comonent_file="tmp.component.yaml",
+		packages_toinstall=['numpy = 1.22.4', 'tqdm = 4.64.0'])
+```
+
+
+
+### InputPath, OutputPath
+
+component간의 전달할 data가 큰 경우 file을 통해 data를 전달할 때 사용
+
+해당 function의 변수를 사용할 때 반드시 해당 type을 명시해주어야 함
 
 
 
@@ -228,191 +282,175 @@ def tmp():
 
 
 
-##### exam_1★
+#### exam★
 
-app.py
-
-```python
-import kfp
-from kfp.components import create_component_from_func
-                          
-def add(value_1:int, value_2:int)->int:		# 반드시 input, output의 type을 명시해야함 (return이 없으면 ->int도 당연히 없음)
-    ret = value_1 + value_2	
-    return ret
-                                                   
-def subtract(value_1:int, value_2:int)->int:
-    ret = value_1 - value_2
-    return ret	   
-                            
-def multiply(value_1:int, value_2:int)->int:
-    ret = value_1 * value_2
-    return ret	
-                            
-add_op = create_component_from_func(add)
-subtract_op = create_component_from_func(subtract)
-multiply_op = create_component_from_func(multiply)
-
-from kfp.dsl import pipeline
-
-@pipeline(name="add_example")
-def my_pipeline(value_1:int, value_2:int)->int:
-    task_1 = add_op(value_1, value_2)
-    task_2 = subtract_op(value_1, value_2)
-
-    task_3 = multiply_op(task_1.output, task_2.output)  #  output -> input 으로 연결
-
-```
-
->  **component간의 data공유는 input/output변수 사용** : `task_1.output` : output -> input 으로 연결하면 DAG 상에 연결됨
->
-> **실제 code를 compile할 땐 주석에도 한글 자체가 없어야 한다.**
-
-- 이후 `dsl-compile` 로 code를 compile
-
-  ```
-  $ dsl-compile --py add.py --output add_exam.yaml
-  ```
-
-  > create `add_exam.yaml`
-
-- 또는 code에 compile을 추가
-
-  ```python
-  if __name__=="__main"__:
-      fkp.compiler.Compiler().compile(my_pipeline, "./add_exam.yaml")
-  ```
-
-  > ```
-  > $ python app.py
-  > ```
-  >
-  > create `add_exam.yaml`
-
-```
-$ ls  			# add_exam.yaml 가 있는걸 확인 가능
-```
-
-> `add_exam.yaml` 을 확인하면
->
-> - `kind : workflow` 
->
-> - `dag` 
->   - `name`, `arguments`등등이 확인 가능
-
-
-
-
-
-위 예시에서 `create_component_from_func()`에 의해 `add` function이 component가 되는데, 이 때 `add` 안에는 해당 Scope외에 정의된 함수를 사용할 수 없다.
-
-```python
-import numpy as np
-add_op = create_component_from_func(add)
-
-def add(value_1:int, value_2:int)->int:		
-    tmp = np.zeros((1, 3))				# 잘못된 형식
-    ret = value_1 + value_2	
-    return ret
-```
-
-```python
-add_op = create_component_from_func(add)
-
-def add(value_1:int, value_2:int)->int:		
-	import numpy as np		# add 안에서 선언되어야 함
-    tmp = np.zeros((1, 3))				
-    ret = value_1 + value_2	
-    return ret
-```
-
-첫 번째 경우 처럼  import를 add 외부(전역 scope)에서 하고자 하는 경우, base_image로 사용되는 Dorker 이미지에 `pip install numpy`와 같이 install을 넣어줘야 한다.
-
-> `python:3.8` 대신 `python:customized image`를 만든 후 `create_component_from_func` 를 아래처럼 선언
-
-```python
-create_component_from_func(
-        finc =tmp_function, 
-        base_image = 'python:customized',
-        output_comonent_file="tmp.component.yaml",
-		packages_toinstall=['numpy = 1.22.4', 'tqdm = 4.64.0'])
-```
-
-
-
-
-
-
-
-### InputPath, OutputPath
-
-component간의 전달할 data가 큰 경우 file을 통해 data를 전달할 때 사용
-
-해당 function의 변수를 사용할 때 반드시 해당 type을 명시해주어야 함
-
-
-
-#### dict
-
-dict형태로 data를 전달
-
-```python
-from kfp.components import OutputPath
-
-@create_component_from_func 
-def exam_func1( data_output_path : OutputPath("dict")):		# path를 받아온다.
-    pass
-
-def exam_func2( data_input_path : InputPath("dict")):		# path를 받아온다.
-    pass
-```
-
-> `OutputPath("dict")` : path에 저장할 data를 어던 type으로 저장할것인지 명시
-
-
-
-##### exam_2★
-
-**component간의 data공유에 file path를 사용**
-
-data_passinf_file_pipeline.py
+`test_1/test1.py`
 
 ```python
 import kfp
-from kfp.components import InputPath, OutputPath, create_component_from_func
+from kfp.components import OutputPath, func_to_container_op
 
-@create_component_from_func
-def write_file_op(data_output_path: OutputPath("dict")):
+def data_test_1(value_1: int, value_2: int, value_3 : int,
+           data_output_dir_path: OutputPath("dict")):
+    
     import json
-    data = {'a': 300, "b" : 10}		# OutputPath("dict") 이므로 dict 
-    with open(data_output_path, "w") as f:
-        json.dump(data, f)
+    import os
+    import numpy as np
+    # 모든 import는 해당 funtion안에서 선언되어야 한다.
+    
+    class NpEncoder(json.JSONEncoder):
+        def default(self, obj):
+            if isinstance(obj, np.integer):
+                return int(obj)
+            elif isinstance(obj, np.floating):
+                return float(obj)
+            elif isinstance(obj, np.ndarray):
+                return obj.tolist()
+            else:
+                return super(NpEncoder, self).default(obj)
+        
+    tmp_np = np.ones(shape = (value_1, value_2, value_3))
+    data_dict = {"1" : tmp_np, "2" : 2}   
+    
+    json.dump(data_dict, open(data_output_dir_path, "w"), indent=4, cls=NpEncoder) 
 
-@create_component_from_func
-def read_file_and_multiply_op(data_input_path: InputPath("dict")) ->float :
+test_1_op  = func_to_container_op(
+            func =data_test_1,
+            base_image = 'hibernation4958/test_4:0.1',		# image명시, pip install포함
+            output_component_file="test_1.component.yaml")    
+```
+
+> import를 함수 외부(전역 scope)에서 하고자 하는 경우, base_image로 사용되는 Dorker 이미지에 `pip install numpy`와 같이 install을 넣어줘야 한다.
+>
+> `hibernation4958/test_4:0.1` : 
+>
+> ```yaml
+> FROM python:3.8
+> ENV PYTHONUNBUFFERED 1
+> 
+> RUN pip install numpy
+> ```
+>
+> ```
+> $ docker build -t test_1 ./test_1
+> $ docker tag test_1:latest hibernation4958/test_1:0.1
+> $ docker push hibernation4958/test_1:0.1
+> ```
+
+
+
+`test_2/test2.py`
+
+```python
+import kfp
+from kfp.components import InputPath, OutputPath, func_to_container_op
+
+def data_test_2(data_input_dir_path: InputPath("dict")) -> list :
+    # return이 있을 땐 해당 return값의 type명시
+    # return값은 .output으로 반환 가능
+    
+    
     import json
-    with open(data_input_path, "r") as f:
+    import numpy as np
+    import glob
+    # 모든 import는 해당 funtion안에서 선언되어야 한다.
+    
+    
+    with open(data_input_dir_path, "r", encoding='utf-8') as f:
         data = json.load(f)
+            
+    img = data["1"]    
+    img = np.array(img)
     
-    result = data['a'] * data['b']
-    print(f"result : {result} ")
+    file_list = glob.glob("/test_2")
+	for file in file_list:
+        print(f"file : {file})
     
-    return result
+    return list(img.shape)
 
-@kfp.dsl.pipeline(name="Data Passing by File Example")
-def data_passing_file_pipeline():
-    write_file_task = write_file_op()
-    _ = read_file_and_multiply_op(write_file_task.outputs["data_output"])
+test_2_op  = func_to_container_op(
+            func =data_test_2,
+            base_image = 'hibernation4958/test_2:0.2',
+            output_component_file="test_2.component.yaml")
+```
+
+> ` InputPath("dict")` : file하나의 path(dir path는 되는지 안되는지 모르겠음)
+>
+> - `OutputPath("dict")` 로 인해 만들어진 file하나의 path를 다시 받을 때 사용
+> - `"dict"` : file을 load했을 때 얻는 변수의 type
+> - `"metrics"` 형태도 있다. 자세한 설명은 아래
+>
+> `hibernation4958/test_2:0.2`
+>
+> ```yaml
+> FROM python:3.8
+> ENV PYTHONUNBUFFERED 1
+> 
+> 
+> RUN pip install numpy
+> ```
+>
+> ```
+> $ docker build -t test_2 ./test_2
+> $ docker tag test_2:latest hibernation4958/test_2:0.2
+> $ docker push hibernation4958/test_2:0.2
+> ```
+
+
+
+`./pipeline.py`
+
+```python
+import kfp
+import kfp.dsl as dsl
+
+from test_1.test_1 import test_1_op
+from test_2.test_2 import test_2_op   
+
+
+
+@dsl.pipeline(name="Data test example")
+def data_example(value_1: int, value_2:int, value_3 : int):
+    # pipeline데코된 함수에서 input으로 받는 값은 type을 명시해주어야 한다.
+    
+    exam_vop = dsl.VolumeOp(
+        name="exam-volume",
+        resource_name="exam-pvc",
+        modes=dsl.VOLUME_MODE_RWM,
+        size="1Gi")
+    # VolumeOP는 미리 선언
+    
+    
+    _test_1 = test_1_op(value_1, value_2, value_3)
+    
+    _test_2 = test_2_op(_test_1.outputs["data_output_dir"]).add_pvolumes({"/test_2": exam_vop.volume})
+    # test_1_op의 input중 data_output_dir_path가 OutputPath("dict")형으로 있기 때문에, outputs의 key값은 _path를 뺀  data_output_dir가 된다.
+    # add_pvolumes를 통해 특정 path를 mount
+    
+    print(_test_2.output)	# data_test_2의 return값
+
+
     
 if __name__=="__main__":
     kfp.compiler.Compiler().compile(
-    	data_passing_file_pipeline,
-        "./data_passinf_file_pipeline.yaml"
+    	data_example,
+        "./data_test.yaml"
     	)
+    # 해당 pipeline.py를 실행하면 data_test.yaml이 생긴다.
+    
 ```
 
 > **실제 code를 compile할 땐 주석에도 한글 자체가 없어야 한다.**
+>
+> compile code를 삭제하고 명령어로 pipeline yaml을 만드려면
+>
+> `dsl-compile --py add.py --output add_exam.yaml`
 
-create `data_passinf_file_pipeline.yaml`
+
+
+
+
+
 
 
 
@@ -429,13 +467,13 @@ InputPath, OutputPath에 metrics를 명시
      - default : "RAW"
      - "PERCENTAGE" : %
 
-##### exam_3★
+##### exam_metrics★
 
 export_metrics.py
 
 ```python
 import kfp
-from kfp.components import InputPath, OutputPath, create_component_from_func
+from kfp.components import OutputPath, create_component_from_func
 
 @create_component_from_func
 def export_metric_op(mlpipeline_metric_path:OutputPath("metrics")):
@@ -444,7 +482,7 @@ def export_metric_op(mlpipeline_metric_path:OutputPath("metrics")):
     metrics["metrics"] = []
     metrics["metrics"].append(dict("name" : "name_1", "number_Value" : 0.8))
     metrics["metrics"].append(dict("name" : "name_2", "number_Value" : 0.9, "format":"PERCENTAGE"))
-    # "format" : 어떤 형태로 출력할 것인지. excel의 표시 형식과 같다.
+    # "format" : 어떤 형태로 출력할 것인지. excel의 '표시' 형식과 같다.
     
     with open(mlpipeline_metric_path, "w") as f:
         json.dump(metrics, f)
@@ -497,7 +535,7 @@ if __name__=="__main__":
 
    > `user@example.com`, `12341234`
 
-   **pipeline** 에서 `+Upload pipeline` , Upload a file 에서 `add_exam.yaml` 선택 >> create
+   **Central Dashboard**의 **pipeline** 에서 `+Upload pipeline` , Upload a file 에서 `add_exam.yaml` 선택 >> create
 
    `+Create run` : 해당 pipeline을 실행 
 
