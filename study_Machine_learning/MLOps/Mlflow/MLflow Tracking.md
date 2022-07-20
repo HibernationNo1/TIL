@@ -76,17 +76,19 @@ import mlflow
 
 아래 mlflow function을 code에 추가하여 특정 값을 기록할 수 있으며, 해당 기록 값은 `$ mlflow ui` 명령어를 통해 ui형태로 확인할 수 있다.
 
-또한 code에서 각 기록 정보들을 변형하여 실행할 때 마다 기록이 진행되며, 이 또한 ui로 확인할 수 있다. 
+또한 code에서 각 기록 정보들을 변형하여 code를 실행할 때 마다 **한 번** 기록이 진행되며(또한 랜덤한 run ID가 할당된다.), 이 또한 ui로 확인할 수 있다.  
 
 ![](https://miro.medium.com/max/1400/1*-BX3BpJxSZroJkSiwNRfGg.png)
 
 > Default라는 experiment의 code가 언제 각각 어떤 정보를 log로 기록하며 실행이 되었는지 알 수 있다.
 >
-> 또한 각 시간마다 **RUN ID**가 새롭게 주어지는데 (63d1a9cde7f84190a5634648467be195 와 같은 긴 ramdom한 숫자+문자) 이느 model을 serving할때 사용된다.  (위 이미지의 Start Time부분을 클릭하면 상세 정보와 함께 볼 수 있다.)
+> 또한 각 시간마다(code를 실행할 때 마다) **RUN ID**가 새롭게 주어지는데 (63d1a9cde7f84190a5634648467be195 와 같은 긴 ramdom한 숫자+문자) 이는 model을 serving할때 사용된다.  (위 이미지의 Start Time부분을 클릭하면 상세 정보와 함께 볼 수 있다.)
 
 
 
 #### log
+
+log는 한 번 key값으로 저장한 정보는 해당 code가 진행되는동안 바뀔 수 없기 때문에 iterate한 training과정에서는 마지막 epche에만 사용하거나, test과정에서 image마다의 값을 모아서 metric형태로 저장하도록 사용한다.
 
 ##### log_param
 
@@ -110,7 +112,7 @@ mlflow.log_metric("{metric}", metric)
 
 
 
-##### log_artifact()
+##### log_artifact
 
 image를 key-image형태로 기록
 
@@ -122,7 +124,7 @@ mlflow.log_artifact("{image_name}", img)
 
 
 
-##### sklearn
+#### sklearn
 
 ```python
 import mlflow.sklearn
@@ -130,7 +132,7 @@ import mlflow.sklearn
 
 
 
-###### log_model
+##### log_model
 
 > .pkl format의 model을 저장
 
@@ -140,13 +142,6 @@ mlflow.sklearn.log_model(model, "{model_name}")
 
 
 
-###### autolog()
-
-특정 정보를 명시하지 않아도 mlflow가 알아서 여러 정보를 logging
-
-```python
-mlflow.sklearn.autolog()
-```
 
 
 
@@ -154,7 +149,10 @@ mlflow.sklearn.autolog()
 
 
 
-#### serving
+
+
+
+### serving
 
 ```
 $ mlflow models serve [OPTION]
@@ -171,9 +169,15 @@ $ mlflow models serve -m ${pwd}/mlruns/0/63d1a9cde7f84190a5634648467be195/artifa
 ````
 
 - `mlruns`
+
 - `0` : experiment ID
+
 - `63d1a9cde7f84190a5634648467be195` : RUN ID
+
+  RUN ID : code가 정상적으로 RUN되는 pipeline의 RUN ID
+
 - `{pwd}/mlruns/0/63d1a9cde7f84190a5634648467be195/artifacts/model` : model.pkl 이 저장된 경로
+
 - `-p 5001` : port (5000을 제외한 열려있는 port )
 
 > 해당 명령어가 성공적으로 입력되면 
