@@ -4,6 +4,16 @@
 
 # Feast
 
+현재까진 image dataset에 사용하기엔 무리
+
+filesource는 `.parquet` 형식의 file로부터 data를 가져오는데, 이 때 parquet는 dataframe의 구조를 가지고 잇다.
+
+image dataset의 전달 포맷은 json이고, json을 dataframe으로 변환하기 위해서는 모든 array의 length가 같도록 dataset을 만들어야 한다. 
+
+이후 pandas를 통해 json을 dataframe으로, dataframe에서 parquet으로 변환해야 한다. original image 같은 경우는 어떻게 store에 넣을지 방법이 없다.
+
+
+
 
 
 ##### instll
@@ -74,7 +84,7 @@ Online Store의 feature저장 방식은 data원천의 저장 방식을 그대로
 - 작업자드르이 공동 작업을 가능하게 한다.
 - feast배포마다 하나의 registry가 존재한다.
 
-- entities, feature views, feature services 드으이 registry구성 요소들은 apply명령에 의해 update되지만, 각 구성 요소들의 meta data는 materialization과 같은 작업에 의해 update가 가능하다.
+- entities, feature views, feature services 등의 registry구성 요소들은 apply명령에 의해 update되지만, 각 구성 요소들의 meta data는 materialization과 같은 작업에 의해 update가 가능하다.
 
 - registry 내 모든 Feature View를 확인
 
@@ -94,18 +104,36 @@ Online Store의 feature저장 방식은 data원천의 저장 방식을 그대로
 
 
 
+**사용법**
+
+1. `feast init {repo_name}`으로 사용할 feature store repository를 만들 수 있다.
+2. 해당 repo안에서 feast SDK와 python을 이용하려 feature을 정의할 수 있다.
+   - python
+     - `data source`지정 (file, Big Query 등)
+     - `Entity`(feature그룹의 대표 ID) 를 정의
+     - `feature view` 정의 : `data source`, `Entity`으로 feature를 만든다. 이 feature은 Feature store생성 시 Feature store에 저장된다.
+     - `feature service` 지정 :  `feature view`이 Feature store에 저장될 수 있도록 하는 code
+   - 
+3. `feast apply` 로 Feature store를 생성 및 업데이트 할 수 있다.
+4. `feast meterialize`로 최산 feature값들을 저장 및 version관리할 수 있다.
+5. ML code를 설계할 때 feast SDK로 위 feature store에 정의한 feature들을 가져올 수 있다.
+
+
+
 
 
 ### Feature Store
 
-**Create a feature repository**
+#### **Create a feature repository**
+
+repository : feature store에 담을 feature들을 생성하는 code가 모여있는 곳
 
 ```
 $ feast init feature_repo
 $ cd feature_repo
 ```
 
-> 안에 기본 sample file들이 생성됨
+> `feature_repo` 안에 기본 sample file들이 생성됨
 
 ```
 __init__.py  data  example.py  feature_store.yaml
@@ -122,7 +150,11 @@ __init__.py  data  example.py  feature_store.yaml
   >
   > ![](https://1650793599-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2F63geyz0MgpJmggxj7jnT%2Fuploads%2Fgit-blob-b2961c773e43f78f59e993ebde00b25a3ff7aca7%2Fscreen-shot-2021-08-23-at-2.35.18-pm.png?alt=media)
 
-- `example.py` : demo data의 feature 정의 : **feature store 정의**
+- `example.py` : 
+
+  demo data의 feature 정의 : **feature store 정의**
+
+  저장할 feature에 대한 정의를 담는다.
 
   ```python
   # This is an example feature definition file
@@ -137,7 +169,7 @@ __init__.py  data  example.py  feature_store.yaml
   # for more info.
   # data source로부터 data를 읽어오는 code. 
   driver_hourly_stats = FileSource(
-      path="/content/feature_repo/data/driver_stats.parquet",
+      path="/feature_repo/data/driver_stats.parquet",
       timestamp_field="event_timestamp",
       created_timestamp_column="created",
   )
@@ -175,6 +207,8 @@ __init__.py  data  example.py  feature_store.yaml
 
 - `feature_store.yaml`
 
+  feature repo가 어떻게 실행될 지 등의 설정 값을 담는다.
+  
   ```
   project: my_project
   registry: data/registry.db
@@ -182,16 +216,18 @@ __init__.py  data  example.py  feature_store.yaml
   online_store:
       path: data/online_store.db
   ```
-
+  
   `project`, `registry`, `provider`, `online_store`를 정의
 
 
 
 
 
-**deploy feature**
+#### deploy feature
 
-`.py` file로 인해 define된 feature를 deploy
+feature repo를 delpoy하는 동작
+
+`.py` file로 인해 define된 feature store에 등록하는 과정
 
 ```
 $ feast apply
@@ -208,3 +244,19 @@ Created sqlite table feature_repo_driver_hourly_stats
 이렇게 해서 하나의 registry가 등록이 된다.
 
 > `feature_store.yaml`에서 설정된 값에 따라 추가적인 file생성
+
+
+
+### Load feature
+
+#### offline
+
+```python
+from feast import FeatureStore
+
+store = FeatureStore(repo_path = ".")
+```
+
+
+
+#### online
