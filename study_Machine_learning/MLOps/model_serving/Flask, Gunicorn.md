@@ -284,7 +284,7 @@ $ which gunicorn
 
 **사용 방법 with flask**
 
-`application.py` 에 flask로 route가 선언되어 있다면 (위 예시 code)
+특정 `.py` 에 flask로 route가 선언되어 있다면 (위 예시`application.py` code)
 
 
 
@@ -361,3 +361,71 @@ $ which gunicorn
 
    
 
+**정리**
+
+1. 어느 서버에서 아래 요청을 한다.
+
+   ```
+   $ curl -X POST {url or IP}:{port_1}/{locate} -d "model_type=strawberry" -d "img_file=file_path"
+   ```
+
+   `url or IP`를 통해 특정 공유기 접근 후 `port_1`를 통해 접속
+
+   > port는 port forward를 통해 연결되어있어야 한다. (공유기에서)
+   >
+   > 목적지 : `start.sh` 가 background로 구동중인 device
+
+   `locate` : port위의 특정 locate결정
+
+2. `start.sh` (background로 구동중)
+
+   ```
+   exec gunicorn --reload wsgi:app -c gunicorn/gunicorn_cfg.py --daemon
+   ```
+
+   `wsgi:app` : 위에서 온 신호(wsgi)를 flask객체 이름 app에 연결한다. 
+
+   이 때 config는 아래와 같다.
+
+   
+
+   `gunicorn_cfg.py`
+
+   ```python
+   bind = "0.0.0.0:{port_2}
+   workers = 1
+   
+   accesslog = "gunicorn/access.log"
+   
+   errorlog = "gunicorn/error.log"
+   
+   capture_output = True
+   
+   loglevel = "all"
+   ```
+
+   > `port_2` 는 flask의 port번호
+   >
+   > 그저 사용 안하는 port번호를 입력하면 해당 port는 flask의 app객체가 실행되는 port로 할당된다.
+
+   
+
+   gunicorn으로 `gunicorn_cfg.py`가 구동이 되면 bind를 통해 app객체의 rount함우가 decorate된 function이 run상태가 된다. 
+
+   > (요청에 따라 service를 할땐 `app.run`사용, data를 반환할때는 `app.response_class`  사용)
+
+   ```python
+   @app.route('/{locate}', methods=['POST'])
+   def exam():
+       ...
+       return app.response_class(response=json.dumps(res['result']), status=res['status'], mimetype='application/json')
+   ```
+
+   > 1번에서 요청이 POST로 왔기 때문에 `methods=['POST']` 명시
+   >
+   > `locate` : 1번에서 요청에 포함된 locate와 동일해야 한다. (같은 port에도 여러 app가 실행될 수 있기 때문)
+
+   - `app.response_class` 
+     - `response` : api 요정으로 반환할 data 
+     - `status` : 실패시 500, 성공시 200반환(int)
+     - `mimetype` : '{해당 code가 작성된 .py file의 이름}/{반환될 data의 format}'
