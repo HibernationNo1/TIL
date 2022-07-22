@@ -129,8 +129,10 @@ NamedTuple('Output', [("{discription}", type), ('discription', type)])
 > 명시는 아래처럼
 >
 > ```python
+> from typing import NamedTuple
+> 
 > def data_test_1(value_1: int, value_2: int, value_3 : int,		# 규칙 1. 
->            data_output_dir_path: OutputPath("dict")): -> NamedTuple('Output', [("day", int), ('example', str)]):	# 규칙 2.
+>         data_output_dir_path: OutputPath("dict")) -> NamedTuple('Output', [("day", int), ('example', str)]):	# 규칙 2.
 > ```
 
 
@@ -363,6 +365,8 @@ if __name__=="__main__":
 
 
 #### metrics
+
+> 동작 안하는거 확인
 
 component에서 metrics를 남길 수 있다. (excel처럼)
 

@@ -22,6 +22,8 @@ compiler.Compiler(mode =
 
     `client.create_run_from_pipeline_func` 으로 pipeline을 구성할 경우 사용
 
+    > V2_COMPATIBLE는 아직 Beta quality
+
   - `kfp.dsl.PipelineExecutionMode.V2_ENGINGE` : 
 
 - `pipeline_func` : compile할 `@dsl.pipeline` 으로 decorator된 pipeline function

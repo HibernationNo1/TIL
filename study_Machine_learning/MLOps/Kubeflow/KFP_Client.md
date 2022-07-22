@@ -131,13 +131,13 @@ import requests
 
 USERNAME = "user@example.com"
 PASSWORD = "12341234"
-NAMESPACE = "hibernation"
-HOST = "http://192.168.0.167:80" 		# "http://127.0.0.1:8080"
+NAMESPACE = "kubeflow-user-example-com"
+HOST =  "http://127.0.0.1:8080"     # "http://192.168.0.167:80" 
 session = requests.Session()
 response = session.get(HOST)
 
 headers = {
-    "Content-Type": "application/json",
+    "Content-Type": "application/x-www-form-urlencoded",
 }
 
 data = {"login": USERNAME, "password": PASSWORD}
@@ -246,7 +246,7 @@ client.upload_pipeline(pipeline_name=,
                        pipeline_package_path=)
 ```
 
-- `pipeline_name `: upload할 pipeline에 지어줄 name
+- `pipeline_name `: upload할 pipeline에 지어줄 name (이미 존재하는 pipeline의 이름과 중복되면 안된다.)
 - `description` : upload할 pipeline에 대한 설명
 - `pipeline_package_path` : upload할 pipeline의 path (.yaml format)
 
@@ -323,11 +323,26 @@ experiment_id = experiment.id
 client의 experiment정보를 return
 
 ```python
-info_experiment = client.get_experiment(experiment_name= , namespace= )
+info_experiment = client.get_experiment(experiment_id = , experiment_name= , namespace= )
 ```
 
+- `experiment_id` : 가져올 experiment의 id
+
 - `experiment_name` : 가져올 experiment의 이름
+
+  > `experiment_id`, `experiment_name` 둘 중 하나는 필수
+
 - `namespace` : client가 속한 kubernetes namespace의 이름
+
+
+
+#### list_experiments
+
+```python
+list_experiments = client.list_experiments(page_size = )
+```
+
+- `page_size` : 최대 보여줄 pipeline개수 (default = 10)
 
 
 
@@ -395,6 +410,8 @@ exec_run = client.run_pipeline(
 - `pipeline_id` : run할 pipeline의 id
 
 - `pipeline_package_path` : run pipeline의 path (.yaml format)
+
+  > `pipeline_id`, `pipeline_package_path` 는 둘 중에 하나만 할당
 
 - `pipeline_root` : pipeline의 outputs을 저장할 path
 
