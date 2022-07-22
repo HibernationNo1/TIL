@@ -1,5 +1,7 @@
 # KubeFlow Pipeline(KFP)
 
+[공식](https://kubeflow-pipelines.readthedocs.io/en/stable/source/kfp.client.html)
+
 #### Introduction
 
 - component : 재사용 가능한 형태로 분리된 하나의 작업 단위
@@ -119,9 +121,9 @@ $ kubectl get pod -n kubeflow
 
 
 
-### component
+## component
 
-#### create_component_from_func
+### create_component_from_func
 
 경량화 component를 만들때 사용하며, function을 하나의 component로 만들 수 있다.
 
@@ -167,13 +169,13 @@ decorator로도 사용할 수 있으며, function으로 호출할 시 여러 opt
 
 
 
-##### resources
+#### resources
 
 하나의 component를 선언 후 해당 instance에 method chaining형태로 pod의 resource를 지정할 수 있다.
 
 component별로 필요한 resource를 할당할 수 있다.
 
-###### CPU, GPU
+##### CPU, GPU
 
 ```python
 import kfp
@@ -201,31 +203,7 @@ def pipeline()
 
 
 
-###### PVC
-
-k8s의 동일한 namespace에 PVC를 미리 생성해둔 뒤, 해당 PVC의 name을 지정하여 `ConainerOP`의 argument로 할당하여 사용
-
-```python
-import kfp
-from kfp.components import create_component_from_func
-from kfp import dsl
-
-@dsl.pipline	
-def pipeline():
-    vop = dsl.VolumeOP(
-    	name="v1",
-    	resource_name="mypvc",
-    	size = "1Gi")
-    
-    use_volume_op = dsl.ContainerOP(
-    	name="test",
-    	pvolumes={"/mnt": vop.volume})		# containerOP생성 시 argument로 지정
-    
-```
-
-
-
-###### Secret
+##### Secret
 
 k8s의 동일한 namespace에 Secret을 미리 생성해둔 뒤, 해당 secret과 name과  value를 지정하여 사용
 
@@ -239,11 +217,11 @@ k8s의 동일한 namespace에 Secret을 미리 생성해둔 뒤, 해당 secret�
 
 
 
-#### ContainerOp
+### ContainerOp
 
 이젠 안씀
 
-#### func_to_container_op
+### func_to_container_op
 
 경량화 component를 만들때 사용하며, function을 하나의 component로 만들 수 있다.
 
@@ -265,7 +243,56 @@ component간의 전달할 data가 큰 경우 file을 통해 data를 전달할 �
 
 해당 function의 변수를 사용할 때 반드시 해당 type을 명시해주어야 함
 
+예시는 [아래](exam★)
 
+
+
+### upload to kubeflow
+
+1. istio-ingressgateway 확인
+
+   ```
+   $ kubectl get svc -n istio-system
+   ```
+
+   ```
+   NAME                    TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)
+   istio-ingressgateway    LoadBalancer   10.102.172.178   <pending>     15021:32503/TCP,80:30116/TCP,443:31897/TCP,31400:31214/TCP,15443:30902/TCP  
+   ```
+
+   > port 80 확인
+
+2. port forward
+
+   ```
+   $ kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80
+   ```
+
+3. localhost 8080접속
+
+   ```
+   localhost:8080
+   ```
+
+   `Eamail Address`, `PW` 입력
+
+   > `user@example.com`, `12341234`
+
+   **Central Dashboard**의 **pipeline** 에서 `+Upload pipeline` , Upload a file 에서 `add_exam.yaml` 선택 >> create
+
+   `+Create run` : 해당 pipeline을 실행 
+
+   > 선택할 experiments가 없으면 Experiments(KFP) 에서 `+Create experiment` 눌러서  experiment만들고 바로 pipeline선택해서 run만들기
+
+   Run이 만들어진 후 시간이 지나면 Graph에서 각 componenet의 상태 확인 가능
+
+   > 모든 output, log는 minio에 저장되며 해당 file을 다운받으면 관련 data를 확인할 수 있다.
+
+
+
+
+
+## dsl
 
 ### pipeline
 
@@ -374,7 +401,7 @@ test_2_op  = func_to_container_op(
             output_component_file="test_2.component.yaml")
 ```
 
-> ` InputPath("dict")` : file하나의 path(dir path는 되는지 안되는지 모르겠음)
+> ` InputPath("dict")` : file하나의 path
 >
 > - `OutputPath("dict")` 로 인해 만들어진 file하나의 path를 다시 받을 때 사용
 > - `"dict"` : file을 load했을 때 얻는 변수의 type
@@ -406,8 +433,6 @@ import kfp.dsl as dsl
 
 from test_1.test_1 import test_1_op
 from test_2.test_2 import test_2_op   
-
-
 
 @dsl.pipeline(name="Data test example")
 def data_example(value_1: int, value_2:int, value_3 : int):
@@ -445,10 +470,6 @@ if __name__=="__main__":
 > compile code를 삭제하고 명령어로 pipeline yaml을 만드려면
 >
 > `dsl-compile --py add.py --output add_exam.yaml`
-
-
-
-
 
 
 
@@ -504,52 +525,7 @@ if __name__=="__main__":
 
 
 
-### upload to kubeflow
 
-1. istio-ingressgateway 확인
-
-   ```
-   $ kubectl get svc -n istio-system
-   ```
-
-   ```
-   NAME                    TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)
-   istio-ingressgateway    LoadBalancer   10.102.172.178   <pending>     15021:32503/TCP,80:30116/TCP,443:31897/TCP,31400:31214/TCP,15443:30902/TCP  
-   ```
-
-   > port 80 확인
-
-2. port forward
-
-   ```
-   $ kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80
-   ```
-
-3. localhost 8080접속
-
-   ```
-   localhost:8080
-   ```
-
-   `Eamail Address`, `PW` 입력
-
-   > `user@example.com`, `12341234`
-
-   **Central Dashboard**의 **pipeline** 에서 `+Upload pipeline` , Upload a file 에서 `add_exam.yaml` 선택 >> create
-
-   `+Create run` : 해당 pipeline을 실행 
-
-   > 선택할 experiments가 없으면 Experiments(KFP) 에서 `+Create experiment` 눌러서  experiment만들고 바로 pipeline선택해서 run만들기
-
-   Run이 만들어진 후 시간이 지나면 Graph에서 각 componenet의 상태 확인 가능
-
-   > 모든 output, log는 minio에 저장되며 해당 file을 다운받으면 관련 data를 확인할 수 있다.
-
-
-
-
-
-## dsl
 
 ### Condition
 
@@ -617,4 +593,41 @@ def conditional_pipeline():
        exam_op(item)
         
 ```
+
+
+
+
+
+### VolumeOp
+
+kubernetest PersistentVolumeClaim를 생성하여 volum mount를 진행한다.
+
+```python
+import kfp
+import kfp.dsl as dsl
+
+from test_1.test_1 import test_1_op
+from test_2.test_2 import test_2_op   
+
+@dsl.pipeline(name="Data test example")
+def data_example(value_1: int, value_2:int, value_3 : int):
+    # pipeline데코된 함수에서 input으로 받는 값은 type을 명시해주어야 한다.
+    
+    exam_vop = dsl.VolumeOp(
+        name="exam-volume",
+        resource_name="exam-pvc",
+        modes=dsl.VOLUME_MODE_RWM,
+        size="1Gi")
+    # 전역에 선언 후 instance만 가져오면 안됨
+    
+    _test_1 = test_1_op(value_1, value_2, value_3)
+    
+    _test_2 = test_2_op(_test_1.outputs["data_output_dir"]).add_pvolumes({"/test_2": exam_vop.volume})
+```
+
+- `add_pvolumes` : `func_to_container_op` 의 instance에 method chaining방식으로 호출하여 특정 path를 mount
+
+
+
+
 
