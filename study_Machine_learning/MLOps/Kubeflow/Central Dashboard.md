@@ -6,6 +6,84 @@
 
 # Central Dashboard
 
+#### port forwarding
+
+1. istio-ingressgateway 확인
+
+   ```
+   $ kubectl get svc -n istio-system
+   ```
+
+   ```
+   NAME                    TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)
+   istio-ingressgateway    LoadBalancer   10.102.172.178   <pending>     15021:32503/TCP,80:30116/TCP,443:31897/TCP,31400:31214/TCP,15443:30902/TCP  
+   ```
+
+   > port 80 확인
+   >
+   > ```
+   > ▒ istioctl install --set profile=default -f - <<EOF
+   > apiVersion: install.istio.io/v1alpha1
+   > kind: IstioOperator
+   > spec:
+   >   components:
+   >     ingressGateways:
+   >     - enabled: true
+   >       k8s:
+   >         service:
+   >           ports:
+   >           - name: status-port
+   >             port: 15021
+   >             targetPort: 15021
+   >           - name: http2
+   >             port: 80
+   >             targetPort: 8080
+   >             nodePort: 32080
+   >           - name: https
+   >             port: 443
+   >             targetPort: 8443
+   >             nodePort: 32443
+   >           - name: tls
+   >             port: 15443
+   >             targetPort: 15443
+   >       name: istio-ingressgateway
+   >   values:
+   >     gateways:
+   >       istio-ingressgateway:
+   >         type: NodePort
+   > EOF
+   > ```
+
+2. port forward
+
+   ```
+   $ kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80
+   ```
+
+   > host `127.0.0.1:8080` ==> node1 `10.102.172.178:30116` 연결
+
+3. localhost 8080접속
+
+   ```
+   localhost:8080
+   ```
+
+   `Eamail Address`, `PW` 입력
+
+   > `user@example.com`, `12341234`
+
+   **Central Dashboard**의 **pipeline** 에서 `+Upload pipeline` , Upload a file 에서 `add_exam.yaml` 선택 >> create
+
+   `+Create run` : 해당 pipeline을 실행 
+
+   > 선택할 experiments가 없으면 Experiments(KFP) 에서 `+Create experiment` 눌러서  experiment만들고 바로 pipeline선택해서 run만들기
+
+   Run이 만들어진 후 시간이 지나면 Graph에서 각 componenet의 상태 확인 가능
+
+   > 모든 output, log는 minio에 저장되며 해당 file을 다운받으면 관련 data를 확인할 수 있다.
+
+
+
 ### Home
 
 - Dashboard
