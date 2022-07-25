@@ -59,6 +59,10 @@
 
 `ifconfig` : network 구성 확인하는 명령어
 
+```
+$ sudo apt install net-tools
+```
+
 - 예시
 
   ```

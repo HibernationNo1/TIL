@@ -18,6 +18,12 @@ check
 $ aws --version
 ```
 
+```
+aws-cli/1.18.69 Python/3.8.10 Linux/5.15.0-41-generic botocore/1.16.19
+```
+
+> version : `1.18.69`
+
 
 
 ##### set configure
@@ -44,7 +50,7 @@ access key발급은 [aws공식](https://us-east-1.console.aws.amazon.com/console
 
    - AWS 계정의 access key
 
-   - AWS 계정의 secret key
+   - AWS 계정의 secret key (secret key는 생성했을 당시에만 확인 및 다운이 가능하다.)
 
 
 

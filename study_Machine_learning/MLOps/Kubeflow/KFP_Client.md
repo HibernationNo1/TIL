@@ -436,11 +436,15 @@ run_id = exec_run.id
 Run을 실행하고, 완료될 때까지 기다렸다가 결과를 return
 
 ```python
-client.wait_for_run_completion(run_id=, timeout=345600)
+completed_run = client.wait_for_run_completion(run_id=run_id, timeout=345600)
 ```
 
 - `timeout` : 단위 : 초
-- `run_id`: 
+- `run_id`:  
+- reuturn
+  - `completed_run.run.status` : `Failed` 또는 `Succeeded`
+
+
 
 
 
