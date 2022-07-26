@@ -50,3 +50,92 @@ ID, PW입력 후
 
   내부 포트 : 외부에서 접근한 port에 내부 특정 device의 port를 연결한다.
 
+
+
+
+
+### Ubuntu
+
+1. port상태 확인
+
+   ```
+   # netstat -tnlp -a
+   ```
+
+   ```
+   Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    
+   tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      -                   ...
+   tcp        0    400 192.168.56.101:22       192.168.56.1:49319      ESTABLISHED -
+   ```
+
+   >`-a` : 모든소켓 표시
+   >
+   >- State 
+   >
+   >  `LISTEN` : 열려 있음(사용 가능) 
+   >
+   >  - `0.0.0.0:22` : 22번 port가 열려 있음
+   >
+   >  `ESTABLISHED` :누군가 접속중
+   >
+   >  ```
+   >  tcp        0    400 192.168.56.101:22       192.168.56.1:49319      ESTABLISHED -
+   >  ```
+   >
+   >  내 IP가 `192.168.56.101` 이고, 이곳의 22번 port로 `192.168.56.1`가 접속중임
+   >
+   >- `TIME_WAIT` : 접속 후 사용이 종료되었으나 지정된 시간만큼 다른 명령이나 신호를 기다리는 중
+   >
+   >- `FIN_WAIT 1` : port가 닫혀있으며 연결이 종료되기를 기다리는 중
+   >
+   >- `FIN_WAIT 2` : 연결이 완전히 닫힌 상태
+   >
+   >- `SYN_SENT` : 원격지에서 port를 열려고 시도하는 중 
+   >
+   >- `UNKNOWN` : 현재 port의 상태를 알 수 없음
+
+2. 열고자 하는 port확인 (5900port확인)
+
+   ```
+   # netstat -nap | grep 5900
+   ```
+
+   > 아무것도 안뜨면 해당 port는 사용 안하는 중
+
+3. 특정 port열기
+
+   외부에서 접속할 수 있도록 port OPEN (사용 안하는 port에만 적용) 
+
+   `INPUT`
+
+   ```
+   # iptables -I INPUT 1 -p tcp --dport 5900 -j ACCEPT
+   ```
+
+   `OUTPUT`
+
+   ```
+   # iptables -I INPUT 1 -p udp --dport 5900 -j ACCEPT
+   ```
+
+4. port가 열렸는지 확인
+
+   ```
+   # iptables -nL
+   ```
+
+   ```
+   Chain INPUT (policy ACCEPT)
+   target     prot opt source               destination
+   ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0            tcp dpt:5900
+   
+   ```
+
+   > 5900번 열려있음 확인
+
+5. port forwarding
+
+   
+
+   
+

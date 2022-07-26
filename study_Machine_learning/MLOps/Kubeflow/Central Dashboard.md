@@ -6,9 +6,56 @@
 
 # Central Dashboard
 
-#### port forwarding
+## link
 
-1. istio-ingressgateway 확인
+### port forwarding
+
+1. kubernetes 확인
+
+   ```
+   $ minikube status
+   ```
+
+   ```
+   type: Control Plane
+   host: Running
+   kubelet: Running
+   apiserver: Running
+   kubeconfig: Configured
+   ```
+
+   > 아래처럼 출력 될 경우
+   >
+   > ```
+   > type: Control Plane
+   > host: Stopped
+   > kubelet: Stopped
+   > apiserver: Stopped
+   > kubeconfig: Stopped
+   > ```
+   >
+   > minikube start 
+   >
+   > ```
+   > minikube start --driver=docker \
+   > --cpus='4' --memory='7g' \
+   > --kubernetes-version=v1.19.3 \
+   > --extra-config=apiserver.service-account-signing-key-file=/var/lib/minikube/certs/sa.key \
+   > --extra-config=apiserver.service-account-issuer=kubernetes.dafault.svc
+   > ```
+
+   ```
+   $ kubectl get nodes
+   ```
+
+   ```
+   NAME       STATUS   ROLES    AGE   VERSION
+   minikube   Ready    master   29h   v1.19.3
+   ```
+
+   kubeflow namespace의 resource check
+
+2. istio-ingressgateway 확인
 
    ```
    $ kubectl get svc -n istio-system
@@ -21,40 +68,8 @@
 
    > port 80 확인
    >
-   > ```
-   > ▒ istioctl install --set profile=default -f - <<EOF
-   > apiVersion: install.istio.io/v1alpha1
-   > kind: IstioOperator
-   > spec:
-   >   components:
-   >     ingressGateways:
-   >     - enabled: true
-   >       k8s:
-   >         service:
-   >           ports:
-   >           - name: status-port
-   >             port: 15021
-   >             targetPort: 15021
-   >           - name: http2
-   >             port: 80
-   >             targetPort: 8080
-   >             nodePort: 32080
-   >           - name: https
-   >             port: 443
-   >             targetPort: 8443
-   >             nodePort: 32443
-   >           - name: tls
-   >             port: 15443
-   >             targetPort: 15443
-   >       name: istio-ingressgateway
-   >   values:
-   >     gateways:
-   >       istio-ingressgateway:
-   >         type: NodePort
-   > EOF
-   > ```
-
-2. port forward
+   
+3. port forward
 
    ```
    $ kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80
@@ -62,7 +77,7 @@
 
    > host `127.0.0.1:8080` ==> node1 `10.102.172.178:30116` 연결
 
-3. localhost 8080접속
+4. localhost 8080접속
 
    ```
    localhost:8080
@@ -70,7 +85,7 @@
 
    `Eamail Address`, `PW` 입력
 
-   > `user@example.com`, `12341234`
+   > deault : `user@example.com`, `12341234`
 
    **Central Dashboard**의 **pipeline** 에서 `+Upload pipeline` , Upload a file 에서 `add_exam.yaml` 선택 >> create
 
@@ -83,6 +98,139 @@
    > 모든 output, log는 minio에 저장되며 해당 file을 다운받으면 관련 data를 확인할 수 있다.
 
 
+
+### access from outside 
+
+ngrok사용
+
+방화벽 넘어서 외부에서 로컬에 접속 가능하게 하는 터널 프로그램
+
+외부에서도 `localhost:8080` 과 같은 local server에 접근할 수 있도록 임시 URL을 만들어준다.
+
+
+
+#### install ngrok
+
+[공식](https://dl.equinox.io/ngrok/ngrok/stable)
+
+```
+wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.tgz
+```
+
+```
+tar -xvzf ngrok-stable-linux-amd64.tgz
+```
+
+> 해당 명령어를 입력한 위치에 ngrok 폴더가 생김
+
+
+
+##### using
+
+```
+./ngrok http 8090
+```
+
+> 외부에서 local의 8090 port에 연결할 수 있는 URL을 만들어본다.
+
+출력
+
+```
+ngrok by @inconshreveable                                                                                                                                           (Ctrl+C to quit)
+
+Session Status                online
+Session Expires               1 hour, 51 minutes
+Version                       2.3.40
+Region                        United States (us)
+Web Interface                 http://127.0.0.1:4040
+Forwarding                    http://eb45-1-214-32-67.ngrok.io -> http://localhost:8090
+Forwarding                    https://eb45-1-214-32-67.ngrok.io -> http://localhost:8090
+
+Connections                   ttl     opn     rt1     rt5     p50     p90
+                              2       0       0.00    0.00    300.58  300.92
+
+HTTP Requests
+-------------
+
+GET /favicon.ico               302 Found
+GET /                          302 Found
+GET /                          302 Found
+
+```
+
+- `Session Status` : session의 상태. online일 경우 정상
+
+- `Session Expires` : 남은 session의 만료 시간
+
+  > 만료 시간이 지나면 다시 `./ngrok http {port}`명령어 입력해야함
+  >
+  > 만료 시간 없이 사용하려면 계정 연동. 방법은 아래에
+
+- `Region` : ngrok agent가 ternal을 hoting하기 위한 region
+
+- `Web Interface` : ngrok dashboard를 제공하는 URL
+
+- `Forwarding` : ngrok에서 제공하는 ternal URL로, 이를 통해 외부에서도 local 한경에 접근할 수 있다. (http, https제공)
+
+
+
+##### account linking
+
+ngrok은 예정을 연결하지 않고 사용할 경우 임시 URL에 연결 시 ERR_BGROK_6022를 만나게 된다. (wab app의 fronted server용도일 경우)
+
+
+
+ngrok account는 **authtoken** 정보를 입력하여 연결할 수 있다.
+
+1. [공식](https://dashboard.ngrok.com/login) 에서 회원가입 및 login
+
+2. authoken확인
+
+   좌측 탭 `Your Authtoken` 에서 `2CSyoOrkvZN0qowT8x72gKYb4qo_6uKpfheB2bC88e7isWSXd` 과 같은 정보 확인
+
+3. ngrok에 link
+
+   ```
+   $ ./ngrok authtoken 2CSyoOrkvZN0qowT8x72gKYb4qo_6uKpfheB2bC88e7isWSXd
+   ```
+
+   > ```
+   > Authtoken saved to configuration file: /home/user_name/.ngrok2/ngrok.yml
+   > ```
+
+4. `./ngrok http {port}`
+
+   ```
+   $ ./ngrok http 8090
+   ```
+
+   연결 확인
+
+
+
+#### kubernetes
+
+minikube는 kubernetes와 다르게 `로컬 쿠버네티스 엔진` 이기 때문에 minikube를 사용할 경우 아래의 LoadBalancer의 `EXTERNAL-IP`이 `<pending>` 인 것을 볼 수 있다.
+
+> istio-ingressgateway 확인
+>
+> ```
+> $ kubectl get svc -n istio-system
+> ```
+>
+> ```
+> NAME                    TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)
+> istio-ingressgateway    LoadBalancer   10.102.172.178   <pending>     15021:32503/TCP,80:30116/TCP,443:31897/TCP,31400:31214/TCP,15443:30902/TCP  
+> ```
+>
+
+때문에 외부에서 접근하기 위해서는 kubectl proxy를 실행하고  `minikube tunnel`를 실행해야 하는 등 번거로운 과정이 많다.
+
+하지만 kubernetes를 설치하면 `EXTERNAL-IP`이 할당되고, 외부로 IP노출이 가능하기 때문에 외부에서 쉽게 접근이 가능하다.
+
+
+
+## menu
 
 ### Home
 

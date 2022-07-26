@@ -213,3 +213,94 @@ Ubuntu 가상머신 저장소, 파티션 용량 늘리는 법
       (내꺼 partition은 /dev/sda5, file System = ex4 인 것을 resize했다)
 
       resize한 후 초록색 확인 버튼 눌러서 적용
+
+
+
+#### 3. port forwarding
+
+1. host 전용 어댑터 사용
+
+   해당 가상 OS의 설정 > 네트워크 > 어댑터 1
+
+   네트워크 어댑터 사용하기 체크, 호스트 전용 어댑터 (어댑터 1에는 NAT로 설정되어 있을 것임)
+
+2. 가상 OS실행 후 IP확인(ifconfig)
+
+   ```
+   enp0s8: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+           inet 192.168.56.101  netmask 255.255.255.0  broadcast 192.168.56.255
+           inet6 fe80::6f64:554f:332e:78c1  prefixlen 64  scopeid 0x20<link>
+           ether 08:00:27:8c:3a:93  txqueuelen 1000  (Ethernet)
+           RX packets 6  bytes 1549 (1.5 KB)
+           RX errors 0  dropped 0  overruns 0  frame 0
+           TX packets 46  bytes 5802 (5.8 KB)
+           TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+   ```
+
+   192.168.56.101 ~ 192.168.56.254 IP 대역으로 자동으로 할당 확인 (`192.168.56.101`)
+
+
+
+#### 4. 원격 접속 확인
+
+- ssh확인
+
+  1. 가상 OS에서 
+
+     check and install
+
+     ```
+     $ dpkg -l | grep openssh					# openssh-client 확인
+     $ sudo apt-get install openssh-server		# openssh-server 설치
+     ```
+
+     start
+
+     ```
+     $ sudo service ssh start
+     ```
+
+     check port
+
+     ```
+     $ sudo netstat -anp|grep LISTEN|grep sshd
+     ```
+
+     > 변경시 
+     >
+     > ```
+     > $ sudo vi /etc/ssh/ssh_config
+     > ```
+
+  2. 접속하고자 하는 OS에서
+
+     IP통신 확인
+
+     ```
+     $ ping 192.168.56.101
+     
+     Ping 192.168.56.101 32바이트 데이터 사용:
+     192.168.56.101의 응답: 바이트=32 시간<1ms TTL=64
+     192.168.56.101의 응답: 바이트=32 시간<1ms TTL=64
+     192.168.56.101의 응답: 바이트=32 시간<1ms TTL=64
+     192.168.56.101의 응답: 바이트=32 시간<1ms TTL=64
+     
+     192.168.56.101에 대한 Ping 통계:
+         패킷: 보냄 = 4, 받음 = 4, 손실 = 0 (0% 손실),
+     왕복 시간(밀리초):
+         최소 = 0ms, 최대 = 0ms, 평균 = 0ms
+     ```
+
+     접속
+
+     `username@IP` :port 입력
+
+- filezilla
+
+  - host : `sftp://192.168.56.101`
+  - user name : 
+  - pw:
+  - port : 22 (ssh와 동일)
+
+- 
+
