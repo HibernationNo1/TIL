@@ -8,43 +8,59 @@ SSH란 Secure Shell Protocol, 즉 네트워크 프로토콜 중 하나로 컴퓨
 
 ### install
 
-Ubuntu 기준
+Ubuntu에서 openssh라는 패키지를 통해 SSH를 구동할 수 있다.
+
+Ubuntu를 설치하면, openssh-client 만이 기본적으로 설치되어있음
 
 ```
-$ apt install ssh
+$ dpkg -l | grep openssh
 ```
 
-또는 
+> openssh-client 확인
+
+다른 컴퓨터에서 Ubuntu에 접속하려면 openssh-server 패키지도 설치해야 한다.
 
 ```
-$ apt install openssh-server
+$ sudo apt-get install openssh-server
 ```
 
-> 설치 안되면 
->
-> 방화벽 해제해보기
->
-> ```
-> root@ ~~~ :~# systemctl stop ufw
-> ```
 
 
+### command
 
-ssh가 잘 설치되었는지 확인
+**start ssh**
 
 ```
-$ systemctl status ssh
+$ sudo service ssh start 
 ```
 
-초록색 글자의  `active(running)`이 보인다면 접속 가능
 
 
-
-ssh 시작
+**stop ssh**
 
 ```
-root@ ~~~ :~# systemctl start ssh
+$ sudo service ssh stop
 ```
+
+
+
+**restart ssh**
+
+```
+$ sudo service ssh restart
+```
+
+
+
+**check ssh port**
+
+```
+$ sudo netstat -antp
+```
+
+> 현재 network가 어떻게 열려있는지, 통신하고있는지 확인
+
+
 
 
 
@@ -58,7 +74,24 @@ root@ ~~~ :~# systemctl start ssh
 $ sudo vi /etc/ssh/ssh_config
 ```
 
+```
+...
 
+#Port 22
+#AddressFamily any
+#ListenAddress 0.0.0.0
+#ListenAddress ::
+
+...
+```
+
+> ssh접근 port가 22인것을 확인. 이 부분을 변경하면 ssh의 접근 port를 변경할 수 있다.
+>
+> 변경 후 확인 방법
+>
+> ```
+> $ sudo netstat -anp|grep LISTEN|grep sshd
+> ```
 
 
 
@@ -66,42 +99,32 @@ $ sudo vi /etc/ssh/ssh_config
 
 원격 제어에 사용
 
-1. login(target OS가 실행되고 있어야함)
+1. 원격 접속하고자 하는 device의 IP확인
 
-   window 10에서 putty 실행 후 
-
-   > 경우 1
-   >
-   > VirtualBox로 network의 포트 포워딩을 통해 특정 Virtual machine의 host port에 105라는 번호를 할당했다면.
-   >
-   > putty의 Host Name : `127.0.0.1`, 		port : `105`
-   >
-   > 경우 2
-   >
-   > Virtual machine의 포트 포워딩을 
-   >
-   > host port : ` 22` 		guest port : `22` 으로 설정했다면 
-   >
-   >  putty의 Host Name : `127.0.0.1`, 		port : `22`
-
-   위 예시 입력 후 확인, accept 클릭
-
-   `login as:` 가 뜨면 성공
+2. IP통신 확인
 
    ```
-   login as: hibernation
-   password : winter4958
+   $ ping 192.168.56.101
+   
+   Ping 192.168.56.101 32바이트 데이터 사용:
+   192.168.56.101의 응답: 바이트=32 시간<1ms TTL=64
+   192.168.56.101의 응답: 바이트=32 시간<1ms TTL=64
+   192.168.56.101의 응답: 바이트=32 시간<1ms TTL=64
+   192.168.56.101의 응답: 바이트=32 시간<1ms TTL=64
+   
+   192.168.56.101에 대한 Ping 통계:
+       패킷: 보냄 = 4, 받음 = 4, 손실 = 0 (0% 손실),
+   왕복 시간(밀리초):
+       최소 = 0ms, 최대 = 0ms, 평균 = 0ms
    ```
 
-   > 아이디 비번 입력해서 접속
+3. 접속
 
-2. VirtualBox와 양방향 setting
+   `username@IP` :port 입력
 
-   VirtualBox에서 장치 - 클립보드 공유 - 양방향 으로 setting
+   
 
-   VirtualBox에서 장치 - 드래그 앤 드롭 - 양방향 으로 setting
 
-이제 window10에서 putty를 통해 ssh로 ubuntu에서 작업이 가능하다.
 
 
 
