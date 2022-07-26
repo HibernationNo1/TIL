@@ -109,6 +109,16 @@ client = kfp.Client(host = host,
 
   > 설정 안할 경우 cluster 내 service DNS name이 사용되며 관련 pod는 동일한 cluster인 경우에만 작동한다. 그렇기 때문에 자신의 host name을 명시하고 관련 cluster를 생성 및 설정시 인지하여 사용하도록 하자.
 
+  - minikube사용시 cluster의 외부 접근이 번거롭기 때문에 `ngrok` 를 사용해서 임시 URL를 할당받아 사용하도록 하자 
+
+    `host = "https://cc11-1-214-32-67.ngrok.io"`
+
+  - kubernetes사용시 외부로 cluster IP노출이 가능하기 때문에 `istio-ingressgateway` 의  `EXTERNAL-IP`이 할당된다. 이걸 사용하자
+
+    `host = http://192.168.0.167:80"`
+
+    
+
 - `namespace` : kubeflow가 사용자별 분리된 workspace를 가지게 하여 독립 환경을 제공하도록 한다.
 
   ```python
