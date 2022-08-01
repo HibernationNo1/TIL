@@ -17,10 +17,14 @@ dataset을 version화 하여 관리할 수 있도록 하는 tool
 가상환경 권장
 
 ```
-$ pip install dvc[all]==2.6.4
+$ pip install dvc[all]
 ```
 
-> 특정 version download
+> storage중에서 s3만 사용할거면 
+>
+> ```
+> pip install dvc[s3]
+> ```
 
 
 
@@ -34,21 +38,21 @@ $ dvc --version
 
 ## Data Management
 
-### DVC storage setting
+### DVC storage setting, upload data 
 
-1. make directory
+1. **make directory**
 
    ```
    $ mkdir dvc-storage && cd dvc-storage
    ```
 
-2. git init
+2. **git init(반드시)**
 
    ```
    $ git init
    ```
 
-3. dvc init
+3. **dvc init**
 
    ```
    $ dvc init
@@ -58,13 +62,22 @@ $ dvc --version
    Initialized DVC repository.
    ```
 
-4. save data
+4. **locate save data**
 
-   data를 저장할 dir을 생성 후 그 안에 data를 save
+   data를 저장할 dir을 생성 후 그 안에 data를 save 
 
    ```
    $ mkdir {dir_name}
    ```
+
+   > 현재 위치에 있는 data를 바로 upload할 수 없다. 1개 이상의 dir이 있는 구조가 필요
+   >
+   > ```
+   > dir - .git
+   > 	- .dvc
+   > 	- dataset_1(dir)
+   > 	- dataset_2(dir)
+   > ```
 
    해당 dir을 dvc로 tracking
 
@@ -74,8 +87,8 @@ $ dvc --version
 
    ```
    To track the changes with git, run:                                             
-   
-   	git add {dir_name}.dvc .gitignore
+   	
+   	git add {dir_name}.dvc .gitignore 
    ```
 
    위에서 뜬 안내메시지 실행 (git에서 version관리를 할 수 있도록 해줌)
@@ -83,8 +96,6 @@ $ dvc --version
    ```
    $ git add {dir_name}.dvc .gitignore
    ```
-
-   
 
    - check
 
@@ -94,43 +105,63 @@ $ dvc --version
 
      git은 바로  이 .dvc file 관리하게 된다.
 
-5. commit
+5. **commit dataset** 
 
    ```
-   $ git commit -m "Add test data"
+   $ git commit -m "commit init data"
    ```
 
-6. set remote storage
+6. **set remote storage**
 
-   data가 실제로 저장될 remote storage를 세팅 (google drive에 저장)
+   data가 실제로 저장될 remote storage를 세팅 
 
-   1. google drive에 가서 dir새로 만들기  >> url ID복사
+   1. **google drive에 저장**
 
-      ```
-      https://drive.google.com/drive/folders/1ZJExBQjJp2VJRBtB-U8IUffJL0q5WBgN
-      ```
+      1. google drive에 가서 dir새로 만들기  >> url ID복사
 
-      일 때 url ID는 아래와 같다
+         ```
+         https://drive.google.com/drive/folders/1ZJExBQjJp2VJRBtB-U8IUffJL0q5WBgN
+         ```
 
-      ```
-      1ZJExBQjJp2VJRBtB-U8IUffJL0q5WBgN
-      ```
+         일 때 url ID는 아래와 같다
 
-   2. dvc add
+         ```
+         1ZJExBQjJp2VJRBtB-U8IUffJL0q5WBgN
+         ```
 
-      ```
-      $ dvc remote add -d storage gdrive://1ZJExBQjJp2VJRBtB-U8IUffJL0q5WBgN
-      ```
+      2. dvc add
 
-      > `gdrive` : google drive라는 뜻
+         ```
+         $ dvc remote add -d storage gdrive://1ZJExBQjJp2VJRBtB-U8IUffJL0q5WBgN
+         ```
 
-      ```
-      Setting 'storage' as a default remote.			
-      ```
+         > `gdrive` : google drive라는 뜻
 
-      > default remote storage로 setting되었음을 의미
+         ```
+         Setting 'storage' as a default remote.          
+         ```
 
-7. git add, commit dvc config
+         > default remote storage로 setting되었음을 의미
+
+   2. **aws S3에 저장**
+
+      1. aws에 가입 후 bucket만든 후, bucket안에서 1개의 directory생성 후 해당 dir의 URL복사
+
+         ```
+         s3://{my_bucket}/{dir_name}/
+         ```
+
+      2. dvc add
+
+         ```
+         $ dvc remote add -d storage s3://{my_bucket}/{dir_name}/
+         ```
+
+         > ```
+         > Setting 'storage' as a default remote.
+         > ```
+
+7. **git add, commit dvc config**
 
    ```
    $ git add .dvc/config
@@ -139,68 +170,136 @@ $ dvc --version
 
    > 변경된 사항을 git에서 관리할 수 있도록 함
 
-8. dvc push
+8. **dvc push**
+
+   > S3인 경우 해당 device에 `aws configure` 를 통해 user의 acssess key와 secret를 등록해놓아야 한다.
+   >
+   > ```
+   > $ aws configure
+   > ```
+   >
+   > ```
+   > AWS Access Key ID [****************xxxx]: 
+   > AWS Secret Access Key [****************xxxx]: 
+   > ```
+
+   
 
    ```
    $ dvc push
    ```
 
-   ```
-   Go to the following link in your browser:
+   > - S3인 경우
+   >
+   >   ```
+   >   19 files pushed
+   >   ```
+   >
+   >   19개 file정상적으로 pushed
+   >
+   > - google drive인 경우
+   >
+   >   ```
+   >   Go to the following link in your browser:
+   >   
+   >       https://accounts.google.com/o/oauth2/auth?client_id=710796635688-iivsgbgsb6uv1fap6635dhvuei09o66c.apps.googleusercontent.com&redirect_uri=urn%3Aietf%3Awg%3Aoauth%3A2.0%3Aoob&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive.appdata&access_type=offline&response_type=code&approval_prompt=force
+   >   
+   >   Enter verification code:
+   >   ```
+   >
+   >   위 출력이 나오며 인증 과정이 필요. 해당 주소로 이동하여 google login을 통해 수행.
+   >
+   >   인증을 수행하는 과정에 code가 보임
+   >
+   >   ```
+   >   4/1AdQt8qgp7fYSoMCqitgBxY7BOOgrbDqZJ8m6o06Lqu3oRgCdJwjBB7zMdgc
+   >   ```
+   >
+   >   이를 `Enter verification code:` 에 입력
+   >
+   >   ```
+   >   Authentication successful.
+   >   ```
+   >
+   >   이후 google drive에 들어가보면 random한 이름으로 file들이 생김. 이것들은 git add-commit으로 업로드 한 file들.
+
    
-       https://accounts.google.com/o/oauth2/auth?client_id=710796635688-iivsgbgsb6uv1fap6635dhvuei09o66c.apps.googleusercontent.com&redirect_uri=urn%3Aietf%3Awg%3Aoauth%3A2.0%3Aoob&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive.appdata&access_type=offline&response_type=code&approval_prompt=force
-   
-   Enter verification code:
-   ```
-
-   위 출력이 나오며 인증 과정이 필요. 해당 주소로 이동하여 google login을 통해 수행.
-
-   인증을 수행하는 과정에 code가 보임
-
-   ```
-   4/1AdQt8qgp7fYSoMCqitgBxY7BOOgrbDqZJ8m6o06Lqu3oRgCdJwjBB7zMdgc
-   ```
-
-   이를 `Enter verification code:` 에 입력
-
-   ```
-   Authentication successful.
-   ```
-
-   
-
-   이후 google drive에 들어가보면 random한 이름으로 file들이 생김. 이것들은 git add-commit으로 업로드 한 file들.
 
 
 
-### data download
+### download data
 
-data를 remote storage로부터 download
+1. git init, dvc init을 한 dir위치에서 dvc pull을 할 때
 
-1. data를 받을 dir결정
+   data를 remote storage로부터 download
 
-   ```
-   $ cd {dir_name}
-   ```
+   1. data를 받을 dir결정
 
-   > `{dir_name}` : 위에서 git, dvc로 init된 dir
+      ```
+      $ cd {dir_name}
+      ```
 
-2. dvc pull
+      > `{dir_name}` : **위에서 git, dvc로 init된 dir**
 
-   data를 remote storage로부터 download받을 수 있는 명령어
+   2. dvc pull
 
-   위의 `{dir_name}` 의 dir안의 data를 전부 지운 후 
+      data를 remote storage로부터 download받을 수 있는 명령어
+
+      위의 `{dir_name}` 의 dir안의 data를 전부 지운 후 
+
+      ```
+      $ dvc pull
+      ```
+
+      을 하면 지워진 data가 google drive로부터 down받아진것을 확인할 수 있다.
+
+2. 전혀 새로운 환경에서 dvc pull을 할 때
+
+   `.dvc(dir)`와  `{dir_name}.dvc` file만 있으면 S3에서 dataset을 pull할 수 있다.
+
+   위 두 개의 file은 git의 repository에 저장해놓은 상태에서, `git clone`을 통해 가져온 후 
 
    ```
    $ dvc pull
    ```
 
-   을 하면 지워진 data가 google drive로부터 down받아진것을 확인할 수 있다.
+   > 만일 S3의 acssess key를 입력하라고 하면
+   >
+   > ````
+   > $ dvc remote modify --local bikes access_key_id 'mykey' 
+   > $ dvc remote modify --local bikes secret_access_key 'mysecret'
+   > ````
 
-   
+
+
+
 
 ### data checkout
 
+#### modify dataset
+
+1. dvc status
+
+   `git init`, `dvc init` 가 된 dir의 하위 dir중에 수정이 있는 경우
+
+   ```
+   $ dvc status
+   ```
+   
+   ```
+   {dir_name}.dvc:
+           changed outs:
+                   modified:           {dir_name}
+   ```
+   
+1. dvc add
+
+   수정사항이 있는 dir은 
+
+   ```
+   $ dvc add {dir_name}/
+   ```
+   
 1. data push
 
    data가 변경될 경우`dvc-storage` 의 위치의 `{dir_name}.dvc` 가 바뀌게 되는데, 이를 push
@@ -208,22 +307,32 @@ data를 remote storage로부터 download
    1. git push
 
       ```
-      $ git add data.dvc
+      $ git add {dir_name}.dvc
       ```
 
-   2. dvc push
+   2. git cummit
 
+      ```
+      $ git commit -m "dataset_1.0.1"
+      ```
+
+      > commit을 하지 않아도 push가 가능하지만, commit을 함으로써 log를 남겨 나중에 rollback이 가능하도록 한다.
+
+   3. dvc push
+   
       ```
       $ dvc push
       ```
-
+   
       > git repository가 있는 사람은 git push까지
-
+   
    google drive에 변경 된 `{dir_name}.dvc`가 업로드 됨 
 
 
 
-2. data rollback
+#### rollback dataset
+
+1. data rollback
 
    이전 version의 data를 받기
 
@@ -254,3 +363,6 @@ data를 remote storage로부터 download
       ```
 
       > `test data` commit했던 version의 data를 받는다.
+
+   
+
