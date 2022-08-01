@@ -180,8 +180,8 @@ for bucket in s3.buckets.all():
 ```python
 import boto3
 
-AWS_ACCESS_KEY_ID ="AKIAXZX44242X6XXYK7K"
-AWS_SECRET_ACCESS_KEY = "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"
+AWS_ACCESS_KEY_ID ="AKIxxxxxxxx6XXYK7K"
+AWS_SECRET_ACCESS_KEY = "YtM93BxxxxxxxxxxxxxxxxxZYVSEkpsJrV9u"
 client = boto3.client('s3',
                       aws_access_key_id=AWS_ACCESS_KEY_ID,
                       aws_secret_access_key=AWS_SECRET_ACCESS_KEY
@@ -253,8 +253,8 @@ import boto3
 import os
 
 
-AWS_ACCESS_KEY_ID ="AKIAXZX44242SIJNTR5O"
-AWS_SECRET_ACCESS_KEY = "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"
+AWS_ACCESS_KEY_ID ="AKIAxxxxxxxxxxJNTR5O"
+AWS_SECRET_ACCESS_KEY = "m7IkmfIvNWXxxxxxxxxxxxxxxx4eXA4c4/5ua"
 bucket_name = "hibernationproject"
 file_path_in_storage = 'requirements.txt'
 file_path_to_upload = os.path.join(os.getcwd(), "exam.txt")
