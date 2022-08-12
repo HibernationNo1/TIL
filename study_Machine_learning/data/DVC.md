@@ -94,7 +94,7 @@ $ dvc --version
    위에서 뜬 안내메시지 실행 (git에서 version관리를 할 수 있도록 해줌)
 
    ```
-   $ git add {dir_name}.dvc .gitignore
+   $ git add {dir_name}.dvc 
    ```
 
    - check
@@ -104,14 +104,24 @@ $ dvc --version
      이 file은 {dir_name}안의 dataset에 대한 meta data를 가진 file이다.
 
      git은 바로  이 .dvc file 관리하게 된다.
+     
+     > 이 때 `.gitignore `는 아래의 내용이 담겼으며 `.dvc`안에 위치해있다.
+     >
+     > ```
+     > /config.local
+     > /tmp
+     > /cache
+     > ```
+     >
+     > 기존의 `.gitignore`과 별개임
 
 5. **commit dataset** 
 
    ```
-   $ git commit -m "commit init data"
+   $ git commit -m "dataset_0.0.1"
    ```
 
-6. **set remote storage**
+6. **dvc storage에 연결**
 
    data가 실제로 저장될 remote storage를 세팅 
 
@@ -126,7 +136,7 @@ $ dvc --version
          일 때 url ID는 아래와 같다
 
          ```
-         1ZJExBQjJp2VJRBtB-U8IUffJL0q5WBgN
+         1ZJExBQjJp2VJRBtB-U8IUffJL0q5WBgN  
          ```
 
       2. dvc add
@@ -172,16 +182,27 @@ $ dvc --version
 
 8. **dvc push**
 
-   > S3인 경우 해당 device에 `aws configure` 를 통해 user의 acssess key와 secret를 등록해놓아야 한다.
+   storage에 실제data를 upload
+
+   > S3인 경우 해당 device에 user의 acssess key와 secret를 등록해놓아야 한다.
    >
-   > ```
-   > $ aws configure
-   > ```
+   > 1. `aws configure` 사용
    >
-   > ```
-   > AWS Access Key ID [****************xxxx]: 
-   > AWS Secret Access Key [****************xxxx]: 
-   > ```
+   >    ```
+   >    $ aws configure
+   >    ```
+   >
+   >    ```
+   >    AWS Access Key ID [****************xxxx]: 
+   >    AWS Secret Access Key [****************xxxx]: 
+   >    ```
+   >
+   > 2. `dvc remote modify --local bikes` 사용
+   >
+   >    ```
+   >    $ dvc remote modify --local bikes access_key_id 'mykey' 
+   >    $ dvc remote modify --local bikes secret_access_key 'mysecret'
+   >    ```
 
    
 
@@ -201,9 +222,9 @@ $ dvc --version
    >
    >   ```
    >   Go to the following link in your browser:
-   >   
+   >     
    >       https://accounts.google.com/o/oauth2/auth?client_id=710796635688-iivsgbgsb6uv1fap6635dhvuei09o66c.apps.googleusercontent.com&redirect_uri=urn%3Aietf%3Awg%3Aoauth%3A2.0%3Aoob&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive.appdata&access_type=offline&response_type=code&approval_prompt=force
-   >   
+   >     
    >   Enter verification code:
    >   ```
    >
@@ -223,13 +244,22 @@ $ dvc --version
    >
    >   이후 google drive에 들어가보면 random한 이름으로 file들이 생김. 이것들은 git add-commit으로 업로드 한 file들.
 
-   
+9. **git repository에 연결**
+
+   ```
+   $ git remote add origin <주소>
+   $ git push
+   ```
+
+   > 필요시  `git push --set-upstream origin master` 
+   >
+   > 해당 dvc의 여러 정보를 git repository로 관리
 
 
 
 ### download data
 
-1. git init, dvc init을 한 dir위치에서 dvc pull을 할 때
+1. git init, dvc init을 한 dir위치에서 dvc pull을 할 때 (`.dvc` dir안에 ceche가 있는 경우)
 
    data를 remote storage로부터 download
 
@@ -239,7 +269,7 @@ $ dvc --version
       $ cd {dir_name}
       ```
 
-      > `{dir_name}` : **위에서 git, dvc로 init된 dir**
+      > `{dir_name}` : **`.div(dir)`과 `{dir_name}.dvc` 가 있어야함.**
 
    2. dvc pull
 
@@ -253,24 +283,54 @@ $ dvc --version
 
       을 하면 지워진 data가 google drive로부터 down받아진것을 확인할 수 있다.
 
-2. 전혀 새로운 환경에서 dvc pull을 할 때
+2. 전혀 새로운 환경에서 dvc pull을 할 때 (`.dvc` dir안에 ceche가 없는 경우)
 
-   `.dvc(dir)`와  `{dir_name}.dvc` file만 있으면 S3에서 dataset을 pull할 수 있다.
+   1. S3 
 
-   위 두 개의 file은 git의 repository에 저장해놓은 상태에서, `git clone`을 통해 가져온 후 
+      `.dvc(dir)`와  `{dir_name}.dvc` file이 있는 repo를 가져온다
 
-   ```
-   $ dvc pull
-   ```
+      ```
+      $ git clone
+      ```
 
-   > 만일 S3의 acssess key를 입력하라고 하면
-   >
-   > ````
-   > $ dvc remote modify --local bikes access_key_id 'mykey' 
-   > $ dvc remote modify --local bikes secret_access_key 'mysecret'
-   > ````
+      access key입력
 
+      ```
+      $ dvc remote modify --local storage access_key_id 'mykey' 
+      $ dvc remote modify --local storage secret_access_key 'mysecret'
+      ```
 
+      ```
+      $ dvc pull
+      ```
+
+   2. google storage
+
+      `.dvc(dir)`와  `{dir_name}.dvc` file이 있는 repo를 가져온다
+
+      ```
+      $ git clone
+      ```
+
+      set remote
+
+      ```
+      $ dvc remote add -d -f bikes gs://{bucket name}
+      ```
+
+      set client secrets
+
+      ```
+      $ export GOOGLE_APPLICATION_CREDENTIALS ='{client_secrets_path}'
+      ```
+
+      - `client_secrets_path` : client_secrets.json의 위치
+
+      ```
+      $ dvc pull
+      ```
+
+      
 
 
 
@@ -318,13 +378,17 @@ $ dvc --version
 
       > commit을 하지 않아도 push가 가능하지만, commit을 함으로써 log를 남겨 나중에 rollback이 가능하도록 한다.
 
-   3. dvc push
+   3. dvc push, git push
    
       ```
       $ dvc push
       ```
    
       > git repository가 있는 사람은 git push까지
+      >
+      > ```
+      > $ git push
+      > ```
    
    google drive에 변경 된 `{dir_name}.dvc`가 업로드 됨 
 
