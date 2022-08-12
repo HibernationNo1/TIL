@@ -54,6 +54,12 @@ ex4.py
 Session.vim
 Sessionx.vim
 
+# PypI
+study_python/moduel/PypI_exam/pipeline_taeuk4958/build
+study_python/moduel/PypI_exam/pipeline_taeuk4958/dist
+study_python/moduel/PypI_exam/pipeline_taeuk4958/pipeline_taeuk4958.egg-info
+
+
 # Temporary
 .netrwhist
 *~
