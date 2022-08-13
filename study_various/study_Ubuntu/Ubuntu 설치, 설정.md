@@ -460,7 +460,7 @@ $ sudo apt -y install typora
 ##### curl, vim
 
 ```
-$ sudo apt-get install -y curl vim
+$ sudo apt-get install -y curl vim		# Ubuntu
 ```
 
 > 다른 text편집할때 vim으로 하려면 반드시 설치
@@ -470,7 +470,7 @@ $ sudo apt-get install -y curl vim
 ##### git 
 
 ```
-$ sudo apt-get install git
+$ sudo apt-get install git				# 	sudo yum install git
 $ git --version
 
 $ git config --global user.name "HibernationNo1"
@@ -520,9 +520,12 @@ $ git config --global user.mail "winter4958@gmail.com"
     - Press CTRL-C to abort the installation
     - Or specify a different location below
   
-  [/home/{user_name}/anaconda3] >>> 
+  [/home/{user_name}/anaconda3] >>> 		/home/ainsoft/anaconda3
   뜨면 새롭게 만들 directory의 name을 입력 (걍 anaconda3으로 )
-  # 이 때 입력 후 바로 뜨는 문구 `PREFIX=/home/ainsoft/anaconda3` 를 아래 기억
+  # 이 때 입력 후 바로 뜨는 문구 `PREFIX=/home/ainsoft/anaconda3` 를 아래 기억★★★
+  # 만약 [/root/anaconda3] >>>  으로 뜨면 root에 설치된다는 뜻이지
+  # [/root/anaconda3] >>> 		/home/ainsoft/anaconda3
+  # 으로 입력
   ```
 
   ```
@@ -541,10 +544,10 @@ $ git config --global user.mail "winter4958@gmail.com"
   text 편집기가 열리면 맨 아래줄에 추가
   
   ```
-  export PATH="/home/ainsoft/ananconda3/bin:$PATH"
+  export PATH=/home/ainsoft/ananconda3/bin:$PATH
   ```
 
-  > 위 설치 도중 만났던 PREFIX값에 + '/bin:$PATH' 
+  > 위 설치 도중 만났던 PREFIX값에 + '/bin:$PATH'    
   
   ```
   $ export PATH=~/anaconda3/bin:$PATH
@@ -615,6 +618,14 @@ $ git config --global user.mail "winter4958@gmail.com"
    ```
 
    > arm기반의 cpu인 경우 위 명령어 대신 다른 명령어 사용(검색하기)
+   >
+   > - dpkg-buildpackage: command not found
+   >
+   >   ```
+   >   sudo apt-get install dpkg-dev
+   >   ```
+   >
+   >   
 
 4. install Docker Engine (최신 version)
 
@@ -1206,4 +1217,22 @@ Ubuntu에선 python colpiler는 default로 설치되어 있지만, C, C++은 따
   ```
 
   > 실행 파일 작동
+
+
+
+
+
+### GPU
+
+check GPU
+
+```
+$ sudo lshw -C display
+```
+
+또는
+
+```
+$ lspci | grep VGA
+```
 
