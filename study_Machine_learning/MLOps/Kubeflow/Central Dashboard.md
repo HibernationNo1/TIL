@@ -128,10 +128,10 @@ tar -xvzf ngrok-stable-linux-amd64.tgz
 ##### using
 
 ```
-./ngrok http 8090
+./ngrok http 8080
 ```
 
-> 외부에서 local의 8090 port에 연결할 수 있는 URL을 만들어본다.
+> 외부에서 local의 8080 port에 연결할 수 있는 URL을 만들어본다.
 
 출력
 
@@ -174,9 +174,9 @@ GET /                          302 Found
 
 
 
-##### account linking
+###### account linking
 
-ngrok은 예정을 연결하지 않고 사용할 경우 임시 URL에 연결 시 ERR_BGROK_6022를 만나게 된다. (wab app의 fronted server용도일 경우)
+ngrok은 계정을 연결하지 않고 사용할 경우 임시 URL에 연결 시 ERR_BGROK_6022를 만나게 된다. (wab app의 fronted server용도일 경우)
 
 
 
@@ -227,6 +227,129 @@ minikube는 kubernetes와 다르게 `로컬 쿠버네티스 엔진` 이기 때�
 때문에 외부에서 접근하기 위해서는 kubectl proxy를 실행하고  `minikube tunnel`를 실행해야 하는 등 번거로운 과정이 많다.
 
 하지만 kubernetes를 설치하면 `EXTERNAL-IP`이 할당되고, 외부로 IP노출이 가능하기 때문에 외부에서 쉽게 접근이 가능하다.
+
+
+
+## add user
+
+dashboard에 user를 추가하기 위해서는 cm dex를 수정해야 한다.
+
+1. **check dex**
+
+   dex는 namespace auth에 있음
+
+   ```
+   $ kubectl -n auth get cm dex -o yaml
+   ```
+
+   ```yaml
+   apiVersion: v1
+   data:
+     config.yaml: |
+       issuer: http://dex.auth.svc.cluster.local:5556/dex
+       storage:
+         type: kubernetes
+         config:
+           inCluster: true
+       web:
+         http: 0.0.0.0:5556
+       logger:
+         level: "debug"
+         format: text
+       oauth2:
+         skipApprovalScreen: true
+       enablePasswordDB: true
+       staticPasswords:
+       - email: user@example.com
+         hash: $2y$12$4K/VkmDd1q1Orb3xAt82zu8gk7Ad6ReFR4LCP9UeYE90NLiN9Df72
+         # https://github.com/dexidp/dex/pull/1601/commits
+         # FIXME: Use hashFromEnv instead
+         username: user
+         userID: "15841185641784"
+       staticClients:
+       # https://github.com/dexidp/dex/pull/1664
+       - idEnv: OIDC_CLIENT_ID
+         redirectURIs: ["/login/oidc"]
+         name: 'Dex Login Application'
+         secretEnv: OIDC_CLIENT_SECRET
+   ... 이하 생략
+   
+   ```
+
+   위의 `staticPasswords` 에 아래 4가지를 추가해야 한다.
+
+   ```
+   - email: winter4958@gmail.com
+     hash: $2a$12$fHI0HP/Afxm2SLudxgvLu.oYsfJz88MaGOjSXJxlbUEtszfYgL2SW
+     userID: "taeuk"
+     username: taeuk
+   ```
+
+   - `email` : dashdoard접속시 입력할 email
+
+   - `hash` : dashdoard접속시 입력할 passward
+
+     > [BCrypt Hash Generator](https://bcrypt-generator.com/) 에서 hash값을 생성할 수 있다.
+
+   - `userID`, `username` : user정보
+
+2. **add user information**
+
+   ```
+   $ kubectl -n auth edit cm dex
+   ```
+
+   >  vim deiter로 변경
+
+3. **rollout restart**
+
+   dex manifast를 수정하고 난 후 해당 resource를 restart해주어야 한다.
+
+   ```
+   $ kubectl rollout restart deployment dex -n auth
+   ```
+
+4. **create namespace**
+
+   이후 해당 ID/PW로 접속이 가능하지만, namespace가 지정되지 않아 자원 생성이 불가능하다. 
+
+   이를 위해 namespace를 생성하자
+
+   1. add profile
+
+      ```
+      $ vi profile.yaml
+      ```
+
+      ```yaml
+      #profile.yaml
+      apiVersion: kubeflow.org/v1beta1
+      kind: Profile
+      metadata:
+        name: testuser
+      spec:
+        owner:
+          kind: User
+          name: winter4958@gmail.com
+        resourceQuotaSpec:
+          hard:
+            cpu: "2"
+            memory: 2Gi
+            requests.nvidia.com/gpu: "1"
+            persistentvolumeclaims: "1"
+            requests.storage: "5Gi"
+      ```
+
+      - `metadata.name` : kubeflow pipeline에서 사용할 namesapce의 name
+      - `spec.owner`
+        - `kind` : User로 고정
+        - `name` : 위 dex resource에 추가한 User의 email
+      - `resourceQuotaSpec` : 해당 namesapce의 resource 할당량 제한 (optional)
+        - `cpu: "2"` : cpu제한 2개
+        - `memory` : 메모리 제한 2개
+        - `requests.nvidia.com/gpu` : 사용 가능항 GPU제한 1개
+        - `persistentvolumeclaims` : volume 1개
+        - `requests.storage` : 저장소 공간 제한 5GB
 
 
 
