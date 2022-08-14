@@ -39,19 +39,7 @@ func_op = components.create_component_from_func(func = ,
 
   `packages_to_install = [opencv-python, numpy, 'pandas==0.24']`
 
-- `annotations` = 해당 function에 `argparse` package가 있다면 해당 값을 줄 때 사용. `key : value` 형식으로 사용
-
-  `func`에 할당될 function에 아래 code가 포함되어 있다면
-
-  ```python
-  import argparse
-  parser = argparse.ArgumentParser()
-  parser.add_argument('--exam_1', type =str)
-  parser.add_argument('--exam_2', type = int)
-  args = parser.parse_args()
-  ```
-
-  `annotations = ['--exam_1' : "exam", '--exam': 365]` 형태
+  
 
 
 
@@ -104,7 +92,7 @@ def data_test_1(value_1: int, value_2: int, value_3 : int,		# 규칙 1.
     
     reutrn 356	# 예시 return
 
-test_1_op  = create_component_from_func(
+data_test_1_op  = create_component_from_func(
             func =data_test_1,
             base_image = 'hibernation4958/test:0.1',		# image명시, pip install포함
             output_component_file="test_1.component.yaml")   
@@ -134,6 +122,17 @@ NamedTuple('Output', [("{discription}", type), ('discription', type)])
 > def data_test_1(value_1: int, value_2: int, value_3 : int,		# 규칙 1. 
 >         data_output_dir_path: OutputPath("dict")) -> NamedTuple('Output', [("day", int), ('example', str)]):	# 규칙 2.
 > ```
+
+
+
+- return으로 내보낸 값은 `_data_test_1_op.outputs['outputs']` 으로 call할 수 있다.
+
+```python
+@dsl.pipeline(name="hibernation_project")
+def project_pipeline(input_mode : str, input_dict : dict):
+    _data_test_1_op = data_test_1_op(input_dict)
+    # _data_test_1_op.outputs['outputs']
+```
 
 
 
@@ -180,6 +179,19 @@ exam_op = components.create_component_from_func(func = exam)
 
 > `components.OutputPath` 을 먼저 확인
 
+```python
+from kfp.components import InputPath
+def exam(args : dict, 
+            exam_1: InputPath("dict"),
+            exam_2: InputPath("dict")):
+    
+         
+```
+
+> 
+
+
+
 
 
 ## Output
@@ -187,6 +199,40 @@ exam_op = components.create_component_from_func(func = exam)
 ### OutputPath
 
 
+
+```python
+from kfp.components import OutputPath
+
+def exam(args : dict,
+            exam_1_path: OutputPath("dict"),
+            exam_2_path: OutputPath("dict")):   
+    
+    import json
+    exam_dict_1 = {'one' : 1}
+    json.dump(exam_dict_1, open(exam_1_path, "w"), indent = 4)
+    
+    exam_dict_2 = {'two' : 2}
+    json.dump(exam_dict_2, open(exam_2_path, "w"), indent = 4)
+    
+exam_op = create_component_from_func(func = exam,
+                                        base_image = SETUP_IMAGE)
+
+```
+
+>`exam_1_path`, `exam_2_path` : 이름은 항상 `_path`라는 단어로 끝나야 한다.
+>
+>`OutputPath("dict")` : `"dict"` 는 개발자가 알기 쉽도록 명시해놓은 것일 뿐, 실제 `exam_1_path` 는 str로서 ` {wiorkspace}/outputs/exam_1/data` 의 값을 가지고 있다. 
+
+
+
+```python
+@dsl.pipeline(name="hibernation_project")
+def project_pipeline(input_mode : str, input_dict : dict):
+    _exam_op = exam_op(input_dict)
+    # _exam_op.outputs["exam_1"], _exam_op.outputs["exam_2"]
+```
+
+>위에서 `OutputPath`로 저장한 file은 해당 name에서 뒷 부분 `_path`를 제외한 이름을 key로 가진 `.outputs` 함수로 불러낼 수 있다. 
 
 
 
