@@ -246,6 +246,26 @@ list_pipeline_versions = client.list_pipeline_versions(pipeline_id=pipeline_id)
 
 
 
+예시
+
+```
+pipeline_name = "exam"
+pipeline_version = "exam_version"
+
+pipeline_id = client.get_pipeline_id(pipeline_name)
+pipelince_versions = client.list_pipeline_versions(pipeline_id = pipeline_id)
+
+versions = []
+for pipeline_index in range(pipelince_versions.total_size):
+	versions.append(pipelince_versions.versions[pipeline_index].name)  
+
+if pipeline_version in versions: raise TypeError(f"{pipeline_version} version is exist!")
+```
+
+
+
+
+
 #### upload_pipeline
 
 pipeline을 kubeflow cluster에 upload(kubeflow central dashboard에 upload)
@@ -282,6 +302,8 @@ updated_pipeline = client.upload_pipeline_version(pipeline_name=,
 - `pipeline_package_path` : upload할 pipeline의 path (.yaml format)
 
 - `description` : 새로운version의 pipeline에 대한 description
+
+
 
 
 
