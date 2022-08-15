@@ -2,17 +2,66 @@
 
 docker registry는 Docker image를 저장하고 배포할 수 있는 server측 application이다.
 
-> ```
-> $ docker run -d -p 5000:5000 --name registry registry
-> ```
->
-> registry application을 담은 image run
+### install, run registry
+
+1. install
+
+   ```
+   $ docker pull registry:latest
+   ```
+
+   check 
+
+   ```
+   $ docker images 
+   ```
+
+   ```
+   REPOSITORY                    TAG       IMAGE ID       CREATED       SIZE
+   registry                      latest    d1fe2eaf6101   2 weeks ago   24.1MB
+   ```
+
+2. run
+
+   ```
+   $ docker run --name private-docker -d -p 5000:5000 registry
+   ```
+
+   - `--name private-docker` : private-docker 이라는 이름으로 run
+   - `-d` : background로 실행
+   - `-p 5000:5000` : 5000번 port로 사용
+   - `registry` : run할 docker images이름
+
+   check container
+
+   ```
+   $ docker ps -a
+   ```
+
+   ```
+   CONTAINER ID   IMAGE                                 COMMAND                  CREATED         STATUS         PORTS                                                                                                                                  NAMES
+   5050f6b6e425   registry                              "/entrypoint.sh /etc…"   2 minutes ago   Up 2 minutes   0.0.0.0:5000->5000/tcp, :::5000->5000/tcp                                                                                              private-docker
+   ```
+
+   check port
+
+   ```
+   $ netstat -anp | grep 5000 | grep LIST
+   ```
+
+
+
+
+
+
 
 
 
 #### image push to registry
 
-1. create dockerfile and build
+regisitry가 run상태라고 가정
+
+1. create dockerfile 
 
    ```
    $ touch Dockerfile
@@ -26,55 +75,74 @@ docker registry는 Docker image를 저장하고 배포할 수 있는 server측 a
    CMD ["echo", "Hellow world"]
    ```
 
-   ```
-   $ docker build -t test:v1.0.0 .
-   ```
-
-2. run registry
+2. build
 
    ```
-   $ docker run -d -p 5000:5000 --name registry registry
+   $ docker build -t [IP]:[registry port]/[container name]:[version] [dockerfile]
    ```
 
-   > registry image가 registry라는 이름으로 생성되었으며, local host 5000으로 registry와 통신 가능 
+   
 
-3. tag to image
+   1. local의 regisitry에 build할 때
+
+      ```
+      $ docker build -t localhost:5000/exam:0.0.1 .
+      ```
+
+   2. 외부 divice(ip : 192.168.56.102)의 regisitry에 local의 image를 build할 때
+
+      ```
+      $ docker build -t 192.168.56.102:5000/exam:0.0.1 .
+      ```
+
+   check 
 
    ```
-   $ docker tag test:v1.0.0 localhost:5000/test:v1.0.0
+   $ docker images
    ```
 
-   > test로 `localhost:5000`를 달아준다
-
-4. push
+3. push
 
    ```
-   $ docker push localhost:5000/test:v1.0.0
+   $ docker push 192.168.56.102:5000/exam:0.0.1
    ```
 
-5. check
+   > 또는 
+   >
+   > ```
+   > $ docker push localhost:5000/exam:0.0.1
+   > ```
+   >
+   > - 만일 `server gave HTTP response to HTTPS client ` 가 출력되면
+   >
+   >   ```
+   >   $ sudo systemctl deamon-reload
+   >   $ sudo systemctl restart docker
+   >   $ docker run --name private-docker -d -p 5000:5000 registry
+   >   $ docker push 192.168.56.102:5000/exam:0.0.1
+   >   ```
+
+   check
 
    ```
    $ curl -X GET http://localhost:5000/v2/_catalog
    ```
 
-   > `localhost:5000 이라는 registry에 어떤 image가 저장되어 있는지 list를 출력`
-   >
-   > ```
-   > {"repositories":["test"]}
-   > ```
-   >
-   > 
+   >localhost:5000 이라는 registry에 어떤 image가 저장되어 있는지 list를 출력
 
    ```
-   $ curl -X GET http://localhost:5000/v2/test/tags/list
+   $ curl -X GET http://localhost:5000/v2/exam/tags/list
    ```
 
-   > test라는 image name에 어떤 tag가 저장되어 있는지 list출력
-   >
-   > ```
-   > {"name":"test","tags":["v1.0.0"]}
-   > ```
+   > `exam`이라는 image name에 어떤 tag가 저장되어 있는지 list출력
+
+#### image pull(run) by load  from registry
+
+```
+$ docker run [regisitry IP]:[port]/[container name]:[version]
+```
+
+
 
 
 
