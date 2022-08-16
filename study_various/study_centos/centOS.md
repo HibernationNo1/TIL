@@ -221,38 +221,105 @@ $ git --version
 
 #### kubernetes
 
-[공식](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/)
+[공식](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/)에는 설명이 이상하게 되어있음. [여기](https://www.hostafrica.co.za/blog/new-technologies/install-kubernetes-delpoy-cluster-centos-7/) 들어가보기
 
-1. check required ports
+1. **check required ports**
 
    ```
-   $ nc -l 6443
+   $ telnet 127.0.0.1 6443
    ```
 
-   > 사용중일 때 아래처럼 나온다
-   >
    > ```
-   > Ncat: bind to :::6443: Address already in use. QUITTING.
+   > $ yum install telnet
    > ```
-   >
-   > kubernetes사용 시 다른 port를 사용해야 함
 
-    
+   - `Connected to xxx.xxx.xxx.xxx...` : 통신 성공 (사용중)
+
+   - `Trying 1xx.1xx.2xx.1xx...` : 방화벽 open이 안되어있음
+
+   - `telnet: Unable to connect to remote host: Connection refused ` : 방화벽은 열려있으나 해당 port에 어떠한 프로세스도 없다
+
+     (사용 가능)
+
+2. **[install docker](#docker)**
 
    ```
-   $ nc -v localhost 80
+   $ sudo systemctl status docker
    ```
 
-   
+   ![](https://www.hostafrica.co.za/blog/wp-content/uploads/2020/05/How-to-Install-Docker-on-Linux-and-Windows_html_m4671b902.png)
 
-   
+3. **Set up the Kubernetes Repository**
 
-   
+   kubenetes package는 공식 CentOS 7 repository가 없기 때문에 새 repo file을 추가해야 한다. 
 
-   
+   ```
+   $ sudo vi /etc/yum.repos.d/kubernetes.repo
+   ```
 
-   
+   ```
+   [kubernetes]
+   name=Kubernetes
+   baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+   enabled=1
+   gpgcheck=0
+   repo_gpgcheck=0
+   gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+   ```
 
-   
+4. **install kubelet**
 
-ncat connection refused centos 7
+   ```
+   $ sudo yum install -y kubelet
+   ```
+
+   ```
+   ...
+   
+   Complete!
+   ```
+
+5. **install kubeadm**
+
+   ```
+   $ sudo yum install -y kubeadm
+   ```
+
+   ```
+   ...
+   
+   Complete!
+   ```
+
+6. Set hostnames
+
+   master node위에서 hostname을 set
+
+   ```
+   $ sudo hostnamectl set-hostname {master-node-name}
+   ```
+
+   - master node가 아니더라도 node이름은 위 명령어로 set가능
+   - 
+
+
+
+```
+[kubernetes]
+name=Kubernetes
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-\$basearch
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+exclude=kubelet kubeadm kubectl
+EOF
+```
+
+
+
+kubeadm version
+
+kubectl version --client
+
+kubectl version

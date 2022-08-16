@@ -470,7 +470,7 @@ $ sudo apt-get install -y curl vim		# Ubuntu
 ##### git 
 
 ```
-$ sudo apt-get install git				# 	sudo yum install git
+$ sudo apt-get install git				
 $ git --version
 
 $ git config --global user.name "HibernationNo1"
