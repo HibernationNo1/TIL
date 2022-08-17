@@ -396,7 +396,7 @@
 
 ### install  
 
-##### chrome
+#### chrome
 
 ```
 $ wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
@@ -405,7 +405,7 @@ $ sudo apt install ./google-chrome-stable_current_amd64.deb
 
 
 
-##### vscode 
+#### vscode 
 
 1. [홈페이지](https://code.visualstudio.com/download)에서 알맞는 모델 다운
 
@@ -447,7 +447,7 @@ $ sudo apt install code
 
 
 
-##### typora 
+#### typora 
 
 ```
 $ wget -qO - https://typora.io/linux/public-key.asc | sudo apt-key add -
@@ -457,7 +457,7 @@ $ sudo apt -y install typora
 
 
 
-##### curl, vim
+#### curl, vim
 
 ```
 $ sudo apt-get install -y curl vim		# Ubuntu
@@ -467,7 +467,7 @@ $ sudo apt-get install -y curl vim		# Ubuntu
 
 
 
-##### git 
+#### git 
 
 ```
 $ sudo apt-get install git				
@@ -479,7 +479,7 @@ $ git config --global user.mail "winter4958@gmail.com"
 
 
 
-##### anaconda
+#### anaconda
 
 [여기](https://repo.anaconda.com/archive/) 에서 아래 버전 선택해서 다운
 
@@ -550,7 +550,7 @@ $ git config --global user.mail "winter4958@gmail.com"
   > 위 설치 도중 만났던 PREFIX값에 + '/bin:$PATH'    
   
   ```
-  $ export PATH=~/anaconda3/bin:$PATH
+  $ export PATH=/home/ainsoft/workspace/anaconda3/bin:$PATH
   ```
   
   
@@ -586,7 +586,7 @@ $ git config --global user.mail "winter4958@gmail.com"
 
 
 
-##### docker
+#### docker
 
 [공식 문서](https://docs.docker.com/engine/install/ubuntu/)
 
@@ -675,9 +675,21 @@ $ git config --global user.mail "winter4958@gmail.com"
    > CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
    > ```
 
+7. docker 실행 설정
+
+   system이 재시작 되더라도 docker 자동 실행
+
+   ```
+   $ sudo systemctl enable docker
+   ```
+
+   
 
 
-##### Kubernetes(minikube)
+
+#### Kubernetes
+
+##### minikube
 
 - minikube
 
@@ -813,7 +825,352 @@ $ git config --global user.mail "winter4958@gmail.com"
 
 
 
-##### kubeflow
+##### kubeadm
+
+###### master
+
+1. **check**
+
+   ```
+   $ sudo apt-get update
+   ```
+
+   ```
+   $ systemctl status docker
+   ```
+
+   `Active: active (running)` 확인
+
+   
+
+2. **swapoff**
+
+   ```
+   $ sudo swapoff –a
+   ```
+
+   > ```
+   > swapoff: –a: swapoff failed: No such file or directory
+   > ```
+   >
+   > 위 문구가 출력되면 아래 명령어로 check
+   >
+   > 아예 영구적으로 사용 안할 시 fstab file에서 swap을 주석 처리
+   >
+   > ```
+   > $ sudo sed -i 's/\/swap/\#/swap/' /etc/fstab
+   > ```
+
+   
+
+   check
+
+   ```
+   $ free -m
+   ```
+
+3. **load kernel module, set sysctl parameters**
+
+   load module
+
+   ```
+   $ sudo modprobe overlay
+   $ sudo modprobe br_netfilter
+   ```
+
+   
+
+   set config file
+
+   ```
+   $ cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
+   overlay
+   br_netfilter
+   EOF
+   ```
+
+   
+
+   set sysctl parameters
+
+   ```
+   $ cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
+   net.bridge.bridge-nf-call-ip6tables = 1
+   net.bridge.bridge-nf-call-iptables = 1
+   net.ipv4.ip_forward = 1
+   EOF
+   ```
+
+   ```
+   $ sysctl --system
+   ```
+
+   
+
+4. **install docekr runtime**
+
+   ```
+   $ cat <<EOF | sudo tee /etc/docker/daemon.json
+   {
+     "exec-opts": ["native.cgroupdriver=systemd"],
+     "log-driver": "json-file",
+     "log-opts": {
+       "max-size": "100m"
+     },
+     "storage-driver": "overlay2"
+   }
+   EOF
+   ```
+
+   ```
+   $ systemctl daemon-reload
+   $ systemctl restart docker
+   $ systemctl restart kubelet
+   ```
+
+   
+
+5. **add kubernetes signing key**
+
+   kubernetes공개 key download
+
+   ```
+   $ curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add
+   ```
+
+   
+
+6. **Add Software Repositories**
+
+   ```
+   $ sudo apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main"
+   ```
+
+    
+
+7. **install kubeadm kubelet kubectl**
+
+   ```
+   $ sudo apt-get update
+   $ sudo apt-get install kubeadm kubelet kubectl
+   ```
+
+   > ```
+   > $ kubeadm version
+   > $ kubelet version
+   > $ kubectl version
+   > ```
+
+   
+
+   activate kubelet
+
+    ```
+    $ systemctl start kubelet && systemctl enable kubelet
+    ```
+
+   
+
+   apt-mark hold
+
+   ```
+   $ sudo apt-mark hold kubelet kubeadm kubectl
+   ```
+
+   
+
+8. **Assign Unique cluster name** 
+
+   ```
+   $ sudo vi /etc/hosts
+   ```
+
+   맨 아래 ip와 hostname추가 (node name)
+
+   ```
+   192.168.0.107 myCluster
+   ```
+
+   
+
+9. **Initialize Kubernetes on Master Node**
+
+   ```
+   $ sudo kubeadm init --apiserver-advertise-address 192.168.0.107 --pod-network-cidr=192.168.1.0/24
+   ```
+
+   - error
+
+     `[ERROR CRI]` 발생 시
+
+     ```
+     $ sudo rm /etc/containerd/config.toml
+     $ sudo systemctl restart containerd
+     ```
+
+   출력 확인
+
+   ```
+   To start using your cluster, you need to run the following as a regular user:
+   
+     mkdir -p $HOME/.kube
+     sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+     sudo chown $(id -u):$(id -g) $HOME/.kube/config
+   
+   Alternatively, if you are the root user, you can run:
+   
+     export KUBECONFIG=/etc/kubernetes/admin.conf
+   
+   You should now deploy a pod network to the cluster.
+   Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+     https://kubernetes.io/docs/concepts/cluster-administration/addons/
+   
+   Then you can join any number of worker nodes by running the following on each as root:
+   
+   kubeadm join 192.168.0.107:6443 --token xop2oi.vyv8qv9zxi34tzpm \
+           --discovery-token-ca-cert-hash sha256:a393c710216abf0ce4badb8c31d3e3c21622677cb948ec9efc269f0d622516bc
+   ```
+
+   cluster를 사용하기 위해 위 출력에 따라 아래 명령어 입력(해당 명령어를 수행해야 root가 아닌 계정으로도 cluster를 사용 = kubectl명령어를 수행할 수 있다.)
+
+   ```
+   $ mkdir -p $HOME/.kube
+   $ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+   $ sudo chown $(id -u):$(id -g) $HOME/.kube/config
+   ```
+
+   
+
+   다른 device에서 worker node를 만들어 해당 master node(cluster)에 join할 때 위 출력에 있는 명령어 입력
+
+   ```
+   kubeadm join 192.168.0.107:6443 --token xop2oi.vyv8qv9zxi34tzpm \
+           --discovery-token-ca-cert-hash sha256:a393c710216abf0ce4badb8c31d3e3c21622677cb948ec9efc269f0d622516bc
+   ```
+
+   
+
+10. **Deploy Pod Network to Cluster**(install network add-on)
+
+    add-on에는 여러가지가 있다.
+
+    그 중 가장 보편적인 flannel 가상 network사용 (가장 최신 flannel manifast download)
+
+    ````
+    $ wget https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+    ````
+
+    > 아래 명령어로 kubectl를 통해 바로 apply를 적용할 수 있다.
+    >
+    > ```
+    > $ sudo kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+    > ```
+    >
+    > 이 경우 `kube-flannel-cfg` 는 namespace : `kube-flannel ` 에 위치함
+
+    
+
+    
+
+    verify
+    
+    ```
+    $ kubectl get node
+    ```
+    
+    ```
+    NAME          STATUS   ROLES           AGE     VERSION
+    master-node   Ready    control-plane   2m59s   v1.24.3
+    ```
+
+    
+    
+    ```
+    $ kubectl get pods --all-namespaces
+    ```
+    
+    ```
+    NAMESPACE      NAME                                  READY   STATUS    RESTARTS   AGE
+    kube-flannel   kube-flannel-ds-xvvn2                 1/1     Running   0          46s
+    kube-system    coredns-6d4b75cb6d-2p695              1/1     Running   0          3m6s
+    kube-system    coredns-6d4b75cb6d-zmqkw              1/1     Running   0          3m6s
+    kube-system    etcd-master-node                      1/1     Running   0          3m20s
+    kube-system    kube-apiserver-master-node            1/1     Running   0          3m20s
+    kube-system    kube-controller-manager-master-node   1/1     Running   0          3m20s
+    kube-system    kube-proxy-zvt2t                      1/1     Running   0          3m6s
+    kube-system    kube-scheduler-master-node            1/1     Running   0          3m21s
+    ```
+    
+    전부 Running인지 확인. 아니면 reset해야할때도 있음
+
+
+
+**reset**
+
+```
+$ sudo kubeadm reset
+```
+
+```
+$ rm $HOME/.kube/config
+```
+
+
+
+###### worker
+
+위 master node 구축의 1번~8번까지 실행
+
+
+
+이후 사전에 구축된 master node(cluster)의 join명령어 확인
+
+```
+kubeadm join 192.168.0.107:6443 --token xop2oi.vyv8qv9zxi34tzpm \
+        --discovery-token-ca-cert-hash sha256:a393c710216abf0ce4badb8c31d3e3c21622677cb948ec9efc269f0d622516bc
+```
+
+- `--token` : token값
+
+  token값은 24시간의 TTL이 있기 때문에 만료시 다시 생성이 필요하다
+
+  ```
+  $ sudo kubeadm token create
+  ```
+
+  check
+
+  ```
+  $ sudo kubeadm token list
+  ```
+
+- `--discovery-token-ca-cert-hash ` : join시 보안을 위해 hash값을 사용한다
+
+  token의 hash값 얻는 법
+
+  ```
+  $ openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'
+  ```
+
+- 아예 새 token 및 join 명령어 생성
+
+  ```
+  $ kubeadm token create --print-join-command
+  ```
+
+  
+
+- 기본 문법
+
+  ```
+  $ kubeadm join [APISERVER_IP]:[APISERVER_PORT] --token [TOKEN] --discover-token-ca-cert-hash [CA_CERT]
+  ```
+
+  
+
+
+
+#### kubeflow
 
 [공식](https://www.kubeflow.org/docs/started/installing-kubeflow/), [github](https://github.com/kubeflow/manifests)
 
@@ -1160,7 +1517,7 @@ kustomzie V3 기반으로  manifests file을 관리한다.
 
 
 
-#### install Compiler
+### install Compiler
 
 Ubuntu에선 python colpiler는 default로 설치되어 있지만, C, C++은 따로 설치를 해 주어야 한다.
 
