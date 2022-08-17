@@ -101,9 +101,11 @@
 
 ### install
 
+#### linux(Ubuntu)
+
 [공식](https://www.kubeflow.org/docs/started/installing-kubeflow/), [github](https://github.com/kubeflow/manifests)
 
-Prerequisites : `Kubernetes` (up to `1.21`) , `kustomize` (version `3.2.0`) 
+Prerequisites : `Kubernetes` , `kustomize` (version `3.2.0`) 
 
 **Install the Kubeflow Manifests manually**
 
@@ -441,6 +443,125 @@ kustomzie V3 기반으로  manifests file을 관리한다.
    2. 접속
 
       `localhost:8080` 으로 접속 후 login
+
+
+
+#### windows
+
+**powershell (관리자 권한)** 사용
+
+1. install docker desktop(with WSL 2)
+
+   install 후 
+
+   - dash board에서 setting > General > Use the WSL 2 based engine 체크되어있는지 확인
+
+   - dash board에서 setting > REsources > =WSL Integration > Enable integration with my default WSL distro 체크되어있는지 확인
+
+   check
+
+   ```
+   $ docker ps
+   ```
+
+   
+
+2. 보안정책 수정
+
+   ```
+   $ Get-ExecutionPolicy
+   ```
+
+   ```
+   Restricted
+   ```
+
+   
+
+   ```
+   $ Set-ExecutionPolicy AllSigned
+   ```
+
+   ```
+   AllSigned
+   ```
+
+   `AllSigned` 출력됨을 확인
+
+3. install chocolatey 
+
+   ```
+   $ Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+   ```
+
+   check
+
+   ```
+   $ choco
+   ```
+
+   ```
+   Chocolatey v1.1.0
+   Please run 'choco -?' or 'choco <command> -?' for help menu.
+   ```
+
+4. install minikube
+
+   [공식](https://minikube.sigs.k8s.io/docs/start/) 에서 명령어 복사
+
+   ```
+   Operating system : windows
+   Architecture : x86-64
+   Release type : Stable
+   Installer type : Chocolatey
+   ```
+
+   
+
+   ```
+   $ choco install minikube
+   ```
+
+5. create kubernetes cluster with minikube
+
+   ```
+   $ minikube start --driver=docker --memory=12g --cpus=4 --disk-size 50GB --kubernetes-version=1.20.11 --profile=mk
+   ```
+
+   
+
+   기본 profile 설정
+
+   ```
+   $ minikube config set profile mk
+   ```
+
+6. **install kustomize** (version `3.8.4`) 
+
+   ```
+   $ choco install kustomize --version=3.8.4
+   ```
+
+7. **Install Kubeflow**
+
+   ```
+   $ choco install git
+   $ git --version
+   ```
+
+   git clone [kubeflow/manifests](https://github.com/kubeflow/manifests)
+
+   ```
+   $ cd ~/Desktop/
+   $ mkdir minikube
+   $ cd minikube
+   $ git clone https://github.com/kubeflow/manifests.git
+   $ cd manifests 
+   ```
+
+   여기까지
+
+   [추가 내용](https://velog.io/@moey920/Window%EC%97%90%EC%84%9C-Minikube-Kubeflow-%EA%B5%AC%EC%B6%95%ED%95%98%EA%B8%B0)
 
 
 
