@@ -280,7 +280,7 @@ dashboard에 user를 추가하기 위해서는 cm dex를 수정해야 한다.
 
    ```
    - email: winter4958@gmail.com
-     hash: $2a$12$fHI0HP/Afxm2SLudxgvLu.oYsfJz88MaGOjSXJxlbUEtszfYgL2SW
+     hash: $2a$12$mAIZSsmCcHk9SMU6yAoYQOt7zXV.7UVboJIfcSB3PF5pD3Nc/oyHi
      userID: "taeuk"
      username: taeuk
    ```
@@ -331,25 +331,56 @@ dashboard에 user를 추가하기 위해서는 cm dex를 수정해야 한다.
         owner:
           kind: User
           name: winter4958@gmail.com
-        resourceQuotaSpec:
-          hard:
-            cpu: "2"
-            memory: 2Gi
-            requests.nvidia.com/gpu: "1"
-            persistentvolumeclaims: "1"
-            requests.storage: "5Gi"
+        resourceQuotaSpec: {}
       ```
-
+   
       - `metadata.name` : kubeflow pipeline에서 사용할 namesapce의 name
+   
       - `spec.owner`
         - `kind` : User로 고정
         - `name` : 위 dex resource에 추가한 User의 email
+        
       - `resourceQuotaSpec` : 해당 namesapce의 resource 할당량 제한 (optional)
+        
+        ```
+          resourceQuotaSpec:
+            hard:
+              cpu: "2"
+              memory: 2Gi
+              persistentvolumeclaims: "1"
+              requests.nvidia.com/gpu: "1"
+              requests.storage: "10Gi"
+        ```
+        
         - `cpu: "2"` : cpu제한 2개
-        - `memory` : 메모리 제한 2개
+        
+        - `memory` : 메모리 제한 2 기가
+        
         - `requests.nvidia.com/gpu` : 사용 가능항 GPU제한 1개
+        
         - `persistentvolumeclaims` : volume 1개
-        - `requests.storage` : 저장소 공간 제한 5GB
+        
+        - `requests.storage` : 저장소 공간 제한 10GB
+        
+          > resourceQuotaSpec에 위 처럼 특정 값을 넣으면 아래의 에러가 발생
+          >
+          > ```
+          > This step is in Error state with this message: task 'hibernation-project-9kj4p.set-config' errored: pods "hibernation-project-9kj4p-3036383870" is forbidden: failed quota: kf-resource-quota: must specify cpu,memory
+          > ```
+   
+   2. apply
+   
+      ```
+      $ kubectl apply -f profile.yaml
+      ```
+   
+   3. edit
+   
+      ```
+      $ kubectl edit profile <namespace_name>
+      ```
+   
+      
 
 
 
