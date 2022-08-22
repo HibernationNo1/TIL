@@ -390,6 +390,31 @@
 
      
 
+
+
+
+### check resource
+
+1. cpu
+
+   ```
+   $ lscpu
+   ```
+
+2. memory
+
+   ```
+   $ free -h
+   ```
+
+3. GPU
+
+   ```
+   $ sudo lshw -C display
+   ```
+
+   
+
    
 
 
@@ -750,7 +775,7 @@ $ git config --global user.mail "winter4958@gmail.com"
   install kubectl
   
   ```
-  $ sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+  $ sudo install -o root -g root -m 0755 kubectl /usr/bin/local/kubectl
   ```
   
   
@@ -768,6 +793,20 @@ $ git config --global user.mail "winter4958@gmail.com"
   > 위 처럼 떠도 정상 (kubenetes server와 client의 version이 모두 출력하는 과정에서, host에서 kubenetes server를 생성하지 않았기 때문에 뜨는 문구)
   >
   > 이를 해결하기 위해 minukube 를 실행하여 kubenetes server를 설치
+  >
+  > - error
+  >
+  >   ```
+  >   bash: /usr/bin/kubectl: No such file or directory
+  >   ```
+  >
+  >   라고 뜨면
+  >
+  >   ```
+  >   $ sudo install -o root -g root -m 0755 kubectl /usr/bin/kubectl
+  >   ```
+  >
+  >   install root다시 정의
   
 - kubenetes server
 
@@ -1237,7 +1276,7 @@ kustomzie V3 기반으로  manifests file을 관리한다.
 
    ```
    $ minikube start --driver=docker \
-    --cpus='4' --memory='7g' \
+    --cpus='4' --memory='8g' \
     --kubernetes-version=v1.19.3 \
     --extra-config=apiserver.service-account-signing-key-file=/var/lib/minikube/certs/sa.key \
     --extra-config=apiserver.service-account-issuer=kubernetes.dafault.svc
@@ -1245,7 +1284,7 @@ kustomzie V3 기반으로  manifests file을 관리한다.
 
    > `--extra-config` : token Request활성화 관련 설정
    >
-   > `--kubernetes-version=v1.19.3` : version정확히 명시해야됨
+   > `--kubernetes-version=v1.19.3` : version정확히 명시해야됨 `$ kubectl version` 으로 확인
    >
    > version잘못 명시하면 다시 install
    >
@@ -1272,7 +1311,7 @@ kustomzie V3 기반으로  manifests file을 관리한다.
 3. git clone [kubeflow/manifests](https://github.com/kubeflow/manifests)
 
    ```
-   $ cd ~/hibernation			# git clone할 임의의 위치
+   $ cd ~/minikube			# git clone할 임의의 위치
    $ git clone https://github.com/kubeflow/manifests.git
    $ cd manifests
    ```
