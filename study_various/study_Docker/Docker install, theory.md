@@ -10,6 +10,8 @@
 
 #### DOCKER
 
+##### Ubuntu
+
 [공식 문서](https://docs.docker.com/engine/install/ubuntu/)
 
 **Install using the repository**
@@ -65,6 +67,59 @@
 ```
 $ sudo apt-get remove docker docker-ce docker-ce-cli containerd.io docker-compose-plugin
 ```
+
+
+
+##### windows
+
+1. [공식 페이지](https://www.docker.com/products/docker-desktop/) 에서 다운 후 실행
+
+   Use WSL 2 instead of Hyper-V 선택
+
+   > Hyper-V 사용 시 문제발생
+
+   설치 후 [여기](https://docs.microsoft.com/ko-kr/windows/wsl/install-manual#step-4---download-the-linux-kernel-update-package) 서 linux kernel(WSL2) updata package다운 후 설치 (PC 다시시작 필요)
+
+2. setting가서 
+
+   General > Use the WSL 2 based engine 체크 확인
+
+   Resources > WSL integration > Enable integration with my default WSL distro 체크 확인
+
+3. WSL2 VM resource limit
+
+    WSL2 VM 가 점유하는 메모리가 상당함 > limit을 걸어준다.
+
+   User폴더에서 .wslconfig file을 만들어준다. (powershell에서 vscode킴)
+
+   ```
+   $ PS C:\Users\ITC> code .wslconfig
+   ```
+
+   아래 내용 입력
+
+   ```
+   [wsl2]
+   memory=4GB
+   processors=2
+   swap=0
+   ```
+
+   이후 
+
+   docker desktop 종료 후 powershell을 관리자 권한으로 새롭게 open
+
+   LxssManager를 다시 실행해야 함
+
+   ```
+   PS C:\WINDOWS\system32> Get-Service LxssManager | Restart-Service
+   ```
+
+   
+
+
+
+
 
 
 
