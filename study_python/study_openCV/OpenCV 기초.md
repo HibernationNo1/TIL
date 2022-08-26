@@ -10,6 +10,16 @@ $ pip install opencv-python
 
 
 
+- in docker
+
+  ```
+  RUN pip install opencv-python-headless==4.6.0.66
+  ```
+
+  
+
+
+
 ```python
 import cv2
 ```

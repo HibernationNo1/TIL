@@ -69,6 +69,8 @@ $ kubectl get pod -n kubeflow
 
 
 
+[공식 문서](https://kubeflow-pipelines.readthedocs.io/en/1.8.13/source/kfp.client.html)
+
 
 
 ## Client
@@ -179,6 +181,11 @@ print(client.list_pipelines())
 
 ```python
 list_pipelines = client.list_pipelines(page_size = 50)  	
+
+list_pipeline_name = []
+for pipeline_index in range(list_pipelines.total_size):
+	list_pipeline_name.append(list_pipelines.pipelines[pipeline_index].default_version.name) 
+        
 ```
 
 - `page_size` : 최대 보여줄 pipeline개수 (default = 10)
