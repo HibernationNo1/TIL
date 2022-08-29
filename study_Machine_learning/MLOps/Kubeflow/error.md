@@ -1,8 +1,10 @@
 
 
-### run
 
-#### Invalid input error: Unrecognized
+
+### 500
+
+#### Invalid input error: Unrecognized 
 
 ```
 kfp_server_api.exceptions.ApiException: (500)
@@ -18,7 +20,7 @@ input parameter: gs_secret"}]}
 
 
 
-### compile
+### 
 
 #### Incorrect string value
 
@@ -30,27 +32,27 @@ HTTP response body: {"error":"Failed to create a new run.: InternalServerError: 
 ```
 
 - **point** : `Incorrect string value `
-- pipeline compile됨
+- pipeline compile후 업로드 할 때 발생
 - component에 한글이 포함되어 있을 때(주석이라도) 발생
 
 
 
-
-
-### client
-
-#### 'authservice_session'
+#### connection reset by peer
 
 ```
-session_cookie = session.cookies.get_dict()["authservice_session"]
-KeyError: 'authservice_session'
+kfp_server_api.exceptions.ApiException: (500)
+Reason: Internal Server Error
+HTTP response headers: HTTPHeaderDict({'Content-Length': '1687', 'Content-Type': 'application/json', 'Date': 'Mon, 22 Aug 2022 08:53:44 GMT', 'Ngrok-Trace-Id': '76dad60dda92d1205c9a3a524115a174', 'Server': 'istio-envoy', 'X-Envoy-Upstream-Service-Time': '426', 'X-Powered-By': 'Express'})
+HTTP response body: {"error":"Failed to authorize the request: Failed to authorize with API resource references: InternalServerError: Failed to create SubjectAccessReview for user 'winter4958@gmail.com' (request: \u0026ResourceAttributes{Namespace:project-pipeline-1,Verb:get,Group:pipelines.kubeflow.org,Version:v1beta1,Resource:runs,Subresource:,Name:hibernation-project-ftxnr,}): Post \"https://10.96.0.1:443/apis/authorization.k8s.io/v1/subjectaccessreviews\": read tcp 172.17.0.27:59254-\u003e10.96.0.1:443: read: connection reset by peer","code":13,"message":"Failed to authorize the request: Failed to authorize with API resource references: InternalServerError: Failed to create SubjectAccessReview for user 'winter4958@gmail.com' (request: \u0026ResourceAttributes{Namespace:project-pipeline-1,Verb:get,Group:pipelines.kubeflow.org,Version:v1beta1,Resource:runs,Subresource:,Name:hibernation-project-ftxnr,}): Post \"https://10.96.0.1:443/apis/authorization.k8s.io/v1/subjectaccessreviews\": read tcp 172.17.0.27:59254-\u003e10.96.0.1:443: read: connection reset by peer","details":[{"@type":"type.googleapis.com/api.Error","error_message":"Internal Server Error","error_details":"Failed to authorize the request: Failed to authorize with API resource references: InternalServerError: Failed to create SubjectAccessReview for user 'winter4958@gmail.com' (request: \u0026ResourceAttributes{Namespace:project-pipeline-1,Verb:get,Group:pipelines.kubeflow.org,Version:v1beta1,Resource:runs,Subresource:,Name:hibernation-project-ftxnr,}): Post \"https://10.96.0.1:443/apis/authorization.k8s.io/v1/subjectaccessreviews\": read tcp 172.17.0.27:59254-\u003e10.96.0.1:443: read: connection reset by peer"}]}
 ```
 
-- clinet접속 시 username또는 passward가 맞지 않은 경우 발생
+- Run을 돌리는 와중에 ngrok이 끊겨버린 경우 발생
 
 
 
-### experiment
+
+
+### 403
 
 #### Unauthorized access
 
@@ -69,7 +71,7 @@ HTTP response body: {"error":"Failed to authorize with API resource references: 
 
 
 
-### pipeline
+### 404
 
 #### Not Found
 
@@ -83,6 +85,25 @@ HTTP response body: {"error":"Failed to get namespace from pipelineId.: Failed t
 - **point** : `Pipeline  not found `
 - 1. upload하지 않은 pipeline의 name으로 `client.list_pipeline_versions` 을 실행했을 때 발생 
   2. 
+
+
+
+
+
+### client
+
+#### 'authservice_session'
+
+```
+session_cookie = session.cookies.get_dict()["authservice_session"]
+KeyError: 'authservice_session'
+```
+
+- clinet접속 시 username또는 passward가 맞지 않은 경우 발생
+
+
+
+
 
 
 
