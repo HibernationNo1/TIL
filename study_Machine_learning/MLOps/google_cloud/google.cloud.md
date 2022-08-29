@@ -82,12 +82,26 @@
 
    2. GCP credentials
 
-      ```
-      $ export GOOGLE_APPLICATION_CREDENTIALS='{path of client_secrets.json}'
-      ```
+      1. export
+   
+         ```
+         $ export GOOGLE_APPLICATION_CREDENTIALS='{path of client_secrets.json}'
+         ```
 
+         > 위 명령어를 입력하는 위치에 `client_secrets.json` 가 있으면
+         >
+         > `export GOOGLE_APPLICATION_CREDENTIALS=client_secrets.json`
+   
+      2. remote modify
+   
+         ```
+         dvc remote modify --local bikes credentialpath '{path of client_secrets.json}'
+         ```
+   
+         
+   
    3. dvc push 
-
+   
       ```
       $ dvc push
       ```
