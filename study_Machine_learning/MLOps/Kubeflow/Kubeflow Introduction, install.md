@@ -185,6 +185,15 @@ kustomzie V3 기반으로  manifests file을 관리한다.
    > $ minikube delete
    > $ minikube delete --all
    > ```
+   >
+   > kubeflow를 사용하기 위해 아래 `--extra-config`는 반드시 명시해야함
+   >
+   > ```
+   > --extra-config=apiserver.service-account-signing-key-file=/var/lib/minikube/certs/sa.key \
+   >  --extra-config=apiserver.service-account-issuer=kubernetes.dafault.svc
+   > ```
+   >
+   > 
 
    check
 

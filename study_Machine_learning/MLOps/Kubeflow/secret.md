@@ -183,12 +183,14 @@
    
 
    ```
-   $ kubectl -n kubeflow create secret generic SECRET_NAME \
+   $ kubectl -n {NAME_SPACE} create secret generic {SECRET_NAME} \
      --from-file ${PATH_TO_FILE1} \
      --from-file ${PATH_TO_FILE2}
    ```
 
-   
+   - `NAME_SPACE` : secrets를 저장할 namespace. 해당 secrets를 사용할 code가 어느 namespace에서 사용되는지 확인 후 해당 namespace에 저장해야한다.
+
+     
 
    check secret
 
@@ -253,13 +255,32 @@ client_x509_cert_url=https://www.googleapis.com/robot/v1/metadata/xxxx/xxxxxxxxx
 
 
 
+create secret
+
+```
+$ kubectl -n {NAME_SPACE} create secret generic {SECRET_NAME} \
+  --from-env-file ${PATH_TO_FILE1}
+```
+
+- `NAME_SPACE` : secrets를 저장할 namespace. 해당 secrets를 사용할 code가 어느 namespace에서 사용되는지 확인 후 해당 namespace에 저장해야한다.
+
+- `PATH_TO_FILE1` : `/home/ainsoft/workspace/manifast/client-secrets.txt` 과 같은 path
+
+- `SECRET_NAME` : 만들고자 하는 secret 의 name (`'_'` 가 포함되면 안됨)
 
 
 
+check secret
+
+```
+$ kubectl get secret -n kubeflow
+```
 
 
 
+if you want modify
 
-
-
+```
+$ kubectl edit secret/SECRET_NAME -n kubeflow
+```
 

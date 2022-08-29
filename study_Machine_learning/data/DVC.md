@@ -79,7 +79,7 @@ $ dvc --version
    > 	- dataset_2(dir)
    > ```
 
-   해당 dir을 dvc로 tracking
+   해당 dir을 dvc로 tracking (`dvc status`를 하면 modified상태 확인 가능)
 
    ```
    $ dvc add {dir_name}/
@@ -222,9 +222,9 @@ $ dvc --version
    >
    >   ```
    >   Go to the following link in your browser:
-   >     
+   >       
    >       https://accounts.google.com/o/oauth2/auth?client_id=710796635688-iivsgbgsb6uv1fap6635dhvuei09o66c.apps.googleusercontent.com&redirect_uri=urn%3Aietf%3Awg%3Aoauth%3A2.0%3Aoob&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive.appdata&access_type=offline&response_type=code&approval_prompt=force
-   >     
+   >       
    >   Enter verification code:
    >   ```
    >
@@ -304,12 +304,12 @@ $ dvc --version
       $ dvc pull
       ```
 
-   2. google storage
+   2. google cloud storage
 
       `.dvc(dir)`와  `{dir_name}.dvc` file이 있는 repo를 가져온다
 
       ```
-      $ git clone
+      $ git pull 		
       ```
 
       set remote
@@ -321,7 +321,7 @@ $ dvc --version
       set client secrets
 
       ```
-      $ export GOOGLE_APPLICATION_CREDENTIALS ='{client_secrets_path}'
+      $ export GOOGLE_APPLICATION_CREDENTIALS='client_secrets_path'
       ```
 
       - `client_secrets_path` : client_secrets.json의 위치
