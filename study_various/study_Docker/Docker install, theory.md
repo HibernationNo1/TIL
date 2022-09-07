@@ -189,7 +189,46 @@ docker contianer안에서 GPU를 사용하기 위해선 필수
 
    
 
+## Uninstall
 
+1. docker container 를 모두 중지하고 삭제한다.
+
+   ```
+   $ docker stop $(docker ps -q)
+   $ docker rm $(docker ps -a -q)
+   ```
+
+2. local 에 저장된 image 를 모두 삭제한다.
+
+   ````
+   $ docker rmi $(docker images -q)
+   ````
+
+3. check package
+
+   ```
+   $ dpkg -l | grep -i docker
+   ```
+
+   delete
+
+   ```
+   $ sudo apt-get purge -y docker-engine docker docker.io docker-ce docker-ce-cli
+   $ sudo apt-get autoremove -y --purge docker-engine docker docker.io docker-ce  
+   ```
+
+   ```
+   $ sudo rm -rf /var/lib/docker /etc/docker
+   $ sudo rm /etc/apparmor.d/docker
+   $ sudo groupdel docker
+   $ sudo rm -rf /var/run/docker.sock
+   ```
+
+   
+
+   
+
+   
 
 ### linux setting
 
