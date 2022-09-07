@@ -1556,6 +1556,123 @@ kustomzie V3 기반으로  manifests file을 관리한다.
 
 
 
+#### Nvidia
+
+사전에 설치되어있는 Nvidia, cuda를 전부 삭제하고 싶을 땐
+
+```
+$ sudo apt-get --purge remove "*cublas*" "cuda*" "*nvidia*"
+
+$ sudo apt-get clean
+$ sudo apt-get autoremove
+
+$ sudo apt-get update
+$ sudo apt-get upgrade
+```
+
+
+
+##### NVIDIA driver
+
+1. check driver
+
+   ```
+   $ nvidia-smi
+   ```
+
+   없다고 뜨면
+
+   ```
+   $ ubuntu-drivers devices
+   ```
+
+   ```
+   == /sys/devices/pci0000:00/0000:00:01.0/0000:01:00.0 ==
+   modalias : pci:v000010DEd00001E07sv000019DAsd00005513bc03sc00i00
+   vendor   : NVIDIA Corporation
+   model    : TU102 [GeForce RTX 2080 Ti Rev. A]
+   driver   : nvidia-driver-470-server - distro non-free
+   driver   : nvidia-driver-450-server - distro non-free
+   driver   : nvidia-driver-515-server - distro non-free
+   driver   : nvidia-driver-470 - distro non-free
+   driver   : nvidia-driver-510 - distro non-free
+   driver   : nvidia-driver-515 - distro non-free recommended
+   driver   : nvidia-driver-510-server - distro non-free
+   driver   : nvidia-driver-418-server - distro non-free
+   driver   : xserver-xorg-video-nouveau - distro free builtin
+   ```
+
+   위 권장 driver중에서 선택
+
+   ```
+   $ sudo apt install nvidia-driver-470
+   ```
+
+2. NVIDIA kernel module의 load를 도와주는 `modprobe` package를 install
+
+   ```
+   $ sudo apt-get install dkms nvidia-modprobe
+   ```
+
+   ```
+   $ sudo apt update
+   $ sudo apt upgrade
+   
+   $ sudo reboot
+   ```
+
+   reboot 후 
+
+   ```
+   $ nvidia-smi
+   ```
+
+##### CUDA toolkit
+
+[여기](https://developer.nvidia.com/cuda-toolkit-archive) 에서 원하는 version선택한 후 `Installer Type` 은 runfile(local) 선택하여 나오는 명령어 복사
+
+```
+$ wget https://developer.download.nvidia.com/compute/cuda/11.3.0/local_installers/cuda_11.3.0_465.19.01_linux.run
+$ sudo sh cuda_11.3.0_465.19.01_linux.run
+```
+
+`Continue` 선택 후 `accept`입력, Driver은 선택 해제(X자 사라지게) 후 `install` 선택
+
+install 완료시 출력 
+
+```
+Driver:   Not Selected
+Toolkit:  Installed in /usr/local/cuda-11.3/
+Samples:  Installed in /home/ainsoft/
+
+Please make sure that
+ -   PATH includes /usr/local/cuda-11.3/bin
+ -   LD_LIBRARY_PATH includes /usr/local/cuda-11.3/lib64, or, add /usr/local/cuda-11.3/lib64 to /etc/ld.so.conf and run ldconfig as root
+
+To uninstall the CUDA Toolkit, run cuda-uninstaller in /usr/local/cuda-11.3/bin
+***WARNING: Incomplete installation! This installation did not install the CUDA Driver. A driver of version at least 465.00 is required for CUDA 11.3 functionality to work.
+To install the driver using this installer, run the following command, replacing <CudaInstaller> with the name of this run file:
+    sudo <CudaInstaller>.run --silent --driver
+
+Logfile is /var/log/cuda-installer.log
+```
+
+check
+
+```
+$nvcc -V
+```
+
+
+
+#### pytorch
+
+[여기](https://pytorch.org/) 에서 알맞는 설치법 명령어 복사하여 설치
+
+
+
+
+
 ### install Compiler
 
 Ubuntu에선 python colpiler는 default로 설치되어 있지만, C, C++은 따로 설치를 해 주어야 한다.
@@ -1617,18 +1734,4 @@ Ubuntu에선 python colpiler는 default로 설치되어 있지만, C, C++은 따
 
 
 
-
-### GPU
-
-check GPU
-
-```
-$ sudo lshw -C display
-```
-
-또는
-
-```
-$ lspci | grep VGA
-```
 
