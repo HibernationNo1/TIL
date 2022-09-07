@@ -88,6 +88,22 @@ HTTP response body: {"error":"Failed to get namespace from pipelineId.: Failed t
 
 
 
+### 400
+
+#### Bad Request
+
+```
+kfp_server_api.exceptions.ApiException: (400)
+Reason: Bad Request
+HTTP response headers: HTTPHeaderDict({'x-powered-by': 'Express', 'content-type': 'application/json', 'date': 'Tue, 06 Sep 2022 02:42:34 GMT', 'content-length': '524', 'x-envoy-upstream-service-time': '67', 
+'server': 'istio-envoy'})
+HTTP response body: {"error":"Validate create run request failed.: Invalid input error: The input parameter length exceed maximum size of 10000.","code":3,"message":"Validate create run request failed.: Invalid input error: The input parameter length exceed maximum size of 10000.","details":[{"@type":"type.googleapis.com/api.Error","error_message":"The input parameter length exceed maximum size of 10000.","error_details":"Validate create run request failed.: Invalid input error: The input parameter length exceed maximum size of 10000."}]}
+```
+
+- **point** : `The input parameter length exceed maximum size of 10000.`
+
+  input parameters값의 길이를 줄이면 됨(str이 너무 길어서 발생한 경우)
+
 
 
 ### client
