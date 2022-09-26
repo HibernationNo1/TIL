@@ -4,7 +4,7 @@
 
 ### abstract
 
-[공식](https://www.kubeflow.org/docs/components/katib/hyperparameter/), [깃헙](https://github.com/kubeflow/katib)
+[공식](https://www.kubeflow.org/docs/components/katib/hyperparameter/), [깃헙](https://github.com/kubeflow/katib), [논문](https://arxiv.org/pdf/2006.02085.pdf)
 
 이미 구현이 되어있는 HPO search package들을 사용할 때 kubernetes의 자원을 효율적으로 활용하여 HPO를 하고 service화 할 수 있도록 하는 인프라를 구축하는것을 담당한다.
 
@@ -77,7 +77,11 @@ Katib 는 제안된 hyper parameter조합을 세트별로 평가하기 위한 `T
 
 [공식](https://www.kubeflow.org/docs/components/katib/overview/#worker-job)
 
-`Worker Job`은 `Trial`을 평가하고 목표 값을 계산하는 프로세스를 의미하며, 제안된 hyper parameter조합을 넘겨 받아서 실제로 모델을 학습한다.
+**Worker job** : kubeflow에서 training을 수행할 때 사용하는 kubernetes custom resource이다.
+
+katib의 experiment에서 job의 의미는 `Trial`을 평가하고 목표 값을 계산하는 프로세스를 의미하며, 제안된 hyper parameter조합을 넘겨 받아서 실제로 모델을 학습한다.
+
+이러한 job은 여러 type이 있다.
 
 type of `Worker Job`
 
@@ -119,11 +123,11 @@ type of `Worker Job`
 
 ## install
 
-[공식](https://www.kubeflow.org/docs/components/katib/hyperparameter/)
-
 1. install katib component
 
-   kubeflow설치 시 포함되는 katib component확인
+   kubeflow설치 시 포함됨
+
+   katib component확인 (만약 설치 안되어있으면 [공식](https://www.kubeflow.org/docs/components/katib/hyperparameter/)에서 설치)
 
    ```
    $ kubectl get deploy -n kubeflow |grep katib
@@ -232,27 +236,6 @@ spec:
   ```
 
   > `project-pipeline` 라는 namespace에 Experiment 생성하도록 설정
-
- - add `sidecar.istio.io/inject: "false"`
-
-   kubeflow를 istio와 함께 사용하기 때문에 pod에 istio-proxy가 자동으로 추가된다. 이를 방지하기 위해 `sidecar.istio.io/inject: "false"`가 포함되어야 한다.
-
-   ```
-     ...
-       
-       trialSpec:
-         apiVersion: batch/v1
-         kind: Job
-         spec:
-           template:
-             metadata:
-               annotations:
-                 sidecar.istio.io/inject: "false"
-             spec:
-             ...
-   ```
-
-   > `spec.trialTemplate.trialSpec.spec.template.metadata` 에 `annotations.sidecar.istio.io/inject: "false" `를 추가
 
 
 
@@ -577,7 +560,7 @@ experiment 실행 중 trial template에서 사용되는 parameters의 목록
 
 ##### trialSpec
 
-`trialParameters` 에서 대체되는 모델 매개변수를 관리?
+job resource를 따로 생성한 후 가져오지 않고, `trialTemplate.trialSpec`에서 job을 정의한다.
 
 `trialSpec`에 정의된 hyper parameters는 command-line arguments 또는 environment variables으로 수신이 가능하다.
 
@@ -605,7 +588,46 @@ experiment 실행 중 trial template에서 사용되는 parameters의 목록
             restartPolicy: Never
 ```
 
+- `kind:` Job의 종류 중 하나 결정
 
+  - `job`
+  - `TFJob` : tensorflow를 사용한 code를 통해 training을 진행할 때 사용
+  - `PyTorchJob` : PyTorchJob를 사용한 code를 통해 training을 진행할 때 사용
+
+- `spec:`
+
+  - `name:` 가져올 container의 이름을 결정
+
+  - `image:` container화 한 training code image
+
+  - `command:` python code를 실행할 때 사용할 command line
+
+    > `--lr`, `--num-layers`, `--optimizer` 를 args로 받는 code이기 때문에, `--` flag를 통해 `trialParameters` value를 전달하고 있다.
+
+  
+
+- `sidecar.istio.io/inject: "false"`
+
+  add `sidecar.istio.io/inject: "false"`
+
+  kubeflow를 istio와 함께 사용하기 때문에 pod에 istio-proxy가 자동으로 추가된다. 이를 방지하기 위해 `sidecar.istio.io/inject: "false"`가 포함되어야 한다.
+
+  ```
+    ...
+      
+      trialSpec:
+        apiVersion: batch/v1
+        kind: Job
+        spec:
+          template:
+            metadata:
+              annotations:
+                sidecar.istio.io/inject: "false"
+            spec:
+            ...
+  ```
+
+  > `spec.trialTemplate.trialSpec.spec.template.metadata` 에 `annotations.sidecar.istio.io/inject: "false" `를 추가
 
 
 
@@ -626,6 +648,36 @@ experiment 실행 중 trial template에서 사용되는 parameters의 목록
    ```
    $ vi random.yaml
    ```
+
+   - change namespace to Kubeflow user profile
+
+     ```
+     metadata:
+       namespace: project-pipeline
+     ```
+
+     > `project-pipeline` 라는 namespace에 Experiment 생성하도록 설정
+
+    - add `sidecar.istio.io/inject: "false"`
+
+      kubeflow를 istio와 함께 사용하기 때문에 pod에 istio-proxy가 자동으로 추가된다. 이를 방지하기 위해 `sidecar.istio.io/inject: "false"`가 포함되어야 한다.
+
+      ```
+        ...
+          
+          trialSpec:
+            apiVersion: batch/v1
+            kind: Job
+            spec:
+              template:
+                metadata:
+                  annotations:
+                    sidecar.istio.io/inject: "false"
+                spec:
+                ...
+      ```
+
+      > `spec.trialTemplate.trialSpec.spec.template.metadata` 에 `annotations.sidecar.istio.io/inject: "false" `를 추가
 
 2. Deploy the example
 
