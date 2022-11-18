@@ -253,7 +253,7 @@ objective:
     additionalMetricNames:
       - Train-accuracy
     metricStrategies:
-      - name: accuracy
+      - name: Validation-accuracy
         value: latest
 ```
 
@@ -451,7 +451,7 @@ experiment search space.
 
 ##### Source  
 
-- `fileSystemPath:`
+- `fileSystemPath:`  (collector의 kind가 StdOut이면 사용안함)
 
   - `path` 
 
@@ -467,11 +467,15 @@ experiment search space.
 
     > `path: "/katib/mnist.log"` 처럼 `.log` format이면 `format` 은 정의 안해도 됨
 
-- `filter:` metric의 형식을 지정
+- `filter:` `collector.kind: StdOut` 인 경우에 metric의 형식을 지정
 
   - `metricsFormat`
 
     `"([\\w|-]+)\\s*=\\s*((-?\\d+)(\\.\\d+)?)"` : default metric형식으로, `{{MetricsName}}={{MetricsValue}}` 이다. (위 code와 같은 경우 생략해도 됨)
+    
+    > `{{MetricsName}}:{{MetricsValue}}` 으로 받고자 하자면
+    >
+    > `"([\\w|-]+)\\s*:\\s*((-?\\d+)(\\.\\d+)?)"` 으로 사용
 
 
 
@@ -510,10 +514,6 @@ kind type
   Katib의 metric 수집기를 사용할 필요가 없는 경우 이 값을 지정
 
 - `Custom` 
-
-##### 
-
-
 
 
 
@@ -591,12 +591,42 @@ job resource를 따로 생성한 후 가져오지 않고, `trialTemplate.trialSp
 - `kind:` Job의 종류 중 하나 결정
 
   - `job`
+
   - `TFJob` : tensorflow를 사용한 code를 통해 training을 진행할 때 사용
+
   - `PyTorchJob` : PyTorchJob를 사용한 code를 통해 training을 진행할 때 사용
+
+    > `PyTorch Operator` 가 구동중인지 확인 후 정의
+    >
+    > 1. Check `PytorchJob` custom resource is installed
+    >
+    >    ```
+    >    $ kubectl get crd pytorchjobs.kubeflow.org
+    >    ```
+    >
+    >    ```
+    >    NAME                       CREATED AT
+    >    pytorchjobs.kubeflow.org   2022-09-22T06:24:08Z
+    >    ```
+    >
+    >    
+    >
+    > 2. Check that the Training operator is running
+    >
+    >    ```
+    >    $ kubectl get pods -n kubeflow | grep training-operator
+    >    ```
+    >
+    >    ```
+    >    training-operator-6c9f6fd894-s4klv                       1/1     Running   0             27h
+    >    ```
+    >
 
 - `spec:`
 
-  - `name:` 가져올 container의 이름을 결정
+  - `name:` 가져올 container의 이름을 결정	
+
+    > `sepc.trialTemplate.primaryContainerName` 와 동일해야 한다.
 
   - `image:` container화 한 training code image
 
@@ -694,7 +724,7 @@ job resource를 따로 생성한 후 가져오지 않고, `trialTemplate.trialSp
 check the experiment status
 
 ```
-$ kubectl -n kubeflow-user-example-com get experiment random -o yaml
+$ kubectl -n project-pipeline get experiment random -o yaml
 ```
 
 
@@ -714,3 +744,111 @@ $ kubectl -n kubeflow-user-example-com get experiment random -o yaml
 - `parameterAssignments` : 해당 parameters의 조합
 
 관련 값은 kubeflow central dashboard에서도 확인이 가능하다.
+
+
+
+
+
+
+
+### Note
+
+#### invalid syntax
+
+- **yaml file에는 number가 들어가면 안된다.** 
+
+  sepc.parameters의 특정 값이 number인 경우 "" 으로 감싸고, 아닌 경우는 그대로 입력
+
+- docker container의 default shared memory는 64MB이다. 이는 training을 하고 image를 dataloader에 할당하기에 부족한 경우가 있다.
+
+  이는 katib에서 아직 해결하지 못한 issue이기 때문에, 어쩔 수 없이 `torch.utils.data.DataLoader` 에 num_workers에 0의 값을 줘야한다. 
+
+
+
+#### check log
+
+아래 명령어를 통해 conditions가 running으로 정상 작동하더라도 katib controller또는 pod내부에서 error가 발생한 경우가 있을 수 있다.
+
+```
+$ kubectl -n project-pipeline get experiment katib -o yaml
+```
+
+
+
+1. check katib-controller
+
+   ```
+   $ kubectl get pod -n kubeflow|grep katib-controller
+   ```
+
+   ```
+   katib-controller-7dd48fc8f-bplkz                         1/1     Running   0               2d3h
+   ```
+
+   **log확인**
+
+   yaml file의 특정한 값에 의해 error가 발생한 경우를 확인이 가능하다.
+
+   ```
+   $ kubectl logs -n kubeflow katib-controller-7dd48fc8f-bplkz
+   ```
+
+   
+
+2. check pod
+
+   katib 관련 pod확인
+
+   ```
+   $ kubectl -n project-pipeline get pods
+   ```
+
+   > namespace는 katib yamlfile에 명시한 namespace여야한다.
+
+   ```
+   NAME                                              READY   STATUS    RESTARTS   AGE
+   katib-bvr7gkjw-5l9xg                              0/2     Error     0          3m11s
+   katib-bvr7gkjw-b5hg9                              0/2     Error     0          2m40s
+   katib-bvr7gkjw-bsl66                              0/2     Running     0          107s
+   ```
+
+   error가 발생한 특정 pod의 log를 확인해보자
+
+   
+
+   - **training-container**
+
+     container를 load하거나 run하는 과정에서 발생한 error를 보여준다. 
+
+     아무 출력 안뜨면 error없음
+
+     ```
+     kubectl logs -n project-pipeline katib-bvr7gkjw-5l9xg training-container
+     ```
+
+   - **metrics-logger-and-collector**
+
+     ```
+     kubectl logs -n project-pipeline katib-bvr7gkjw-5l9xg metrics-logger-and-collector
+     ```
+
+     image에 포함된 code의 진행 상황을 log로 보여준다.
+
+     code에 의한 error를 확인할 수 있다.
+
+
+
+
+
+
+
+### delete
+
+```
+$ kubectl -n project-pipeline delete experiment random
+```
+
+
+
+
+
