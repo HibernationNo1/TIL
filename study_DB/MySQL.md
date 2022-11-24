@@ -31,7 +31,7 @@ sql 파일에 접근할 수 있도록 하는 tool
 Workbench를 통해 local에 설치된 mysql에 연결한다.
 
 > - Connection Name : ainsoft
-> - port : 3307
+> - port : 3306
 > - password : ain7679
 
 
