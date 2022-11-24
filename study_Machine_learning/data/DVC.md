@@ -125,7 +125,7 @@ $ dvc --version
 
    data가 실제로 저장될 remote storage를 세팅 
 
-   1. **google drive에 저장**
+   1. **google drive에 연결**
 
       1. google drive에 가서 dir새로 만들기  >> url ID복사
 
@@ -153,7 +153,7 @@ $ dvc --version
 
          > default remote storage로 setting되었음을 의미
 
-   2. **aws S3에 저장**
+   2. **aws S3에 연결**
 
       1. aws에 가입 후 bucket만든 후, bucket안에서 1개의 directory생성 후 해당 dir의 URL복사
 
@@ -171,6 +171,25 @@ $ dvc --version
          > Setting 'storage' as a default remote.
          > ```
 
+   3. **google storage에 연결**
+
+      1. google cloud storage에서 bucket생성
+
+         [여기](https://console.cloud.google.com/welcome?project=adroit-producer-358501)에서 storage bucket 만들기 > 
+
+         - 객체 엑세스 제어 : 균일한 엑세스
+         - 객체 데이터 보호하는 방법 : 객체 버전 관리 (객체당 치대 버전 수 3, 다음 날짜 7)
+
+         > bucket세부정보에서 bucket name확보
+
+      2. dvc add
+
+         ```
+         $ dvc remote add -d bikes gs://{bucket name}
+         ```
+
+         
+
 7. **git add, commit dvc config**
 
    ```
@@ -184,65 +203,107 @@ $ dvc --version
 
    storage에 실제data를 upload
 
-   > S3인 경우 해당 device에 user의 acssess key와 secret를 등록해놓아야 한다.
-   >
-   > 1. `aws configure` 사용
-   >
-   >    ```
-   >    $ aws configure
-   >    ```
-   >
-   >    ```
-   >    AWS Access Key ID [****************xxxx]: 
-   >    AWS Secret Access Key [****************xxxx]: 
-   >    ```
-   >
-   > 2. `dvc remote modify --local bikes` 사용
-   >
-   >    ```
-   >    $ dvc remote modify --local bikes access_key_id 'mykey' 
-   >    $ dvc remote modify --local bikes secret_access_key 'mysecret'
-   >    ```
+   1. **S3**에 push
+
+      S3인 경우 해당 device에 user의 acssess key와 secret를 등록해놓아야 한다.
+
+      1. `aws configure` 사용
+
+         ```
+         $ aws configure
+         ```
+
+         ```
+         AWS Access Key ID [****************xxxx]: 
+         AWS Secret Access Key [****************xxxx]: 
+         ```
+
+      2. `dvc remote modify --local bikes` 사용
+
+         ```
+         $ dvc remote modify --local bikes access_key_id 'mykey' 
+         $ dvc remote modify --local bikes secret_access_key 'mysecret'
+         ```
+
+      acssess key와 secret등록이 완료되면 push
+
+      ```
+      $ dvc push
+      ```
+
+      > ```
+      > 19 files pushed
+      > ```
+      >
+      > 19개 file정상적으로 pushed
 
    
 
-   ```
-   $ dvc push
-   ```
+   2. **google drive**에 push
 
-   > - S3인 경우
-   >
-   >   ```
-   >   19 files pushed
-   >   ```
-   >
-   >   19개 file정상적으로 pushed
-   >
-   > - google drive인 경우
-   >
-   >   ```
-   >   Go to the following link in your browser:
-   >       
-   >       https://accounts.google.com/o/oauth2/auth?client_id=710796635688-iivsgbgsb6uv1fap6635dhvuei09o66c.apps.googleusercontent.com&redirect_uri=urn%3Aietf%3Awg%3Aoauth%3A2.0%3Aoob&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive.appdata&access_type=offline&response_type=code&approval_prompt=force
-   >       
-   >   Enter verification code:
-   >   ```
-   >
-   >   위 출력이 나오며 인증 과정이 필요. 해당 주소로 이동하여 google login을 통해 수행.
-   >
-   >   인증을 수행하는 과정에 code가 보임
-   >
-   >   ```
-   >   4/1AdQt8qgp7fYSoMCqitgBxY7BOOgrbDqZJ8m6o06Lqu3oRgCdJwjBB7zMdgc
-   >   ```
-   >
-   >   이를 `Enter verification code:` 에 입력
-   >
-   >   ```
-   >   Authentication successful.
-   >   ```
-   >
-   >   이후 google drive에 들어가보면 random한 이름으로 file들이 생김. 이것들은 git add-commit으로 업로드 한 file들.
+      ```
+      Go to the following link in your browser:
+      
+          https://accounts.google.com/o/oauth2/auth?client_id=710796635688-iivsgbgsb6uv1fap6635dhvuei09o66c.apps.googleusercontent.com&redirect_uri=urn%3Aietf%3Awg%3Aoauth%3A2.0%3Aoob&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive.appdata&access_type=offline&response_type=code&approval_prompt=force
+      
+      Enter verification code:
+      ```
+
+      위 출력이 나오며 인증 과정이 필요. 해당 주소로 이동하여 google login을 통해 수행.
+
+      인증을 수행하는 과정에 code가 보임
+
+      ```
+      4/1AdQt8qgp7fYSoMCqitgBxY7BOOgrbDqZJ8m6o06Lqu3oRgCdJwjBB7zMdgc
+      ```
+
+      이를 `Enter verification code:` 에 입력
+
+      ```
+      Authentication successful.
+      ```
+
+      이후 google drive에 들어가보면 random한 이름으로 file들이 생김. 이것들은 git add-commit으로 업로드 한 file들.
+
+   
+
+   3. **google storage**에 push
+
+      1. `client_secrets.json` 다운로드
+
+         service account의 정보 중 `작업` > `key 관리` > `add key` : `'Json' format`
+
+         -> json형식의 secret key가 local에 저장됨
+
+         이걸 `client_secrets.json` 으로 이름 변경
+
+      2. GCP credentials
+
+         1. export
+
+            ```
+            $ export GOOGLE_APPLICATION_CREDENTIALS='{path of client_secrets.json}'
+            ```
+
+            > 위 명령어를 입력하는 위치에 `client_secrets.json` 가 있으면
+            >
+            > `export GOOGLE_APPLICATION_CREDENTIALS=client_secrets.json`
+
+         2. remote modify
+
+            ```
+            dvc remote modify --local bikes credentialpath '{path of client_secrets.json}'
+            ```
+
+         3. dvc push 
+
+            ```
+            $ dvc push
+            ```
+
+         
+
+   
 
 9. **git repository에 연결**
 
