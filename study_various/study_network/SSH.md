@@ -64,14 +64,14 @@ $ sudo netstat -antp
 
 
 
-### ssh_config
+### set port 
 
 위치 : `/etc/ssh/ssh_config` 
 
 해당 파일에서 port부분을 변경할 수 있다.
 
 ```
-$ sudo vi /etc/ssh/ssh_config
+# vi /etc/ssh/ssh_config
 ```
 
 ```
@@ -92,6 +92,64 @@ $ sudo vi /etc/ssh/ssh_config
 > ```
 > $ sudo netstat -anp|grep LISTEN|grep sshd
 > ```
+
+
+
+### set allowed ip
+
+1.  add allow ip
+
+   ```
+   # vi /etc/hosts.allow
+   ```
+
+   
+
+   ```
+   # /etc/hosts.allow: list of hosts that are allowed to access the system.
+   #                   See the manual pages hosts_access(5) and hosts_options(5).
+   #
+   # Example:    ALL: LOCAL @some_netgroup
+   #             ALL: .foobar.edu EXCEPT terminalserver.foobar.edu
+   #
+   # If you're going to protect the portmapper use the name "rpcbind" for the
+   # daemon name. See rpcbind(8) and rpc.mountd(8) for further information.
+   #
+   
+   sshd: 124.50.187.177		# `124.50.187.177` 라는 ip허용
+   sshd: 211.36.				# `211.36.` 로 시작하는 ip허용
+   ```
+
+   
+
+2. set denie ip
+
+   ```
+   # vi /etc/hosts.deny
+   ```
+
+   ```
+   # /etc/hosts.deny: list of hosts that are _not_ allowed to access the system.
+   #                  See the manual pages hosts_access(5) and hosts_options(5).
+   #
+   # Example:    ALL: some.host.name, .some.domain
+   #             ALL EXCEPT in.fingerd: other.host.name, .other.domain
+   #
+   # If you're going to protect the portmapper use the name "rpcbind" for the
+   # daemon name. See rpcbind(8) and rpc.mountd(8) for further information.
+   #
+   # The PARANOID wildcard matches any host whose name does not match its
+   # address.
+   #
+   # You may wish to enable this to ensure any programs that don't
+   # validate looked up hostnames still leave understandable logs. In past
+   # versions of Debian this has been the default.
+   # ALL: PARANOID
+   
+   sshd: ALL
+   ```
+
+   
 
 
 
