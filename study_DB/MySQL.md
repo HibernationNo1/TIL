@@ -142,6 +142,20 @@ CREATE DATABASE database_name;
 
 
 
+e.g.
+
+```sql
+CREATE DATABASE database_name DEFAULT CREATE=utf8 COLLATE=utf8_bin
+```
+
+- `DEFAULT CREATE`: 문자 incording과 관련된 설정
+
+  `utf8`: 한글 data의 정확한 처리를 위해
+
+- `COLLATE`: 특정 문자 셋에 의해 database에 저장된 값들을 비교 검색하거나 정렬 등의 작업을 위해 문자들을 서로 `비교`할때 사용하는 규칙들의 집합을 의미
+
+> 한글을 포함하는 data가 있는 경우 위 예시처럼 만들자.
+
 
 
 ##### DROP
@@ -206,21 +220,24 @@ CREATE TABLE table_name (
     다른 column의 row가 추가되면, 해당 row에 자동으로 마지막 숫자의 +1을 넣어 값이 채워진다.
 
     > 보통 PRIMARY_KEY에 지정한다.
+    >
+    > 전체 columns중에 단 하나에만 지정할 수 있다. 
 
   - `UNSIGNED`: 숫자형 type의 column에만 사용 가능
 
     모든 숫자는 양수만 취급
 
   보통 PRIMARY_KEY에 적용되는 options
-
+  
   ```python
   ...	
   	ID INT UNSIGNED NOT NULL AUTO_INCREMENT
   ...
   	PRIMARY KEY(ID)
   ```
-
   
+
+
 
 
 
@@ -256,7 +273,7 @@ CREATE TABLE table_name (
 
 
 
-**e.g.**
+###### exam_1
 
 ```sql
 USE test_db;
@@ -269,6 +286,131 @@ CREATE TABLE ann_dataset (
 );
 
 DESC ann_dataset;
+```
+
+
+
+###### exam_2
+
+```sql
+USE database_name;
+DROP TABLE IF EXISTS table_name;
+CREATE TABLE table_name(
+    column_name_1 ENUM('foo, bar') NOT NULL PRIMARY KEY,
+    column_name_2 TINYINT,
+    column_name_3 VARCHAR(20),
+) ENDINE=InnoDB DEFAULT CHARSET=utf8;"
+```
+
+- `DROP TABLE IF EXISTS table_name;`: table을 만들기 전에 기존 table이 있다면 삭제하도록 설정
+- `PRIMARY KEY` : PRIMARY KEY로 삼고자 하는 column에 option으로 명시해도 됨
+- `ENUM`: 특정 값 중에서만 data를 넣을 수 있음을 명시(choices in)
+
+- `ENDINE `: storage engine을 결정. 
+
+  - ` InnoDB`: default storage engine
+
+- `DEFAULT CHARSET=UTF8`: table생성 시 문자 incording과 관련된 설정
+
+  
+
+
+
+##### FOREIGN KEY
+
+두 table간의 column을 참조하여 data의 무결성(두 table간 관례에 있어서, data의 정확성을 보장하는 제약 조건을 거는 것이다.)을 보장한다.
+
+```sql
+USE database_name;
+CREATE TABLE table_1 (
+    foreign_key INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    column_1_1 TINYINT,
+    column_1_2 VARCHAR(20),
+    column_1_3 VARCHAR(10)
+	) DEFAULT CHARSET=utf8;
+
+CREATE TABLE table_2 (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    foreign_key INT UNSIGNED NOT NULL AUTO_INCREMENT
+    column_2_1 TINYINT,1_b VARCHAR(20),
+    column_2_2 VARCHAR(10),
+    FOREIGN KEY(foreign_key) REFERENCES table_1(foreign_key)
+	) DEFAULT CHARSET=utf8;
+
+```
+
+- `FOREIGN KEY`: 다른 table의 column과 값을 참조한다.
+
+  참조하는 column의 options를 그대로 적용해야 한다.
+
+  > 위 예시는 foreign_key라는 column을 `FOREIGN KEY`로 지정
+
+  - `REFERENCES table_1(foreign_key)` :
+    - `table_1`: FOREIGN KEY에 연결할 column이 속한 table
+    - `foreign_key`: FOREIGN KEY에 연결할 column의 이름
+
+
+
+table_1에 아래 data가 있고
+
+```
+foreign_key  column_1_1 column_1_2 column_1_3
+0            1           0      9079f       1297
+1            2          10      5043k        720
+2            3          20      7929P       1132
+3            4          30      2237Z        319
+4            5          40      5991S        855
+5            6          50      7832a       1118
+6            7          60      1836c        262
+7            8          70      7574b       1082
+8            9          80      4802l        686
+9           10          90      3315y        473
+```
+
+
+
+table_2에 아래 data가 있다고 하자.
+
+```
+   id  foreign_key column_2_1 column_2_2
+0   1           10          V          r
+1   2            9          I          w
+2   3            8          b          r
+3   4            7          l          h
+4   5            6          j          r
+5   6            5          D          J
+6   7            4          P          E
+7   8            3          V          W
+8   9            2          c          I
+9  10            1          W          Q
+```
+
+
+
+- `table_2`의 foreign_key라는 column에 속한 data는 반드시 `table_1`의 foreign_key라는 column에 속한 data중에 하나여야 한다. 
+
+  즉,  `table_1`의 foreign_key안에 없는 data를 table_2의 foreign_key에 insert하려고 하면 에러가 발생한다. 
+
+- `table_2`에서 `table_1` 의 foreign_key를 참조하고 있기 때문에
+
+  data의 insert는 `table_1`이 먼저 이루어져야 한다.
+
+  > `table_1`안에 아무 data가 없는 상태에서 `table_2`에 특정 값을 넣고자 하면 참조하는 foreign_key값이 없기 때문에 error발생
+
+
+
+###### DROP
+
+FOREIGN KEY로 인해 다른 table을 참조하고 있는 column이 있는 table은 DROP이 바로 되지 않는다.
+
+이는 Mysql이 테이블 간 관계가 있는 데이터를 함부로 수정하거나 삭제할 수 없도록 안전장치를 해두었기 때문
+
+그럼에도 불구하고 데이터를 삭제하고자 한다면 `foreign_key_checks` 의 값을 설정하면 된다.
+
+```sql
+SET foreign_key_checks = 0;	 # 안전장치 해제
+DROP TABLE table_name;		# table삭제
+SET foreign_key_checks = 1;	 # 안전장치 적용
 ```
 
 
@@ -419,62 +561,33 @@ SELECT test_value FROM
 
 
 
-- **conditional options**
+###### **options**
 
-  option은 FROM뒤에 위치
+option은 FROM뒤에 위치
 
-  - `ORDER BY`
+- `LIKE`
 
-    ```sql
-    ORDER BY column_name DESC;
-    ```
+  ```sql
+  LIKE '%test%'; 
+  ```
 
-    오름차순, 내림차순 정렬
+  > `'%test'`: 단어의 앞에 %가 있으면, 해당 단어로 끝나는 경우
+  >
+  > `'test%'`: 단어의 뒤에 %가 있으면, 해당 단어로 끝나는 경우
+  >
+  > `'%test%'` : 단어의 앞 뒤에 %가 있으면 해당 단어를, 가운데 포함하는 경우
+  >
+  > `'_test'`: 단어의 앞에 어떤 글자 1개가 있는 경우 
+  >
+  > %는 전체 str에 영향을 받는다면, `_`는 한 글자씩을 표현
 
-    - `DESC`: 내림차순
-    - `ASC`: 오름차순 정렬
+- `LIMIT`
 
-  - `WHERE`
+  ```sql
+  LIMIT 10;
+  ```
 
-    ```sql
-    WhERE tmp_value > 1; 
-    ```
-
-    ```sql
-    WhERE tmp_value > 1 AND tmp_value < 3;
-    ```
-
-    - `AND`사용
-
-    ```
-    x WhERE tmp_value =1 ;
-    ```
-
-    특정 조건에 부합하는 data만 select
-
-  - `LIKE`
-
-    ```sql
-    LIKE '%test%'; 
-    ```
-
-    > `'%test'`: 단어의 앞에 %가 있으면, 해당 단어로 끝나는 경우
-    >
-    > `'test%'`: 단어의 뒤에 %가 있으면, 해당 단어로 끝나는 경우
-    >
-    > `'%test%'` : 단어의 앞 뒤에 %가 있으면 해당 단어를, 가운데 포함하는 경우
-    >
-    > `'_test'`: 단어의 앞에 어떤 글자 1개가 있는 경우 
-    >
-    > %는 전체 str에 영향을 받는다면, `_`는 한 글자씩을 표현
-
-  - `LIMIT`
-
-    ```sql
-    LIMIT 10;
-    ```
-
-    상위 10개만 출력
+  상위 10개만 출력
 
 
 
@@ -491,6 +604,129 @@ LIMIT 5;
 
 
 
+
+
+###### conditional
+
+**WHERE**
+
+특정 조건에 부합하는 data만 select
+
+```sql
+WhERE tmp_value > 1; 
+```
+
+```sql
+WhERE tmp_value > 1 AND tmp_value < 3;
+```
+
+>  `AND`사용
+
+
+
+```sql
+x WHERE tmp_value =1 ;
+```
+
+
+
+**HAVING**
+
+집계함수에 대한 조건비교를 할 때 사용한다.
+
+```sql
+SELECT COUNT(*) FROM peaple GROUP BY gender HAVING COUNT(*) >=100;
+```
+
+
+
+
+
+
+
+###### aggregate
+
+집계 함수
+
+**AVG**
+
+평균값 계산
+
+```sql
+SELECT AVG(price) FROM items;
+```
+
+
+
+**SUM**
+
+합산
+
+```sql
+SELECT SUM(price) FROM items;
+```
+
+
+
+**MAX**
+
+````sql
+SELECT MAX(price) FROM items;
+````
+
+
+
+**MIN**
+
+```sql
+SELECT MIN(price) FROM items;
+```
+
+
+
+**COUNT**
+
+SELECT결과의 row수를 계산
+
+```sql
+SELECT COUNT(price) FROM items;
+```
+
+
+
+
+
+###### by
+
+aggregate function과 같이 쓰인다.
+
+**GROUP BY**
+
+그룹을 지어서 DATA를 분석하고자 할 때 사용
+
+```sql
+SELECT AVG(age) FROM peaple GROUP BY gender;
+```
+
+ `GROUP BY`의 target column의 data종류별로 나누어 보여준다.
+
+> 위 예시의 `gender`처럼 data의 종류(범위)가  적은(man, woman) column에 적용하기 좋다
+
+
+
+**ORDER BY**
+
+```sql
+ORDER BY column_name DESC;
+```
+
+오름차순, 내림차순 정렬
+
+- `DESC`: 내림차순
+- `ASC`: 오름차순 정렬
+
+
+
 ##### UPDATE
 
 특정 data를 수정
@@ -504,7 +740,7 @@ UPDATE test_table SET value='tmp' WHERE conditional_value='conditional';
 
 
 
-##### DELET
+##### DELETE
 
 특정 data삭제
 
@@ -519,99 +755,57 @@ DELETE FROM test_table WHERE value = 1;
 
 
 
-## MySQL pyhton
-
-**install**
-
-```
-$ pyp install pymysql
-```
-
-```py
-import pymysql
-```
 
 
+#### JOIN
 
+##### INNER JOIN
 
+두 TABLE간에 각각의 column값이 매칭되는 row만 select할 때 사용한다.
 
-### connect
-
-```python
-import pymysql
-db = pymysql.connect(host='localhost', port=3306, user='root', passwd='test4958', db='test_db', charset='utf8')
-
-
+```sql
+SELECT * FROM table_name_1 INNER JOIN table_name_2 ON table_name_1.column_1 = table_name_2.column_2 WHERE table_name_1.column_1 > 100;
 ```
 
-- `host`
-- `port`
-- `user`: mysql에 접속할 user account
-- `passwd`
-- `db`: 접속하고자 하는 database
-- `charset`: 지원 언어 유니코드
+- `FROM table_name_1 INNER JOIN table_name_2` :  table_name_1 과 table_name_2를 JOIN
+
+- `ON table_name_1.column_1 = table_name_2.column_2` : 두 table간의 select조건
+
+  >  table.column의 형식으로 table과 그에 속한 column을 명시한다.
 
 
 
+약칭 사용 가능(as문처럼)
 
-
-#### cursor
-
-`cursor()`: cursor객체의 `execute()`를 사용하여 sql문장을 DB server에 전송한다.
-
-```python
-cursor = db.cursor()
+```sql
+SELECT * FROM table_name_1 i INNER JOIN table_name_2 j ON i.column_1 = j.column_2 WHERE table_name_1.column_1 > 100;
 ```
 
+- `table_name_1 i` : `table_name_1 `을 `i` 라고 명시
+- `table_name_2 j`: `table_name_2`을 `j` 라고 명시
 
 
-##### execute
 
-sql구문을 직접 실행하는 method
+##### OUTER JOIN
 
-```python
-schema = """
-                CREATE TABLE ann_dataset (
-                id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-                json_name VARCHAR(50),
-                image_name VARCHAR(50),
-                PRIMARY KEY(ID)
-                );
-            """
-cursor.execute(schema)
+pass
+
+
+
+
+
+### SubQuery
+
+`()`를 사용해서 SQL문 안에 추가적인 SQL문을 추가하는 것 
+
+table간의 검색 시, 검색 범위를 좁히는 기능에 주로 사용
+
+```sql
+SELECT column_1 FROM table_name_1 IN(SELECT table_name_2 FROM column_2 WHERE column_1 > 100) ;
 ```
 
-
-
-##### fetchall
-
-CRUD에 의한 결과값을 모두 출력한다.
-
-```python
-result = cursor.fetchall()
-```
-
-
-
-
-
-#### commit
-
-이제까지 실행한 sql구문에 문제가 없다고 판단될 경우 data를 commit하여 완전히 적용시키는 method
-
-```python
-db.commit()
-```
-
-
-
-#### close
-
-db와의 connection을 끊는 method
-
-```python
-db.close()
-```
-
-
-
+> ```sql
+> SELECT * FROM table_name_1 i INNER JOIN table_name_2 j ON i.column_1 = j.column_2 WHERE table_name_1.column_1 > 100;
+> ```
+>
+> `JOIN`을 사용한 SQL문과 같은 동작을 한다.
