@@ -23,7 +23,42 @@
    # swapoff -a && sed -i '/swap/s/^/#/' /etc/fstab
    ```
 
-4. **open port 6443**
+   confirm
+
+   ```
+   $ sudo vi /etc/fstab
+   ```
+
+   ```
+   #/swapfile                                 none            swap    sw              0       0
+   ```
+
+4. Firewall off
+
+   ```
+   $ sudo ufw disable
+   ```
+
+   > 방화벽을 끄는것이 아닌, 특정 port만 허용하고 싶으면 아래 명령어
+   >
+   > ```
+   > # Master
+   > sudo ufw enable
+   > sudo ufw allow 6443/tcp
+   > sudo ufw allow 2379:2380/tcp
+   > sudo ufw allow 10250/tcp
+   > sudo ufw allow 10251/tcp
+   > sudo ufw allow 10252/tcp
+   > sudo ufw status
+   > 
+   > # Worker
+   > sudo ufw enable
+   > sudo ufw allow 10250/tcp
+   > sudo ufw allow 30000:32767/tcp
+   > sudo ufw status
+   > ```
+
+5. **open port 6443**
 
    ```
    $ echo > /dev/tcp/127.0.0.1/6443
@@ -225,7 +260,7 @@ Mirantis cri-dockerd CRI 소켓 파일 경로는 `/run/cri-dockerd.sock` (Kubern
 
    ```
    $ wget https://github.com/Mirantis/cri-dockerd/releases/download/v${VER}/cri-dockerd-${VER}.amd64.tgz
-   tar xvf cri-dockerd-${VER}.amd64.tgz
+   $ tar xvf cri-dockerd-${VER}.amd64.tgz
    ```
 
    Move `cri-dockerd` binary package to `/usr/local/bin` directory
@@ -327,6 +362,29 @@ docker contianer안에서 GPU를 사용하기 위해선 필수
 
    > cuda와 ubuntu version에 대한tag는 [docker hub-nvidia](https://hub.docker.com/r/nvidia/cuda/tags)에서 검색 후 결정
 
+   ```
+   +-----------------------------------------------------------------------------+
+   | NVIDIA-SMI 470.161.03   Driver Version: 470.161.03   CUDA Version: 11.4     |
+   |-------------------------------+----------------------+----------------------+
+   | GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+   | Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+   |                               |                      |               MIG M. |
+   |===============================+======================+======================|
+   |   0  NVIDIA GeForce ...  Off  | 00000000:07:00.0  On |                  N/A |
+   |  0%   27C    P8    15W / 180W |     45MiB / 12052MiB |      0%      Default |
+   |                               |                      |                  N/A |
+   +-------------------------------+----------------------+----------------------+
+                                                                                  
+   +-----------------------------------------------------------------------------+
+   | Processes:                                                                  |
+   |  GPU   GI   CI        PID   Type   Process name                  GPU Memory |
+   |        ID   ID                                                   Usage      |
+   |=============================================================================|
+   +-----------------------------------------------------------------------------+
+   ```
+
+   
+
 4. edit daemon
 
    ```
@@ -370,7 +428,7 @@ docker contianer안에서 GPU를 사용하기 위해선 필수
 2. download google cloud public key
 
    ```
-   $ sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+   $ curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
    ```
 
    
@@ -387,7 +445,7 @@ docker contianer안에서 GPU를 사용하기 위해선 필수
 
    ```
    $ sudo apt-get update
-   $ sudo apt-get install -y kubectl=1.22.13-00 kubelet=1.22.13-00 kubeadm=1.22.13-00 
+   $ sudo apt-get install -y kubectl=1.22.13-00 kubelet=1.22.13-00 kubeadm=1.22.13-00
    ```
 
    > 차후 `kserve`를 위해  version을 1.22.13으로 결정 (`1.22.13-00`) 이라 명시해줘야 함
@@ -443,8 +501,6 @@ docker contianer안에서 GPU를 사용하기 위해선 필수
 
 ### Initialize master node
 
-
-
 1. confirm br_netfilter
 
    ```
@@ -462,30 +518,36 @@ docker contianer안에서 GPU를 사용하기 위해선 필수
 2. set host
 
    ```
-   $ sudo vim /etc/hosts
+   $ hostnamectl set-hostname master_node_name
    ```
 
-   ```
-   127.0.1.1 master.example.com master					# node(cluster)이름
-   192.168.0.107 k8s-cluster.computingforgeeks.com		# endpoint설정
-   ```
+   
+
+   - if you have plan to set up worker nodes
+
+     ```
+     $ sudo vi /etc/hosts
+     ```
+
+     ```
+     127.0.1.1 master.example.com master					# node(cluster)이름
+     
+     worker_node_내부IP_1	worker node 이름_1
+     worker_node_내부IP_1	worker node 이름_2
+     ```
+
+     
 
    > minikube를 설치했다가 삭제한 경우로 인해 아래 문구가 존재하면 #으로 주석처리
+   >
+   > ````
+   > $ sudo vi /etc/hosts
+   > ````
    >
    > ```
    > 127.0.0.1       host.minikube.internal
    > 192.168.0.107   control-plane.minikube.internal
    > ```
-
-   
-
-   ```
-   sudo vi /etc/hostname
-   ```
-
-   ```
-   master.example.com
-   ```
 
    
 
@@ -506,7 +568,16 @@ docker contianer안에서 GPU를 사용하기 위해선 필수
          Architecture: x86-64
    ```
 
-   
+   > 또는 hostname file을 직접 확인
+   >
+   > ```
+   > $ sudo vi /etc/hostname
+   > ```
+   >
+   > ```
+   > master.example.com
+   > ```
+   >
 
    
 
@@ -515,7 +586,8 @@ docker contianer안에서 GPU를 사용하기 위해선 필수
    ```
    $ sudo kubeadm init \
      --pod-network-cidr=10.244.0.0/16 \
-     --control-plane-endpoint=k8s-cluster.computingforgeeks.com
+     --apiserver-advertise-address 192.168.219.100\
+     --cri-socket /run/cri-dockerd.sock
    ```
 
    - `--pod-network-cidr` : 포드 네트워크의 IP 주소 범위를 지정 설정
@@ -527,14 +599,28 @@ docker contianer안에서 GPU를 사용하기 위해선 필수
      - **Flannel 기반 구축** :  10.244.0.0/16
 
        > kubeflow사용시 권장
+       >
+       > 해당 옵션 사용 시 init이후 flannel CNI를 설치해야 한다. 방법은 아래
 
    - `--cri-socket` : runtime적용
+
+     ```
+     --cri-socket /run/cri-dockerd.sock
+     ```
+
+     **Mirantis cri-dockerd** 를 설치했다면 반드시 option에 추가
 
      > installed `cri-dockerd`
 
    - `--upload-certs` : control-plane 인증서를 kubeadm-certs Secret에 업로드한다.
 
    - `--control-plane-endpoint` : control-plane의 IP 주소 또는 DNS 이름을 지정
+
+     ```
+     --control-plane-endpoint=k8s-cluster.computingforgeeks.com
+     ```
+
+     
 
    
 
@@ -570,7 +656,7 @@ docker contianer안에서 GPU를 사용하기 위해선 필수
            --discovery-token-ca-cert-hash sha256:d46b1bed31c13efd6d15ad94ae739a914e359ff8d3244a5da52bdc5e82a444c9 
    ```
 
-   위 출력 중 아래 세 줄을 실행해야됨
+   위 출력 중 보이는 아래 세 줄을 실행해야됨
 
    ```
    $ mkdir -p $HOME/.kube
@@ -597,7 +683,67 @@ docker contianer안에서 GPU를 사용하기 위해선 필수
    > The connection to the server 192.168.0.107:6443 was refused - did you specify the right host or port?
    > ```
 
-   
+   - STATUS: `NotReady` 인 경우
+
+     1. ```
+        $ kubectl get pod -n kube-system
+        ```
+
+        ```
+        NAME                                     READY   STATUS    RESTARTS   AGE
+        coredns-78fcd69978-cdf4d                 1/1     padding   0          49s
+        coredns-78fcd69978-snxdp                 1/1     padding   0          49s
+        ```
+
+        위 pods의 STATUS: `padding` 인 경우에는 **`install CNI(flannel)`**
+
+        해당 CNI를 설치하지 않으면 nodes의 STATUS가 계속해서 `NotReady`이다.
+
+        ```
+        $ kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+        ```
+
+        ```
+        $ kubectl get pod -n kube-system
+        ```
+
+        모든 STAUS가 `Running`임을 확인
+
+
+
+
+
+### nvidia-device-plugin
+
+1. graphic driver확인
+
+   ```
+   $ nvidia-smi
+   ```
+
+
+
+```
+$ /etc/containerd/config.toml
+```
+
+
+
+```
+$ kubectl get daemonset -n kube-system
+```
+
+```
+$ kubectl get daemonset -n kube-system -o yaml
+```
+
+
+
+```
+$ kubectl delete daemonset nvidia-device-plugin-daemonset -n kube-system
+```
+
+
 
 
 
@@ -636,3 +782,36 @@ $ docker rmi $(docker images -q)
 $ sudo apt-get remove docker-ce docker-ce-cli containerd.io 
 ```
 
+
+
+
+
+### error
+
+**`sudo kubeadm init` 시 발생**
+
+- ```
+  Found multiple CRI endpoints on the host. Please define which one do you wish to use by setting the 'criSocket' field in the kubeadm configuration file: unix:///var/run/containerd/containerd.sock, unix:///var/run/cri-dockerd.sock
+  To see the stack trace of this error execute with --v=5 or higher
+  ```
+
+  kubeadm init을 진행할 때 `--cri-socket` option을 추가해야 함
+
+  
+
+- ````
+  I1205 13:40:20.612618   30956 version.go:255] remote version is much newer: v1.25.4; falling back to: stable-1.22
+  [init] Using Kubernetes version: v1.22.16
+  [preflight] Running pre-flight checks
+  error execution phase preflight: [preflight] Some fatal errors occurred:
+          [ERROR FileAvailable--etc-kubernetes-manifests-kube-apiserver.yaml]: /etc/kubernetes/manifests/kube-apiserver.yaml already exists
+          [ERROR FileAvailable--etc-kubernetes-manifests-kube-controller-manager.yaml]: /etc/kubernetes/manifests/kube-controller-manager.yaml already exists
+          [ERROR FileAvailable--etc-kubernetes-manifests-kube-scheduler.yaml]: /etc/kubernetes/manifests/kube-scheduler.yaml already exists
+          [ERROR FileAvailable--etc-kubernetes-manifests-etcd.yaml]: /etc/kubernetes/manifests/etcd.yaml already exists
+  [preflight] If you know what you are doing, you can make a check non-fatal with `--ignore-preflight-errors=...`
+  To see the stack trace of this error execute with --v=5 or higher
+  ````
+
+  **kubeadm reset 진행**
+
+  
