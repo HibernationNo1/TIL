@@ -118,7 +118,7 @@
 - 다른 storage가 새롭게 생성된 storage인 경우
 
   ```
-  dvc remote add -d {remote name} gs://{bucket name}
+  dvc remote modify {remote name} gs://{bucket name}
   ```
 
 - 다른 storage가 기존에 있던 storage인 경우
