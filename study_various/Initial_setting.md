@@ -175,32 +175,38 @@ $ sudo apt -y install typora
 **linux**
 
 1. `Anaconda3-2021.05-Linux-x86_64.sh` file다운로드 후, 해당 위치에서 무결성 확인
+
+   ```
+   $ wet https://repo.anaconda.com/archive/Anaconda3-2021.05-Linux-x86_64.sh$
+   ```
+
    
+
    ```
    $ sha256sum Anaconda3-2021.05-Linux-x86_64.sh
    ```
 
    > Anaconda3-2022.05-Linux-x86_64.sh 파일 명 확인
-   
+
 2. 설치
-   
+
    ```
    $ bash Anaconda3-2021.05-Linux-x86_64.sh
    ```
-   
+
    1. ```
       Please, press ENTER to continue
       >>> 
       뜨면 Enter하고 다 읽어내린 후 
       ```
-   
+
    2. ```
       Do you accept the license terms? [yes|no]
       Please answer 'yes' or 'no':'
       >>> 
       뜨면 yes 입력 후 Enter
       ```
-   
+
    3. ```
       Anaconda3 will now be installed into this location:
       /home/hibernation/anaconda3
@@ -212,14 +218,14 @@ $ sudo apt -y install typora
       [/home/hibernation/anaconda3] >>> 
       뜨면 새롭게 만들 directory의 name을 입력
       ```
-   
+
    4. ```
       Do you wish the installer to initialize Anaconda3
       by running conda init? [yes|no]
       
       no를 입력하면 콘다는 쉘 스크립트를 수정하지 못한다. yes를 누른다
       ```
-   
+
    5. path추가
       
       ```
@@ -549,6 +555,8 @@ $ kubectl version
    > $ echo 'source <(kubectl completion bash)' >> ~/.bachrc
    > ```
 
+
+
 #### kubelet, kubeadm, kubectl(linux)
 
 kubelet, kubeadm, kubectl, docker 한 번에 설치
@@ -624,6 +632,42 @@ print(scipy.__version__)
 ## GPU_CUDA설치
 
 ### Ubuntu
+
+#### graphic driver
+
+1. GPU확인
+
+   ```
+   $ nvidia-smi -L
+   ```
+
+   [여기](https://www.studio1productions.com/Articles/NVidia-GPU-Chart.htm)서 CUDA core 수 확인  (4352)
+
+2. CUDA Compute Capability확인
+
+   [여기](https://www.wikiwand.com/en/CUDA) (7.5)
+
+3. graphic driver 설치
+
+   1. 사용 가능한 graphic driver확인
+
+      ```
+      $ ubuntu-drivers devices
+      ```
+
+   2. 사용 가능한 driver중 하나 설치
+
+      ```
+      $ sudo apt install nvidia-driver-460		# 예시임
+      ```
+
+   3. 확인
+
+      ```
+      nvidia-smi
+      ```
+
+      `Diver Version`: 확인. 적용 안되어있으면 `sudo reboot`
 
 
 
