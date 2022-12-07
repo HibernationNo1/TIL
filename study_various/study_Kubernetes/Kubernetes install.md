@@ -409,11 +409,8 @@ docker contianer안에서 GPU를 사용하기 위해선 필수
    $ sudo systemctl daemon-reload 
    ```
 
-   
 
-   
 
-   
 
 ### install kubelet, kubeadm, kubectl
 
@@ -715,37 +712,127 @@ docker contianer안에서 GPU를 사용하기 위해선 필수
 
 ### nvidia-device-plugin
 
-1. graphic driver확인
+[doc](https://github.com/NVIDIA/k8s-device-plugin)
+
+1. graphic driver 존재 확인
 
    ```
    $ nvidia-smi
    ```
 
+2. create `nvidia-device-plugin` daemonset
 
+   ```
+   $ kubectl create -f https://raw.githubusercontent.com/NVIDIA/k8s-device-plugin/v0.13.0/nvidia-device-plugin.yml
+   ```
 
-```
-$ /etc/containerd/config.toml
-```
+   > version은 공식 doc에서 확인 후 결정
 
+   - kubernetes는 1.6부터 Daemonset이 기본적으로 master node에서 schedule되지 않는다.
 
+     > 정확히는, taint에 의해 master node에서 pod구동이 안되도록 되어 있다.
 
-```
-$ kubectl get daemonset -n kube-system
-```
+     만일 master node에서 pod작업을 이어가고자 한다면 taint를 해제
 
-```
-$ kubectl get daemonset -n kube-system -o yaml
-```
+     ```
+     $ kubectl taint nodes hibernationno1 node-role.kubernetes.io/master-
+     ```
 
+3. confirm enabling GPU support in Kubernetes
 
+   ```
+   $ kubectl get nodes "-o=custom-columns=NAME:.metadata.name,GPU:.status.allocatable.nvidia\.com/gpu"
+   ```
 
-```
-$ kubectl delete daemonset nvidia-device-plugin-daemonset -n kube-system
-```
+   ```
+   NAME             GPU
+   hibernationno1   1
+   ```
 
+   > 1 확인
 
+   
 
+   pod구동 확인
 
+   ```
+   $ kubectl get pod -A | grep nvidia
+   ```
+
+   ```
+   kube-system   nvidia-device-plugin-daemonset-k228k     1/1     Running   0              16m
+   ```
+
+4. check use GPU at pod
+
+   create pod
+
+   ```
+   $ vi gpu-container.yaml
+   ```
+
+   ```
+   apiVersion: v1
+   kind: Pod
+   metadata:
+     name: gpu
+   spec:
+     containers:
+     - name: gpu-container
+       image: nvidia/cuda:11.3.1-runtime-ubuntu20.04
+       command:
+         - "/bin/sh"
+         - "-c"
+       args:
+         - nvidia-smi && tail -f /dev/null
+       resources:
+         requests:
+           nvidia.com/gpu: 1
+         limits:
+           nvidia.com/gpu: 1
+   ```
+
+   - `nvidia/cuda:10.2-runtime` : 알맞는 cuda version명시해줘야 함
+   - ``spec.resources.requests` 와 `spec.resources.limits` 에 `nvidia.com/gpu` 를 포함해야 pod 내에서 GPU 사용이 가능` ★★★
+
+   ```
+   $ kubectl create -f gpu-container.yaml
+   $ kubectl get pod gpu -n default
+   ```
+
+   ```
+   NAME   READY   STATUS              RESTARTS   AGE
+   gpu    0/1     ContainerCreating   0          90s
+   ```
+
+   > `STATUS : Runniing` 확인 후 아래 명령어 실행
+
+   ```
+   $ kubectl logs gpu
+   ```
+
+   ```
+   +-----------------------------------------------------------------------------+
+   | NVIDIA-SMI 470.161.03   Driver Version: 470.161.03   CUDA Version: 11.4     |
+   |-------------------------------+----------------------+----------------------+
+   | GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+   | Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+   |                               |                      |               MIG M. |
+   |===============================+======================+======================|
+   |   0  NVIDIA GeForce ...  Off  | 00000000:07:00.0 Off |                  N/A |
+   |  0%   27C    P8    14W / 180W |     64MiB / 12052MiB |      0%      Default |
+   |                               |                      |                  N/A |
+   +-------------------------------+----------------------+----------------------+
+                                                                                  
+   +-----------------------------------------------------------------------------+
+   | Processes:                                                                  |
+   |  GPU   GI   CI        PID   Type   Process name                  GPU Memory |
+   |        ID   ID                                                   Usage      |
+   |=============================================================================|
+   +-----------------------------------------------------------------------------+
+   ```
+
+   
 
 
 
@@ -754,10 +841,12 @@ $ kubectl delete daemonset nvidia-device-plugin-daemonset -n kube-system
 #### kubeadm reset
 
 ```
-$ sudo systemctl restart docker
-$ docker rm -f $(docker ps -aq)
-$ docker rmi $(docker images -q)
+sudo systemctl restart docker
+docker rm -f $(docker ps -aq)
+docker rmi $(docker images -q)
 ```
+
+> 한 번에 입력
 
 ```
 $ sudo kubeadm reset
@@ -777,7 +866,7 @@ $ sudo apt-get purge kubeadm kubectl kubelet
 #### uninstall docker
 
 ```
-$ docker rm -f$(docker ps -aq)
+$ docker rm -f $(docker ps -aq)
 $ docker rmi $(docker images -q)
 $ sudo apt-get remove docker-ce docker-ce-cli containerd.io 
 ```
