@@ -1,9 +1,3 @@
-
-
-`Ubuntu 18.04`
-
-
-
 ## install
 
 ### requirements
@@ -279,8 +273,6 @@ docker contianer안에서 GPU를 사용하기 위해선 필수
    
 
    
-
-
 
 ### minikube
 
