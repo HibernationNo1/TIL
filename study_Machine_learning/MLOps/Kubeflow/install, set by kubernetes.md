@@ -962,6 +962,10 @@ Version: {KustomizeVersion:3.2.0 GitCommit:a3103f1e62ddb5b696daa3fd359bb6f2e8333
    ```
    $ while ! kustomize build example | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
    ```
+   
+   위 명령어로 자동 install을 하면 몇 가지 기능이 빠진 채 진행이 안될 수 있다.
+   
+   가능하면 [kubeflow/manifasts](https://github.com/kubeflow/manifests)에서 하나하나 복사해가며 진행하자.
 
 
 
@@ -1047,7 +1051,7 @@ dashboard에 user를 추가하기 위해서는 cm dex를 수정해야 한다.
    ```
    - email: winter4958@gmail.com
      hash: $2a$12$lRDeywzDl4ds0oRR.erqt.b5fmNpvJb0jdZXE0rMNYdmbfseTzxNW
-     userID: "taeuk"
+     userID: "84604958"
      username: taeuk
    ```
 
@@ -1092,7 +1096,7 @@ dashboard에 user를 추가하기 위해서는 cm dex를 수정해야 한다.
       apiVersion: kubeflow.org/v1beta1
       kind: Profile
       metadata:
-        name: testuser
+        name: namesapce
       spec:
         owner:
           kind: User
@@ -1141,17 +1145,267 @@ dashboard에 user를 추가하기 위해서는 cm dex를 수정해야 한다.
       $ kubectl apply -f profile.yaml
       ```
 
+      > 만일 `no matches for kind "Profile" in version "kubeflow.org/v1beta1"` 라는 error message가 뜬다면  [kubeflow/manifasts](https://github.com/kubeflow/manifests)에서 `Profiles + KFAM`와 `User Namespace`를 install이 제대로 됐는지 확인하자.
+
    3. edit
 
       profile 변경이 필요할 시
-
+   
       ```
       $ kubectl edit profile <namespace_name>
       ```
-
+   
       
 
 
+
+## KServe
+
+[doc_kserve0.9](https://kserve.github.io/website/0.9/admin/serverless/#5-install-kserve-built-in-clusterservingruntimes)
+
+`Istio`, `Knative Serving`, `Cert Manager` 는 전부 kubeflow에 설치한 resource그대로 사용
+
+
+
+kubeflow/manifast공시 gitgub에 있는 건 뭐냐?
+
+
+
+### KServe
+
+```
+$ kubectl apply -f https://github.com/kserve/kserve/releases/download/v0.9.0/kserve.yaml
+```
+
+confirm 
+
+```
+$ kubectl get pod -n kserve
+```
+
+```
+NAME                                         READY   STATUS    RESTARTS   AGE
+kserve-controller-manager-5fc887875d-td89t   2/2     Running   0          3m58s
+```
+
+
+
+
+
+### Built-in ClusterServingRuntimes
+
+```
+$ kubectl apply -f https://github.com/kserve/kserve/releases/download/v0.9.0/kserve-runtimes.yaml
+```
+
+> **ClusterServingRuntimes** are required to create InferenceService for built-in model serving runtimes with KServe v0.8.0 or higher.
+
+
+
+
+
+### exam
+
+**preparations**
+
+1. namespace생성
+
+   ```
+   $ kubectl create namespace kserve-test
+   ```
+
+2. 배포하고자 하는 model에 대한 InferenceService 작성 후 apply
+
+   ```
+   $ kubectl apply -n kserve-test -f - <<EOF
+   apiVersion: "serving.kserve.io/v1beta1"
+   kind: "InferenceService"
+   metadata:
+     name: "sklearn-iris"
+   spec:
+     predictor:
+       model:
+         modelFormat:
+           name: sklearn
+         storageUri: "gs://kfserving-examples/models/sklearn/1.0/model"
+   EOF
+   ```
+
+   > - `metadata.name` : Knative service name
+   >
+   > 
+   >
+   > ```
+   > $ kubectl get pods -n kserve-test -w
+   > ```
+   >
+   > `STATUS : Running` 확인 후 진행
+
+3. confirm domain
+
+   ```
+   $ kubectl get inferenceservices sklearn-iris -n kserve-test
+   ```
+
+   ```
+   NAME           URL                                           READY   PREV   LATEST   PREVROLLEDOUTREVISION   LATESTREADYREVISION                    AGE
+   sklearn-iris   http://sklearn-iris.kserve-test.example.com   True           100                              sklearn-iris-predictor-default-00001   5h11m
+   ```
+
+   `URL` : 기본 도메인 값은 `http://{Knative service name}.{namespace}.example.com` 이다.
+
+4. port forward
+
+   ```
+   kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80
+   ```
+
+   
+
+
+
+
+
+- SERVICE_HOSTNAME
+
+  ```
+  $ SERVICE_HOSTNAME=$(kubectl get inferenceservice sklearn-iris -n kserve-test -o jsonpath='{.status.url}' | cut -d "/" -f 3)
+  ```
+
+  ```
+  sklearn-iris.kserve-test.example.com
+  ```
+
+  
+
+  
+
+- INGRESS_HOST
+
+  ```
+  INGRESS_HOST=192.168.219.100
+  ```
+
+  내부 IP
+
+  
+
+- INGRESS_PORT
+
+  ```
+  $ INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}')
+  ```
+
+  > ```
+  > $ echo $INGRESS_PORT
+  > ```
+  >
+  > install시 random으로 할당됨
+
+
+
+호출
+
+- internal
+
+  ```
+  $ curl -v -H "Host: ${SERVICE_HOSTNAME}" http://${INGRESS_HOST}:${INGRESS_PORT}/v1/models/sklearn-iris:predict -d @./iris-input.json
+  ```
+
+  > ```
+  > $ curl -v -H "Host: sklearn-iris.kserve-test.example.com" http://192.168.219.100:30551/v1/models/sklearn-iris:predict -d @./iris-input.json
+  > ```
+
+- external
+
+  ```
+  curl -v -H "Host: sklearn-iris.kserve-test.example.com" http://{외부IP}:${INGRESS_PORT}/v1/models/sklearn-iris:predict -d @./iris-intput.json
+  ```
+
+
+
+이대로 호출하면 302 가 뜬다(dex인증 필요)
+
+
+
+#### indirection
+
+[configmap](https://istio.io/latest/docs/reference/config/istio.mesh.v1alpha1/#MeshConfig-ExtensionProvider-EnvoyExternalAuthorizationHttpProvider)
+
+```
+$ kubectl edit configmap istio -n istio-system
+```
+
+```
+data:
+  mesh: |-
+    extensionProviders:
+      - name: dex-auth-provider
+          envoyExtAuthzHttp:
+            service: "authservice.istio-system.svc.cluster.local"
+            port: "8080"
+            includeRequestHeadersInCheck: ["authorization", "cookie", "x-auth-token"]
+            headersToUpstreamOnAllow: ["kubeflow-userid"]
+```
+
+
+
+[AuthorizationPolicy](https://istio.io/latest/docs/reference/config/security/authorization-policy/)
+
+```
+$ vi authorizationpolicy.yaml
+```
+
+```
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: dex-auth
+  namespace: istio-system
+spec:
+  selector:
+    matchLabels:
+      istio: ingressgateway
+  action: CUSTOM
+  provider:
+    # The provider name must match the extension provider defined in the mesh config.
+    name: dex-auth-provider
+  rules:
+  # The rules specify when to trigger the external authorizer.
+  - to:
+    - operation:
+        notPaths: ["/v1*"]
+```
+
+> - `action: CUSTOM`:  `-n istio-system`의 `configmap` 에서 설정한  `dex-auth-provider`애 의해 차단 설정을 구축하기 위해선 `CUSTOM` 선택  
+> - `name: dex-auth-provider`:  `-n istio-system`의 `configmap` 에서 설정한  `extensionProviders`의 이름과 같아야 한다.
+> - `notPaths: ["/v1*"]`: `/v1` 로 시작하는 route제외 전부 차단
+
+```
+$ kubectl apply -f authorizationpolicy.yaml 
+```
+
+
+
+이후 `authn-filter` 삭제
+
+```
+$ kubectl delete -n istio-system envoyfilters.networking.istio.io authn-filter
+```
+
+```
+$ kubectl rollout restart deployment/istiod -n istio-system
+```
+
+
+
+> ```
+> $ kubectl delete -n istio-system AuthorizationPolicy dex-auth
+> ```
+
+
+
+TODO: 실패
 
 
 
