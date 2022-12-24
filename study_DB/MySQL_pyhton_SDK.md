@@ -3,7 +3,7 @@
 **install**
 
 ```
-$ pyp install pymysql
+$ pip install pymysql
 ```
 
 ```py
@@ -29,6 +29,20 @@ db = pymysql.connect(host='localhost', port=3306, user='root', passwd='test4958'
 - `passwd`
 - `db`: 접속하고자 하는 database
 - `charset`: 지원 언어 유니코드
+
+
+
+**external connect**
+
+1. confirm port 3306 open 
+
+   ```
+   $ sudo netstat -ntlp |grep mysql
+   ```
+
+   
+
+
 
 
 

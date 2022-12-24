@@ -40,7 +40,39 @@ Relational Database Management System
 
   > [참고](https://www.inflearn.com/course/%EC%96%84%EC%BD%94-%EB%A7%88%EC%9D%B4%EC%97%90%EC%8A%A4%ED%81%90%EC%97%98/lecture/86854?tab=curriculum&volume=0.49&quality=auto&speed=1.25)
 
+- linux: 
 
+  1. ```
+     $ sudo apt-get update
+     ```
+
+  2. install
+
+     ```
+     $sudo apt-get install mysql-server
+     ```
+
+  3. set open 3306 port
+
+     ```
+     $ sudo ufw allow mysql
+     ```
+
+  4. restart mysql automatically when ubuntu reboot
+
+     ```
+     $ sudo systemctl enable mysql
+     ```
+
+  5. connect mysql
+
+     ```
+     $ sudo mysql -u root -p 
+     ```
+
+     ```
+     mysql
+     ```
 
 
 
@@ -103,6 +135,47 @@ Workbench를 통해 local에 설치된 mysql에 연결한다.
 
 아래 모든 명령어는 commend에서도 실행이 가능하다. 아래 설명은 workbench에서 실행하는 것을 기준으로 적어놓는다.
 
+version 확인
+
+```
+SHOW VARIABLES LIKE '%VERSION%';
+```
+
+
+
+
+
+### SET
+
+mysql비번 변경
+
+```sql
+SET PASSWORD FOR 'root'@'localhost' = PASSWORD('바꿀비번');
+```
+
+
+
+```
+CREATE USER 'project-pipeline'@'%' IDENTIFIED BY '4958';
+```
+
+```
+GRANT ALL PRIVILEGES ON *.* TO 'project-pipeline'@'%' WITH GRANT OPTION;		
+project-pipeline로 접속하는 모든 DB에 대한 모든 IP의 접근 허용 
+```
+
+```
+FLUSH PRIVILEGES;			# 설정 적용
+```
+
+
+
+```
+$ SELECT User, Host, authentication_string FROM mysql.user;
+```
+
+
+
 
 
 ### DATABASE
@@ -145,8 +218,12 @@ CREATE DATABASE database_name;
 e.g.
 
 ```sql
-CREATE DATABASE database_name DEFAULT CREATE=utf8 COLLATE=utf8_bin
+CREATE DATABASE database_name DEFAULT CREATE=utf8 COLLATE=utf8_bin;
 ```
+
+> ```
+> mysql> CREATE DATABASE database_name DEFAULT CHARACTER set utf8 COLLATE utf8_unicode_ci;
+> ```
 
 - `DEFAULT CREATE`: 문자 incording과 관련된 설정
 
