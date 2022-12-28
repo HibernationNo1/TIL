@@ -1,6 +1,6 @@
 
 
-
+## log
 
 ### 500
 
@@ -15,12 +15,27 @@ input parameter: gs_secret"}]}
 ```
 
 - **point** : `Invalid input error: Unrecognized `
+
 - pipeline compile됨
+
 - input parameters가 maching되지 않을 때 발생
 
+  > 또는 
+  >
+  > ```
+  > exec_run = client.run_pipeline(
+  >             experiment_id = experiment_id,
+  >             job_name = cfg.run.name,
+  >             version_id = version_id,
+  >             params = params
+  >             )
+  > ```
+  >
+  > 여기서 version이 맞지 않은 경우에도 발생
 
 
-### 
+
+
 
 #### Incorrect string value
 
@@ -106,6 +121,8 @@ HTTP response body: {"error":"Validate create run request failed.: Invalid input
 
 
 
+## code
+
 ### client
 
 #### 'authservice_session'
@@ -123,7 +140,7 @@ KeyError: 'authservice_session'
 
 
 
-### else
+## bashboard
 
 #### must specify cpu,memory
 
@@ -160,3 +177,41 @@ This step is in Error state with this message: task 'hibernation-project-9kj4p.s
 #### secret
 
 해당 RUN process가 진행되는 namespace에 secrets가 있는지 확인
+
+
+
+#### STRING [{] to VARIABLE [???]
+
+```
+This step is in Error state with this message: Invalid 'when' expression '"{"dvc": {"remote": 1}}" != "None"': Cannot transition token types from STRING [{] to VARIABLE [dvc]
+```
+
+이와 같은 error는 
+
+1. 하나의 component에 input이 두개이고
+
+2. 두 개의 type이 모두 dict인 경우이고
+
+3. 두 개의 dict이 모두 하나 이상의 key를 가지고 있는 경우
+
+   > 하나라도 dict: {} 처럼 빈 dict이면 에러발생 안함
+
+발생한다.
+
+```
+ _check_status_op = recode_op(cfg_1, cfg_2)
+```
+
+- `cfg_1`, `cfg_2` 두개 다 하나 이상의 key를 가지고 있음 >> error발생
+
+왜?
+
+component가 input을 dict으로 받는 경우 `'{'key':value}'`형식으로 받게 되는데, 이러한 input을 두 개 이상 받을 경우 구분을 위해서 큰따옴표`"` 도 사용하게 된다.
+
+이 때 따옴표`' or "` 간의 간섭이 일어나 `{` 라는 기호가 dict을 구분짓는 역할을 하지 못하게 되는 것.
+
+
+
+해결법: 
+
+가능하면 dict을 하나로 합쳐 input을 하나로 하자. 
