@@ -94,7 +94,7 @@ $ dvc --version
    위에서 뜬 안내메시지 실행 (git에서 version관리를 할 수 있도록 해줌)
 
    ```
-   $ git add {dir_name}.dvc 
+   $ git add {dir_name}.dvc .gitignore 
    ```
 
    - check

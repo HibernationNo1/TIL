@@ -166,7 +166,7 @@ kubectl -n knative-serving  get pod activator-7c5cd78566-jkv7c -o yaml
    >   ingress gateway는 `istio-system` 에만 존재
    >
    >   ```
-   >   $ kubectl get svc -n istio-system
+   >   $ kubectl get svc istio-ingressgateway -n istio-system
    >   ```
    >
    >   ```
@@ -194,6 +194,10 @@ kubectl -n knative-serving  get pod activator-7c5cd78566-jkv7c -o yaml
    > - `EXTERNAL-IP` 가 CNAME인 경우
 
    
+
+---
+
+이 위에꺼 하면 안됨. knative와 istio-system은 kubeflow를 설치 한 상태로 진행
 
 
 
@@ -402,10 +406,24 @@ model배포
    
 
    ```
-   curl -v -H "Host: ${SERVICE_HOSTNAME}" http://${INGRESS_HOST}:${INGRESS_PORT}/v1/models/sklearn-iris:predict -d @./iris-input.json
+   $ CLUSTER_IP=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.clusterIP}')
    ```
 
    
+   
+   
+   
+   
+   
+   ```
+   curl -v -H "Host: ${SERVICE_HOSTNAME}" http://${INGRESS_HOST}:${INGRESS_PORT}/v1/models/sklearn-iris:predict -d @./iris-input.json
+   ```
+   
+   
+
+```
+curl -v -H "Host: ${SERVICE_HOSTNAME}" http://192.168.219.100:${INGRESS_PORT}/v1/models/sklearn-iris:predict -d @./iris-input.json
+```
 
 
 

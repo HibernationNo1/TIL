@@ -105,7 +105,7 @@
    2. set credentialpath
 
       ```
-      dvc remote modify --local {remote name} credentialpath '{path of client_secrets.json}'
+      dvc remote modify --local {remote name} credentialpath {path of client_secrets.json}
       ```
 
 
@@ -156,7 +156,7 @@ $ export GOOGLE_APPLICATION_CREDENTIALS='{path of client_secrets.json}'
 
 
 
-set credentialpath
+set credential path
 
 ```
 dvc remote modify --local {remote name} credentialpath '{path of client_secrets.json}'

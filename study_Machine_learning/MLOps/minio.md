@@ -18,7 +18,7 @@ minio-service                                               ClusterIP   10.97.17
 $ kubectl -n kubeflow port-forward svc/minio-service 9000:9000
 ```
 
-기본 `minio/minio123`
+기본access key:  `minio/minio123`
 
 
 

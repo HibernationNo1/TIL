@@ -1,3 +1,5 @@
+
+
 # Ubuntu 설치
 
 1. VirtualBox 설치
@@ -549,7 +551,7 @@ $ git config --global user.mail "winter4958@gmail.com"
   뜨면 새롭게 만들 directory의 name을 입력 (걍 anaconda3으로 )
   # 이 때 입력 후 바로 뜨는 문구 `PREFIX=/home/ainsoft/anaconda3` 를 아래 기억★★★
   # 만약 [/root/anaconda3] >>>  으로 뜨면 root에 설치된다는 뜻이지
-  # [/root/anaconda3] >>> 		/home/ainsoft/anaconda3
+  # [/root/anaconda3] >>> 		/home/username/anaconda3
   # 으로 입력
   ```
 
@@ -569,13 +571,13 @@ $ git config --global user.mail "winter4958@gmail.com"
   text 편집기가 열리면 맨 아래줄에 추가
   
   ```
-  export PATH=/home/ainsoft/ananconda3/bin:$PATH
+  export PATH=/home/username/ananconda3/bin:$PATH
   ```
 
   > 위 설치 도중 만났던 PREFIX값에 + '/bin:$PATH'    
   
   ```
-  $ export PATH=/home/ainsoft/workspace/anaconda3/bin:$PATH
+  $ export PATH=/home/username/anaconda3/bin:$PATH
   ```
   
   
@@ -1630,6 +1632,8 @@ $ sudo apt-get upgrade
 ##### CUDA toolkit
 
 [여기](https://developer.nvidia.com/cuda-toolkit-archive) 에서 원하는 version선택한 후 `Installer Type` 은 runfile(local) 선택하여 나오는 명령어 복사
+
+> `linux`, `x86_64`, `Ubuntu`, `20.04`, `runfile(local)`
 
 ```
 $ wget https://developer.download.nvidia.com/compute/cuda/11.3.0/local_installers/cuda_11.3.0_465.19.01_linux.run
