@@ -980,7 +980,7 @@ NAME                   TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)          
 istio-ingressgateway   NodePort   10.96.89.178   <none>        15021:32680/TCP,80:32075/TCP,443:32334/TCP,31400:30226/TCP,15443:30276/TCP   15m
 ```
 
-- `NodePort` 인 경우
+- `NodePort` 인 경우 (EXTERNAL-IP없음)
 
   1. port-forward
 
@@ -995,6 +995,42 @@ istio-ingressgateway   NodePort   10.96.89.178   <none>        15021:32680/TCP,8
      ```
 
      
+
+- `Connection refused` 가 뜰 때
+
+  port-forward을 한 상태에서 localhost:8080으로 접속이 거부당한 경우
+
+  port-forward를 한 pc에서 새 terminal키고 아래 명령어로 문제가 있는지 확인
+
+  ```
+  $ curl http://127.0.0.1:8080
+  ```
+
+  ```
+  <a href="/dex/auth?client_id=kubeflow-oidc-authservice&amp;redirect_uri=%2Flogin%2Foidc&amp;response_type=code&amp;scope=profile+email+groups+openid&amp;state=MTY3MDg5Mzc4OHxFd3dBRUdNeVYwUTRSakp4VG1aSVN6VmhPRFE9fF3WLfxMIG835gne0SjDh4WzG1p56rNw64yirgAFPW92">Found</a>.
+  ```
+
+  이상 없을 경우 위 출력과 같이 보인다.
+
+  이후 접속해보면 됨.
+
+  
+  
+  그래도 안될 경우
+
+  1. 모든 bind의 주소를 열어주는 방향으로 port-forward
+
+     ```
+     $ kubectl port-forward --address=0.0.0.0 svc/istio-ingressgateway -n istio-system 8080:80
+     ```
+
+  2. 공인 IP를 통해 접속 시도
+  
+     ```
+     http://<공인_IP>:8080
+     ```
+  
+     만약 여기서 성공한다면, 다시 `--address=0.0.0.0` option을 제거하고 port forward를 한 후  localhost8080에 접속해본다.
 
 
 
@@ -1049,10 +1085,10 @@ dashboard에 user를 추가하기 위해서는 cm dex를 수정해야 한다.
    위의 `staticPasswords` 에 아래 4가지를 추가해야 한다.
 
    ```
-   - email: winter4958@gmail.com
-     hash: $2a$12$lRDeywzDl4ds0oRR.erqt.b5fmNpvJb0jdZXE0rMNYdmbfseTzxNW
-     userID: "84604958"
-     username: taeuk
+       - email: winter4958@gmail.com
+         hash: $2a$12$lRDeywzDl4ds0oRR.erqt.b5fmNpvJb0jdZXE0rMNYdmbfseTzxNW
+         userID: "84604958"
+         username: taeuk
    ```
 
    - `email` : dashdoard접속시 입력할 email
