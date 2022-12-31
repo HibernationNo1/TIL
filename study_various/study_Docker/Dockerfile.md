@@ -336,7 +336,9 @@ docker multi stage build는 여러 container image를 사용하여 처리하고 
 
 
 
-## 예시
+## exam
+
+##### 1
 
 ```
 $ touch Dockerfile
@@ -373,4 +375,111 @@ $ docker run test:v1.0.0
 ```
 Hellow world
 ```
+
+
+
+##### 2
+
+```
+ARG PYTORCH="1.11.0"
+ARG CUDA="11.3"
+ARG CUDNN="8"   
+
+FROM pytorch/pytorch:${PYTORCH}-cuda${CUDA}-cudnn${CUDNN}-devel	
+
+ENV TORCH_CUDA_ARCH_LIST="7.5"
+ENV TORCH_NVCC_FLAGS="-Xfatbin -compress-all"
+ENV CMAKE_PREFIX_PATH="$(dirname $(which conda))/../"	
+
+COPY ./requirements.txt ./requirements.txt
+# install custom package
+RUN pip install -r requirements.txt
+
+# To fix GPG key error when running apt-get update
+RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/3bf863cc.pub
+RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64/7fa2af80.pub
+RUN apt-get update 
+
+RUN apt-get install -y git
+
+RUN mkdir /root/.ssh
+ADD id_rsa /root/.ssh/id_rsa
+RUN chmod 600 /root/.ssh/id_rsa
+RUN touch /root/.ssh/known_hosts
+RUN ssh-keyscan github.com >> /root/.ssh/known_hosts
+
+WORKDIR pipeline_dataset
+RUN git init
+RUN git remote add origin git@github.com:HibernationNo1/pipeline_dataset.git
+RUN git pull git@github.com:HibernationNo1/pipeline_dataset.git
+```
+
+- `FROM pytorch/pytorch:${PYTORCH}-cuda${CUDA}-cudnn${CUDNN}-devel  `
+
+   docker hub에서 PYTORCH, CUDA, CUDNN 의 version이 각각 호환되는 version별로 tag된 image가 있는지 확인 후 작성
+
+- `ENV TORCH_CUDA_ARCH_LIST="7.5"`
+
+  사용하는 GPU의 compute capability 값 [여기](https://developer.nvidia.com/cuda-gpus#compute)에서 확인
+
+- `ENV CMAKE_PREFIX_PATH="$(dirname $(which conda))/../"  `
+
+  Cmake 환경 변수에 anaconda/bin 하위 path를 할당 
+
+- ```
+  RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/3bf863cc.pub
+  RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64/7fa2af80.pub
+  RUN apt-get update 
+  ```
+  
+  `RUN apt-get update ` 을 위한 GPG key등록
+  
+  > GPG key등록 방법
+  >
+  > `GPG error: https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64  InRelease: The following signatures couldn't be verified because the public key is not available: NO_PUBKEY A4B469963BF863CC` 라는 error 발생 시 `A4B469963BF863CC`를 확인할 수 있다.
+  >
+  > [여기](http://pgp.mit.edu/)에서 Search String 에 `0x`를 앞단에 붙여 `0xA4B469963BF863CC` 를 검색하면
+  >
+  > ```
+  > pub  4096R/3BF863CC 2022-04-14 cudatools <cudatools@nvidia.com>
+  > ```
+  >
+  > 라고 뜨는걸 볼 수 있다.
+  >
+  > 위 문구 중 `3BF863C`부분을 붙여 
+  >
+  > ```
+  > RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/3bf863cc.pub
+  > ```
+  >
+  > 라고 붙임
+  
+- ```
+  RUN mkdir /root/.ssh
+  ADD id_rsa /root/.ssh/id_rsa
+  RUN chmod 600 /root/.ssh/id_rsa
+  RUN touch /root/.ssh/known_hosts
+  RUN ssh-keyscan github.com >> /root/.ssh/known_hosts
+  ```
+
+  private git repository를 clone또는 pull하기 위한 SSH public key 설정
+
+- ```
+  WORKDIR pipeline_dataset
+  RUN git init
+  RUN git remote add origin git@github.com:HibernationNo1/pipeline_dataset.git
+  RUN git pull git@github.com:HibernationNo1/pipeline_dataset.git
+  ```
+
+  해당 repos가 private repository인 경우 위의 SSH public key가 필수
+
+  > clone이 아닌 pull을 한 이유
+  >
+  > `git clone`을 하면 container내부의 python code에서 git user인증을 하지 못하기 때문에 git push가 불가능하다.
+  >
+  > 반면 `git pull`하면 container내부의 code에서 git push가 가능
+
+
+
+
 
