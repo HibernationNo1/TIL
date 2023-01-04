@@ -221,7 +221,7 @@ exam_op = create_component_from_func(func = exam,
 
 >`exam_1_path`, `exam_2_path` : 이름은 항상 `_path`라는 단어로 끝나야 한다.
 >
->`OutputPath("dict")` : `"dict"` 는 개발자가 알기 쉽도록 명시해놓은 것일 뿐, 실제 `exam_1_path` 는 str로서 ` {wiorkspace}/outputs/exam_1/data` 의 값을 가지고 있다. 
+>`OutputPath("dict")` : `"dict"` 는 개발자가 알기 쉽도록 명시해놓은 것일 뿐, 실제 `exam_1_path` 는 str로서 ` {workspace}/outputs/exam_1/data` 의 값을 가지고 있다. 
 
 
 
@@ -244,7 +244,9 @@ def project_pipeline(input_mode : str, input_dict : dict):
 
 
 
-#### exam★
+#### exam
+
+##### 1
 
 `test_1/test1.py`
 
@@ -410,6 +412,113 @@ if __name__=="__main__":
 
 
 
+##### 2
+
+
+
+
+
+1. case 1: return single value, type of `<T>`
+
+   ```pytohn
+   from kfp.components import func_to_container_op   
+   # I make component using `kfp.components.func_to_container_op`
+   
+   def case_1(value_1: int, value_2: int) -> int:  # to use return, write '-> {type}' 
+       result = value_1 + value_2		
+   
+       return result    # it can be int, float, bouble, str, bool, .... 
+   
+   case_1_op = func_to_container_op(func = case_1,
+                                    base_image = 'case_1/tag:0.1',
+               					 output_component_file="case_1.component.yaml")
+   ```
+
+2. case 2: return multiple value
+
+   ```pytohn
+   from kfp.components import func_to_container_op   
+   from typing import NamedTuple
+   
+   # If there are multiple return values, wrap them in a tuple.
+   # And use `NamedTuple`
+   def case_2(value_1: int) -> NamedTuple('Output', [("key_of_foo", int), 
+                                                     ('key_of_bar', str),
+                                                     ('key_of_baz', bool)]):
+       foo = value_1 		# int
+       bar = "2"	        # str
+       baz = True	        # bool
+       
+       return (foo, bar, baz)      #  wrap them in a tuple.
+   
+   case_2_op = func_to_container_op(func = case_2,
+                                    base_image = 'case_2/tag:0.1',
+               					 output_component_file="case_2.component.yaml")
+   ```
+
+3. case 3: save data to file using `kfp.components.OutputPath`.
+
+   ```pytohn
+   def case_3(value_1: str, value_2: int, value_3: bool,
+       	   file_path: OutputPath("dict")):      
+       	   # 'OutputPath' has a naming rule: it must end with `_path`.
+       
+       import json
+       exam_dict = dict(one = value_1,
+                  		 two = [value_2, value_3])
+       
+       json.dump(exam_dict, open(file_path, "w"), indent=4) 
+   	
+   case_3_op = func_to_container_op(func = case_3,
+                                    base_image = 'case_3/tag:0.1',
+               					 output_component_file="case_3.component.yaml")
+   ```
+
+4.  case 4: load data from file using `kfp.components.InputPath`.
+
+   ```pytohn
+   def case_4(data_input: InputPath("dict")): 
+       import json
+       
+       with open(data_input, "r", encoding='utf-8') as f:
+           data = json.load(f)
+       
+       print(data)     # {'one': '2', 'two': [1, True]}
+   	
+   case_4_op = func_to_container_op(func = case_4,
+                                    base_image = 'case_4/tag:0.1',
+               					 output_component_file="case_4.component.yaml")
+   ```
+
+   
+
+**pipeline**
+
+```python
+import kfp.dsl as dsl
+
+@dsl.pipeline(name="example")
+def data_example(value_1: int, value_2:int):
+    _case_1_op = case_1_op(value_1, value_2)
+    
+    # case of input from single return
+    _case_2_op = case_2_op(_case_1_op.output)   
+    
+    # case of input from multi value return. input value using key.
+    # key name must match each key in the NamedTuple.
+    _case_3_op = case_3_op(_case_2_op.outputs['key_of_bar'], _case_2_op.outputs['key_of_foo'], _case_2_op.outputs['key_of_baz'])
+    
+    # case of input from path. input path using key.
+    # The key name must match the OutputPath name without '_path'.
+    _case_4_op = case_4_op(_case_3_op.outputs["file"])  
+```
+
+
+
+
+
+
+
 #### metrics
 
 > 동작 안하는거 확인
@@ -459,4 +568,8 @@ if __name__=="__main__":
 > | export_metric_op | 0.800  | 90.000% |
 >
 > 위 처럼 metrics 형태로 data를 넘기고 받을 수 있다.
+
+
+
+
 
