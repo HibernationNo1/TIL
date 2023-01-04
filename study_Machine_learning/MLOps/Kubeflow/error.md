@@ -125,7 +125,7 @@ HTTP response body: {"error":"Validate create run request failed.: Invalid input
 
 ### client
 
-#### 'authservice_session'
+#### authservice_session
 
 ```
 session_cookie = session.cookies.get_dict()["authservice_session"]
@@ -136,7 +136,39 @@ KeyError: 'authservice_session'
 
 
 
+#### shared memory
 
+```
+Bus error. It is possible that dataloader's workers are out of shared memory. Please try to raise your shared memory limit.
+```
+
+container내부 shared memory가 부족한 경우 발생
+
+`EmptyDirVolume`을 만들어서 해결
+
+
+
+```
+import kfp.dsl as dsl
+from kubernetes.client import V1Volume, V1EmptyDirVolumeSource
+
+
+@dsl.pipeline(name="exam")
+def project_pipeline():  
+	# for allocate shared memory
+    shm_volume = dsl.PipelineVolume(
+        volume=V1Volume(
+            name= "shm",
+            empty_dir=V1EmptyDirVolumeSource(medium="Memory"))
+        )            
+                    
+                    ... 생략
+                    
+	_exam_op = exam_op().add_pvolumes({"dev/shm": shm_volume})
+                
+```
+
+- `medium="Memory"` : [여기](https://kubernetes.io/docs/concepts/storage/volumes/#emptydir) 에서 "Memory"할당한 이유 확인
 
 
 
