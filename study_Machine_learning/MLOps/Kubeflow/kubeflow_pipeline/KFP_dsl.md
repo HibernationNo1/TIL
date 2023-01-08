@@ -19,9 +19,37 @@ def tmp():
 
 
 
+#### Condition
+
+```python
+@dsl.pipeline(name="hibernation_project")
+def project_pipeline(input):    
+    _exam_1_op = exam_1_op()
+    
+    with dsl.Condition(input == True) :  
+        _exam_2_op = exam_2_op()
+        
+```
+
+- `input == True` 을 할 때 True는 bool type으로 인식하지 않고 str로 인식한다.( 'True')
+
+- 특정 component의 output으로 condition의 조건을 찾으면 AttributeError발생.
+
+  ```python
+  with dsl.Condition(_exam_op.output == True) : 
+  ```
+
+  ```
+  AttributeError: 'bool' object has no attribute 'operand1'
+  ```
+
+  
 
 
-### Condition
+
+### RUN
+
+#### Condition
 
 if문처럼 사용해서 component의 실행 여부를 분기처리 할 수 있다.
 
@@ -55,7 +83,7 @@ def conditional_pipeline():
 
 
 
-### ParallelFor
+#### ParallelFor
 
 다수의 동일한 component를 병렬로 실행할 수 있다.
 
@@ -90,9 +118,9 @@ def conditional_pipeline():
 
 
 
+### Volume
 
-
-### VolumeOp
+#### VolumeOp
 
 kubernetest PersistentVolumeClaim를 생성하여 volum mount를 진행한다.
 
@@ -122,4 +150,8 @@ def data_example(value_1: int, value_2:int, value_3 : int):
 - `add_pvolumes` : `func_to_container_op` 의 instance에 method chaining방식으로 호출하여 특정 path를 mount
 
 
+
+#### PipelineVolume
+
+pipeline의 component간 data를 전달하기 위해 사용하는 volum
 
