@@ -84,15 +84,15 @@ cv2.rectangle(img, (50, 200, 150, 100), (0, 255, 0), 2)
 
 다각형을 그리는 함수
 
-`cv2.ploylines(img, [pts], isClose, color, thickness = , lineType = , shift =)`
+`cv2.polylines(img, [pts], isClosed, color, thickness = , lineType = , shift =)`
 
 `pts` : 다각형 외각 점들의 좌표 배열 
 
 예: np.array([10, 10], [50, 50], [10, 50], dtype = np.int32)
 
-`isClose`: 폐곡선 여부. Ture or False
+`isClosed`: 폐곡선 여부. Ture or False
 
-`thickness = -1` 을 주면 내부가 채워진 채로 그려진다.
+`thickness = 1`  선 두께(-1줘도 내부 안채워짐)
 
 
 

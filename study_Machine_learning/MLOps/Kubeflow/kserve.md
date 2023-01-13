@@ -289,6 +289,8 @@ model배포
    apiVersion: "serving.kserve.io/v1beta1"
    kind: "InferenceService"
    metadata:
+     annotations:
+       isdecar.istio.is/inject
      name: "sklearn-iris"
    spec:
      predictor:
