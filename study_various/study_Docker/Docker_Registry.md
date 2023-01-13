@@ -162,6 +162,80 @@ $ docker run [regisitry IP]:[port]/[container name]:[version]
 
 
 
+### command
+
+image나 tags를 확인하려면 Docker Registry가 지원하는 REST API를 이용해야 한다.
+
+[공식](https://docs.docker.com/registry/spec/api/)
+
+
+
+#### images
+
+해당 registry안에 있는 images의 이름 확인
+
+```
+$ curl http://localhost:5000/v2/_catalog
+```
+
+```
+{"repositories":["docker","train"]}
+```
+
+`docker`, `train` 이라는 두 개의 image가 있는것을 확인할 수 있다.
+
+
+
+#### tags
+
+해당 registry안에 있는 images의 tag를 확인할 수 있다.
+
+```
+$ curl http://localhost:5000/v2/image_name/tags/list
+```
+
+```
+{"name":"train","tags":["0.1"]}
+```
+
+> `train`이라는 image가 `0.1`의 tag 1개를 가진 것을 확인할 수 있다.
+
+
+
+### uninstall
+
+1. delete container
+
+   ```
+   $ docker run --name private-docker -dit -t -p 5000:5000 registry
+   ```
+
+   ```
+   docker: Error response from daemon: Conflict. The container name "/private-docker" is already in use by container "476618bf9a89cc94a286b1f20bb86409197dfc76955bac3caf4145fce082b2bb". You have to remove (or rename) that container to be able to reuse that name.
+   ```
+
+   ```
+   $ docker rm 476618bf9a89cc94a286b1f20bb86409197dfc76955bac3caf4145fce082b2bb
+   ```
+
+   
+
+2. delete image
+
+   ```
+   $ docker images
+   ```
+
+   ```
+   registry                                                                 latest                                            81c944c2288b   8 weeks ago     24.1MB
+   ```
+
+   ```
+   docker rmi -f 81c944c2288b
+   ```
+
+   
+
 
 
 ## Docker Hub
