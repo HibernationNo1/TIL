@@ -58,7 +58,9 @@ $ tensorboard --logdir=tensorboard_log --reload_interval=5
 
 ## method
 
-### checkpoint namager
+### tensorflow
+
+#### checkpoint manager
 
 ##### Checkpoint()
 
@@ -290,4 +292,18 @@ with validation_summary_writer.as_default():
 ```
 
 
+
+
+
+
+
+### pytorch
+
+```python
+from torch.utils.tensorboard import SummaryWriter
+
+writer = SummaryWriter(log_dir = "/output")
+
+writer.add_scalar(f"value_name", value, iter)
+```
 
