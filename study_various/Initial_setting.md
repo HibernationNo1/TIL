@@ -88,6 +88,16 @@ install후
    $ git config --global user.email taeuk4958@gmail.com
    ```
 
+   
+   
+   설정된 config확인
+   
+   ```
+   $ git config --list
+   ```
+   
+   
+   
 2. upstream 설정
    
    처음 branch를 만들고 push를 하면 upstream을 설정하라고 한다.
