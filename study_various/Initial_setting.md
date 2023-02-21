@@ -217,15 +217,17 @@ $ sudo apt -y install typora
       
       [/home/hibernation/anaconda3] >>> 
       뜨면 새롭게 만들 directory의 name을 입력
+      anaconda3라는 name을 입력하면 
+      'PREFIX=/home/hibernation/anaconda3' 라고 출력되며 해당 dir의 path에 anaconda관련 file들이 설치된다.
       ```
-
+      
    4. ```
       Do you wish the installer to initialize Anaconda3
       by running conda init? [yes|no]
       
       no를 입력하면 콘다는 쉘 스크립트를 수정하지 못한다. yes를 누른다
       ```
-
+   
    5. path추가
       
       ```
