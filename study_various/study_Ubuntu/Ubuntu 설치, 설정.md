@@ -26,6 +26,8 @@
 
 
 
+## With VirtualBox
+
 ### set VirtualBox
 
 1. Network 구성
@@ -165,7 +167,189 @@
 
    You're ready to go! 하며 설치 가능한 package를 보여준다.
 
+   
 
+4. 게스트 확장 설치 진행 (window10과 통신을 하기 위해)
+
+   windows와 ubuntu사이의 붙여넣기가 적용되지 않는 경우
+
+   실행중인 가상환경 창(Oracle VM VirtualBox)의 장치 탭 - 게스트 확장 CD 이미지 삽입 선택
+
+   > cd룸에 cd넣은거라고 생각하면 됨
+   >
+   > - (VERR_PDM_MEDIA_LOCKED)에러 뜨면 이미 삽입되어있어서 락이 걸려있다는 내용 >> 다시 설정 필요함
+   >
+   >   해당 가상머신 종료 후 VirtualBox 메인화면의 가상머신 선택 > 설정 - 저장소 VBoxGuestAdditions.iso 가 있음 (꺼내가 다시 넣어야 인식됨)
+   >
+   > - 우측 속성칸 '광학 드라이브(D)' 의 선택버튼 옆 파란색 버튼 클릭 > `가상 드라이브에서 디스크 꺼내기` 클릭 
+   >
+   > - 다시 가상머신 on > 장치 > 게스트 확장 CD 이미지 삽입 선택, >> 실행 (인증 후 terminal 뜨고 진행하다 완료)
+
+   창 뜨면 실행(run) 
+
+    인증 후 terminal 뜨고 진행하다 완료
+
+   터미널 마지막에 
+
+   ```
+   Press Return to close this window...
+   ```
+
+   뜨면 완료
+
+   
+
+3. 언어팩 설치
+
+   한글 언어팩 설치 안될경우만 해당
+
+   ```
+   # nl /etc/default/locale
+   ```
+
+   을 입력하면 각 기능에 어떤 언어가 사용되어 표현되는지 확인할 수 있다.
+
+   > en_US.UTF-8 : 영어 
+   >
+   > ko_KR.UTF-8 : 한글
+
+   위 언어를 다른 언어로 바꾸려면 해당 언어팩이 있어야 한다.
+
+   1. 한글 언어팩
+
+      ```
+      # apt -y install language-pack-ko
+      ```
+
+   2. 영어 언어팩
+
+      ```
+      # apt -y install language-pack-en
+      ```
+
+   언어 변환
+
+   ```
+   # update-locale LANG=ko_KR.UTF-8 LC_MESSAGES=POSIX
+   ```
+
+   > en_US.UTF-8 에서 ko_KR.UTF-8로 변환
+
+   이후 MV logout후 다시 login
+
+   
+
+   **추가**
+
+   virtualBox에서 가상머신의 설정 -> 일반 -> 고급 의
+
+   - 클립보드 공유, 드래그 앤 드롭 을 **양방향** 으로 해야 window에서 복사한거 ubuntu안에서 붙여넣기 가능
+
+
+
+4. 한글 입력 키 설정( fcitx-hangul 설치)
+
+   `Ctrl + space`  으로 한글 전환이 안될 경우(기본적으로 `Ctrl + space` 만 가능)
+
+   1. fcitx-hangul 설치
+
+      ```
+      sudo apt-get update
+      sudo apt-get install fcitx-hangul
+      ```
+
+   2. 설정
+
+      setting(설정) -> Region & Language -> 
+
+      - input source에 korean 설정 후 해당 language setting의 keyboard input method system을 fcitx로 변경
+
+      또는
+
+      - input source에 korean 설정 후 manage installed Languages누른 후 install 진행
+      - 오른쪽 상탄 tap의 키보드 아이콘 클릭 후 현재 입력기 설정
+      - 입력 방법 : 한국어 추가
+      - 전역 설정 : Ctrl + space : hangul
+
+
+
+
+
+네트워크 구성
+
+1. 네트워크 연결
+
+   우측상단 화살표 클릭 - 설정 - 네트워크 - 설정모양 아이콘 클릭
+
+   IP주소 확인 가능(local의 사용 가능한 ip대역대 안에서 사용 가능한 ip가 자동으로 할당되어있음)
+
+   이 때 static IP를 설정할 경우(위 **set VirtualBox**의 `Network 구성` 과정에서 결정한 특정 IP를 할당할 경우)
+
+   해당 창의 위 Tap중 IPv4에서 자동 > 수동으로 변경 후 
+
+   주소 : 10.100.0.105 (위에서 예시로 결정한 것)
+
+   네트마스크 : 24 (CIDR값)
+
+   게이트웨이 : 10.100.0.1 (`Network 구성` 과정에서 설정한 대역값 10.100.0.105 의 가장 앞 번호 )
+
+   네임 서버(DNS) : 10.100.0.1 (게이트웨이와 동일)
+
+   적용 후 연결됨을 껏다 키면 바뀐거 확인 가능
+
+2. host
+
+   1. 터미널에서 host name확인
+
+      ```
+      $ host name
+      ```
+
+   2. host name 변경
+
+      편집기 열어서
+
+      ```
+      $ sudo vi /etc/hostname
+      ```
+
+      pull conneted name으로 바꾸자
+
+      ```
+      hibernation-ubuntu.example.com
+      ```
+
+      > :wq 으로 저장까지
+
+   3. hosts file에 등록
+
+      ```
+      $ sudo vi /etc/hosts 
+      ```
+
+      여기서 
+
+      ```
+      127.0.0.1 	hibernation-ubuntu.example.com	# 을
+      10.100.0.105 	hibernation-ubuntu.example.com # 으로 변경
+      ```
+
+
+
+network check
+
+- 외부 network와 통신이 잘 되는지 확인
+
+  ```
+  $ ping -c 3 8.8.8.8
+  ```
+
+
+
+
+
+
+## Desktop
 
 ### set initial Ubuntu
 
@@ -214,109 +398,44 @@
 
    
 
-2. 게스트 확장 설치 진행 (window10과 통신을 하기 위해)
-
-   windows와 ubuntu사이의 붙여넣기가 적용되지 않는 경우
-
-   실행중인 가상환경 창(Oracle VM VirtualBox)의 장치 탭 - 게스트 확장 CD 이미지 삽입 선택
-
-   > cd룸에 cd넣은거라고 생각하면 됨
-   >
-   > - (VERR_PDM_MEDIA_LOCKED)에러 뜨면 이미 삽입되어있어서 락이 걸려있다는 내용 >> 다시 설정 필요함
-   >
-   >   해당 가상머신 종료 후 VirtualBox 메인화면의 가상머신 선택 > 설정 - 저장소 VBoxGuestAdditions.iso 가 있음 (꺼내가 다시 넣어야 인식됨)
-   >
-   > - 우측 속성칸 '광학 드라이브(D)' 의 선택버튼 옆 파란색 버튼 클릭 > `가상 드라이브에서 디스크 꺼내기` 클릭 
-   >
-   > - 다시 가상머신 on > 장치 > 게스트 확장 CD 이미지 삽입 선택, >> 실행 (인증 후 terminal 뜨고 진행하다 완료)
-   
-   창 뜨면 실행(run) 
-   
-    인증 후 terminal 뜨고 진행하다 완료
-   
-   터미널 마지막에 
-   
-   ```
-   Press Return to close this window...
-   ```
-   
-   뜨면 완료
-   
-   
-
 
 
 3. 언어팩 설치
 
-   한글 언어팩 설치 안될경우만 해당
+   1. 전체 system을 한글로 변경하는 경우
    
-   ```
-   # nl /etc/default/locale
-   ```
-
-   을 입력하면 각 기능에 어떤 언어가 사용되어 표현되는지 확인할 수 있다.
+      1. `Settings` > `Regions & Language` 의 상단 Language칸을 클릭 후 Korean선택 > **`Korean(101/104 key compatible)` 말고 `Korean` 선택** 후 add
    
-   > en_US.UTF-8 : 영어 
-   >
-   > ko_KR.UTF-8 : 한글
+      2. `Settings` > `Regions & Language` 의 하단 `Manage Installed Languages` 칸 선택 > 한글 언어팩이 추가되었기 때문에 install진행
 
-   위 언어를 다른 언어로 바꾸려면 해당 언어팩이 있어야 한다.
-
-   1. 한글 언어팩
+      3. 이후 reboot
    
-      ```
-      # apt -y install language-pack-ko
-      ```
-
-   2. 영어 언어팩
+   2. 한글 입력키만 변경하는 경우
    
-      ```
-      # apt -y install language-pack-en
-      ```
+      1. `Settings` > `Regions & Language` 의 하단 `Manage Installed Languages` 칸 선택 > 한글 언어팩이 추가되었기 때문에 install진행
 
-   언어 변환
+         > 이미 한글 언어팩이 설치되어 있으면 이 과정은 pass
+
+      2. `Settings` > `Regions & Language` 의 Input Sources 아래 `+` 칸 선택 > 언어 목록에서 `Korean` 선택
    
-   ```
-   # update-locale LANG=ko_KR.UTF-8 LC_MESSAGES=POSIX
-   ```
-
-   > en_US.UTF-8 에서 ko_KR.UTF-8로 변환
-
-   이후 MV logout후 다시 login
-
+      3. `Korean(Hangul)` 선택
    
+         > 만약 없다면 reboot
+
+      4. 3번까지 진행한다면 `Settings` > `Regions & Language` 의 Input Sources에 `Korean(Hangul)`이 추가되어 있다. 이 칸의 톱니바퀴 아이콘 클릭
    
-   **추가**
+         새롭게 나온 창의 Hangul Toggle Key의 Add 후 `한/영` 키 누르면 `Hangul`이 추가됨. 적용 후 desktop화면 우측 상단 한/en에서 직접 입력 선택하고나면 그 다음부터는 한/영 키로 toggle변경 가능 
    
-   virtualBox에서 가상머신의 설정 -> 일반 -> 고급 의
+      
+
+      
    
-   - 클립보드 공유, 드래그 앤 드롭 을 **양방향** 으로 해야 window에서 복사한거 ubuntu안에서 붙여넣기 가능
+      
 
 
 
-4. 한글 입력 키 설정( fcitx-hangul 설치)
+4. 한글 입력 키 설정
 
-   `Ctrl + space`  으로 한글 전환이 안될 경우(기본적으로 `Ctrl + space` 만 가능)
-
-   1. fcitx-hangul 설치
-   
-      ```
-      sudo apt-get update
-      sudo apt-get install fcitx-hangul
-      ```
-
-   2. 설정
-
-      setting(설정) -> Region & Language -> 
-
-      - input source에 korean 설정 후 해당 language setting의 keyboard input method system을 fcitx로 변경
-
-      또는
-   
-      - input source에 korean 설정 후 manage installed Languages누른 후 install 진행
-      - 오른쪽 상탄 tap의 키보드 아이콘 클릭 후 현재 입력기 설정
-      - 입력 방법 : 한국어 추가
-      - 전역 설정 : Ctrl + space : hangul
 
 
 
@@ -610,6 +729,123 @@ $ git config --global user.mail "winter4958@gmail.com"
   
   > 만일 `conda : command not found` 가 뜨면
   >
+
+
+
+#### Nvidia
+
+사전에 설치되어있는 Nvidia, cuda를 전부 삭제하고 싶을 땐
+
+```
+$ sudo apt-get --purge remove "*cublas*" "cuda*" "*nvidia*"
+
+$ sudo apt-get clean
+$ sudo apt-get autoremove
+
+$ sudo apt-get update
+$ sudo apt-get upgrade
+```
+
+
+
+##### NVIDIA driver
+
+1. check driver
+
+   ```
+   $ nvidia-smi
+   ```
+
+   없다고 뜨면
+
+   ```
+   $ ubuntu-drivers devices
+   ```
+
+   ```
+   == /sys/devices/pci0000:00/0000:00:01.0/0000:01:00.0 ==
+   modalias : pci:v000010DEd00001E07sv000019DAsd00005513bc03sc00i00
+   vendor   : NVIDIA Corporation
+   model    : TU102 [GeForce RTX 2080 Ti Rev. A]
+   driver   : nvidia-driver-470-server - distro non-free
+   driver   : nvidia-driver-450-server - distro non-free
+   driver   : nvidia-driver-515-server - distro non-free
+   driver   : nvidia-driver-470 - distro non-free
+   driver   : nvidia-driver-510 - distro non-free
+   driver   : nvidia-driver-515 - distro non-free recommended
+   driver   : nvidia-driver-510-server - distro non-free
+   driver   : nvidia-driver-418-server - distro non-free
+   driver   : xserver-xorg-video-nouveau - distro free builtin
+   ```
+
+   위 권장 driver중에서 선택
+
+   ```
+   $ sudo apt install nvidia-driver-470
+   ```
+
+2. NVIDIA kernel module의 load를 도와주는 `modprobe` package를 install
+
+   ```
+   $ sudo apt-get install dkms nvidia-modprobe
+   ```
+
+   ```
+   $ sudo apt update
+   $ sudo apt upgrade
+   
+   $ sudo reboot
+   ```
+
+   reboot 후 
+
+   ```
+   $ nvidia-smi
+   ```
+
+##### CUDA toolkit
+
+[여기](https://developer.nvidia.com/cuda-toolkit-archive) 에서 원하는 version선택한 후 `Installer Type` 은 runfile(local) 선택하여 나오는 명령어 복사
+
+> `linux`, `x86_64`, `Ubuntu`, `20.04`, `runfile(local)`
+
+```
+$ wget https://developer.download.nvidia.com/compute/cuda/11.3.0/local_installers/cuda_11.3.0_465.19.01_linux.run
+$ sudo sh cuda_11.3.0_465.19.01_linux.run
+```
+
+`Continue` 선택 후 `accept`입력, Driver은 선택 해제(X자 사라지게) 후 `install` 선택
+
+install 완료시 출력 
+
+```
+Driver:   Not Selected
+Toolkit:  Installed in /usr/local/cuda-11.3/
+Samples:  Installed in /home/ainsoft/
+
+Please make sure that
+ -   PATH includes /usr/local/cuda-11.3/bin
+ -   LD_LIBRARY_PATH includes /usr/local/cuda-11.3/lib64, or, add /usr/local/cuda-11.3/lib64 to /etc/ld.so.conf and run ldconfig as root
+
+To uninstall the CUDA Toolkit, run cuda-uninstaller in /usr/local/cuda-11.3/bin
+***WARNING: Incomplete installation! This installation did not install the CUDA Driver. A driver of version at least 465.00 is required for CUDA 11.3 functionality to work.
+To install the driver using this installer, run the following command, replacing <CudaInstaller> with the name of this run file:
+    sudo <CudaInstaller>.run --silent --driver
+
+Logfile is /var/log/cuda-installer.log
+```
+
+check
+
+```
+$nvcc -V
+```
+
+
+
+#### 
+
+
 
 
 
@@ -1555,117 +1791,6 @@ kustomzie V3 기반으로  manifests file을 관리한다.
       `localhost:8080` 으로 접속 후 login
 
 
-
-
-
-#### Nvidia
-
-사전에 설치되어있는 Nvidia, cuda를 전부 삭제하고 싶을 땐
-
-```
-$ sudo apt-get --purge remove "*cublas*" "cuda*" "*nvidia*"
-
-$ sudo apt-get clean
-$ sudo apt-get autoremove
-
-$ sudo apt-get update
-$ sudo apt-get upgrade
-```
-
-
-
-##### NVIDIA driver
-
-1. check driver
-
-   ```
-   $ nvidia-smi
-   ```
-
-   없다고 뜨면
-
-   ```
-   $ ubuntu-drivers devices
-   ```
-
-   ```
-   == /sys/devices/pci0000:00/0000:00:01.0/0000:01:00.0 ==
-   modalias : pci:v000010DEd00001E07sv000019DAsd00005513bc03sc00i00
-   vendor   : NVIDIA Corporation
-   model    : TU102 [GeForce RTX 2080 Ti Rev. A]
-   driver   : nvidia-driver-470-server - distro non-free
-   driver   : nvidia-driver-450-server - distro non-free
-   driver   : nvidia-driver-515-server - distro non-free
-   driver   : nvidia-driver-470 - distro non-free
-   driver   : nvidia-driver-510 - distro non-free
-   driver   : nvidia-driver-515 - distro non-free recommended
-   driver   : nvidia-driver-510-server - distro non-free
-   driver   : nvidia-driver-418-server - distro non-free
-   driver   : xserver-xorg-video-nouveau - distro free builtin
-   ```
-
-   위 권장 driver중에서 선택
-
-   ```
-   $ sudo apt install nvidia-driver-470
-   ```
-
-2. NVIDIA kernel module의 load를 도와주는 `modprobe` package를 install
-
-   ```
-   $ sudo apt-get install dkms nvidia-modprobe
-   ```
-
-   ```
-   $ sudo apt update
-   $ sudo apt upgrade
-   
-   $ sudo reboot
-   ```
-
-   reboot 후 
-
-   ```
-   $ nvidia-smi
-   ```
-
-##### CUDA toolkit
-
-[여기](https://developer.nvidia.com/cuda-toolkit-archive) 에서 원하는 version선택한 후 `Installer Type` 은 runfile(local) 선택하여 나오는 명령어 복사
-
-> `linux`, `x86_64`, `Ubuntu`, `20.04`, `runfile(local)`
-
-```
-$ wget https://developer.download.nvidia.com/compute/cuda/11.3.0/local_installers/cuda_11.3.0_465.19.01_linux.run
-$ sudo sh cuda_11.3.0_465.19.01_linux.run
-```
-
-`Continue` 선택 후 `accept`입력, Driver은 선택 해제(X자 사라지게) 후 `install` 선택
-
-install 완료시 출력 
-
-```
-Driver:   Not Selected
-Toolkit:  Installed in /usr/local/cuda-11.3/
-Samples:  Installed in /home/ainsoft/
-
-Please make sure that
- -   PATH includes /usr/local/cuda-11.3/bin
- -   LD_LIBRARY_PATH includes /usr/local/cuda-11.3/lib64, or, add /usr/local/cuda-11.3/lib64 to /etc/ld.so.conf and run ldconfig as root
-
-To uninstall the CUDA Toolkit, run cuda-uninstaller in /usr/local/cuda-11.3/bin
-***WARNING: Incomplete installation! This installation did not install the CUDA Driver. A driver of version at least 465.00 is required for CUDA 11.3 functionality to work.
-To install the driver using this installer, run the following command, replacing <CudaInstaller> with the name of this run file:
-    sudo <CudaInstaller>.run --silent --driver
-
-Logfile is /var/log/cuda-installer.log
-```
-
-check
-
-```
-$nvcc -V
-```
 
 
 
