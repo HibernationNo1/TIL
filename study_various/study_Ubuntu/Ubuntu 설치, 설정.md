@@ -1,4 +1,4 @@
-
+dhkdn?
 
 # Ubuntu 설치
 
@@ -542,194 +542,6 @@ network check
 
 ### install  
 
-#### chrome
-
-```
-$ wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-$ sudo apt install ./google-chrome-stable_current_amd64.deb
-```
-
-
-
-#### vscode 
-
-1. [홈페이지](https://code.visualstudio.com/download)에서 알맞는 모델 다운
-
-   > default로 install하지 말고 file을 다운
-
-2. `.deb` file 실행
-
-   ```
-   $ cd ~/Downloads 
-   $ sudo dpkg -i code*.deb
-   ```
-
-   완료
-
-> **consolas** font download in ubuntu
->
-> Referance : https://gist.github.com/sigoden/d01ad118da677f796bab01781b7eae23
->
-> 그대로 따라한 후 font setting에 `"YaHei Consolas Hybrid"` 추가
-
-**또는**
-
-```
-$ sudo sh -c 'curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/trusted.gpg.d/microsoft.gpg'
-```
-
-> Curl있어야함
-
-```
-$ sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
-$ sudo apt update
-```
-
-```
-$ sudo apt install code
-```
-
-
-
-
-
-#### typora 
-
-```
-$ wget -qO - https://typora.io/linux/public-key.asc | sudo apt-key add -
-$ sudo add-apt-repository 'deb https://typora.io/linux ./'
-$ sudo apt -y install typora
-```
-
-
-
-#### curl, vim
-
-```
-$ sudo apt-get install -y curl vim		# Ubuntu
-```
-
-> 다른 text편집할때 vim으로 하려면 반드시 설치
-
-
-
-#### git 
-
-```
-$ sudo apt-get install git				
-$ git --version
-
-$ git config --global user.name "HibernationNo1"
-$ git config --global user.mail "winter4958@gmail.com"
-```
-
-
-
-#### anaconda
-
-[여기](https://repo.anaconda.com/archive/) 에서 아래 버전 선택해서 다운
-
-[Anaconda3-2021.05-Linux-x86_64.sh](https://repo.anaconda.com/archive/Anaconda3-2021.05-Linux-x86_64.sh)
-
-- download 
-
-  ```
-  $ wget https://repo.anaconda.com/archive/Anaconda3-2021.05-Linux-x86_64.sh
-  ```
-
-  > 년도에 따라 version 알맞게 사용. 	21.05가 현재까진 범용적
-
-- start install process
-
-  ```
-  $ sudo bash Anaconda3-2021.05-Linux-x86_64.sh
-  ```
-
-  ```
-  Please, press ENTER to continue
-  >>> 
-  뜨면 Enter하고 다 읽어내린 후 
-  ```
-
-  ```
-  Do you accept the license terms? [yes|no]
-  Please answer 'yes' or 'no':'
-  >>> 
-  뜨면 yes 입력 후 Enter
-  ```
-
-  ```
-  Anaconda3 will now be installed into this location:
-  /home/hibernation/anaconda3
-  
-    - Press ENTER to confirm the location
-    - Press CTRL-C to abort the installation
-    - Or specify a different location below
-  
-  [/home/{user_name}/anaconda3] >>> 		/home/ainsoft/anaconda3
-  뜨면 새롭게 만들 directory의 name을 입력 (걍 anaconda3으로 )
-  # 이 때 입력 후 바로 뜨는 문구 `PREFIX=/home/ainsoft/anaconda3` 를 아래 기억★★★
-  # 만약 [/root/anaconda3] >>>  으로 뜨면 root에 설치된다는 뜻이지
-  # [/root/anaconda3] >>> 		/home/username/anaconda3
-  # 으로 입력
-  ```
-
-  ```
-  Do you wish the installer to initialize Anaconda3
-  by running conda init? [yes|no]
-  
-  no를 입력하면 콘다는 쉘 스크립트를 수정하지 못한다. yes를 누른다
-  ```
-
-- path추가
-
-  ```
-  $ sudo vi ~/.bashrc
-  ```
-
-  text 편집기가 열리면 맨 아래줄에 추가
-  
-  ```
-  export PATH=/home/username/ananconda3/bin:$PATH
-  ```
-
-  > 위 설치 도중 만났던 PREFIX값에 + '/bin:$PATH'    
-  
-  ```
-  $ export PATH=/home/username/anaconda3/bin:$PATH
-  ```
-  
-  
-  
-- 설치 확인
-
-  bashrc 실행
-
-  ```
-  $ sudo source ~/.bashrc
-  ```
-
-  > (base)뜨는지 확인
-  >
-  > 안뜨면 `conda init`을 해야 함 (그 전에 `conda -V`을 통해 `conda : command not found` 가 뜨는지 확인)
-  >
-  > ```
-  > $ conda init bash
-  > ```
-  >
-  > bash사용
-  >
-  > > (base) 없애려면 ` $ conda deactivate`
-
-  check version
-  
-  ```
-  $ conda -V 
-  ```
-  
-  > 만일 `conda : command not found` 가 뜨면
-  >
-
 
 
 #### Nvidia
@@ -835,6 +647,29 @@ To install the driver using this installer, run the following command, replacing
 Logfile is /var/log/cuda-installer.log
 ```
 
+
+
+이후 path설정
+
+```
+$ sudo vi ~/.bashrc
+```
+
+맨 아래 두 줄 입력
+
+```
+export PATH=/usr/local/cuda-11.3/bin:$PATH
+export LD_LIBRARY_PATH=/usr/local/cuda-11.3/lib64:$LD_LIBRARY_PATH
+```
+
+활성화
+
+```
+$ source ~/.bashrc
+```
+
+
+
 check
 
 ```
@@ -843,9 +678,199 @@ $nvcc -V
 
 
 
-#### 
 
 
+#### chrome
+
+```
+$ wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+$ sudo apt install ./google-chrome-stable_current_amd64.deb
+```
+
+
+
+#### vscode 
+
+1. [홈페이지](https://code.visualstudio.com/download)에서 알맞는 모델 다운
+
+   > default로 install하지 말고 file을 다운
+
+2. `.deb` file 실행
+
+   ```
+   $ cd ~/Downloads 
+   $ sudo dpkg -i code*.deb
+   ```
+
+   완료
+
+> **consolas** font download in ubuntu
+>
+> Referance : https://gist.github.com/sigoden/d01ad118da677f796bab01781b7eae23
+>
+> 그대로 따라한 후 font setting에 `"YaHei Consolas Hybrid"` 추가
+
+**또는**
+
+```
+$ sudo sh -c 'curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/trusted.gpg.d/microsoft.gpg'
+```
+
+> Curl있어야함
+
+```
+$ sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
+$ sudo apt update
+```
+
+```
+$ sudo apt install code
+```
+
+
+
+
+
+#### typora 
+
+```
+$ wget -qO - https://typora.io/linux/public-key.asc | sudo apt-key add -
+$ sudo add-apt-repository 'deb https://typora.io/linux ./'
+$ sudo apt -y install typora
+```
+
+
+
+#### curl, vim
+
+```
+$ sudo apt-get install -y curl vim		# Ubuntu
+```
+
+> 다른 text편집할때 vim으로 하려면 반드시 설치
+
+
+
+#### git 
+
+```
+$ sudo apt-get install git				
+$ git --version
+
+$ git config --global user.name "HibernationNo1"
+$ git config --global user.email "winter4958@gmail.com"
+```
+
+
+
+#### anaconda
+
+[여기](https://repo.anaconda.com/archive/) 에서 아래 버전 선택해서 다운
+
+[Anaconda3-2021.05-Linux-x86_64.sh](https://repo.anaconda.com/archive/Anaconda3-2021.05-Linux-x86_64.sh)
+
+- download 
+
+  ```
+  $ wget https://repo.anaconda.com/archive/Anaconda3-2021.05-Linux-x86_64.sh
+  ```
+
+  > 년도에 따라 version 알맞게 사용. 	21.05가 현재까진 범용적
+
+- start install process
+
+  ```
+  $ sudo bash Anaconda3-2021.05-Linux-x86_64.sh
+  ```
+
+  ```
+  Please, press ENTER to continue
+  >>> 
+  뜨면 Enter하고 다 읽어내린 후 
+  ```
+
+  ```
+  Do you accept the license terms? [yes|no]
+  Please answer 'yes' or 'no':'
+  >>> 
+  뜨면 yes 입력 후 Enter
+  ```
+
+  ```
+  Anaconda3 will now be installed into this location:
+  /home/hibernation/anaconda3
+  
+    - Press ENTER to confirm the location
+    - Press CTRL-C to abort the installation
+    - Or specify a different location below
+  
+  [/home/{user_name}/anaconda3] >>> 		/home/ainsoft/anaconda3
+  뜨면 새롭게 만들 directory의 name을 입력 (걍 anaconda3으로 )
+  # 이 때 입력 후 바로 뜨는 문구 `PREFIX=/home/ainsoft/anaconda3` 를 아래 기억★★★
+  
+  ```
+
+  > 만약 [/root/anaconda3] >>>  으로 뜨면 root에 설치된다는 뜻.
+  >
+  > `/home/username`의 위치에서 anaconda install을 진행할 때 발생한다. 
+  >
+  > 위 path가 보이는 경우 install이후에도 anaconda3가 작동하지 않을 수 있기 때문에
+  >
+  > `/home/username` 에서 `$ mkdir workspace` 와 같이 새 dir을 만든 후 그 안에서 anaconda설치를 진행해야 한다.
+
+  ```
+  Do you wish the installer to initialize Anaconda3
+  by running conda init? [yes|no]
+  
+  no를 입력하면 콘다는 쉘 스크립트를 수정하지 못한다. yes를 누른다
+  ```
+
+- path추가
+
+  ```
+  $ sudo vi ~/.bashrc
+  ```
+
+  text 편집기가 열리면 맨 아래줄에 추가
+  
+  ```
+  export PATH="~/anaconda3/bin:~/anaconda3/condabin:$PATH"
+  ```
+
+  > 예시로, `home/hibernation/workspace/tmp` 의 위치에서 `$ bash Anaconda3-2021.05-Linux-x86_64.sh` 를 했어도 위 명령어 그대로 입력
+  
+  
+  
+  
+  
+- 설치 확인
+
+  bashrc 실행
+
+  ```
+  $ sudo source ~/.bashrc
+  ```
+
+  > (base)뜨는지 확인
+  >
+  > 안뜨면 `conda init`을 해야 함 (그 전에 `conda -V`을 통해 `conda : command not found` 가 뜨는지 확인)
+  >
+  > ```
+  > $ conda init bash
+  > ```
+  >
+  > bash사용
+  >
+  > > (base) 없애려면 ` $ conda deactivate`
+
+  check version
+  
+  ```
+  $ conda -V 
+  ```
+  
+  > 만일 `conda : command not found` 가 뜨면
+  >
 
 
 
