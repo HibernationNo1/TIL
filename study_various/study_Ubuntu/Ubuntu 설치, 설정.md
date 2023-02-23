@@ -531,7 +531,7 @@ network check
 3. GPU
 
    ```
-   $ sudo lshw -C display
+   $ nvidia-smi --query | fgrep 'Product Name'
    ```
 
    
@@ -806,7 +806,7 @@ $ git config --global user.email "winter4958@gmail.com"
   
   [/home/{user_name}/anaconda3] >>> 		/home/ainsoft/anaconda3
   뜨면 새롭게 만들 directory의 name을 입력 (걍 anaconda3으로 )
-  # 이 때 입력 후 바로 뜨는 문구 `PREFIX=/home/ainsoft/anaconda3` 를 아래 기억★★★
+  # 이 때 입력 후 바로 뜨는 문구 `PREFIX=/home/username/anaconda3` 
   
   ```
 
@@ -816,7 +816,7 @@ $ git config --global user.email "winter4958@gmail.com"
   >
   > 위 path가 보이는 경우 install이후에도 anaconda3가 작동하지 않을 수 있기 때문에
   >
-  > `/home/username` 에서 `$ mkdir workspace` 와 같이 새 dir을 만든 후 그 안에서 anaconda설치를 진행해야 한다.
+  > sudo 를 때고 위 명령어를 입력한다.
 
   ```
   Do you wish the installer to initialize Anaconda3
@@ -831,12 +831,31 @@ $ git config --global user.email "winter4958@gmail.com"
   $ sudo vi ~/.bashrc
   ```
 
-  text 편집기가 열리면 맨 아래줄에 추가
+  text 편집기가 열리면 아래 이런 내용이 추가되어 있을 것이다.
+  
+  ```
+  # >>> conda initialize >>>
+  # !! Contents within this block are managed by 'conda init' !!
+  __conda_setup="$('/home/hibernation/workspace/anaconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+  if [ $? -eq 0 ]; then
+      eval "$__conda_setup"
+  else
+      if [ -f "/home/hibernation/workspace/anaconda3/etc/profile.d/conda.sh" ]; then
+          . "/home/hibernation/workspace/anaconda3/etc/profile.d/conda.sh"
+      else
+          export PATH="/home/hibernation/workspace/anaconda3/bin:$PATH"
+      fi
+  fi
+  unset __conda_setup
+  # <<< conda initialize <<<
+  ```
+  
+  맨 아래줄에 추가
   
   ```
   export PATH="~/anaconda3/bin:~/anaconda3/condabin:$PATH"
   ```
-
+  
   > 예시로, `home/hibernation/workspace/tmp` 의 위치에서 `$ bash Anaconda3-2021.05-Linux-x86_64.sh` 를 했어도 위 명령어 그대로 입력
   
   
@@ -848,7 +867,7 @@ $ git config --global user.email "winter4958@gmail.com"
   bashrc 실행
 
   ```
-  $ sudo source ~/.bashrc
+  $ source ~/.bashrc
   ```
 
   > (base)뜨는지 확인
