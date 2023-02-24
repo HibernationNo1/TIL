@@ -741,13 +741,46 @@ $ sudo apt -y install typora
 
 
 
-#### curl, vim
+#### curl, vim, ssh, net-tools
 
 ```
-$ sudo apt-get install -y curl vim		# Ubuntu
+$ sudo apt update
+$ sudo apt-get install -y curl vim openssh-server net-tools		# Ubuntu
 ```
 
 > 다른 text편집할때 vim으로 하려면 반드시 설치
+
+- ssh 확인
+
+  ```
+  $ sudo systemctl status ssh
+  ```
+
+  ```
+      Loaded: loaded (/lib/systemd/system/ssh.service; enabled; vendor preset: enabled)
+       Active: active (running) since Fri 2023-02-24 12:35:58 KST; 46s ago
+         Docs: man:sshd(8)
+               man:sshd_config(5)
+     Main PID: 57484 (sshd)
+        Tasks: 1 (limit: 38293)
+       Memory: 1.0M
+       CGroup: /system.slice/ssh.service
+               └─57484 sshd: /usr/sbin/sshd -D [listener] 0 of 10-100 startups
+  
+   2월 24 12:35:58 hibernation systemd[1]: Starting OpenBSD Secure Shell server...
+   2월 24 12:35:58 hibernation sshd[57484]: Server listening on 0.0.0.0 port 22.
+   2월 24 12:35:58 hibernation sshd[57484]: Server listening on :: port 22.
+   2월 24 12:35:58 hibernation systemd[1]: Started OpenBSD Secure Shell server.
+  
+  ```
+
+  방화벽 해제
+
+  ```
+  $ sudo ufw allow ssh
+  ```
+
+  
 
 
 
