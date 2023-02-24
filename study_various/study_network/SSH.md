@@ -24,6 +24,14 @@ $ dpkg -l | grep openssh
 $ sudo apt-get install openssh-server
 ```
 
+이후 방화벽 해제
+
+```
+$ sudo ufw allow ssh
+```
+
+
+
 
 
 ### command
@@ -200,3 +208,42 @@ $ sudo netstat -antp
 
   입력 후 빠른연결 사용
 
+
+
+
+
+## vscode
+
+extension에서 `remote-ssh` 검색해서 설치
+
+`ssh username@IP` 로 접속
+
+
+
+**error**  
+
+외부에서 filezilla, putty 다 되는데 vscode만 되지 않고
+
+bash에서 `ssh username@IP` 명령어 입력 시 아래 error가 뜨는 경우
+
+```
+ECDSA host ket for 192.168.219.100 has changed and you have requsted strict checking.
+Host key verification failed.
+```
+
+`192.168.219.100`이라는 ip로 기존에 접속한 적이 있는 서버와 RAS 공유키를 교환한 상태에서, `192.168.219.100`이라는 서버가 바뀐 경우 발생한다.
+
+아래 명령어로 초기화 진행
+
+```
+$ ssh-keygen -R 192.168.219.100
+```
+
+```
+username$ ssh-keygen -R 192.168.219.100
+# Host 192.168.2119.100 found: line 3 type RSA
+/User/username/.ssh/known_hosts updated.
+original contents retained as /User/username/.ssh/known_hosts.old
+```
+
+이후 접속 되는것 확인
