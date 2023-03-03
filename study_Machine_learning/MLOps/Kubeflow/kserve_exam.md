@@ -6,7 +6,7 @@ kind: "InferenceService"
 metadata:
   annotations:
     isdecar.istio.is/inject: "false"
-  name: "sklearn-iris-test2"
+  name: "sklearn-iris-python2"
 spec:
   predictor:
     sklearn:
@@ -15,21 +15,6 @@ spec:
 ```
 
 
-
-```
-apiVersion: "serving.kserve.io/v1beta1"
-kind: "InferenceService"
-metadata:
-  annotations:
-    isdecar.istio.is/inject: "false"
-  name: "sklearn-iris-test1"
-spec:
-  predictor:
-    model:
-      modelFormat:
-        name: sklearn
-      storageUri: "gs://kfserving-examples/models/sklearn/1.0/model"
-```
 
 ```
 $ kubectl get InferenceService -n project-pipeline
