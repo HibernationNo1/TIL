@@ -41,7 +41,16 @@
    ]
    ```
 
-   
+
+
+
+> delete
+>
+> ```
+> $ docker volume rm test-vol
+> ```
+
+
 
 ### apply
 
