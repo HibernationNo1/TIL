@@ -816,24 +816,39 @@ $ kubectl -n project-pipeline get experiment katib -o yaml
 
    
 
+   - **log of pad**
+
+     ```
+     kubectl logs -n project-pipeline katib-bvr7gkjw-5l9xg
+     ```
+
+     ```
+     INFO:hyperopt.utils:Failed to load cloudpickle, try installing cloudpickle via "pip install cloudpickle" for enhanced pickling support.
+     INFO:hyperopt.fmin:Failed to load cloudpickle, try installing cloudpickle via "pip install cloudpickle" for enhanced pickling support.
+     ```
+   
+     INFO가 위 처럼 출력되어도 실행하는데는 문제 없다.
+   
+   
+   
    - **training-container**
-
+   
      container를 load하거나 run하는 과정에서 발생한 error를 보여준다. 
-
+   
      아무 출력 안뜨면 error없음
-
+   
      ```
      kubectl logs -n project-pipeline katib-bvr7gkjw-5l9xg training-container
      ```
-
+   
    - **metrics-logger-and-collector**
-
+   
      ```
      kubectl logs -n project-pipeline katib-bvr7gkjw-5l9xg metrics-logger-and-collector
      ```
-
+   
      image에 포함된 code의 진행 상황을 log로 보여준다.
-
+   
      code에 의한 error를 확인할 수 있다.
 
 
