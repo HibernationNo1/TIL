@@ -13,32 +13,33 @@ ARG CUDNN="8"
 
 FROM pytorch/pytorch:${PYTORCH}-cuda${CUDA}-cudnn${CUDNN}-devel	
 
-
 ENV TORCH_CUDA_ARCH_LIST="7.5"
 ENV TORCH_NVCC_FLAGS="-Xfatbin -compress-all"
 ENV CMAKE_PREFIX_PATH="$(dirname $(which conda))/../"	
 
-
 # To fix GPG key error when running apt-get update
 RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/3bf863cc.pub
 RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu2004/x86_64/7fa2af80.pub
+RUN apt-get update
 
-# for install opencv
-RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y  
+# for isntall opencv
+RUN apt-get -y install libgl1-mesa-glx
+RUN apt-get -y install libglib2.0-0
+RUN pip install opencv-python-headless
 
-
-# COPY ./requirements.txt ./requirements.txt
 COPY ./ ./
 RUN pip install -r requirements.txt
 
 # Install MMCV
 RUN pip install --no-cache-dir --upgrade pip wheel setuptools
 RUN pip install --no-cache-dir mmcv-full==1.5.3 -f https://download.openmmlab.com/mmcv/dist/cu113/torch1.11.0/index.html
+# RUN pip install mmdet     # if run this line, get 'MMCV CUDA Compiler: not available'
 
-# ENTRYPOINT python train.py --cfg configs/swin_maskrcnn.py --epo 50 --val_iter 50
+RUN apt-get install -y git
+RUN git clone https://github.com/HibernationNo1/hibernation_no1.git
+
+ENTRYPOINT ["python", "main.py"]
 ```
-
-
 
 - `TORCH_CUDA_ARCH_LIST`: 해당 device의 GPU compute capability를 설정 
 
@@ -59,9 +60,16 @@ RUN pip install --no-cache-dir mmcv-full==1.5.3 -f https://download.openmmlab.co
 
   To fix GPG key error when running apt-get update
 
-- `RUN apt-get update`
+- ```
+  RUN apt-get install -y git
+  RUN git clone https://github.com/HibernationNo1/hibernation_no1.git
+  ```
 
--   `apt-get install ffmpeg libsm6 libxext6  -y  `:  for install opencv in container
+  container안에서 사용할 custom packages를 git clone으로 불러오기
+
+- `ENTRYPOINT ["python", "main.py"]` : container가 run되자마자 실행되는 command
+
+  해당 command가 실행되면 막힘없이 code가 진행되어야 한다.
 
 
 
@@ -117,56 +125,78 @@ $ vi katib.yaml
 apiVersion: kubeflow.org/v1beta1
 kind: Experiment
 metadata:
-  namespace: project-pipeline
-  name: katib
+  namespace: pipeline
+  name: katib-local		# katib-docker
 spec:
   objective:
     type: maximize
-    goal: 0.85
+    goal: 0.8
     objectiveMetricName: mAP
     metricStrategies:
     - name: mAP
-      value: latest
+      value: latest             # max 
   algorithm:
-    algorithmName: random				
-  parallelTrialCount: 2
+    algorithmName: random
+  parallelTrialCount: 1
   maxTrialCount: 12
   maxFailedTrialCount: 5
   parameters:
-    - name: drop_rate
-      parameterType: double
+    - name: lr
+      parameterType: categorical
       feasibleSpace:
-        min: "0.0"
-        max: "0.3"
-    - name: attn_drop_rate
-      parameterType: double
+        list:
+          - "0.0001"
+          - "0.0005"
+          - "0.001"
+          - "0.00005"
+          - "0.00001"
+    - name: swin_drop_rate
+      parameterType: categorical
       feasibleSpace:
-        min: "0.0"
-        max: "0.3"
-    - name: drop_path_rate
-      parameterType: double
+        list:
+          - "0.0"
+          - "0.1"
+          - "0.2"
+          - "0.3"
+          - "0.4"
+    - name: swin_window_size
+      parameterType: categorical
       feasibleSpace:
-        min: "0.1"
-        max: "0.3"
+        list:
+          - "3"
+          - "5"
+          - "7"
+          - "9"
+          - "11"
+    - name: swin_mlp_ratio
+      parameterType: categorical
+      feasibleSpace:
+        list:
+          - "3"
+          - "4"
+          - "5"
   metricsCollectorSpec:
     collector:
       kind: StdOut
     source:
       filter:
         metricsFormat:
-        - "([\\w|-]+)\\s*=\\s*((-?\\d+)(\\.\\d+)?)"  
+        - "([\\w|-]+)\\s*=\\s*((-?\\d+)(\\.\\d+)?)"
   trialTemplate:
     primaryContainerName: training-container
     trialParameters:
-      - name: drop_rate
+      - name: lr
+        description: learning rate
+        reference: lr
+      - name: swin_drop_rate
         description: drop_rate of SwinTransformer
-        reference: drop_rate
-      - name: drop_path_rate
-        description: drop_path_rate of SwinTransformer
-        reference: drop_path_rate
-      - name: attn_drop_rate
-        description: attn_drop_rate of SwinTransformer.SwinBlockSequence.ShiftWindowMSA.WindowMSA
-        reference: attn_drop_rate 
+        reference: swin_drop_rate
+      - name: swin_window_size
+        description: window_size of SwinTransformer
+        reference: swin_window_size
+      - name: swin_mlp_ratio
+        description: mlp_ratio of SwinTransformer
+        reference: swin_mlp_ratio
     trialSpec:
       apiVersion: batch/v1
       kind: Job
@@ -178,16 +208,18 @@ spec:
           spec:
             containers:
               - name: training-container
-                image: hibernation4958/katib_it:0.1
+                image: 	localhost:5000/katib:0.1     # docker.io/hibernation4958/katib:0.1
                 command:
-                  - "python3"
-                  - "/workspace/train.py"
-                  - "--cfg=configs/swin_maskrcnn.py"
-                  - "--epo=50"
+                  - "python"
+                  - "main.py"
                   - "--katib"
-                  - "--drop_rate=${trialParameters.drop_rate}"
-                  - "--drop_path_rate=${trialParameters.drop_path_rate}"
-                  - "--attn_drop_rate=${trialParameters.attn_drop_rate}"                  
+                  - "--cfg_train=config/train_cfg.py"
+                  - "--model=MaskRCNN"
+                  - "--epoch=100"
+                  - "--lr=${trialParameters.lr}"
+                  - "--swin_drop_rate=${trialParameters.swin_drop_rate}"
+                  - "--swin_window_size=${trialParameters.swin_window_size}"
+                  - "--swin_mlp_ratio=${trialParameters.swin_mlp_ratio}"
             restartPolicy: Never
 ```
 
@@ -240,34 +272,50 @@ $ kubectl -n project-pipeline get experiment katib -o yaml
    > namespace는 katib yamlfile에 명시한 namespace여야한다.
 
    ```
-   NAME                                              READY   STATUS    RESTARTS   AGE
-   katib-bvr7gkjw-5l9xg                              0/2     Error     0          3m11s
-   katib-bvr7gkjw-b5hg9                              0/2     Error     0          2m40s
-   katib-bvr7gkjw-bsl66                              0/2     Running     0          107s
+   katib-local-95frxdkc-bzs9h                        2/2     Running   0          103s
+   katib-local-random-76cdf89cb8-v7lfv               1/1     Running   0          115s
    ```
+   
+   `katib-local-random-76cdf89cb8-v7lfv` : 먼저 만들어진 pod는 experiment에 의해 정의된 pod이다.
 
-   error가 발생한 특정 pod의 log를 확인해보자
+   `katib-local-95frxdkc-bzs9h` : experiment에 의해 정의된 pod이후 만들어진 pod는 `Trial`을 진행하는 pod로, 실제 code에 대한 log를 확인하고자 할 때 해당 pod의 log를 확인하면 된다.
 
+   - error
+
+     ```
+     NAME                                              READY   STATUS    RESTARTS   AGE
+     katib-bvr7gkjw-5l9xg                              0/2     Error     0          3m11s
+     katib-bvr7gkjw-b5hg9                              0/2     Error     0          2m40s
+     katib-bvr7gkjw-bsl66                              0/2     Running     0          107s
+     ```
+   
+     위 처럼 error 발생시 
+   
+     - image가 잘못된 경우
+     - dockerfile의 `ENTRYPOINT`의 명령어 입력 시 code가 정상적으로 학습 진행이 안되는 경우
+
+   
+   
    
 
    - **training-container**
 
      container를 load하거나 run하는 과정에서 발생한 error를 보여준다. 
-
+   
      아무 출력 안뜨면 error없음
-
+   
      ```
      kubectl logs -n project-pipeline katib-bvr7gkjw-5l9xg training-container
      ```
-
+   
    - **metrics-logger-and-collector**
-
+   
      ```
      kubectl logs -n project-pipeline katib-bvr7gkjw-5l9xg metrics-logger-and-collector
      ```
-
+   
      image에 포함된 code의 진행 상황을 log로 보여준다.
-
+   
      code에 의한 error를 확인할 수 있다.
 
 
