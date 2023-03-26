@@ -130,11 +130,11 @@ metadata:
 spec:
   objective:
     type: maximize
-    goal: 0.8
+    goal: 0.85
     objectiveMetricName: mAP
     metricStrategies:
     - name: mAP
-      value: latest             # max 
+      value: max 
   algorithm:
     algorithmName: random
   parallelTrialCount: 1
@@ -208,14 +208,14 @@ spec:
           spec:
             containers:
               - name: training-container
-                image: 	localhost:5000/katib:0.1     # docker.io/hibernation4958/katib:0.1
+                image: 	localhost:5000/katib:0.2     # docker.io/hibernation4958/katib:0.1
                 command:
                   - "python"
                   - "main.py"
                   - "--katib"
                   - "--cfg_train=config/train_cfg.py"
                   - "--model=MaskRCNN"
-                  - "--epoch=100"
+                  - "--epoch=50"
                   - "--lr=${trialParameters.lr}"
                   - "--swin_drop_rate=${trialParameters.swin_drop_rate}"
                   - "--swin_window_size=${trialParameters.swin_window_size}"
@@ -263,10 +263,10 @@ $ kubectl -n project-pipeline get experiment katib -o yaml
 
 2. check pod
 
-   katib 관련 pod확인
+   katib 관련 pod확인 (`| grep katib`를 사용해 experiment 이름이 포함된 pod를 검색)
 
    ```
-   $ kubectl -n project-pipeline get pods
+   $ kubectl -n project-pipeline get pods | grep katib
    ```
 
    > namespace는 katib yamlfile에 명시한 namespace여야한다.
@@ -292,14 +292,29 @@ $ kubectl -n project-pipeline get experiment katib -o yaml
      위 처럼 error 발생시 
    
      - image가 잘못된 경우
+     
      - dockerfile의 `ENTRYPOINT`의 명령어 입력 시 code가 정상적으로 학습 진행이 안되는 경우
-
+     
+       > ex) dockerfile의 `ENTRYPOINT`가 아래와 같은 경우
+       >
+       > ```
+       > ENTRYPOINT ["python", "main.py", "--katib"]
+       > ```
+       >
+       > 해당 명령어를 `main.py`가 있는 위치에서 직접 입력해보자.
+       >
+       > ```
+       > $ python main.py --katib
+       > ```
+       >
+       > 위 명령어에 의해 code가 정상 실행이 되어야 한다.
    
    
    
-
+   
+   
    - **training-container**
-
+   
      container를 load하거나 run하는 과정에서 발생한 error를 보여준다. 
    
      아무 출력 안뜨면 error없음
@@ -317,6 +332,26 @@ $ kubectl -n project-pipeline get experiment katib -o yaml
      image에 포함된 code의 진행 상황을 log로 보여준다.
    
      code에 의한 error를 확인할 수 있다.
+
+
+
+★★★★★
+
+experiment의 hyperparameter조합 결과는 해당 experiment의 Type이 `Succeeded`인 경우에만 알 수 있다.
+
+```
+$ kubectl delete experiment -n pipeline <experiment-name>
+```
+
+```
+NAME              TYPE        STATUS   AGE
+experiment-name   Succeeded   True     23m
+```
+
+`Succeeded`가 뜨려면 해당 두 가지 조건이 만족해야 한다.
+
+1.  experiment의 실행 code의 학습이 전부 끝나거나 `exit()`로 인해 실행히 멈춘 상태
+2. `spec.objective.goal`의 조건을 만족한 경우 
 
 
 
