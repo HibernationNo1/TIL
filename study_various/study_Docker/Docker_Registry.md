@@ -52,6 +52,8 @@ docker registry는 Docker image를 저장하고 배포할 수 있는 server측 a
    5050f6b6e425   registry                              "/entrypoint.sh /etc…"   2 minutes ago   Up 2 minutes   0.0.0.0:5000->5000/tcp, :::5000->5000/tcp                                                                                              private-docker
    ```
    
+   - container name이  `private-docker`인 것을 볼 수 있다.
+   
    check port
    
    ```
@@ -202,6 +204,22 @@ $ curl http://localhost:5000/v2/image_name/tags/list
 
 
 
+#### stop, start 
+
+```
+$ docker stop private-docker
+```
+
+```
+$ docker start private-docker
+```
+
+
+
+
+
+
+
 ### uninstall
 
 1. delete container
@@ -215,7 +233,7 @@ $ curl http://localhost:5000/v2/image_name/tags/list
    ```
 
    ```
-   $ docker rm 476618bf9a89cc94a286b1f20bb86409197dfc76955bac3caf4145fce082b2bb
+   $ docker rm 573ff7f3c266f3e002245df0e875e976b0fc44eea80583ca8aa78c4a4907b67a
    ```
 
    
@@ -235,6 +253,48 @@ $ curl http://localhost:5000/v2/image_name/tags/list
    ```
 
    
+
+3. delete volume
+
+   registry는 삭제하더라도 registry에 push했던 image에 대한 layer들은 volume안에 data로 남아있기 때문에 삭제해야한다.
+
+   ```
+   # cd /var/lib/docker/volumes
+   # du -h --max-depth=1 | awk '$1~/G/ {print}'
+   ```
+
+   ```
+   8.1G    ./7aa8036a507e46c97aa6b043fa15004b17c4429f968b8cbc7c8b5837ac106ac6
+   90G     ./dc210f11ebc8c5fdcddbb88a5e18b3df04a6ecfe2935ade2881b3370b59fc26f
+   43G     ./dce626501c9daad73ea9f95cead1d85491722cea1cef609799c43c2439279e23
+   7.0G    ./ecaf4285dd1cb5a9a0c55d1dadf2523df22b4b522d47f0eb88b109e946b0511e
+   ```
+
+   위 처럼 무거운 image가 많이 들어간 경우 용량이 클 수 있다.
+
+   특정 dir에 들어가서 tag를 확인
+
+   ```
+   #cd /<dir_name>/_data/docker/registry/v2/repositories/<image_name>/_manifests/tags
+   ```
+
+   `/<dir_name>/_data/docker/registry/v2/repositories` 에서 push된 images의 name을 확인할 수 있다.
+
+   `<image_name>/_manifests/tags` 에서 특정 image의 push된 tag를 확인할 수 있다.
+
+    image의 name과 tag를 확인 후 deleted registry인것을 확인했다면 해당 volume은 삭제
+
+   ```
+   # rm -rf <dir_name>
+   ```
+
+   
+
+    
+
+
+
+
 
 
 
