@@ -1,212 +1,27 @@
-https://kserve.github.io/website/0.9/admin/serverless/#recommended-version-matrix
+# Kserve
 
+## install
 
+### [kubeflow](https://github.com/kubeflow/manifests)
 
+kubeflow 설치를 통해 `knative`와 관련된 resource와 `istio-system`과 관련된 resource가 제대로 설치되어야 한다.
 
 
-Istio version check 
 
-특정 pod를 들여다보면 알 수 있다.
+### [kserve](https://kserve.github.io/website/0.10/)
 
-```
-kubectl -n istio-system  get pod istio-ingressgateway-6668f9548d-gn8sd -o yaml
-```
+공식 link에서 install관련 정보를 얻을 수 있다.
 
-`istio/proxyv2:1.14.1`
+version에 따라서 내용이 달라질 수 있으니 version확인을 잘 하자.
 
+[공식](https://kserve.github.io/website/0.10/admin/serverless/serverless/)
 
 
-kubectl version check
-
-```
-kubectl version
-```
-
-`v1.22.13`
-
-
-
-kanaitve version check
-
-```
-kubectl -n knative-serving  get pod activator-7c5cd78566-jkv7c -o yaml
-```
-
-`serving.knative.dev/release: v1.2.5`
-
-
-
-
-
-
-
-
-
----
-
-1. kubeflow설치
-2. istio는 kubeflow꺼 그대로 사용, knative는 아래 순서대로 install
-
-
-
-#### knative
-
-1. knative는 [공식 문서](https://knative.dev/docs/install/yaml-install/serving/install-serving-with-yaml/)에 따라 설치(YAML file사용)
-
-   **Install the Knative Serving component**
-
-   1. Install the required custom resources
-
-      ```
-      $ kubectl apply -f https://github.com/knative/serving/releases/download/knative-v1.7.1/serving-crds.yaml
-      ```
-
-   2. Install the core components of Knative Serving
-
-      ```
-      $ kubectl apply -f https://github.com/knative/serving/releases/download/knative-v1.7.1/serving-core.yaml
-      ```
-
-   3. Verify
-
-      pod
-
-      ```
-      $ kubectl get pods -n knative-serving
-      ```
-
-      
-
-      version 확인
-
-      ```
-      $ kubectl describe cm config-domain -n knative-serving
-      ```
-
-   
-
-   
-
-   **Install a networking layer** 설치 (istio)
-
-   istio를 설치하고 Knative integration를 활성화
-
-   1. Install Knative Istio
-
-      ```
-      $ kubectl apply -l knative.dev/crd-install=true -f https://github.com/knative/net-istio/releases/download/knative-v1.7.0/istio.yaml
-      $ kubectl apply -f https://github.com/knative/net-istio/releases/download/knative-v1.7.0/istio.yaml
-      ```
-
-   2. Install the Knative Istio controller
-
-      ```
-      $ kubectl apply -f https://github.com/knative/net-istio/releases/download/knative-v1.7.0/net-istio.yaml
-      ```
-
-   3. External IP address 확인
-
-      ```
-      $ kubectl --namespace istio-system get service istio-ingressgateway
-      ```
-
-      ```
-      NAME                   TYPE           CLUSTER-IP       EXTERNAL-IP     PORT(S)                                      AGE
-      istio-ingressgateway   LoadBalancer   10.102.229.237   192.168.0.240   15021:31907/TCP,80:31577/TCP,443:30362/TCP   5h57m
-      ```
-
-   
-
-   
-
-   knative는 여기까지, **KServe**로 넘어간다
-
-   > 
-   >
-   > ```
-   > $ kubectl get gateway -n knative-serving
-   > ```
-   >
-   > ```
-   > NAME                      AGE
-   > knative-ingress-gateway   6m52s
-   > knative-local-gateway     5h17m
-   > ```
-   >
-   > 그대로 설치하면 Isito gateway 와 연동되지 않는다. 그렇기 때문에 아래와 같이 `knative-ingress-gateway`, `knative-local-gateway` 의 selector 를 수정해 줘야 한다.
-   >
-   > - `knative-ingress-gateway`
-   >
-   >   ```
-   >   $ kubectl edit gateway -n knative-serving knative-ingress-gateway
-   >   ```
-   >
-   >   ```
-   >   spec:
-   >     selector:
-   >       istio: ingressgateway
-   >       istio: ingress          # 추가
-   >   ```
-   >
-   > - `knative-local-gateway`
-   >
-   >   ```
-   >   $ kubectl edit gateway -n knative-serving knative-local-gateway
-   >   ```
-   >
-   >   ```
-   >   spec:
-   >     selector:
-   >       istio: ingressgateway
-   >       istio: ingress          # 추가
-   >   ```
-   >
-   >   
-   >
-   >   ingress gateway는 `istio-system` 에만 존재
-   >
-   >   ```
-   >   $ kubectl get svc istio-ingressgateway -n istio-system
-   >   ```
-   >
-   >   ```
-   >   NAME                   TYPE           CLUSTER-IP       EXTERNAL-IP     PORT(S)                                      AGE
-   >   istio-ingressgateway   LoadBalancer   10.102.229.237   192.168.0.240   15021:31907/TCP,80:31577/TCP,443:30362/TCP   5h57m
-   >   ```
-   >
-   >   
-   >
-   > 
-   >
-   > **Configure DNS**  (Magic DNS (sslip.io)는 minikube에선 안됨. Real DNS를 사용)
-   >
-   > - `EXTERNAL-IP` 가 실제 IP인 경우
-   >
-   >   domain에 대한 wildcard A record를 구성
-   >
-   >   ```
-   >   *.kserve-test.example.com == A 192.168.0.240
-   >   ```
-   >
-   >   - `kserve-test` : 배포하고자 하는 model에 대한 `InferenceService`를 띄울 namesapce
-   >   - `192.168.0.240` : `istio-ingressgateway`의 `EXTERNAL-IP`
-   >
-   > - `EXTERNAL-IP` 가 CNAME인 경우
-
-   
-
----
-
-이 위에꺼 하면 안됨. knative와 istio-system은 kubeflow를 설치 한 상태로 진행
-
-
-
-#### **KServe**
 
 **Install KServe**
 
 ```
-$ kubectl apply -f https://github.com/kserve/kserve/releases/download/v0.9.0/kserve.yaml
+$ kubectl apply -f https://github.com/kserve/kserve/releases/download/v0.10.0/kserve.yaml
 ```
 
 check
@@ -225,10 +40,12 @@ kserve-controller-manager-5fc887875d-xl7sj   2/2     Running   0          7h3m
 **Install KServe Built-in ClusterServingRuntimes**
 
 ```
-kubectl apply -f https://github.com/kserve/kserve/releases/download/v0.9.0/kserve-runtimes.yaml
+kubectl apply -f https://github.com/kserve/kserve/releases/download/v0.10.0/kserve-runtimes.yaml
 ```
 
 > InferenceService를 생성하는 데 필요
+
+
 
 check
 
@@ -255,254 +72,206 @@ kserve-xgbserver                       xgboost      kserve-container   7h13m
 
 
 
+## example
 
+### kubeflow Dashboard
 
-model배포
-
-1. namespace생성
-
-   ```
-   $ kubectl create namespace kserve-test
-   ```
-
-   
-
-2. model배포
-
-   ```
-   $ kubectl get pod -n kserve
-   ```
-
-   ```
-   NAME                                         READY   STATUS    RESTARTS   AGE
-   kserve-controller-manager-5fc887875d-4f5kb   2/2     Running   0          5m18s
-   ```
-
-   `STATUS : Running` 확인 후 진행
-
-   
-
-   배포하고자 하는 model에 대한 InferenceService 작성 후 apply
-
-   ```
-   $ kubectl apply -n kserve-test -f - <<EOF
-   apiVersion: "serving.kserve.io/v1beta1"
-   kind: "InferenceService"
-   metadata:
-     annotations:
-       isdecar.istio.is/inject
-     name: "sklearn-iris"
-   spec:
-     predictor:
-       model:
-         modelFormat:
-           name: sklearn
-         storageUri: "gs://kfserving-examples/models/sklearn/1.0/model"
-   EOF
-   ```
-
-   - `metadata.name` : Knative service name
-
-   
-
-   confirm pod
-
-   ```
-   $ kubectl get pods -n kserve-test -w
-   ```
-
-   `STATUS : Running` 확인 후 진행
-
-   
-
-   check
-
-   ```
-   $ kubectl get inferenceservices sklearn-iris -n kserve-test
-   ```
-
-   ```
-   NAME           URL                                           READY   PREV   LATEST   PREVROLLEDOUTREVISION   LATESTREADYREVISION                    AGE
-   sklearn-iris   http://sklearn-iris.kserve-test.example.com   True           100                              sklearn-iris-predictor-default-00001   5h11m
-   ```
-
-   `URL` : 기본 도메인 값은 `http://{Knative service name}.{namespace}.example.com` 이다.
-
-   
-
-3. 수신 IP 및 port 확인
-
-   ```
-   $ kubectl get svc istio-ingressgateway -n istio-system
-   ```
-
-   ```
-   NAME                   TYPE           CLUSTER-IP       EXTERNAL-IP     PORT(S)                                      AGE
-   istio-ingressgateway   LoadBalancer   10.102.229.237   192.168.0.240   15021:31907/TCP,80:31577/TCP,443:30362/TCP   7h28m
-   ```
-
-   
-
-   
-
-4. port forward
-
-   ```
-   kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80
-   ```
-
-   
-
-5. set ingress
-
-   ```
-   $ export INGRESS_HOST=127.0.0.1
-   $ export INGRESS_PORT=8080
-   ```
-
-   > ```
-   > $ echo $INGRESS_HOST
-   > $ echo $INGRESS_PORT
-   > ```
-
-   
-
-   > 
-   >
-   > ```
-   > export INGRESS_HOST=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-   > export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].port}')
-   > 
-   > ```
-   >
-   > `INGRESS_HOST` == 192.168.0.240
-   >
-   > `INGRESS_PORT` == 80
-
-   
-
-   ```
-   cat <<EOF > "./iris-input.json"
-   {
-     "instances": [
-       [6.8,  2.8,  4.8,  1.4],
-       [6.0,  3.4,  4.5,  1.6]
-     ]
-   }
-   EOF
-   ```
-
-   
-
-   ```
-   $ SERVICE_HOSTNAME=$(kubectl get inferenceservice sklearn-iris -n kserve-test -o jsonpath='{.status.url}' | cut -d "/" -f 3)
-   ```
-
-   > ```
-   > $ echo $SERVICE_HOSTNAME
-   > http://sklearn-iris.kserve-test.example.com		# 출력
-   > ```
-
-   
-
-   
-
-   ```
-   $ CLUSTER_IP=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.clusterIP}')
-   ```
-
-   
-   
-   
-   
-   
-   
-   ```
-   curl -v -H "Host: ${SERVICE_HOSTNAME}" http://${INGRESS_HOST}:${INGRESS_PORT}/v1/models/sklearn-iris:predict -d @./iris-input.json
-   ```
-   
-   
+kubeflow의 Tap menu중 하나은 Endpoint에 기본 예제의 resource를 배포
 
 ```
-curl -v -H "Host: ${SERVICE_HOSTNAME}" http://192.168.219.100:${INGRESS_PORT}/v1/models/sklearn-iris:predict -d @./iris-input.json
+apiVersion: "serving.kserve.io/v1beta1"
+kind: "InferenceService"
+metadata:
+  annotations:
+    isdecar.istio.is/inject: "false"
+  name: "sklearn-iris-python"
+spec:
+  predictor:
+    sklearn:
+      image: "kserve/sklearnserver:v0.9.0"
+      storageUri: "gs://kfserving-examples/models/sklearn/1.0/model"
+```
+
+해당 계정이 속한 nemaspace에 자동으로 배포된다.
+
+
+
+- `inferenceservices`확인
+
+  ```
+  $ kubectl get inferenceservices -n pipeline
+  ```
+
+  ```
+  NAME            	sklearn-iris-python       
+  URL                 http://sklearn-iris-python.pipeline.svc.cluster.local
+  READY   			True
+  PREV   				
+  LATEST   			100
+  PREVROLLEDOUTREVISION   
+  LATESTREADYREVISION              sklearn-iris-python-predictor-default-00001               
+  AGE					3m48s
+                                                    
+  ```
+
+  
+
+- `ksvc` 확인
+
+  ```
+  $ kubectl get ksvc -n pipeline
+  ```
+
+  ```
+  NAME            sklearn-iris-python-predictor-default                         
+  URL     		http://sklearn-iris-python-predictor-default.pipeline.svc.cluster.local     
+  LATESTCREATED   sklearn-iris-python-predictor-default-00001                            
+  LATESTREADY     sklearn-iris-python-predictor-default-00001
+  READY      		True 
+  ```
+
+  
+
+- model server가 운영되는 pod 확인
+
+  ```
+  $ kubectl get pods -n pipeline -l serving.kserve.io/inferenceservice=sklearn-iris-python
+  ```
+
+  ```
+  NAME                                                              READY   STATUS    RESTARTS   AGE
+  sklearn-iris-python-predictor-default-00001-deployment-84zrcd5    3/3     Running   0          32m
+  ```
+
+  
+
+- model server가 운영되는 pod의 log확인
+
+  ```
+  $ kubectl logs -n pipeline -l serving.kserve.io/inferenceservice=sklearn-iris-python
+  ```
+
+  > 또는
+  >
+  > ```
+  > $ kubectl get logs sklearn-iris-python2-predictor-default-00001-deployment-84zrcd5 -n pipeline
+  > ```
+
+  ```
+  [I 230401 15:32:26 storage:63] Copying contents of /mnt/models to local
+  [I 230401 15:32:26 model_server:150] Registering model: sklearn-iris-python
+  [I 230401 15:32:26 model_server:123] Listening on port 8080
+  [I 230401 15:32:26 model_server:125] Will fork 1 workers
+  [I 230401 15:32:26 model_server:128] Setting max asyncio worker threads as 5
+  ```
+
+  1. `[I 230401 15:32:26 storage:63] Copying contents of /mnt/models to local`: 이 로그는 저장소에서 로컬 환경으로 모델 파일을 복사하는 과정을 나타낸다. 
+
+  2. `[I 230401 15:32:26 model_server:150] Registering model: sklearn-iris-python`: 이 로그는 모델 서버에 `sklearn-iris-python` 모델을 등록하는 과정을 나타낸다. 
+
+  3. `[I 230401 15:32:26 model_server:123] Listening on port 8080`: 이 로그는 모델 서버가 8080 포트에서 수신 대기 중임을 나타낸다.
+
+     > **model server의 pod안의 8080 port가 수신 대기중임**
+
+  4. `[I 230401 15:32:26 model_server:125] Will fork 1 workers`: 이 로그는 모델 서버가 1개의 워커 프로세스를 생성할 것임을 나타낸다.
+
+  5. `[I 230401 15:32:26 model_server:128] Setting max asyncio worker threads as 5`: 이 로그는 최대 asyncio 워커 스레드를 5개로 설정하는 과정을 나타낸다.
+
+  위 모든 작업은 정상적으로 완료되었음을 확인. (로그는 모델 서버가 정상적으로 실행 중이며, 모델이 올바르게 등록되었음을 나타냄)
+
+
+
+이제 해당 service에 요청을 보내려면 port-forward를 해야 한다.
+
+
+
+#### port-forward
+
+```
+kubectl port-forward -n pipeline sklearn-iris-python-predictor-default-00001-deployment-84zrcd5 8081:8080
+```
+
+- `sklearn-iris-python2-predictor-default-00001-deployment-84zrcd5`라는 pod에 port-foward
+- local의 `8081` port와 연결
+
+
+
+
+
+
+
+#### python SDK
+
+##### with kfp client
+
+```python
+import kfp
+import requests
+import json
+
+def connet_client(user_n, , name_space, host, pw,
+                  return_session = False):   
+    session = requests.Session()
+    response = session.get(host)
+
+    headers = {
+        "Content-Type": "application/x-www-form-urlencoded",
+    }
+
+    data = {"login": user_n, "password": pw}
+    session.post(response.url, headers=headers, data=data)                              
+    session_cookie = session.cookies.get_dict()["authservice_session"]  
+    
+   
+    # access kubeflow dashboard
+    client = kfp.Client(
+        host=f"{host}/pipeline",
+        namespace=f"{name_space}",
+        cookies=f"authservice_session={session_cookie}")
+    if return_session:
+        return client, session
+    else:
+        return client 
+    
+if __name__ == "__main__":
+    dashboard_cfg = {'user_n': 'winter4958@gmail.com', 
+                     'name_space': 'pipeline', 
+                     'host': 'http://localhost:8080', 
+                     'pw': '4958',
+                    'return_session' = True}
+    client, session = connet_client(**dashboard_cfg) 
+
+    session_cookie = session.cookies.get_dict()
+    sklear_iris_input = dict(instances = [
+    [6.8, 2.8, 4.8, 1.4],
+    [6.0, 3.4, 4.5, 1.6]
+    ])
+
+    HOST = "http://127.0.0.1:8081"		# port-forward한 port를 명시
+
+    headers = {'Host': "sklearn-iris-python-predictor-default.pipeline.svc.cluster.local"}
+    res = session.post(f"{HOST}/v1/models/sklearn-iris-python:predict", 
+                        headers=headers, 
+                        cookies=session_cookie,
+                        data=json.dumps(sklear_iris_input))
+
+    print(f"res.json : {res.json()}")
+```
+
+- heaser의 Host값에는 kserve의 URL에서 `http://`를 제외한 부분이 들어가야 한다.
+
+
+
+출력
+
+```
+res.json : {'predictions': [1, 1]}
 ```
 
 
 
 
 
->https://arxiv.org/pdf/2206.13655.pdf
->
->kubeflow 논문
->
->
->
->kserve
->
->https://www.youtube.com/watch?v=FX6naJLaq2Y
->
->
->
->**302 Found**
->
->/dex/auth로 인하여 인증용 Redirect 발생
->
->**solution**: `EnvoyFilter`를 만들어 dex 인증에서 제외해야 한다.
->
->1. 적용된 Auth filter확인
->
->   ```
->   $ kubectl get envoyfilters.networking.istio.io authn-filter -n istio-system
->   ```
->
->   ```
->   NAME           AGE
->   authn-filter   55m
->   ```
->
->   
->
->2. Dex인증을 제외할 URL을 `EnvoyFilter`에 적용
->
->   ```
->   $ kubectl apply -n istio-system -f - <<EOF
->   apiVersion: networking.istio.io/v1alpha3
->   kind: EnvoyFilter
->   metadata:
->     name: bypass-auth-iris-sample
->     namespace: istio-system
->   spec:
->     workloadSelector:
->       labels:
->         istio: ingressgateway
->     configPatches:
->     - applyTo: VIRTUAL_HOST
->       match:
->         routeConfiguration:
->           vhost:
->             name: 192.168.0.240:80
->       patch:
->         operation: MERGE
->         value:
->           per_filter_config:
->             envoy.ext_authz:
->               disabled: true
->   EOF
->   ```
->
->   
->
->   confirm
->
->   ```
->   $ kubectl get envoyfilters -n istio-system bypass-auth-iris-sample
->   ```
->
->   >edit
->   >
->   >```
->   >$ kubectl edit envoyfilters -n istio-system bypass-auth-iris-sample
->   >```
->
->   
+##### with KServeClient
 
+TODO
