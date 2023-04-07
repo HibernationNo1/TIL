@@ -49,7 +49,7 @@ Relational Database Management System
   2. install
 
      ```
-     $sudo apt-get install mysql-server
+     $ sudo apt-get install mysql-server
      ```
 
   3. set open 3306 port
@@ -73,6 +73,28 @@ Relational Database Management System
      ```
      mysql
      ```
+
+
+
+이후 해당 DB에 외부에서 접근이 가능하게 하기 위해 mysql의 설정 file을 변경한다.
+
+```
+$ sudo vi /etc/mysql/mysql.conf.d/mysqld.cnf
+```
+
+> ubuntu20.04기준 `mysqld.cnf`의 위치는  `/etc/mysql/mysql.conf.d/` 이다.
+
+```
+bind-address            = 0.0.0.0 			# 127.0.0.1  >> 0.0.0.0 으로 변경
+```
+
+이후 
+
+```
+$ sudo systemctl restart mysql
+```
+
+
 
 
 
@@ -218,7 +240,7 @@ CREATE DATABASE database_name;
 e.g.
 
 ```sql
-CREATE DATABASE database_name DEFAULT CREATE=utf8 COLLATE=utf8_bin;
+CREATE DATABASE database_name DEFAULT CHARACTER SET=utf8 COLLATE=utf8_bin;
 ```
 
 > ```
