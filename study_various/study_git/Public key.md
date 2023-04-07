@@ -4,6 +4,47 @@ private repository를 git clone하기 위한 방법
 
 ###  
 
+## personal-access-token
+
+
+
+**remote: Support for password authentication was removed on August**
+
+git push과정에서 
+
+```
+Username for 'https://github.com': HibernationNo1
+Password for 'https://HibernationNo1@github.com':
+```
+
+password입력 시 아래와 같은 메시지를 만날 경우
+
+```
+remote: Support for password authentication was removed on August 13, 2021.
+```
+
+개인 access key가 만료되었다는 뜻
+
+github계정에서 setting > 좌측 하단  Developer settings > Personal access tokens
+
+Note : access key의 이름
+
+발급시 `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` 와 같은 key(Password)를 받을 수 있다.
+
+
+
+만일 이미 clone된 repository에 새로 발급한 personal-access-token을 적용하고 싶다면 아래 명령어
+
+```
+git remote set-url origin https://<your-username>:<your-personal-access-token>@github.com/<your-username>/<your-repo>.git
+```
+
+
+
+
+
+## SSH key
+
 ### generate
 
 - check if already exist before generate public key

@@ -1,6 +1,125 @@
-# git flow
+# Git Branching Strategies
 
-## Introduce
+
+
+**tip)**
+
+- 두 branch를 병합하는 경우 rebase보다는 merge를 사용하자. (history를 남길 수 있다.)
+
+  ```
+  $ git merge exam
+  ```
+
+  
+
+- 원격 branch에 push를 하기 전, 원격의 상태를 항상 항상 꼭 하자.
+
+  - 원격의  branch를 포함해서, 모든 branch의 이름을 확인
+
+    ```
+    $ git branch -a
+    ```
+
+  - 원격의 commit상태 확인
+
+    ```
+    $ git fetch
+    ```
+
+    
+
+  이 때 `pull`을 해야 하는 경우, merge방식보다는, rebase방식을 사용하자.
+
+  ```
+  $ git pull --rebase
+  ```
+
+  
+
+
+
+
+
+## Github Flow
+
+GitHub에서 제공하는 `Pull Request`와 `코드 리뷰`기능을 적극적으로 활용한 방식. 
+
+브랜치와 `Pull Request`(줄여서 PR)라는 개념을 사용한다.
+
+
+
+### Getting Started
+
+#### 1. create branch
+
+Github-flow 전략은 기능 개발, 버그 픽스 등 어떤 이유로든 **새로운 브랜치를 생성**하는 것으로 시작된다.
+
+> 이때 체계적인 분류 없이 브랜치 하나에 의존하게 되기 때문에 **브랜치 이름을 통해 의도를 명확하게** 드러내는 것이 매우 중요하다.
+
+- master 브랜치는 항상 최신 상태며, stable 상태로 product에 배포되는 브랜치다. 이 브랜치에 대해서는 엄격한 role과 함께 사용한다
+- **새로운 브랜치는 항상 master 브랜치에서 만든다**.
+- Git-flow와는 다르게 feature 브랜치나 develop 브랜치가 존재하지 않는다.
+- 그렇지만, 새로운 기능을 추가하거나 버그를 해결하기 위한 **브랜치 이름은 자세하게** 어떤 일을 하고 있는지에 대해서 작성해주도록 하자
+
+
+
+#### 2. cummit and push
+
+개발을 진행하면서 커밋을 남긴다.
+
+- **커밋메시지를 명확하게 작성하자**
+- 원격지 브랜치로 **수시로 push** 하자
+
+
+
+#### 3. create PR(Pull Request)
+
+피드백이나 도움이 필요할 때, 그리고 merge 준비가 완료되었을 때는 pull request를 생성한다
+
+- pull request는 **코드 리뷰**를 도와주는 시스템
+- 이것을 이용해 자신의 코드를 공유하고, 리뷰받는다.
+- merge 준비가 완료되었다면 master 브랜치로 반영을 요구한다.
+
+
+
+#### 4. code review
+
+Pull-Request가 master 브랜치 쪽에 합쳐진다면 곧장 라이브 서버에 배포되는 것과 다름 없으므로, 상세한 리뷰와 토의가 이루어져야 한다.
+
+
+
+#### 5. run test
+
+리뷰와 토의가 끝났다면 해당 내용을 라이브 서버(혹은 테스트 환경)에 배포해본다.
+
+배포시 문제가 발생한다면 곧장 master 브랜치의 내용을 다시 배포하여 초기화 시킨다.
+
+
+
+#### 6. merge to master
+
+라이브 서버(혹은 테스트 환경)에 배포했음에도 문제가 발견되지 않았다면 **그대로 master 브랜치에 푸시를 하고, 즉시 배포**를 진행한다.
+
+대부분의 Github-flow 에선 master 브랜치를 최신 브랜치라고 가정하기 때문에 배포 자동화 도구를 이용해서 Merge 즉시 배포를 시킨다.
+
+**master로 merge되고 push 되었을 때는, 즉시 배포되어야한다**
+
+- GitHub-flow의 핵심
+- master로 merge가 일어나면 자동으로 배포가 되도록 설정해놓는다. (CI / CD)
+
+
+
+
+
+
+
+## Git flow
+
+여러 version의 서비스를 제공하는 프로그램인 경우 사용되는 방식. 
+
+ 
+
+### Introduce
 
 git flow를 이용해 만들 수 있는 branch는 6종류가 있다.
 
@@ -41,41 +160,15 @@ git flow를 이용해 만들 수 있는 branch는 6종류가 있다.
 
 
 
-### model 구성
+#### model 구성
 
 ![](https://media.vlpt.us/images/cos/post/57fa6718-f327-4ae8-b789-26259632e4fe/Simplified-version-of-the-gitflow-branching-model-adapted-from-8.png)
 
 
 
-### GitKraken
-
-1. develop 에서 feature 만든 후 code 변경. 
-
-2. 변경된 code를 up stage한 후 commit
-
-3. finish feature (변경사항)
-
-4. develop 에서 release 만든 후 주석 변경.  
-
-   > 각 release는  feature개당 1개씩
-   >
-   > finish feature (변경사항) 이후에 release해야함
-
-5. 변경된 주석을 up stage한 후 commit
-
-6. finish release (v 0.0.0)
-
-   >  release 만든 후 바로 변경사항 없이 finish release 해도 됨
-
-7. master에서 push
-
-   > finish release 안하면 develop에서 master로 marge가 안됨
-
-같은 파일의 내용에 대해서 각각의 feature 또는 release를 진행하면, 변경된 두 경우 중 어떤 경우를 marge할건지 물어본다. 그렇기 때문에 가능하면 각 branch마다 다른 file에 대해서 개발하자.
 
 
-
-## Getting Started
+### Getting Started
 
 #### Install
 
@@ -87,7 +180,7 @@ git flow를 이용해 만들 수 있는 branch는 6종류가 있다.
 
   
 
-#### initialize
+##### initialize
 
 기존 git repository에서 초기화 하는 것으로 git-flow의 사용을 시작 할 수 있다.
 
@@ -99,7 +192,7 @@ $ git flow init -d
 
 
 
-### Feature
+#### Feature
 
 **start**
 
@@ -145,7 +238,7 @@ $ git branch -D {branch name}
 
 
 
-### Release
+#### Release
 
 **start**
 
@@ -173,7 +266,7 @@ $ git flow release finish {version}
 
 
 
-### example
+#### example
 
 - 항상 `git branch`와 `git log`(`git log --pretty=format:"%h %s" --graph`) 를 통해 현재 위치와 log를 확인하고 `git switch`를 활용하자.
 
