@@ -1,20 +1,6 @@
 # branch 활용 방법
 
-branch는 firsh commit이 반드시 있어야 한다.
-
-HEAD: 내가 화면으로 보고있는 위치
-
-master branch: 시초의 branch 
-
----
-
-
-
-
-
-## branch
-
-###  branch 명령어
+###  branch 기본 명령어
 
 `git branch, git branch --list` : 현재 repository의 branch 목록을 확인할 수 있다.
 
@@ -44,185 +30,407 @@ master branch: 시초의 branch
 
 
 
-##  branch 경우의 수
+#### +
 
-#### - master branch를 사용하면서 프로젝트를 진행할 때
+- `git log --all --decorate --oneline --gragh` : 모든 banch의 log를 확인하는 명령어
 
-1. first commit 이후 branch가 1개만 생성되어 몇 번의 commit 후 merge
 
-   > 해당 브랜치가 master가 된다.
+
+### banch 병합
+
+#### merge branch 
+
+merge할 branch와 main branch의 모든 내용을 적용한다.
+
+
+
+main branch에 exam이라는 sub branch를 merge할 경우
+
+```
+$ git merge exam
+```
+
+
+
+**충돌시**
+
+같은 파일에 다른 내용이 입력되는 경우 branch간 병합 시 충돌이 일어나게 된다.
+
+이 때 `Automatic merge failed;`라는 문구와 함께 `MEARGING`상태로 돌입하게 되며, 각 변경된 부분마다 vscode로 확인하면 아래 4개의 선택을 할 수 있다.
+
+- `Accept Cureent Change`
+- `Accept Incomming Chagne`
+- `Accept Both Changes`
+- `Compare Change` 
+
+
+
+>merge가 안되겠다 하는 경우: merge를 중단하는 경우
+>
+>```
+>$ git merge --abort
+>```
+
+
+
+#### rebase branch
+
+rebase할 branch의 commit들을 main branch의 최신 commit뒤에 이어 붙인다. 
+
+단, branch에 대한 history를 남기지 않는다.(모든 history가 main에 추가되게 된다.)
+
+
+
+main branch에 exam이라는 sub branch를 rebase할 경우
+
+```
+```
+
+
+
+
+
+**충돌시**
+
+rebase 할 branch의 **commit 하나 하나**마다 merge형태로 조치를 취해줘야 한다.
+
+rebase 할 branch의 commit이 3번이 있었다고 한다면
+
+- 각 변경된 부분마다 vscode로 확인하면 아래 4개의 선택을 할 수 있다. 
+
+  - `Accept Cureent Change`
+  - `Accept Incomming Chagne`
+  - `Accept Both Changes`
+  - `Compare Change` 
+
+  이후 
+
+  ```
+  $ git add .		
+  $ git rebase --continue
+  >> wq
+  ```
+
+  > `git add` 까지만 진행, commit까지는 진행하지 않고 `git rebase --continue`를 실행해야 한다.
+
+위와 같은 동작을 각 commit마다 진행
+
+이후
+
+```
+$ git switch main
+$ git merge exam
+```
+
+
+
+
+
+> rebase가 안되겠다 하는 경우: rebase를 중단하는 경우
+>
+> ```
+> $ git rebase --abort
+> ```
+
+
+
+
+
+### remote branch관리
+
+remote branch확인하는 명령어
+
+1. 원격에서 remote상에 존재하는 branch를 추적하는 정보를 최신화
+
+   ```
+   $ git fetch --prune origin
+   ```
+
+2. remote상의 branch확인
+
+   ```
+   $ git branch -r
+   ```
+
+3. local과 remote상의 branch비교
+
+   ```
+   $ git branch -a
+   ```
+
+   
+
+
+
+
+
+- remote 에는 있지만 local에는 없는 `remote-branch`라는 branch가 있는 경우
+
+  remote의 branch를 local로 받아온다.
+
+  ```
+  $ git swith -t origin/remote-branch
+  ```
+
+  이후 pull까지 진행해본다면
+
+  ```
+  $ git swith remote-branch
+  $ git pull
+  ```
+
+  
+
+- local에는 있지만 remote에는 없는 `local-branch`라는 branch가 있는 경우
+
+  - local의 branch를 remote에도 올리는 경우
+
+    local의 branch에서 commit후 push를 할 때 `--set-upstream`으로 local의 branch명 명시
+  
+    ```
+    $ git push -u origin local-branch
+    ```
+  
+    > - `-u` : `--set-upstream`의 축약문구
+  
+  - remote에서 삭제된 것 처럼 local에도 branch를 삭제하려는 경우
+  
+    변경사항이 반영 되었다면 local에서 그냥 삭제해도 안전하다
+  
+    
+
+- local에서 삭제한 branch는 remote에서도 삭제를 해야 한다.
+
+  1. local에서 삭제
+
+     ```
+     $ git branch -d local-branch 
+     ```
+
+  2. remote에서도 삭제
+
+     ```
+     $ git push origin --delete local-branch
+     ```
+
+     
+
+  
+
+- **항상 remote에서 새 변경점이 있는지 확인하도록 한다.**
+
+  1. 변경점 사전 확인
+
+     ```
+     $ git fetch
+     ```
+
+  2. local과 remote상의 branch비교
+
+     ```
+     $ git branch -a
+     ```
+
+  3. 변경점이 있다면 해당 branch로 이동 후 확인
+
+     ```
+     $ git checkout remote_name/branch_name
+     ```
+
+  4. 다시 local branch로 이동
+
+     ```
+     $ git switch local_branch_name
+     ```
+
+  5. 경우의 수에 따라 다른 동작
+
+     - remote에 새로운 branch가 있는 경우: local에도 해당 branch가져오기
+
+       ```
+       $ git switch -t remote_name/new_branch_name
+       ```
+
+     - local에 있는 branch가 remote에 존재하는 경우: remote에 해당 branch삭제
+
+       ```
+       $ git push remote_name --delete local-branch
+       ```
+
+        
+
+
+
+
+
+### HEAD운용
+
+**`git switch`**
+
+branch간 이동을 할 때 사용
+
+git swith를 통해 branch간 이동 시 해당 branch의 최신 commit상태로 이동하게 되고, 그 자리가 HEAD의 위치다.
+
+
+
+예시
+
+```
+$ git switch exam-1
+```
+
+`exam-1` 이라는 branch의 최신 commit으로 이동
+
+
+
+
+
+**`git checkout`**
+
+1개의 branch내에서 특정 commit으로 HEAD를 이동할 때 사용. (HEAD만 이동하기 때문에 commit의 history에는 변경이 없다.)
+
+이 때 해당 branch내의 특정 commit에 임의의 branch를 만들어 최신 commit의 위치로 결정하고(HEAD의 정의처럼) 위치하게 된다. 때문에 해당 HEAD의 위치에서 새로운 commit을 진행하면 임의의 branch에 새 commit이 생기게 된다.
+
+
+
+예시
+
+- 현재 HEAD의 이전 commit으로 이동 
+
+  ```
+  $ git checkout HEAD^
+  ```
+
+  현재 HEAD의 두 번 전의 commit으로 이동
+
+  ```
+  $ git checkout HEAD^^
+  ```
+
+  
+
+- 바로 이전의 HEAD의 위치로 이동
+
+  ```
+  $ git checkout -
+  ```
+
+   `git checkout -`은 이전 HEAD의 위치로 이동한는 것 외에는 동작하지 못한다. 
+
+  때문에 특정 branch로 이동하고자 하면 `git switch`를 사용해야 한다.
+
+  
+
+- `git checkout` 으로 만들어진 임의의 branch에서 다른 branch로 이동할 때
+
+  ```
+  $ git switch branch-name
+  ```
+
+  
+
+
+
+
+
+
+
+### example
+
+#### case 1
+
+branch만들고 이름 바꾸기
+
+1. `exam-1`이라는 branch 추가
+
+   ```
+   $ git branch exam-1
+   ```
+
+2. 해당 branch로 이동
+
+   ```
+   $ git switch exam-1
+   ```
+
+   > ```
+   > $ git switch -c exam-2
+   > ```
    >
-   > > fast forward 라고 함
+   > `exam-2`라는 branch를 새로 만들고 HEAD를 `exam-2`로 이동
 
-2. first commit 이후 2개 이상의 branch가 생성되어 몇 번의 commit 후 merge
+3. branch 이름 바꾸기
 
-   2 -1.중복되는 메모리에 서로 다른 정보가 있다면?
+   ```
+   $ git branch -m exam-1 exam-2
+   ```
 
-   >수동으로 바꿔달라고 한다. 
+   `exam-1`이라는 이름에서 `exam-2`로 이름 변경
+
+
+
+
+
+#### case 2
+
+두 개의 branch만들고 각각의 commit후 병합하기(**충돌 없음**)
+
+1. branch 추가: `exam-1`
+
+   ```
+   $ git switch -c exam-1
+   $ git add .
+   $ git commut -m "exam-1 first commit"
+   $ git switch main
+   ```
+
+2. branch 추가: `exam-2`
+
+   ```
+   $ git switch -c exam-2
+   $ git add .
+   $ git commut -m "exam-2 first commit"
+   $ git switch main
+   ```
+
+3. branch `exam-1`을 main에 merge
+
+   main branch에서 merge명령어 실행
+
+   ```
+   $ git merge exam-1
+   ```
+
+   > 병합된 branch를 삭제할 경우
    >
-   >그 동안은 MERGING상태. merge가 완료된 것이 아님.
-   >
-   >>이 때는 commit이 불가능
+   > ```
+   > $ git branch -d exam-1
+   > ```
 
-2 -2.그 외
+4. branch `exam-2`를 main에 rebase
 
->이거 괜찮냐? 라고 물어보며 vim이 실행되지만 그대로 저장하면 merge 진행됨
-   >
-   >> automatic merge 라고 함
+   `exam-2`에서 rebase명령어 실행
 
-- 병합이 성공적으로 되면 master가 아닌 branch는 병합 이전의 commit에서 멈추고, master가 병합된 마지막 commit의 주인임
+   ```
+   $ git swith exam-2
+   $ git rebase main
+   ```
 
-##### branch 경우의 수 예제
+   이후 main으로 이동하면 rebase되기 전 commit으로 이동하게 된다.
 
-1. 의 경우
+   ```
+   $ git swith main
+   ```
 
->`$ touch word.md`				// master branch에 word라는 파일 생성
->
->`$ vim about.md`  를 통해 첫 번째 줄에 2라는 내용 저장
->
->`$ git commit - m "commit1"` 	//  commit1 이라는 commit 실행
->
->`$ git switch - c home`				// home 이라는 branch 생성 후 해당 branch로 HEAD 이동
->
->`$ touch alphabet.md	`				// home branch에 alphabet라는 파일 생성
->
->`$ git commit - m "commit2"` 	//  commit2 이라는 commit 실행
->
->`$ git switch master` 				// master branch 로 HEAD 이동
->
->현재까지 branch 갯수 2개(master, home)
->
->현재 log
->
->branch 2개 (master, home)
->
->> master branch에서 실행된 commit 1회 (commit 1)
->>
->> - commit1: word.md 의 첫 번째 줄에 1이라는 내용 추가
->
->>  home branch에서 실행된 commit 2회 (commit 1, commit 2)
->>
->> - commit1:  위의 commit1과 같은 commit임
->> - commit2: alphabet라는 파일 생성
->
->`$ git merge home`
->
->master가 commit2 위치로 이동 . fast forward 라고 함
+    merge까지 진행을 해 주어야 완전한 rebase가 진행되는 것
+
+   ```
+   $ git merge exam-2
+   ```
+
+   
 
 
 
-2-1. 의 경우
 
->`$ touch word.md`				// master branch에 word라는 파일 생성
->
->`$ vim about.md`  를 통해 3 번째 줄에 1이라는 내용 입력 후 저장
->
->`$ git commit - m "commit1"` 	//  commit1 이라는 commit 실행
->
->`$ git switch - c home`				// home 이라는 branch 생성 후 해당 branch로 HEAD 이동
->
->`$ touch alphabet.md	`				// home branch에 alphabet라는 파일 생성
->
->`$ git commit - m "commit2"` 	//  commit2 이라는 commit 실행
->
->`$ git switch master` 				// master branch 로 HEAD 이동
->
->`$ vim about.md`  를 통해 3 번째 줄에 1이라는 내용을 2로 수정 후 저장
->
->`$ git commit - m "commit3"` 	//  commit3 이라는 commit 실행
->
->`$ git switch home` 				// home branch 로 HEAD 이동
->
->> 현재 log
->>
->> branch 2개 (master, home)
->>
->> > master branch에서 실행된 commit 2회 (commit 1, commit 3)
->> >
->> > - commit1: word.md 의 3 번째 줄에 1이라는 내용 추가
->> >
->> > - commit3: word.md 의 3 번째 줄에 1이라는 내용을 2로 변경
->>
->> >  home branch에서 실행된 commit 2회 (commit 1, commit 2)
->> >
->> > - commit1:  위의 commit1과 같은 commit임
->> > - commit2: alphabet라는 파일 생성
->
->`$ git merge home`  // 두 branch 안에 있는 같은 파일인 word.md 안의 같은 줄( 3 번째 줄) 내용이 다르기 때문에 수동으로 고쳐군 다음에 merge 해야 한다.
->
->- 방법 1.  home branch 안에 있는 word.md의 내용 또는 master branch 안에 있는 word.md 내용 둘 중에 하나를 결정하고 남기면 된다.
->
->md파일 열어서 해결 가능
->
->- 방법 2.  vscode로word.md를 연다면, 합칠 수 있는 경우의 수를 보여준다.
->
->`$ git merge home`   // 변경 후 다시 merge
->
->master가 commit3 위치로 이동 (commit 2과 3이 합쳐짐)
->
->내용을 변경하기 전에 `$ git add .`  하면 master|MASGING 라며 마징이 진행중이라고 뜬다.
->
->내용을 변경한 후에 `$ git add .`  하면 commit이 가능해진다.
 
-2 -2. 의 경우
-
->`$ touch word.md`				// master branch에 word라는 파일 생성
->
->`$ vim about.md`  를 통해 3 번째 줄에 1이라는 내용 입력 후 저장
->
->`$ git commit - m "commit1"` 	//  commit1 이라는 commit 실행
->
->`$ git switch - c home`				// home 이라는 branch 생성 후 해당 branch로 HEAD 이동
->
->`$ touch alphabet.md	`				// home branch에 alphabet라는 파일 생성
->
->`$ git commit - m "commit2"` 	//  commit2 이라는 commit 실행
->
->`$ git switch master` 				// master branch 로 HEAD 이동
->
->`$ vim about.md`  를 통해 4 번째 줄에 2라는 내용 추가 저장
->
->`$ git commit - m "commit3"` 	//  commit3 이라는 commit 실행
->
->`$ git switch home` 				// home branch 로 HEAD 이동
->
->현재 log
->
->branch 2개 (master, home)
->
->> master branch에서 실행된 commit 2회 (commit 1, commit 3)
->>
->> - commit1: word.md 의 3 번째 줄에 1이라는 내용 추가
->>
->> - commit3: word.md 의 4 번째 줄에 2라는 내용 추가
->
->>  home branch에서 실행된 commit 2회 (commit 1, commit 2)
->>
->> - commit1:  위의 commit1과 같은 commit임
->> - commit2: alphabet라는 파일 생성
->
->`$ git merge home `   // 두 branch 성공적으로 merge
->
->master가 commit3 위치로 이동 (commit 2과 3이 합쳐짐)
-
-#### - master branch는 구현 branch로만 활용해서 프로젝트를 진행할 때
-
-1. 각자 브랜치에서 작업함 (commit)
-
-2. branch push도 종종함.
-
-3. 적절한 시점에 remote/master와 merge 함.
-
-4. 이 때, Pull Request 를 통해서 리모트(깃허브)에서 원격으로 merge 진행함.
-
-   > git hub에서  repository에 compate & pull request  >> create pull request  >> 승인과정이 이루어져야 merge됨. >> 승인은 본인도, 함께 협업하는 사람도 모두 가능.
-   >
-   > >단, 본인이 pull request 올리고 승인까지 다 해버리면 협업하는 사람은 
-   > >
-   > >깃허브 상에서 수동 merge을 진행해야 함 
-
-5. 리모트 merge 종료 이후, 로컬에서 master 브랜치로 origin / master 를 pull 함.(git pull origin master)
-
-   > 배포했거나 배포할 코드만 master 브랜치에 merge 해서 안정 버전의 코드만 master 브랜치에 둔다.
-
-6. pull 이후에 바로 다른 브랜치 생성 => 다시 위의 작업 반복
