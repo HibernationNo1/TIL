@@ -336,10 +336,33 @@ blob.upload_from_filename(local_file_path)
 
 
 
-###### download_to_filename
+###### download
 
-```python
-blob.download_to_filename(local_file_path)
-```
+- download_to_filename
 
-- `local_file_path` : file을 download할 path
+  ```python
+  blob.download_to_filename(local_file_path)
+  ```
+
+  - `local_file_path` : file을 download할 path
+
+
+
+- dir단위로 download
+
+  ```
+  blobs = bucket.list_blobs(prefix=BLOB_PATH)
+  
+  for blob in blobs:
+      # blob 이름에서 프리픽스를 제거하고 로컬 파일 경로를 생성
+      local_file_path = os.path.join(local_directory, blob.name[len(prefix):])
+  
+      # 로컬 파일 경로의 디렉토리 생성
+      os.makedirs(os.path.dirname(local_file_path), exist_ok=True)
+  
+      # blob을 로컬 파일로 다운로드
+      blob.download_to_filename(local_file_path)
+  ```
+
+  - `BLOB_PATH` : bucket내 dir의 path
+
