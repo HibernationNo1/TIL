@@ -91,3 +91,7 @@ volume을 delete할 땐 dashboard에서 진행해도 되지 않는다.
 $ kubectl delete pvc pvc_name -n project-pipeline
 ```
 
+
+
+
+

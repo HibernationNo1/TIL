@@ -126,19 +126,23 @@ apiVersion: kubeflow.org/v1beta1
 kind: Experiment
 metadata:
   namespace: pipeline
-  name: katib-local		# katib-docker
+  name: katib-local             # katib-docker
 spec:
   objective:
     type: maximize
-    goal: 0.85
-    objectiveMetricName: mAP
+    goal: 0.99
+    objectiveMetricName: dv_mAP
+    additionalMetricNames:
+      - mAP
     metricStrategies:
     - name: mAP
-      value: max 
+      value: max
+    - name: dv_mAP
+      value: max
   algorithm:
     algorithmName: random
   parallelTrialCount: 1
-  maxTrialCount: 12
+  maxTrialCount: 20
   maxFailedTrialCount: 5
   parameters:
     - name: lr
@@ -147,9 +151,9 @@ spec:
         list:
           - "0.0001"
           - "0.0005"
-          - "0.001"
           - "0.00005"
           - "0.00001"
+          - "0.000005"
     - name: swin_drop_rate
       parameterType: categorical
       feasibleSpace:
@@ -163,12 +167,11 @@ spec:
       parameterType: categorical
       feasibleSpace:
         list:
-          - "3"
-          - "5"
           - "7"
           - "9"
           - "11"
-    - name: swin_mlp_ratio
+          - "13"
+    - name: swin_mlp_ratio      
       parameterType: categorical
       feasibleSpace:
         list:
@@ -208,14 +211,14 @@ spec:
           spec:
             containers:
               - name: training-container
-                image: 	localhost:5000/katib:0.2     # docker.io/hibernation4958/katib:0.1
+                image:  localhost:5000/katib:0.1     # docker.io/hibernation4958/katib:0.1
                 command:
                   - "python"
                   - "main.py"
                   - "--katib"
                   - "--cfg_train=config/train_cfg.py"
                   - "--model=MaskRCNN"
-                  - "--epoch=50"
+                  - "--epoch=25"
                   - "--lr=${trialParameters.lr}"
                   - "--swin_drop_rate=${trialParameters.swin_drop_rate}"
                   - "--swin_window_size=${trialParameters.swin_window_size}"
@@ -335,12 +338,20 @@ $ kubectl -n project-pipeline get experiment katib -o yaml
 
 
 
+- delete
+
+  ```
+  kubectl delete experiment -n pipeline <experiment-name>
+  ```
+
+  
+
 ★★★★★
 
 experiment의 hyperparameter조합 결과는 해당 experiment의 Type이 `Succeeded`인 경우에만 알 수 있다.
 
 ```
-$ kubectl delete experiment -n pipeline <experiment-name>
+$ kubectl get experiment -n pipeline <experiment-name>
 ```
 
 ```
@@ -360,6 +371,31 @@ experiment-name   Succeeded   True     23m
 ```
 $ kubectl -n project-pipeline get experiment katib -o yaml
 ```
+
+
+
+Experiment details의 Best trial performance값은 Latest value가 출력되는데
+
+```
+$ kubectl describe experiment -n pipeline katib-local
+```
+
+위 명령을 통해 아래 결과를 확인할 수 있다.
+
+```
+Observation:
+      Metrics:
+        Latest:  0.6567
+        Max:     0.8567
+        Min:     0.0
+        Name:    mAP
+        Latest:  0.2408
+        Max:     0.4542
+        Min:     0.0
+        Name:    dv_mAP
+```
+
+
 
 
 
@@ -393,6 +429,8 @@ experiment의 `Created`, `Running`,  `Succeeded`여부를 확인할 수 있다.
 - **`runningTrialList`** : 진행중인 trial의 list를 출력
 
 - **`succeededTrialList`** : 성공한 trial list를 출력
+
+
 
 
 

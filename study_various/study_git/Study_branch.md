@@ -169,7 +169,7 @@ remote branch확인하는 명령어
   remote의 branch를 local로 받아온다.
 
   ```
-  $ git swith -t origin/remote-branch
+  $ git switch -t origin/remote-branch
   ```
 
   이후 pull까지 진행해본다면
