@@ -26,6 +26,22 @@ object store 또는 PVC에 event file을 save하여 tensorboard viewer를 사용
 
 
 
+check
+
+- tensorboard
+
+  ```
+  $ kubectl get tensorboards -n <namespace>
+  ```
+
+- pod
+
+  ```
+  $ kubectl get pod -n <namespace> | grep <tensorboard name> 
+  ```
+
+
+
 tip)
 
 tensorboard를 만들 때 시점의 path의 event file만 읽어온다.
@@ -39,4 +55,28 @@ tensorboard를 만들 때 시점의 path의 event file만 읽어온다.
 **CONNECT**
 
 tensorboard viewer를 확인할 수 있다.
+
+```
+$ kubectl port-forward <tensorboard_pod_name> <local_port>:<tensorboard_port> -n <your_namespace>
+```
+
+- `<tensorboard_port>`: 6006
+
+  > 예시
+  >
+  > ```
+  > $ kubectl port-forward pipeline-project-6cd9c947c6-kp8q8 6006:6006 -n pipeline
+  > ```
+
+이후 `http://localhost:6006`로 접속
+
+만일 연결이 거부된 경우 curl으로 접속 명령어 실행 후 다시 `http://localhost:6006`로 접속
+
+```
+$ curl http://127.0.0.1:6006
+```
+
+
+
+
 
