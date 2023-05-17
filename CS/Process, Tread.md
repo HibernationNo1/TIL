@@ -1,4 +1,4 @@
-# Process
+#  Process
 
 process란 실행중인 program이라고 할 수 있는데, 이는 실행파일(program)이 memory에 적재되어 CPU를 할당받아 실행(연산)되는 것을 의미한다.
 
@@ -197,14 +197,14 @@ Thread는 한 process내에서 실행되는 동작을 의미하며, 독립적으
 
 Multi thread란 하나의 process내에 여러개의 thread가 실행되는 것을 의미한다.
 
-하나의 process내에서도 여러 기능이 있고, 이를 수행하기 위해 multi tread가 사용되게 되는데
+하나의 process내에서도 여러 기능이 있고, 이를 수행하기 위해 multi thread가 사용되게 되는데
 
 이 또한 multi process의 concurrency처럼 context switching이 이루어지며 time sharing system으로 진행되는 것이다.
 
 - 각 thread는 process의 stack memory를 제외한 나머지 memory영역을 공유할 수 있다.
 - 각 thread는 독립적인 stack memory와 PC register가 필요하다.
-  - tread가 독립적인 함수를 호출하기 위해서는 인자 전달, return address저장, 함수 내 지역변수 저장 등을 위한 stack memory공간을 필요로 한다.
-  - process내에서도 여러개의 tread끼리 context switching이 이루어지며 작업이 진행되기 때문에 PC register에 code address가 저장되어 있어야 한다.
+  - thread가 독립적인 함수를 호출하기 위해서는 인자 전달, return address저장, 함수 내 지역변수 저장 등을 위한 stack memory공간을 필요로 한다.
+  - process내에서도 여러개의 thread끼리 context switching이 이루어지며 작업이 진행되기 때문에 PC register에 code address가 저장되어 있어야 한다.
 
 
 
@@ -220,7 +220,7 @@ process는 운영체제로부터 자원들 할당받는 작업의 단위이고, 
 
   - 많은 memory공간과 CPU의 시간을 차지하지만, 안정성이 높다.
 
-- single process의 multi tread로 사용하는 경우
+- single process의 multi thread로 사용하는 경우
 
   - data의 공유가 빈번하거나 자원을 효율적으로 사용해야 되는 경우 유리하다.
 
@@ -230,7 +230,7 @@ process는 운영체제로부터 자원들 할당받는 작업의 단위이고, 
 
   - tread간 같은 자원을 공유하기 때문에 동일안 자원에 동시에 접근하여 엉뚱한 값을 읽거나 수정하는 문제가 발생할 수 있다.(**동기와 문제**) 
 
-process간의 통신(IPC)보다 tread간의 통신 비용이 적기 때문에 overhead가 적다.
+process간의 통신(IPC)보다 thread간의 통신 비용이 적기 때문에 overhead가 적다.
 
 
 
@@ -244,7 +244,7 @@ process간의 통신(IPC)보다 tread간의 통신 비용이 적기 때문에 ov
 
 
 
-- race condition(경쟁 상황)
+- **race condition**(경쟁 상황)
 
   특정 변수 `count`의 값을 1 올리는 `count++`의 명령을 수행하는 경우 CPU는 3개의 작은 동작(atomic poerations)를 수행한다.
 
@@ -252,42 +252,60 @@ process간의 통신(IPC)보다 tread간의 통신 비용이 적기 때문에 ov
   2. `count`변수의 값을 1 증가시킨다
   3. 변경된 `count`변수의 값을 저장한다.
 
-  만일 여러개의 tread가 공유 메모리에 접근하여 같은 data에 대해 위와 같은 동작을 수행하는 경우 
+  만일 여러개의 thread가 공유 메모리에 접근하여 같은 data에 대해 위와 같은 동작을 수행하는 경우 
 
-  각각의 process/tread에 의한 atomic poerations의 순서가 겹치는 경우가 발생할 수 있다. 이런 경우 의도했던 동작이 이루어지지 않을 수 있다.
+  각각의 process/thread에 의한 atomic poerations의 순서가 겹치는 경우가 발생할 수 있다. 이런 경우 의도했던 동작이 이루어지지 않을 수 있다.
 
   이를 race condition 라고 한다.
 
-- critical section(임계 영역)
+- **critical section**(임계 영역)
 
-  둘 이상의 process/tread가 동시에 공유 memory상의 동일한 자원에 접근하도록 하는 code부분을 의미한다.
+  둘 이상의 process/thread가 동시에 공유 memory상의 동일한 자원에 접근하도록 하는 code부분을 의미한다.
 
   여기서 race condition가 발생하지 않기 위해서는 
 
-  1. process/tread가 critical section내의 code에 진입할 때 진입 허기를 요청하도록 해야 한다.
-  2. 진입 허가 요청(entry section)에서 진입이 허가되면, critical section부분이 끝난 우 exit section으로 퇴출을 하게 된다.
-
-  위 1, 2번 동작이 이루어지는 것을 critical section내의 code가 '**atomically적으로 실행된다**고' 한다.
-
+  1. process/thread가 critical section내의 code에 진입할 때 진입 허기를 요청하도록 해야 한다.
+  2. 진입 허가 요청(entry section)에서 진입이 허가되면, critical section부분이 끝난 후 exit section으로 퇴출을 하게 된다.
+  3. 특정 process/thread가 critical section내의 code에 진입한 상태하면, 또 다른 process/thread는 critical section진입이 거부된다.
   
+  위 1, 2번 동작이 이루어지는 것을 critical section내의 code가 '**atomically적으로 실행된다**고' 한다.
+  
+- **Deadlock**(교착상태)
+
+  둘 이상의 process/thread가 또 다른 process/thread가 점유하고 있는 자원을 서로 기다릴 때, 무한 대기에 빠지는 상황
+
+  > 예시
+  >
+  > - `resource_1`을 사용하는 `thread_1`가 있다. 이 때 `resource_1`은 이미 `thread_1`에 의해 사용되고 있기 때문에 lock이 걸려 있다.
+  >
+  > - `resource_2`를 사용하는 `thread_2`가 있다. 이 때 `resource_2`는 이미 `thread_2`에 의해 사용되고 있기 때문에 lock이 걸려 있다.
+  >
+  > 위 두 조건의 상황에서
+  >
+  > `thread_1`이 `resource_2`의 data를 사용할 상황이 생겨 접근하지만, lock이 걸려 있어 사용하지 못하는 상태가 되면 작업이 일시중지 상태가 되고
+  >
+  > `thread_2`또한 `resource_1`의 data를 사용할 상황이 생겨 접근하지만, lock이 걸려 있어 사용하지 못하는 상태가 되면
+  >
+  > 무한 대기에 빠지게 된다.
 
 
 
-#### mutex
+## mutex
 
-1개의 tread(또는 process)만이 공유 memory에 접근할 수 있도록 하여 경쟁 상황(race condition)을 방지하는 기법이다.
+1개의 process/tread만이 공유 memory에 접근할 수 있도록 하여 경쟁 상황(race condition)을 방지하는 기법이다.
 
-공유 자원을 점유하는 tread(또는 process)가 lock을 걸면, 다른 tread(또는 process)는 unlock상태가 될 때까지 해당 자원에 접근할 수 없다.
-
-
+공유 자원을 점유하는 process/thread가 lock을 걸면, 다른 process/thread는 unlock상태가 될 때까지 해당 자원에 접근할 수 없다.
 
 
 
-#### semaphore
 
-S개의 tread(또는 process)만이 공유 memory에 접근할 수 있도록 제어하는 기법이다.
+
+## semaphore
+
+S(2 이상)개의 process/thread만이 공유 memory에 접근할 수 있도록 제어하는 기법이다.
 
 1. 정수형 변수 S(semaphore)값을 가용한 자원의 수로 초기화한다.
-2. 특정 tread(또는 process)가 자원에 접근할 때는 `S--`연산을 수행
-3. 접근했던 tread(또는 process)가 다시 연결을 끊으면 `S++`연산을 수행한다.
-4. S값이 0인 경우 모든 자원이 사용중임을 의미하고, 이후 자원을 사용하려는 tread(또는 process)는 S값이 0보다 커질 때까지 block된다.
+2. 특정 process/thread가 자원에 접근할 때는 `S--`연산을 수행
+3. 접근했던 process/thread가 다시 연결을 끊으면 `S++`연산을 수행한다.
+4. S값이 0인 경우 모든 자원이 사용중임을 의미하고, 이후 자원을 사용하려는 process/thread는 S값이 0보다 커질 때까지 block된다.
+
