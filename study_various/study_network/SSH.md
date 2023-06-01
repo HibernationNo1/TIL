@@ -222,28 +222,67 @@ extension에서 `remote-ssh` 검색해서 설치
 
 **error**  
 
-외부에서 filezilla, putty 다 되는데 vscode만 되지 않고
+- 외부에서 filezilla, putty 다 되는데 vscode만 되지 않고
 
-bash에서 `ssh username@IP` 명령어 입력 시 아래 error가 뜨는 경우
+  bash에서 `ssh username@IP` 명령어 입력 시 아래 error가 뜨는 경우
 
-```
-ECDSA host ket for 192.168.219.100 has changed and you have requsted strict checking.
-Host key verification failed.
-```
+  ```
+  ECDSA host ket for 192.168.219.100 has changed and you have requsted strict checking.
+  Host key verification failed.
+  ```
 
-`192.168.219.100`이라는 ip로 기존에 접속한 적이 있는 서버와 RAS 공유키를 교환한 상태에서, `192.168.219.100`이라는 서버가 바뀐 경우 발생한다.
+  `192.168.219.100`이라는 ip로 기존에 접속한 적이 있는 서버와 RAS 공유키를 교환한 상태에서, `192.168.219.100`이라는 서버가 바뀐 경우 발생한다.
 
-아래 명령어로 초기화 진행
+  아래 명령어로 초기화 진행
 
-```
-$ ssh-keygen -R 192.168.219.100
-```
+  ```
+  $ ssh-keygen -R 192.168.219.100
+  ```
 
-```
-username$ ssh-keygen -R 192.168.219.100
-# Host 192.168.2119.100 found: line 3 type RSA
-/User/username/.ssh/known_hosts updated.
-original contents retained as /User/username/.ssh/known_hosts.old
-```
+  ```
+  username$ ssh-keygen -R 192.168.219.100
+  # Host 192.168.2119.100 found: line 3 type RSA
+  /User/username/.ssh/known_hosts updated.
+  original contents retained as /User/username/.ssh/known_hosts.old
+  ```
 
-이후 접속 되는것 확인
+  이후 접속 되는것 확인
+
+
+
+
+
+- 프로세스에서 없는 파이프에 쓰려고 했습니다.
+
+  ```
+  [15:23:31.588] > ssh: connect to host 192.168.219.100 port 22: Connection refused
+  > 프로세스에서 없는 파이프에 쓰려고 했습니다.
+  [15:23:32.777] "install" terminal command done
+  [15:23:32.778] Install terminal quit with output: 프로세스에서 없는 파이프에 쓰려고 했습니다.
+  [15:23:32.778] Received install output: 프로세스에서 없는 파이프에 쓰려고 했습니다.
+  [15:23:32.778] Failed to parse remote port from server output
+  [15:23:32.780] Resolver error: Error: 
+  	at m.Create (c:\Users\마이노\.vscode\extensions\ms-vscode-remote.remote-ssh-0.102.0\out\extension.js:1:584145)
+  	at t.handleInstallOutput (c:\Users\마이노\.vscode\extensions\ms-vscode-remote.remote-ssh-0.102.0\out\extension.js:1:582705)
+  	at t.tryInstall (c:\Users\마이노\.vscode\extensions\ms-vscode-remote.remote-ssh-0.102.0\out\extension.js:1:681881)
+  	at async c:\Users\마이노\.vscode\extensions\ms-vscode-remote.remote-ssh-0.102.0\out\extension.js:1:644110
+  	at async t.withShowDetailsEvent (c:\Users\마이노\.vscode\extensions\ms-vscode-remote.remote-ssh-0.102.0\out\extension.js:1:647428)
+  	at async t.resolve (c:\Users\마이노\.vscode\extensions\ms-vscode-remote.remote-ssh-0.102.0\out\extension.js:1:645160)
+  	at async c:\Users\마이노\.vscode\extensions\ms-vscode-remote.remote-ssh-0.102.0\out\extension.js:1:720916
+  [15:23:32.787] ------
+  ```
+
+  경우의 수
+
+  - client와 sever가 같은 공유기로 묶여있는 경우
+
+    같은 내부 IP가 할당되었는지 확인
+
+    > 192.168.219.100 으로 client와 server가 같은 IP를 사용하고 있는 경우 발생한다.
+    >
+    > 공유기를 통해 DHCP IP 고정할당을 설정해야 함 
+
+  
+
+
+
