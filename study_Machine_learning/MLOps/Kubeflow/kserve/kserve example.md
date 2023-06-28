@@ -97,7 +97,7 @@ spec:
    import requests
    import json
    
-   def connet_client(user_n, , name_space, host, pw,
+   def connet_client(user_n, name_space, host, pw,
                      return_session = False):   
        session = requests.Session()
        response = session.get(host)
@@ -126,7 +126,7 @@ spec:
                         'name_space': 'pipeline', 
                         'host': 'http://localhost:8080', 
                         'pw': '4958',
-                       'return_session' = True}
+                        'return_session' : True}
        client, session = connet_client(**dashboard_cfg) 
    
        session_cookie = session.cookies.get_dict()
@@ -137,8 +137,8 @@ spec:
    
        HOST = "http://127.0.0.1:8081"		# port-forward한 port를 명시
    
-       headers = {'Host': "sklearn-iris-python-predictor-default.pipeline.svc.cluster.local"}
-       res = session.post(f"{HOST}/v1/models/sklearn-iris-python:predict", 
+       headers = {'Host': "sklearn-iris-predictor-default.pipeline.svc.cluster.local"}
+       res = session.post(f"{HOST}/v1/models/sklearn-iris:predict", 
                            headers=headers, 
                            cookies=session_cookie,
                            data=json.dumps(sklear_iris_input))
