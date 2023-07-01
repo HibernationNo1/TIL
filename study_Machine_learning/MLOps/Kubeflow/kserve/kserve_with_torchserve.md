@@ -55,7 +55,7 @@ $ torch-model-archiver \
 	--extra-files extra \
 	--handler handler.py \
 	--runtime python \
-	--requirements-file extra/requirements.txt
+	--requirements-file requirements.txt
 ```
 
 > `--model-name`에 할당한 이름에 `.mar`라는 format으로 file이 만들어진다.
@@ -80,36 +80,15 @@ $ torch-model-archiver \
 
 - `--requirements-file`: inference과정에서 추가로 install해야 할 module을 적어놓은 txt file의 path를 지정한다. 
 
-  해당 option은 **kserve를 통해 배포**할 때 pod의 환경에 modules를 install하는 경우 사용된다.
+  `config.properties`file에 `install_py_dep_per_model=true`를 포함시켜야 한다.
 
-  해당 option을 사용하려면 아래의 조건이 만족되어야 한다.
+  **사용하는 경우**
 
-  - `config.properties`file에 `install_py_dep_per_model=true`를 포함시켜야 한다.
-  - 해당 option에 지정할 requirements.txt의 path는 `--export-path`에 지정될 dir에 포함되어야 한다.
+  **kserve를 통해 배포**할 때 pod의 환경에 library를 install하는 경우 사용된다.
 
-  > 예시
-  >
-  > **requirements.txt**
-  >
-  > ```
-  > opencv-python
-  > pycocotools
-  > matplotlib
-  > terminaltables
-  > nvgpu==0.9.0
-  > pynvml==11.4.1
-  > Pillow
-  > addict
-  > mmcv
-  > ```
-  >
-  > 해당 package는 `torchserve --start`명령을 실행한 환경의 library를 참조한다.
-  >
-  > - GTX3060기준, Nvidia driver version : `470.182.03` 일 때 pynvml의 최신 `11.5.0` version은 호환되지 않는다. 
-  >
-  >   `11.4.1`은 2021년에, `11.5.0`는 2023년 release된 version임
-  >
-  > kserve를 통해 배포하는 것이 아니라면, Torchserve의 package는 `torchserve --start`명령이 실행되는 환경속에서 작동된다.
+  `requirements.txt`는  kserve의 환경이 될 docker container내부에서 install이 가능한 library만 포함해야 한다.
+
+  > kserve의 container image의 환경이 python3.7인데 python3.8에서만 install가능한 library가 있다면 requirements.txt의 모든 lib이 설치되지 않는다
 
 - `--export-path`: 생성된 model archive file(`.mar`)이 저장될 directory를 지정한다. 
 
@@ -128,21 +107,48 @@ $ torch-model-archiver \
 properties는 지정할 수 있는 사용자가 torchserve에 대한 설정을 결정한다.
 
 ```
-inference_address=http://0.0.0.0:8085
-management_address=http://0.0.0.0:8085
-metrics_address=http://0.0.0.0:8082
+inference_address=http://0.0.0.0:8095
+management_address=http://0.0.0.0:8091
+metrics_address=http://0.0.0.0:8092
 grpc_inference_port=7070
 grpc_management_port=7071
+enable_envvars_config=true	
 enable_metrics_api=true
 metrics_format=prometheus
-config_path=extra/config
+NUM_WORKERS=4
+number_of_netty_threads=4
+job_queue_size=10
+load_models=all
+number_of_gpu=1
 gpu_id=0
-model_store=/mnt/models/model-store	# torchserve구동 시 model file의 저장 위치 지정
-install_py_dep_per_model=true		# requriements.txt를 설치하기 위해
-model_snapshot={"name": "startup.cfg", "modelCount": 1, "models": {"my_model": {"1.0": {"defaultVersion": true, "marName": "my_model.mar", "minWorkers": 1, "maxWorkers": 3, "batchSize": 4, "maxBatchDelay": 100, "responseTimeout": 120}}}}
+install_py_dep_per_model=true
+model_store=/mnt/models/model-store	
+model_snapshot={"name": "startup.cfg", "modelCount": 1, "models": {"pipeline": {"1.0": {"defaultVersion": true, "marName": "pipeline.mar", "minWorkers": 1, "maxWorkers": 3, "batchSize": 4, "maxBatchDelay": 100, "responseTimeout": 120}}}}
 ```
 
-- `install_py_dep_per_model`: kserve에 의한 배포를 진행할 때 inference를 진행할 pod에 설치할 module을 적어놓은 requirements.txt를 전달한 경우 추가
+- `enable_envvars_config=true`: TorchServe가 환경 변수를 사용하여 구성 설정을 오버라이드할 수 있도록 설정한다.
+
+-  `enable_metrics_api=true`: TorchServe가 지표(metrics) API를 사용할 것인지를 정의한다.
+
+- `metrics_format=prometheus`: TorchServe가 어떤 유형의 메트릭 시스템을 사용하는지를 정의한다.
+
+- `NUM_WORKERS=`: orchServe에서 사용하는 워커(worker) 프로세스의 수를 지정한다.
+
+- `number_of_netty_threads=`: Netty를 사용하여 비동기 네트워킹을 처리하는 데 사용되는 스레드 수를 지정한다. torchserve의 network처리 성능에 영향을 미친다
+
+- `job_queue_size=`: TorchServe의 작업 큐 크기를 지정한다.
+
+- `load_models=all`: TorchServe가 시작될 때 로드할 모델을 지정한다.
+
+   `all` 값은 모든 사용 가능한 모델을 로드하도록 TorchServe에 지시한다.
+
+- `number_of_gpu=1`: TorchService에서 사용할 GPU의 갯수를 지정한다.
+
+- `gpu_id=0`: 사용할 gpu 의 id를 지정한다.
+
+-  `install_py_dep_per_model=true`: kserve에 의한 배포를 진행할 때 inference를 진행할 pod에 설치할 module을 적어놓은 requirements.txt를 전달한 경우 추가한다.
+
+- `model_store=` kserve의  `storageUri`로부더 download한 model(`.mar`)을 위치할 path를 지정한다
 
 
 
@@ -224,17 +230,235 @@ kind: "InferenceService"
 metadata:
   annotations:
     isdecar.istio.is/inject: "false"
-  name: "{InferenceService_name}"
+  name: "test-01"
 spec:
   predictor:
-    model:
-      modelFormat:
-        name: pytorch
-      storageUri: "{google storage path}"
+    pytorch:
+      storageUri: "gs://bucket_name/dir/dir_name"
+      resources:
+        limits:
+          nvidia.com/gpu: 1
+          cpu: "4" 
+          memory: "4Gi"
+        requests:
+          cpu: "1"
+          memory: "2Gi" 
+      image: "192.168.219.100:5000/kserve:0.1"
 ```
 
-> - storageUri은 `gs://bucket_name/dir`과 같이 bucket하위 최소 1층의 dir의 위치에 있어야 한다.
+- `storageUri`:  `gs://bucket_name/dir`과 같이 bucket하위 최소 1층의 dir의 위치에 있어야 한다.
+
+- `resources`: kserve/InferenceService에 의해 만들어진 pod에 할당된 resource의 최소, 최대 할당값을 지정한다
+
+  - `nvidia.com/gpu: 1`: 사용할 GPU의 개수를 지정한다.
+
+    GPU를 사용하기 위해 해당 문구는 반드시 포함되어야 한다.
+
+- `image`: kserve/InferenceService에 의해 만들어진 pod의 환경을 구성할 docker image를 지정한다
+
+  InferenceService가 GPU를 사용하는 경우 docker image pull할 때 `{image_name}-gpu`으로 pull을 하게 된다.
+
+  > `hibernation4958/kserve:0.1`로 할당한 경우 `hibernation4958/kserve:0.1-gpu`를 pull하게 된다
+
+  ```
+  image: "192.168.219.100:5000/kserve:0.1"
+  ```
+
+  위 처럼 특정  IP의 registry로부터 pull을 하려면, 해당 InferenceService를 배포하는 device에서 docker의 demon에 아래 내용을 추가해야 한다.
+
+  ```
+  $ vi /etc/docker/daemon.json
+  ```
+
+  ```
+  {
+  
+   "insecure-registries": ["192.168.219.100:5000"]
+  
+  }
+  ```
+
+  ```
+  $ systemctl restart docker
+  ```
+
+  
+
+
+
+**tip**
+
+- kserve/InferenceService에 의해 만들어진 pod가 반복적으로 kill되는 경우
+
+  해당 pod에 의해 torch-archrive명령어가 실행될 때 아래와 같이 실행할 수 없는 code가 포함된 경우가 있다.
+
+  ```
+  import subprocess
+  
+  command = "pip install mmcv-full==1.5.3 -f https://download.openmmlab.com/mmcv/dist/cu112/torch1.13.0/index.html"
+  subprocess.call(command, shell=True)
+  ```
+
+  > pod의 환경에 설치가 불가능한 module을 설치하고자 하는 python code
+  >
+
+  
+
+### docker image
+
+pytorch를 사용하여 학습된 model인 경우 [`pytorch/torchserve-kfs`](https://hub.docker.com/r/pytorch/torchserve-kfs)  의 image를 기반으로 환경우 구성하는게 좋다
+
+kserve의 example로 제공되는 InferenceService 또한 해당 image를 사용한다
+
+> pod에 어떤 container가 사용되는지 확인하는 방법
 >
+> ```
+> $ kubectl describe pod pod_name -n pipeline
+> ```
+>
+> ```
+> ...
+>   kserve-container:
+>     Container ID:  docker://443bdd2498a05531f9a0e336cd4d8225eef04aa2fb06e473dfb24e842e4731fd
+>     Image:         index.docker.io/pytorch/torchserve-kfs@sha256:6daae3c54cf6b1785c4eb9849c4d1b88adf04625057c4026126b1b6a3cd27f5b
+>     Image ID:      docker-pullable://pytorch/torchserve-kfs@sha256:6daae3c54cf6b1785c4eb9849c4d1b88adf04625057c4026126b1b6a3cd27f5b
+> ...
+> ```
+>
+> `pytorch/torchserve-kfs`라는 container임을 확인
+>
+> - DIGEST 확인: `kfs@sha256:6daae3c54cf6b1785c4eb9849c4d1b88adf04625057c4026126b1b6a3cd27f5b`
+>
+>   DIGEST는 docker가 push된 registry에서 tag를 확인하는데 사용된다
+>
+> 해당 image를 기반으로 새로운 docker image생성, 필요한 package를 install한다
+
+
+
+**example**: 아래는 ubuntu 20.04에 python3.8의 환경을 제공하는 dockerfile이다.
+
+> `pytorch/torchserve-kfs`를 분해하여 재조립한 docekrfile이다.
+>
+> pip를 통한 library 설치 시 해당 환경에 알맞는 version을 명시해야 한다.
+>
+> - requirements.txt
+>
+> ```
+> kserve==0.10.2
+> fastapi==0.88.0
+> transformers==4.30.2
+> captum==0.6.0
+> 
+> torchserve==0.8.1
+> 
+> pycocotools==2.0.6
+> matplotlib==3.7.1
+> terminaltables==3.1.0
+> nvgpu==0.9.0
+> pynvml==11.4.1
+> Pillow==9.5.0
+> addict==2.4.0
+> tensorboard==2.13.0
+> protobuf==3.19.6
+> requests==2.28.2
+> urllib3==1.26.14
+> chardet==5.1.0
+> ```
+
+```
+FROM ubuntu:20.04
+LABEL org.opencontainers.image.ref.name=ubuntu
+LABEL org.opencontainers.image.version=20.04
+
+ARG TARGETARCH=amd64
+
+# ADD file:d05d1c0936b046937bd5755876db2f8da3ed8ccbcf464bb56c312fbc7ed78589 in / 
+CMD ["/bin/bash"]
+
+# install package
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends curl vim sudo wget
+RUN useradd -m winter && echo "winter:4958" | chpasswd && adduser winter sudo
+
+# set CUDA
+ENV NVARCH=x86_64
+ENV NVIDIA_REQUIRE_CUDA=cuda>=11.3 brand=nvidia,driver>=470,driver<471 
+ENV NV_CUDA_COMPAT_PACKAGE=cuda-compat-11-3
+ENV NV_CUDA_CUDART_PACKAGE=cuda-cudart-11-3
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends gnupg2 ca-certificates && \
+    curl -fsSL https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/${NVARCH}/3bf863cc.pub | apt-key add - && \
+    echo "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/${NVARCH} /" > /etc/apt/sources.list.d/cuda.list && \
+    rm -rf /var/lib/apt/lists/* 
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ${NV_CUDA_CUDART_PACKAGE}\
+    ${NV_CUDA_COMPAT_PACKAGE} && \
+    rm -rf /var/lib/apt/lists/* 
+RUN echo "/usr/local/nvidia/lib" >> /etc/ld.so.conf.d/nvidia.conf && \
+    echo "/usr/local/nvidia/lib64" >> /etc/ld.so.conf.d/nvidia.conf 
+ENV PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ENV LD_LIBRARY_PATH=/usr/local/nvidia/lib:/usr/local/nvidia/lib64
+ENV NVIDIA_VISIBLE_DEVICES=all
+ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
+COPY ./copy/NGC-DL-CONTAINER-LICENSE /
+
+# install python3, package-python, java
+ENV PYTHONUNBUFFERED=TRUE
+ARG PYTHON_VERSION=3.8
+COPY ./copy/home/venv /home/venv 
+RUN apt-get update --fix-missing && apt-get upgrade -y && \
+    apt-get install -y software-properties-common && \
+    add-apt-repository -y ppa:deadsnakes/ppa && \
+    apt remove python-pip && \
+	apt-get install -y python3-pip && \
+    DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
+    python$PYTHON_VERSION \
+    python3-distutils \
+    python$PYTHON_VERSION-dev \
+    python$PYTHON_VERSION-venv \
+    openjdk-17-jdk \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/* \
+    && cd /tmp 
+# create symbolic link for use `python` command for `python3`
+RUN ln -s /usr/bin/python3 /usr/local/bin/python
+
+ENV PATH=/home/venv/bin:/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+# COPY
+RUN useradd -m model-server && \
+    mkdir -p /home/model-server/tmp && \
+    chown -R model-server /home/model-server && \
+    mkdir /home/model-server/model-store && \
+    chown -R model-server /home/model-server/model-store 
+COPY ./copy/kserve_wrapper /home/model-server/kserve_wrapper
+COPY ./copy/requirements.txt /home/model-server/requirements.txt
+WORKDIR /home/model-server
+
+# install requirements
+RUN pip install -r requirements.txt
+RUN pip install opencv-python-headless
+RUN pip install torch==1.12.0+cu113  -f https://download.pytorch.org/whl/torch_stable.html
+
+# set entryporint for kserve
+COPY ./copy/dockerd-entrypoint.sh /usr/local/bin/dockerd-entrypoint.sh 
+RUN chmod +x /usr/local/bin/dockerd-entrypoint.sh && \
+    chmod +x /home/venv/bin
+
+USER model-server
+EXPOSE 7070/tcp 7071/tcp 8080/tcp 8081/tcp 8082/tcp
+ENV TEMP=/home/model-server/tmp
+ENTRYPOINT ["/usr/local/bin/dockerd-entrypoint.sh"]
+CMD ["serve"]
+
+# docker build docker --no-cache -t hibernation4958/kserve:0.1-gpu
+# docker push hibernation4958/kserve:1.8-gpu
+
+# docker build docker --no-cache -t localhost:5000/kserve:0.1-gpu
+# docker push localhost:5000/kserve:0.1-gpu
+```
+
+
 
 
 
@@ -333,6 +557,18 @@ spec:
 
 
 
+**tip**
+
+만일 pod는 Runinng인데 torchserve가 멈추거나 worker가 죽는 경우 해당 pod에 접속해서 여러 명령어를 통해 package또는 library version을 확인하자
+
+```
+kubectl exec -it pod_name -n pipeline -- /bin/bash
+```
+
+
+
+
+
 
 
 ### ex
@@ -345,13 +581,20 @@ kind: "InferenceService"
 metadata:
   annotations:
     isdecar.istio.is/inject: "false"
-  name: "pipeline-test"
+  name: "test-01"
 spec:
   predictor:
-    model:
-      modelFormat:
-        name: pytorch
+    pytorch:
       storageUri: "gs://pipeline_kserve_test_01/dir/gs"
+      resources:
+        limits:
+          nvidia.com/gpu: 1
+          cpu: "4" 
+          memory: "4Gi"
+        requests:
+          cpu: "1"
+          memory: "2Gi" 
+      image: "hibernation4958/kserve:0.1"
 ```
 
 
@@ -392,5 +635,117 @@ $ SERVICE_HOSTNAME=$(kubectl get inferenceservice pipeline-test -n pipeine -o js
 
 ```
 $ curl -v -H "Host: ${SERVICE_HOSTNAME}" http://127.0.0.1:{local_port}/v1/models/${MODEL_NAME}:predict -d @./input.json
+```
+
+
+
+또는 , 특정 image를 request로 보내는 python code
+
+```python
+import base64
+import json
+import argparse
+import os, os.path as osp
+import cv2
+import requests
+
+URL = "http://localhost:8095/predictions/pipeline"
+ACCEPT_MB = 5
+class Kserve_cfg():
+    URL = "http://127.0.0.1:8081/v1/models/pipeline:predict"
+    headers = dict(Host = 'test-02.pipeline.svc.cluster.local')
+
+
+# python request.py 20230219_102814_3.jpg --kserve
+def parser_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("filename", help="converts image to bytes array",
+                        type=str)
+    parser.add_argument("--kserve", help="converts image to bytes array",
+                        action='store_true')
+    
+    args = parser.parse_args()
+    return args
+
+def resize_image(file_name, scale):    
+    file_path = osp.join(os.getcwd(), file_name)
+    if not osp.isfile(file_path):
+        raise OSError(f"The file does not exist! \n file path: {file_path}")
+    
+    org_img = cv2.imread(file_path)
+    h, w, c = org_img.shape
+    
+    re_h, re_w = int(h*scale), int(w*scale)
+    re_img = cv2.resize(org_img, (re_w, re_h))
+    
+    print(f"Resizing from [{h}, {w}, {c}] to [{re_h}, {re_w}, {c}]")
+    
+    return re_img
+
+
+def send_request_get_response(request, kserve = False):    
+    if kserve:
+        response = requests.post(Kserve_cfg.URL, json=request, headers=Kserve_cfg.headers)
+        print(f"\n    request: {Kserve_cfg.URL}\n    header: {Kserve_cfg.headers}")
+    else:
+        response = requests.post(URL, json=request)
+        print(f"Send request to {URL}")
+    
+    # show response
+    if not response.text == '':
+        license_info = response.json() # ['response']
+        print(f"license_info : {license_info}")
+        exit()
+        if license_info is None or license_info == 'None': 
+            print(f"License plate detection failed.")
+            exit()
+        print(f"License plate information")
+        for key, value in response.json()['response'][0].items():
+            if key in ['width', 'height', 'board_center_p']: continue
+            print(f"	{key}: {value}")
+    else:
+        print("Request has been denied.")
+   
+
+def endecode_image(image_bytes):
+    image_64_encode = base64.b64encode(image_bytes)        # encode image to base64
+    bytes_array = image_64_encode.decode('utf-8')    # decode base64 to UTF-8 string
+    request = {"data": bytes_array}
+    return request
+    
+def get_size_reque_mbytes(request):
+    # check size of request
+    json_string = json.dumps(request)
+    json_bytes = json_string.encode('utf-8')
+    size_in_bytes = len(json_bytes)
+    size_in_mbytes = size_in_bytes/(1024*1024)
+    return size_in_mbytes
+
+if __name__ == '__main__':
+    args = parser_args()
+        
+    file_path = osp.join(os.getcwd(), args.filename)
+    if not osp.isfile(file_path):
+        raise RuntimeError(f"File dose not exist: {file_path}")
+    
+    image_file = open(file_path, 'rb')          # open binary file in read mode
+    image_bytes = image_file.read()             # <class 'bytes'>
+    
+    request = endecode_image(image_bytes)
+    size_mbytes = get_size_reque_mbytes(request)
+    if size_mbytes > ACCEPT_MB:
+        image_np = resize_image(args.filename, 6/size_mbytes*1)       # load image and resizing
+        _, buffer = cv2.imencode(".jpg", image_np)          # compression in memory
+        image_bytes = buffer.tobytes()                      # convert to `bytes`
+        request = endecode_image(image_bytes)
+        
+        size_mbytes_re = get_size_reque_mbytes(request)
+        if size_mbytes_re > ACCEPT_MB:
+            raise RuntimeError(f"The size of the request payload too large.\n"
+                f"              Size of the request payload: {size_mbytes_re:.3f} MB")
+
+    send_request_get_response(request, args.kserve)
+
+
 ```
 
