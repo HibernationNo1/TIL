@@ -332,71 +332,41 @@ TorchServe Model Archive(`.mar`)와 를 생성한다
   	--serialized-file pipeline.pth \
   	--extra-files extra \
   	--handler handler.py \
-  	--runtime python \
-  	--requirements-file extra/requirements.txt
+  	--runtime python 
   ```
-
+  
   > `--model-name`에 할당한 이름에 `.mar`라는 format으로 file이 만들어진다.
-
+  
   - `--model-name`: model의 이름을 지정. 지정된 이름은 추후 TorchServe에서 model을 참조할 때 사용된다.
-
+  
   - `--version`: model의 version을 지정.  지정된 version은 추후 model 관리에 사용된다.
-
+  
   - `--model-file`: model을 정의하는 python file의 path를 지정한다. 해당 file은 model이 정의된 class를 포함해야 한다.
-
+  
     만일 model이 여러 file에 나뉘어 정의되어 있다면 해당 model을 하나의 module로 정의하여 dir에 보관하고 `--extra-files`에 해당 module을 포함하자.
-
+  
     `--model-file`은 단일 file만 지정할 수 있다.
-
+  
   - `--serialized-file`: 직렬화된 model file(일반적으로 `.pth` or `.pt` format)의 경로를 지정한다. 
-
+  
   - `--extra-files`: 추가 file의 경로를 지정한다. config file이나 infomation 또는 보조 code file등을 포함할 수 있다. 
-
+  
   - `--handler`: model serving handler를 지정한다. (`hendler.py`와 같은)
-
+  
   - `--runtime`: runtime version을 지정한다. (`python` or `python3`)
-
-  - `--requirements-file`: inference과정에서 추가로 install해야 할 module을 적어놓은 txt file의 path를 지정한다. 
-
-    해당 option은 **kserve를 통해 배포**할 때 pod의 환경에 modules를 install하는 경우 사용된다.
-
-    해당 option을 사용하려면 아래의 조건이 만족되어야 한다.
-
-    - `config.properties`file에 `install_py_dep_per_model=true`를 포함시켜야 한다.
-    - 해당 option에 지정할 requirements.txt의 path는 `--export-path`에 지정될 dir에 포함되어야 한다.
-
-    > 예시
-    >
-    > **requirements.txt**
-    >
-    > ```
-    > opencv-python
-    > pycocotools
-    > matplotlib
-    > terminaltables
-    > nvgpu==0.9.0
-    > pynvml==11.4.1
-    > Pillow
-    > addict
-    > mmcv
-    > ```
-    >
-    > 해당 package는 `torchserve --start`명령을 실행한 환경의 library를 참조한다.
-    >
-    > - GTX3060기준, Nvidia driver version : `470.182.03` 일 때 pynvml의 최신 `11.5.0` version은 호환되지 않는다. 
-    >
-    >   `11.4.1`은 2021년에, `11.5.0`는 2023년 release된 version임
-    >
-    > kserve를 통해 배포하는 것이 아니라면, Torchserve의 package는 `torchserve --start`명령이 실행되는 환경속에서 작동된다.
-
+  
   - `--export-path`: 생성된 model archive file(`.mar`)이 저장될 directory를 지정한다. 
-
+  
     default는 `.` 이다.
-
+  
     > `hendler.py`에서 import할 modul 및 python file을 포함한다.
-
+  
   - `--force`: 해당 option을 사용하면 이미 존재하는 archive file이 있을 경우 덮어씌운다.
+  
+  - 그 외
 
+    - `--requirements-file` : **kserve를 통해 배포**할 때 pod의 환경에 library를 install하는 경우 사용된다.
+  
   
 
 ### config.properties
@@ -429,6 +399,17 @@ model_snapshot={"name": "startup.cfg", "modelCount": 1, "models": {"my_model": {
 `.mar`file과 `config.properites`file을 사용하여 torchserve를 구동한다.
 
 > Torchserve의 package는 `torchserve --start`명령이 실행되는 환경속에서 작동된다.
+>
+> ```
+> nvgpu==0.9.0
+> pynvml==11.4.1
+> ```
+>
+> GTX3060기준, Nvidia driver version : `470.182.03` 일 때 pynvml의 최신 `11.5.0` version은 호환되지 않는다. 
+>
+> `11.4.1`은 2021년에, `11.5.0`는 2023년 release된 version임
+
+
 
 
 
