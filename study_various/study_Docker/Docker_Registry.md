@@ -28,39 +28,61 @@ docker registry는 Docker image를 저장하고 배포할 수 있는 server측 a
    ```
 
    - `--name private-docker` : private-docker 이라는 이름으로 run
-   
+
    - `-d` : background로 실행
-   
+
    - `-t`: TTY mode사용 (bash를 사용하려면 설정)
-   
+
    - `-i`: 표준 입력(STDIN)을 활성화하고, container와 연결되어 있지 않더라도 표준입력 유지
-   
+
      > `-d`, `-t`, `-i`를 함께 쓰려면 `-dit`라고 명시
-   
+
    - `-p 5000:5000` : 5000번 port로 사용
-   
+
    - `registry` : run할 docker images이름
-   
+
    check container
 
    ```
    $ docker ps -a | grep registry
    ```
-   
+
    ```
    CONTAINER ID   IMAGE                                 COMMAND                  CREATED         STATUS         PORTS                                                                                                                                  NAMES
    5050f6b6e425   registry                              "/entrypoint.sh /etc…"   2 minutes ago   Up 2 minutes   0.0.0.0:5000->5000/tcp, :::5000->5000/tcp                                                                                              private-docker
    ```
-   
+
    - container name이  `private-docker`인 것을 볼 수 있다.
-   
+
    check port
-   
+
    ```
    $ netstat -anp | grep 5000 | grep LIST
    ```
-   
+
    > 공유기 통해서 들어가는거면 port forwarding필요
+
+3. start
+
+   만일 docker registry가 동작중이지 않은 것 같다면 아래 명령어로 확인해보자
+
+   ```
+   $ docker ps -a | grep private-docker
+   ```
+
+   ```
+   85153ca68b9e   registry                                   "/entrypoint.sh /etc…"   52 minutes ago   Exited (255) 10 minutes ago   0.0.0.0:5000->5000/tcp, :::5000->5000/tcp   private-docke
+   ```
+
+   > `Exited`: 해당 container가 동작하고 있지 않음
+
+   이런 경우는 docker ID로 start를 하자
+
+   ```
+   $ docker start 85153ca68b9e
+   ```
+
+   
 
 
 
