@@ -155,4 +155,12 @@ disk-pressure issue로 인해 pod들이 제 기능을 못하게 된다.
 
   - `-a` : 사용되지 않는 이미지뿐만 아니라, 현재 사용되고 있지 않은 모든 이미지를 제한다. 이는 빌드 캐시를 비롯한 모든 관련 리소스를 제거하므로 시스템에서 많은 공간을 확보할 수 있다.
 
-    
+  이후 안쓰는 pod삭제
+  
+  ```
+  kubectl get pods --field-selector=status.phase=Failed --all-namespaces -o json | kubectl delete -f -
+  ```
+  
+  
+  
+  
