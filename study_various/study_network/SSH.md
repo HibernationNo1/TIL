@@ -241,7 +241,7 @@ extension에서 `remote-ssh` 검색해서 설치
 
   ```
   username$ ssh-keygen -R 192.168.219.100
-  # Host 192.168.2119.100 found: line 3 type RSA
+  # Host 192.168.219.100 found: line 3 type RSA
   /User/username/.ssh/known_hosts updated.
   original contents retained as /User/username/.ssh/known_hosts.old
   ```

@@ -437,10 +437,10 @@ docker contianer안에서 GPU를 사용하기 위해선 필수
 
    ```
    $ sudo apt-get update
-   $ sudo apt-get install -y kubectl=1.22.13-00 kubelet=1.22.13-00 kubeadm=1.22.13-00
+   $ sudo apt-get install -y kubectl=1.25.4-00 kubelet=1.25.4-00 kubeadm=1.25.4-00
    ```
 
-   > 차후 `kserve`를 위해  version을 1.22.13으로 결정 (`1.22.13-00`) 이라 명시해줘야 함
+   > 차후 `kserve`를 위해  version을 1.25.4으로 결정 (`1.25.4-00`) 이라 명시해줘야 함
 
    
 

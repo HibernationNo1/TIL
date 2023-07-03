@@ -24,7 +24,7 @@ docker registry는 Docker image를 저장하고 배포할 수 있는 server측 a
 2. run
 
    ```
-   $ docker run --name private-docker -dit -t -p 5000:5000 registry
+   $ docker run --name private-docker -dit -t -p 5000:5000 registry:2
    ```
 
    - `--name private-docker` : private-docker 이라는 이름으로 run
@@ -40,6 +40,8 @@ docker registry는 Docker image를 저장하고 배포할 수 있는 server측 a
    - `-p 5000:5000` : 5000번 port로 사용
 
    - `registry` : run할 docker images이름
+
+     > `registry:2` 2.x version의 tag
 
    check container
 

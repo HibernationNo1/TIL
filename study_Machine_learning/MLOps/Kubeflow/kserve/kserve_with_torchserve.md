@@ -168,6 +168,10 @@ upload하려는 storageUri은 `gs://bucket_name/dir`과 같이 bucket하위 최�
 
    https://cloud.google.com/storage/docs/access-control/making-data-public?hl=ko
 
+   버킷의 모든 객체를 읽을 수 있도록 공개
+
+   
+
    > 특정 examples를 download하는 명령어
    >
    > ```
@@ -213,7 +217,7 @@ upload하려는 storageUri은 `gs://bucket_name/dir`과 같이 bucket하위 최�
    2. upload
 
       ```
-      $ gsutil cp -r gs gs://pipeline_kserve_test_01/dir
+      $ gsutil cp -r gs gs://bucket_name/dir
       ```
 
       `pipeline_kserve_test_01`라는 bucket의 `dir`이라는 path로 upload
