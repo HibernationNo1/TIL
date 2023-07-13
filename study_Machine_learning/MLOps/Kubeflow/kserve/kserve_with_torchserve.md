@@ -368,6 +368,8 @@ kserve의 example로 제공되는 InferenceService 또한 해당 image를 사용
 > urllib3==1.26.14
 > chardet==5.1.0
 > ```
+>
+> - pynvml의 version은 2023년에 11.5.0이 새롭게 release되었다. 하지만 이는 470번대 nvidia version과 호환되지 않기 때문에 pynvml는 11.4.1을 사용해야 한다.
 
 ```
 FROM ubuntu:20.04

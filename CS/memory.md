@@ -26,7 +26,7 @@
 
 ### paging
 
-process의 memory공간을 동일한 크기의 page단위로 나누어 physical address의 서로 다른 위치에 page들을 저장하는 memory관리 기법.
+Paging은 프로그램이 실행되는 동안 메모리를 일정한 크기의 고정된 단위인 페이지(Page)로 분할하는 기법이다.
 
 1. 실제 Ram memory인 physical memory를 page와 같은 크기의 frame으로 미리 나누어둔다.
 
@@ -52,11 +52,11 @@ process의 memory공간을 동일한 크기의 page단위로 나누어 physical 
 
 **paging기법시 발생할 수 있는 문제**
 
-- memory gragmentation(memory 내부 단편화)
+- memory fragmentation(memory 내부 단편화)
 
   process주소 공간의 크기가 page크기의 배수라는 보장이 없기 때문에, process의 주소 공간 중 가장 마지막에 위치한 page에서는 결국 어느정도 남는 공간(아무 data도 없는 공간)이 발생하게 된다. 
 
-  process주소 공간에서 이러한 낭비되는 memory가 있는 것을 memory gragmentation이라고 한다.
+  process주소 공간에서 이러한 낭비되는 memory가 있는 것을 memory fragmentation이라고 한다.
 
 
 

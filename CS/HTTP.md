@@ -240,7 +240,7 @@ authorization(인가)는 사용자가 요청하는 것에 대한 권한이 있�
 
 2. 회원 정보를 session저장소에 생성하고 session ID를 발급한다.
 
-3. http response header cookie에 위에서 발급한 발급한 session ID를 담아서 보낸다.
+3. http response header의 cookie부분에 위에서 발급한 발급한 session ID를 담아서 보낸다.
 
 4. clinet에서 session ID를 cookie저장소에 저장하고, 이후에 http request를 보낼 때마다 coockie에 session ID를 담아서 보낸다.
 
