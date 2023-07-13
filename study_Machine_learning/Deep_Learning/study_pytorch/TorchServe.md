@@ -51,6 +51,22 @@ model을 TorchServe에서 요구하는 방식으로 변환한 file이다.
 
 
 
+### requirements.txt
+
+```
+# conda create -n torchserve python=3.8 -c conda-forge -y  
+# pip install torch==1.12.0+cu113 -f https://download.pytorch.org/whl/torch_stable.html
+torchserve==0.8.1
+torch-model-archiver==0.8.1
+requests==2.31.0
+nvgpu==0.9.0
+pynvml==11.4.1
+```
+
+- pynvml의 version은 2023년에 11.5.0이 새롭게 release되었다. 하지만 이는 470번대 nvidia version과 호환되지 않기 때문에 pynvml는 11.4.1을 사용해야 한다.
+
+
+
 ### handler.py
 
 model을 serving하기 위해 TorchServe가 이해할 수 있는 형태로 정의하게 도와준다. `handler.py`가 정의되어 있어야 model을 동작시킬 수 있다.
