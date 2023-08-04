@@ -109,7 +109,7 @@ OSI 7계층은 네트워크 통신을 표준화한 모델로, 통신 시스템�
 
      - 오류제어
 
-       훼손된 segment의 감지 및 재전송, 손실된 segment의 재전송, 순서가 맞지 않게 도착한 segment를 정렬하고 중곡 segment감지 및 폐기
+       훼손된 segment의 감지 및 재전송, 손실된 segment의 재전송, 순서가 맞지 않게 도착한 segment를 정렬하고 중복 segment감지 및 폐기
 
      - 흐름제어
 
