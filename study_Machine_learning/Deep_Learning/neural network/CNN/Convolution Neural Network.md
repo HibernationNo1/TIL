@@ -193,10 +193,8 @@ receptive field에서 average만을 추려낸다.
 - Input / Output shape
 
   image가 convolution layer을 한 번 통과하게 되면 그 shape에는 변화가 생긴다.
-  $$
-  H_n = \left[ \frac{H_{n-1} + 2p - k}{s}  \right] + 1 \\
-  W_n = \left[ \frac{W_{n-1} + 2p - k}{s}  \right] + 1
-  $$
+  $$H_n = \left[ \frac{H_{n-1} + 2p - k}{s}  \right] + 1 \\
+  W_n = \left[ \frac{W_{n-1} + 2p - k}{s}  \right] + 1$$
 
   > H : height of image 
   >
