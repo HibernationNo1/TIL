@@ -108,13 +108,68 @@ redis는 단일 thread model을 기반으로 동작하기 때문에 모든 요�
 
 
 
+
+
+### install
+
+[공식](https://redis.io/docs/getting-started/installation/install-redis-on-linux/)
+
+**Prerequisites**
+
+```
+$ sudo apt install lsb-release curl gpg
+```
+
+```
+$ curl -fsSL https://packages.redis.io/gpg | sudo gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg
+
+$ echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/redis.list
+
+$ sudo apt-get update
+$ sudo apt-get install redis
+```
+
+
+
+- 설치 확인
+
+  ```
+  $ redis-server --version
+  ```
+
+  
+
+
+
+
+
+
+
+
+
+celery와 함게 사용할땐 종료
+
+
+
 ### start
 
 redis서버 실행
 
-```
-$ redis-server
-```
+서버 실행에는 두 가지 방법이 있다.
+
+1. ```
+   $ systemctl start redis-server # 시작
+   $ systemctl stop redis-server # 정지
+   $ systemctl status redis-server # 상태 확인
+   ```
+
+2. ```
+   $ systemctl start redis # 시작
+   $ systemctl stop redis # 정지
+   $ systemctl status redis # 상태 확인
+   ```
+
+
 
 해당 server에 접속
 
