@@ -12,7 +12,39 @@ Elasticsearch에 저장 data를 활용하는 여러 기능을 제공한다.
 
 ### Discover
 
-Elasticsearch에 저장된 원시 데이터를 탐색하고 특정 필드의 값을 볼 수 있게 해주는 기능으로, 특정 쿼리나 필터를 사용하여 데이터를 검색하고 결과를 테이블 또는 JSON 형식으로 볼 수 있게 해준다.
+Elasticsearch에 저장된 원시 data를 search하고 특정 field의 값을 볼 수 있게 해주는 기능이다.
+
+특정 query나 filter를 사용하여 data를 search하고 결과를 table 또는 JSON 형식으로 볼 수 있게 해준다.
+
+
+
+#### index management
+
+Elasticsearch를 구성하는 index를 관리한다
+
+특정 index를 선택하면 index의 `Settings`, `Mappings`을 결정할 수 있다.
+
+- **Settings**
+
+  index를 구성한 shard, replica 등의 resource개수를 결정할 수 있다.
+
+  그 외에도 analyzer, tokenizer, filter 등도 사용자에 맞춰 구성할 수 있다.
+
+- **Mappings**
+
+  index에 추가될 document의 구조를 정의한다.
+
+  Elasticsearch 는 동적 mapping을 지원하기 때문에 미리 정의하지 않아도 index에 document를 새로 추가하면 자동으로 mapping이 생성된다.
+
+  이 때는 처음 추가된 document의 구조를 기준으로 mapping이 결정된다
+
+   
+
+  
+
+
+
+
 
 
 
@@ -186,18 +218,33 @@ service와 endpoint의 가용성을 모니터링한다.
 
 ## Management
 
-kibana로 접속한 elasticsearch의 dashboard에서  Security의 아래 각 항목에 대해 설명해줘 
 
-Detections
-Hosts
-Network
-Timelines
-Cases
-Administration
 
 
 
 ### Dev Tools
+
+#### Console
+
+Elasticsearch에 RESTful query를 바로 전송할 수 있는 인터페이스를 제공한다.
+
+사용자는 이를 통해 data를 직접 조회하거나 index 설정을 변경하는 등의 작업을 수행할 수 있다. 
+
+>  자동완성 기능도 지원됨
+>
+> 
+
+#### Search Profiler
+
+ Elasticsearch의 검색 query 성능을 프로파일링하고 분석하는 도구
+
+
+
+#### Grok Debugger
+
+ Grok 패턴을 테스트하기 위한 도구입니다. 
+
+
 
 ### Fleet
 
