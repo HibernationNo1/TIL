@@ -1,5 +1,7 @@
 # gspread
 
+**install**
+
 ```
 pip install gspread
 ```
@@ -27,13 +29,19 @@ if isinstance(client, gspread.Client):
 
      해당 project의 이메일을 확인할 수 있다.
 
-  2. `이메일 선택(클릭) ` > `키` > `키 추가` > `새 키 만들기`
+  2. `key값 이메일 선택(클릭) ` > `키` > `키 추가` > `새 키 만들기`
 
       키 유형은 json으로 선택 
 
      바로 json의 비공개 키 download
 
   위 방법으로 생성한 key의 path를 `key_filename`에 할당한다.
+  
+- 특정 spreadsheet에 접근 후 write를 하려면 권한이 있어야 한다.
+
+  권한은 spreadsheet의 주관자가 우측 상단 `공유` 버튼을 누른 후 `사용자 및 그룹 추가`에 `key값 이메일`을 입력해야 한다.
+
+  
 
 
 
@@ -52,7 +60,7 @@ for sheets in spreadsheet_list:
         if isinstance(sheet, dict):
             google_sheet_list.append(sheet['name'])
 
-print(f"google_sheet_l")
+print(f"google_sheet_list : {google_sheet_list}")
 ```
 
 
