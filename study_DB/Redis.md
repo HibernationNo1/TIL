@@ -139,7 +139,11 @@ $ sudo apt-get install redis
 
   
 
+**uninstall**
 
+```
+$ sudo apt remove redis-server
+```
 
 
 
@@ -164,10 +168,10 @@ redis서버 실행
    ```
 
 2. ```
-   $ systemctl start redis # 시작
-   $ systemctl stop redis # 정지
-   $ systemctl status redis # 상태 확인
+   $ redis-server &
    ```
+   
+   > `systemstl`을 사용하여 redis를 실행시키는 경우 celery에서 broker경로를 찾지 못할때가 있다.
 
 
 
