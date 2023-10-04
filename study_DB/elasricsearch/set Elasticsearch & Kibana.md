@@ -1,5 +1,7 @@
 # elasticsearch & Kibana
 
+해당 문서는 local에서 1개의 node로 cluster를 구성하여 사용하는 경우에 해당된다.
+
 
 
 ## install
@@ -18,7 +20,7 @@ elasticsearch와 Kibana는 version을 일치시켜서 install해야 한다.
   $ tar -zxvf elasticsearch-7.13.0-linux-x86_64.tar.gz
   ```
 
-  
+  `elasticsearch-7.13.0` 라는 dir이 생성됨을 확인
 
   install java
 
@@ -47,9 +49,31 @@ elasticsearch와 Kibana는 version을 일치시켜서 install해야 한다.
   $ tar -zxvf kibana-7.13.0-linux-x86_64.tar.gz
   ```
 
-  
+  `kibana-7.13.0-linux-x86_64  ` 라는 dir이 생성됨을 확인
 
+#### uninstall
 
+- elasticsearch
+
+  ```
+  $ sudo dpkg --purge --force-all elasticsearch
+  ```
+
+  - `dpkg`: Debian package관리자.		`.deb` 패키지를 설치, 제거 및 관리할때 사용
+  - `--purge`: package를 제거하는 것 외에도 해당 package의 설정 파일도 제거
+  - `--force-all`: 모든 강제 option을 활성화
+
+  ```
+  $ rm -rf elasticsearch-7.13.0-linux-x86_64
+  ```
+
+  dir도 지워야 한다
+
+- kibana
+
+  ```
+  $ rm -rf kibana-7.13.0-linux-x86_64
+  ```
 
 
 
@@ -145,13 +169,31 @@ local에서 kibana를 설치해야 cluster에 접속한 후 깔끔한 UI을 활�
   http://localhost:5601
   ```
   
-  - 어느 위치에서든 아래 명령어를 사용하면 elasticsearch를 시작할 수 있다.
+  - 어느 위치에서든 아래 명령어를 사용하면 kibana를 시작할 수 있다.
   
     ```
     $ cd $(find ~ -name kibana-7.13.0-linux-x86_64 2>/dev/null -print -quit) && ./bin/kibana 
     ```
   
     
+
+### stop
+
+- elasticsearch
+
+  ```
+  $ ps -aux | grep elasticsearch
+  $ kill -9 PID
+  ```
+
+- kibana
+
+  ```
+  $ ps -aux | grep kibana
+  $ kill -9 PID
+  ```
+
+
 
 
 
@@ -179,3 +221,6 @@ index에 저장되는 document의 규칙을 설정하는 것을 `mappings`이라
 document는 각 field와 value의 type등 구조를 결정해놓은 data만 저장할 수 있다.
 
 >  mapping은 각 index마다 설정한다.
+
+
+
