@@ -1,6 +1,6 @@
 # Kibana-Dashboard
 
-elasticsearch 시각화 관리 service
+Kibana란: elasticsearch 시각화 관리 service
 
 
 
