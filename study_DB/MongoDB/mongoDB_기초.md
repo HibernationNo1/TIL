@@ -122,7 +122,27 @@
 
 
 
+### command
+
+- `show dbs`
+
+  현재 device에 있는 database의 이름을 나열한다.
+
+- `use {DB이름}`
+
+  특정 database에 접속한다.
+
+- `show users`
+
+  현재 접속한 database에 등록된 user들의 정보를 보여준다.
+
+
+
 ### 3T
 
 MongoDB의 UI를 지원하는 tool
+
+
+
+
 
