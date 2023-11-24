@@ -20,11 +20,23 @@ dataset을 version화 하여 관리할 수 있도록 하는 tool
 $ pip install dvc[all]
 ```
 
-> storage중에서 s3만 사용할거면 
+> - storage중에서 s3만 사용할거면 
 >
-> ```
-> pip install dvc[s3]
-> ```
+>   ```
+>   $ pip install dvc[s3]
+>   ```
+>
+> - SSH를 사용할거면
+>
+>   ```
+>   $ pip install dvc[ssh]
+>   ```
+>
+> - local dir을 storage로 사용할거면
+>
+>   ```
+>   $ pip install dvc
+>   ```
 
 
 
@@ -38,46 +50,48 @@ $ dvc --version
 
 ## Data Management
 
-### DVC storage setting, upload data 
+### 1. DVC init setting 
 
-1. **make directory**
+1. **init**
 
-   ```
-   $ mkdir dvc-storage && cd dvc-storage
-   ```
-
-2. **git init(반드시)**
+   git과 dvc모두 init
 
    ```
    $ git init
-   ```
-
-3. **dvc init**
-
-   ```
    $ dvc init
    ```
 
+2. **git repository에 연결**
+
    ```
-   Initialized DVC repository.
+   $ vi README.md
+   $ git commit -m "first commit"
+   $ git remote add origin <주소>
+   $ git push
    ```
 
-4. **locate save data**
+   > 필요시  `git push --set-upstream origin master` 
+   >
+   > dvc의 여러 정보를 git repository로 관리
 
-   data를 저장할 dir을 생성 후 그 안에 data를 save 
+3. **add datset**
+
+   관리할 dataset을 dir째로 위치한다.
 
    ```
    $ mkdir {dir_name}
    ```
 
-   > 현재 위치에 있는 data를 바로 upload할 수 없다. 1개 이상의 dir이 있는 구조가 필요
+   >현재 위치에 있는 data를 바로 upload할 수 없다. 1개 이상의 dir이 있는 구조가 필요
    >
-   > ```
-   > dir - .git
-   > 	- .dvc
-   > 	- dataset_1(dir)
-   > 	- dataset_2(dir)
-   > ```
+   >```
+   >dir - .git
+   >	- .dvc
+   >	- dataset_1(dir)
+   >	- dataset_2(dir)
+   >```
+
+4. **dvc add**
 
    해당 dir을 dvc로 tracking (`dvc status`를 하면 modified상태 확인 가능)
 
@@ -91,230 +105,285 @@ $ dvc --version
    	git add {dir_name}.dvc .gitignore 
    ```
 
-   위에서 뜬 안내메시지 실행 (git에서 version관리를 할 수 있도록 해줌)
+   > dvc push는 remote storage에 연결 후 진행
+
+5. **해당 변경 내용 git으로 관리**
 
    ```
    $ git add {dir_name}.dvc .gitignore 
    ```
 
-   - check
+   위 명령어를 수행한 위치에 `{dir_name}.dvc` file이 생겼음을 확인할 수 있다.
 
-     위 명령어를 수행한 위치에 `{dir_name}.dvc` file이 생겼음을 확인할 수 있다.
+   이 file은 {dir_name}안의 dataset에 대한 meta data를 가진 file이다.
 
-     이 file은 {dir_name}안의 dataset에 대한 meta data를 가진 file이다.
+   git은 바로  이 .dvc file 관리하게 된다.
 
-     git은 바로  이 .dvc file 관리하게 된다.
-     
-     > 이 때 `.gitignore `는 아래의 내용이 담겼으며 `.dvc`안에 위치해있다.
-     >
-     > ```
-     > /config.local
-     > /tmp
-     > /cache
-     > ```
-     >
-     > 기존의 `.gitignore`과 별개임
+   > 이 때 `.gitignore `는 아래의 내용이 담겼으며 `.dvc`안에 위치해있다.
+   >
+   > ```
+   > /config.local
+   > /tmp
+   > /cache
+   > ```
+   >
+   > 기존의 `.gitignore`과 별개임
 
-5. **commit dataset** 
+   그 외에도 add할 사항이 있다면 git add 실행
+
+   
+
+   이후 git commit까지
 
    ```
    $ git commit -m "dataset_0.0.1"
    ```
 
-6. **dvc storage에 연결**
 
-   data가 실제로 저장될 remote storage를 세팅 
 
-   1. **google drive에 연결**
+### 2. **add remote storage**
 
-      1. google drive에 가서 dir새로 만들기  >> url ID복사
+remote storage는 cloud storage가 될 수도 있고, local에 특정 dir이 될 수도 있다.
 
-         ```
-         https://drive.google.com/drive/folders/1ZJExBQjJp2VJRBtB-U8IUffJL0q5WBgN
-         ```
+#### google drive
 
-         일 때 url ID는 아래와 같다
-
-         ```
-         1ZJExBQjJp2VJRBtB-U8IUffJL0q5WBgN  
-         ```
-
-      2. dvc add
-
-         ```
-         $ dvc remote add -d storage gdrive://1ZJExBQjJp2VJRBtB-U8IUffJL0q5WBgN
-         ```
-
-         > `gdrive` : google drive라는 뜻
-
-         ```
-         Setting 'storage' as a default remote.          
-         ```
-
-         > default remote storage로 setting되었음을 의미
-
-   2. **aws S3에 연결**
-
-      1. aws에 가입 후 bucket만든 후, bucket안에서 1개의 directory생성 후 해당 dir의 URL복사
-
-         ```
-         s3://{my_bucket}/{dir_name}/
-         ```
-
-      2. dvc add
-
-         ```
-         $ dvc remote add -d storage s3://{my_bucket}/{dir_name}/
-         ```
-
-         > ```
-         > Setting 'storage' as a default remote.
-         > ```
-
-   3. **google storage에 연결**
-
-      1. google cloud storage에서 bucket생성
-
-         [여기](https://console.cloud.google.com/welcome?project=adroit-producer-358501)에서 storage bucket 만들기 > 
-
-         - 객체 엑세스 제어 : 균일한 엑세스
-         - 객체 데이터 보호하는 방법 : 객체 버전 관리 (객체당 치대 버전 수 3, 다음 날짜 7)
-
-         > bucket세부정보에서 bucket name확보
-
-      2. dvc add
-
-         ```
-         $ dvc remote add -d bikes gs://{bucket name}
-         ```
-
-         
-
-7. **git add, commit dvc config**
+1. google drive에 가서 dir새로 만들기  >> url ID복사
 
    ```
-   $ git add .dvc/config
-   $ git commit -m "add remote storage"
+   https://drive.google.com/drive/folders/1ZJExBQjJp2VJRBtB-U8IUffJL0q5WBgN
    ```
 
-   > 변경된 사항을 git에서 관리할 수 있도록 함
+   일 때 url ID는 아래와 같다
 
-8. **dvc push**
+   ```
+   1ZJExBQjJp2VJRBtB-U8IUffJL0q5WBgN  
+   ```
 
-   storage에 실제data를 upload
+2. dvc add
 
-   1. **S3**에 push
+   ```
+   $ dvc remote add -d storage gdrive://1ZJExBQjJp2VJRBtB-U8IUffJL0q5WBgN
+   ```
 
-      S3인 경우 해당 device에 user의 acssess key와 secret를 등록해놓아야 한다.
+   > `gdrive` : google drive라는 뜻
 
-      1. `aws configure` 사용
+   ```
+   Setting 'storage' as a default remote.          
+   ```
 
-         ```
-         $ aws configure
-         ```
+   > default remote storage로 setting되었음을 의미
 
-         ```
-         AWS Access Key ID [****************xxxx]: 
-         AWS Secret Access Key [****************xxxx]: 
-         ```
+#### google storage
 
-      2. `dvc remote modify --local bikes` 사용
+1. google cloud storage에서 bucket생성
 
-         ```
-         $ dvc remote modify --local bikes access_key_id 'mykey' 
-         $ dvc remote modify --local bikes secret_access_key 'mysecret'
-         ```
+   [여기](https://console.cloud.google.com/welcome?project=adroit-producer-358501)에서 storage bucket 만들기 > 
 
-      acssess key와 secret등록이 완료되면 push
+   - 객체 엑세스 제어 : 균일한 엑세스
+   - 객체 데이터 보호하는 방법 : 객체 버전 관리 (객체당 치대 버전 수 3, 다음 날짜 7)
+
+   > bucket세부정보에서 bucket name확보
+
+2. dvc add
+
+   ```
+   $ dvc remote add -d remote_name gs://{bucket name}
+   ```
+
+
+
+#### aws S3
+
+1. aws에 가입 후 bucket만든 후, bucket안에서 1개의 directory생성 후 해당 dir의 URL복사
+
+   ```
+   s3://{my_bucket}/{dir_name}/
+   ```
+
+2. dvc add
+
+   ```
+   $ dvc remote add -d remote_name s3://{my_bucket}/{dir_name}/
+   ```
+
+   > ```
+   > Setting 'storage' as a default remote.
+   > ```
+
+
+
+#### ssh
+
+192.168.0.101의 서버의 `/var/services/homes/dvc` 의 위치를 remote directory로 결정
+
+1. SSH연결
+
+   ```
+   $  dvc remote add -d remote_name ssh://teno@192.168.0.101:/var/services/homes/dvc
+   ```
+
+2. port설정 (기본값 22이 아닌, 2323인 경우)
+
+   ```
+   $ dvc remote modify remote_name port 2323
+   ```
+
+   - Nas에 연결하는 경우 
+
+     1. `제어판` > `FTP` > `SFTP서비스 활성화`
+
+        해당 port는 sftp의 포트번호 기입
+
+     2. 원격 서버의 `/etc/ssh/sshd_config` 의 아래 내용 수정
+
+        ```
+        # override default of no subsystems
+        # Subsystem sftp    /usr/libexec/sftp-server
+        Subsystem   sftp    internal-sftp -f DAEMON -u 000		# 활성화 되어있어야 함
+        ```
+
+3. remote에 ssh개인 키 등록
+
+   ```
+   $ dvc remote modify remote_name keyfile ~/.ssh/id_rsa
+   ```
+
+   
+
+
+
+#### local dir
+
+1. storage path결정
+
+   ```
+   $ dvc remote add -d remote_name local/dir/path
+   ```
+
+
+
+
+
+
+
+
+### 3. dvc push
+
+
+
+#### google drive
+
+```
+Go to the following link in your browser:
+
+    https://accounts.google.com/o/oauth2/auth?client_id=710796635688-iivsgbgsb6uv1fap6635dhvuei09o66c.apps.googleusercontent.com&redirect_uri=urn%3Aietf%3Awg%3Aoauth%3A2.0%3Aoob&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive.appdata&access_type=offline&response_type=code&approval_prompt=force
+
+Enter verification code:
+```
+
+위 출력이 나오며 인증 과정이 필요. 해당 주소로 이동하여 google login을 통해 수행.
+
+인증을 수행하는 과정에 code가 보임
+
+```
+4/1AdQt8qgp7fYSoMCqitgBxY7BOOgrbDqZJ8m6o06Lqu3oRgCdJwjBB7zMdgc
+```
+
+이를 `Enter verification code:` 에 입력
+
+```
+Authentication successful.
+```
+
+이후 google drive에 들어가보면 random한 이름으로 file들이 생김. 이것들은 git add-commit으로 업로드 한 file들.
+
+
+
+#### google storage
+
+1. `client_secrets.json` 다운로드
+
+   service account의 정보 중 `작업` > `key 관리` > `add key` : `'Json' format`
+
+   -> json형식의 secret key가 local에 저장됨
+
+   이걸 `client_secrets.json` 으로 이름 변경
+
+2. GCP credentials
+
+   1. export
+
+      ```
+      $ export GOOGLE_APPLICATION_CREDENTIALS='{path of client_secrets.json}'
+      ```
+
+      > 위 명령어를 입력하는 위치에 `client_secrets.json` 가 있으면
+      >
+      > `export GOOGLE_APPLICATION_CREDENTIALS=client_secrets.json`
+
+   2. remote modify
+
+      ```
+      dvc remote modify --local remote_name credentialpath '{path of client_secrets.json}'
+      ```
+
+   3. dvc push 
 
       ```
       $ dvc push
       ```
 
-      > ```
-      > 19 files pushed
-      > ```
-      >
-      > 19개 file정상적으로 pushed
 
-   
 
-   2. **google drive**에 push
+#### aws S3
 
-      ```
-      Go to the following link in your browser:
-      
-          https://accounts.google.com/o/oauth2/auth?client_id=710796635688-iivsgbgsb6uv1fap6635dhvuei09o66c.apps.googleusercontent.com&redirect_uri=urn%3Aietf%3Awg%3Aoauth%3A2.0%3Aoob&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive.appdata&access_type=offline&response_type=code&approval_prompt=force
-      
-      Enter verification code:
-      ```
+S3인 경우 해당 device에 user의 acssess key와 secret를 등록해놓아야 한다.
 
-      위 출력이 나오며 인증 과정이 필요. 해당 주소로 이동하여 google login을 통해 수행.
-
-      인증을 수행하는 과정에 code가 보임
-
-      ```
-      4/1AdQt8qgp7fYSoMCqitgBxY7BOOgrbDqZJ8m6o06Lqu3oRgCdJwjBB7zMdgc
-      ```
-
-      이를 `Enter verification code:` 에 입력
-
-      ```
-      Authentication successful.
-      ```
-
-      이후 google drive에 들어가보면 random한 이름으로 file들이 생김. 이것들은 git add-commit으로 업로드 한 file들.
-
-   
-
-   3. **google storage**에 push
-
-      1. `client_secrets.json` 다운로드
-
-         service account의 정보 중 `작업` > `key 관리` > `add key` : `'Json' format`
-
-         -> json형식의 secret key가 local에 저장됨
-
-         이걸 `client_secrets.json` 으로 이름 변경
-
-      2. GCP credentials
-
-         1. export
-
-            ```
-            $ export GOOGLE_APPLICATION_CREDENTIALS='{path of client_secrets.json}'
-            ```
-
-            > 위 명령어를 입력하는 위치에 `client_secrets.json` 가 있으면
-            >
-            > `export GOOGLE_APPLICATION_CREDENTIALS=client_secrets.json`
-
-         2. remote modify
-
-            ```
-            dvc remote modify --local bikes credentialpath '{path of client_secrets.json}'
-            ```
-
-         3. dvc push 
-
-            ```
-            $ dvc push
-            ```
-
-         
-
-   
-
-9. **git repository에 연결**
+1. `aws configure` 사용
 
    ```
-   $ git remote add origin <주소>
-   $ git push
+   $ aws configure
    ```
 
-   > 필요시  `git push --set-upstream origin master` 
-   >
-   > 해당 dvc의 여러 정보를 git repository로 관리
+   ```
+   AWS Access Key ID [****************xxxx]: 
+   AWS Secret Access Key [****************xxxx]: 
+   ```
+
+2. `dvc remote modify --local bikes` 사용
+
+   ```
+   $ dvc remote modify --local remote_name access_key_id 'mykey' 
+   $ dvc remote modify --local remote_name secret_access_key 'mysecret'
+   ```
+
+acssess key와 secret등록이 완료되면 push
+
+```
+$ dvc push
+```
+
+> ```
+> 19 files pushed
+> ```
+>
+> 19개 file정상적으로 pushed
+
+
+
+#### ssh, local dir
+
+```
+$ dvc push
+```
+
+
+
+
+
+---
+
+
 
 
 
@@ -357,8 +426,8 @@ $ dvc --version
       access key입력
 
       ```
-      $ dvc remote modify --local storage access_key_id 'mykey' 
-      $ dvc remote modify --local storage secret_access_key 'mysecret'
+      $ dvc remote modify --local remote_name access_key_id 'mykey' 
+      $ dvc remote modify --local remote_name secret_access_key 'mysecret'
       ```
 
       ```
@@ -376,7 +445,7 @@ $ dvc --version
       set remote
 
       ```
-      $ dvc remote add -d -f bikes gs://{bucket name}
+      $ dvc remote add -d -f remote_name gs://{bucket name}
       ```
 
       set client secrets
