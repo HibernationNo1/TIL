@@ -489,3 +489,15 @@ commit에 tag달기
 직접 dowload를 할 때 특정 tag를 target으로 할 수 있도록 하는 기능
 
 remote상에서 repository의 tags클릭 > 각 tag의 우측에 위치한 `...` 클릭 > `Create release` 클릭 > 제목과 내용(markdown형식)으로 작성
+
+
+
+
+
+## conflict
+
+하나의 branch에서 충돌이 일어난 경우
+
+1. 현재 local의 모든 사항을 commit
+2. git pull진행
+3. 각각의 변경사항이 충돌한 파일들에서 병합 후 commit
