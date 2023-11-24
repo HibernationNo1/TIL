@@ -129,6 +129,8 @@ $ sudo apt-get remove docker docker-ce docker-ce-cli containerd.io docker-compos
 
 docker contianer안에서 GPU를 사용하기 위해선 필수
 
+[공식문서](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) 참고
+
 1. Setting up NVIDIA Container Toolkit
 
    ```

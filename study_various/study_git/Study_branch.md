@@ -81,9 +81,11 @@ rebase할 branch의 commit들을 main branch의 최신 commit뒤에 이어 붙�
 
 
 
-main branch에 exam이라는 sub branch를 rebase할 경우
+`master`라는 main branch에 `exam`이라는 sub branch를 rebase할 경우
 
 ```
+$ git checkout exam
+$ git rebase master
 ```
 
 
@@ -169,13 +171,13 @@ remote branch확인하는 명령어
   remote의 branch를 local로 받아온다.
 
   ```
-  $ git switch -t origin/remote-branch
+  $ git checkout -t origin/remote-branch
   ```
 
   이후 pull까지 진행해본다면
 
   ```
-  $ git swith remote-branch
+  $ git checkout remote-branch
   $ git pull
   ```
 

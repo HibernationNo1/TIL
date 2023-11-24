@@ -9,7 +9,7 @@ Docker compose file(YAML file)에 여러 container를 일괄적으로 정의하�
 https://docs.docker.com/compose/install/
 
 ```
-$ sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+$ sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
 ```
 
 ```
@@ -19,7 +19,7 @@ $ sudo chmod +x /usr/local/bin/docker-compose
 check
 
 ```
-$ docker-compese version
+$ docker-compose --version
 ```
 
 
