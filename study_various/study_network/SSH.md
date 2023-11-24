@@ -6,6 +6,8 @@ SSH란 Secure Shell Protocol, 즉 네트워크 프로토콜 중 하나로 컴퓨
 
 
 
+## start
+
 ### install
 
 Ubuntu에서 openssh라는 패키지를 통해 SSH를 구동할 수 있다.
@@ -32,9 +34,166 @@ $ sudo ufw allow ssh
 
 
 
+### add ssh key
+
+- 개인 key 쌍 추가
+
+  ```
+  $ ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+  ```
+
+  - `-t rsa`: 키 유형을 RSA로 지정
+  - `-b 4096`: 키의 비트 길이를 4096으로 설정(더 강력한 보안 제공).
+  - `-C "your_email@example.com"`: 키에 대한 주석 추가(예: 소유자의 이메일 주소).
+
+  ```
+  Generating public/private rsa key pair.
+  Enter file in which to save the key (/home/username/.ssh/id_rsa): 
+  Enter passphrase (empty for no passphrase): 
+  Enter same passphrase again: 
+  Your identification has been saved in /home/username/.ssh/id_rsa
+  Your public key has been saved in /home/username/.ssh/id_rsa.pub
+  The key fingerprint is:
+  SHA256:HS3y4/fFS0uyw6FsS1IrtftF09XYya0LvMFQQmUXi4A your_email@example.com
+  The key's randomart image is:
+  +---[RSA 4096]----+
+  |         o+.+ o. |
+  |        E  * o.++|
+  |        . + o oo=|
+  |         + *   .o|
+  |        S +o= .o.|
+  |         .o.o=.o.|
+  |         oo+=.o+o|
+  |          +=.+*.o|
+  |          .ooooo |
+  +----[SHA256]-----+
+  ```
+
+  전부 기본값으로 하면 `/home/username/.ssh`의 위치에 아래 2개의 파일이 생성된다.
+
+  - `id_rsa` : private key
+  -  `id_rsa.pub`: public key. gitlab과 같은 관리 프로세스와 연동할때 사용한다.
+  - `known_hosts`: 이미 신뢰된 SSH 서버들의 공개 키들의 지문(fingerprints)을 저장
 
 
-### command
+
+
+
+#### gitlab에 추가하기
+
+`setting` > `SSH key` > `Key` 칸에  위에서 생성한 파일 `id_rsa.pub` 의 내용 추가
+
+- 만일 `Fingerprint has already been taken`라는 문구가 뜬다면
+
+  해당 공개키는 다른 gitlab에서 사용중이란 뜻이다.
+
+
+
+### SSH agent
+
+openssh package의 일부로 포함되어 있는 agent 프로그램. 
+
+- SSH 키 관리를 담당하는 백그라운드 프로그램
+- 개인 키를 안전하게 관리하고, 해당 키를 사용하여 SSH 세션을 위한 인증을 자동화
+
+#### start
+
+agent 시작 명령어
+
+```
+$ eval "$(ssh-agent -s)"
+```
+
+
+
+- 기본 키 추가 명령어
+
+  사용자의 SSH 키를 SSH agent에 추가
+
+  ```
+  $ ssh-add
+  ```
+
+  ```
+  Identity added: /home/username/.ssh/id_rsa (username@shopdb-B365M-DS3H)
+  ```
+
+  `/home/username/.ssh/id_rsa `라는 file(key)를 agent에 추가
+
+- 특정 키 파일 추가 명령어
+
+  ```
+  $ ssh-add ~/.ssh/your_private_key
+  ```
+
+
+
+#### check ssh key
+
+사용중인 ssh key가 있는지 확인. 
+
+git에 어떤 ssh key로 연결되어있는지 확인하는 경우에도 사용할 수 있다.
+
+```
+$ ssh-add -l
+```
+
+
+
+
+
+
+
+## connection
+
+1. copy ssh key to server
+
+   ```
+   $ ssh-copy-id -p 2323 username@IP
+   ```
+
+   - port `2323`으로 접속 (default `22`)
+
+2. connection
+
+   ```
+   $ ssh username@IP -p 2323
+   ```
+
+   비밀번호 입력을 해야 한다면 ssh key에 의한 인증이 제대로 되지 않은 것이다.
+
+
+
+- ssh key에 의한 인증이 제대로 안된 경우
+
+  1. 원격 서버의 SSH 공개 키 파일 권한 확인
+
+     ```
+     $ chmod 700 ~/.ssh
+     $ chmod 600 ~/.ssh/authorized_keys
+     ```
+
+  2. 원격 서버의 SSH 공개 키 확인
+
+     `~/.ssh/authorized_keys`의 공개 키와 로컬의 `ssh-keygen -y -f /home/teno/.ssh/id_rsa`에 의한 출력이 같음을 확인
+
+  3. home dir의 권한 확인
+
+     ```
+     $ cd ~
+     $ cd ..
+     $ cd ll		
+     ```
+
+     권한이 700이여야 한다.
+
+
+
+
+
+## command
+
+### start
 
 **start ssh**
 
