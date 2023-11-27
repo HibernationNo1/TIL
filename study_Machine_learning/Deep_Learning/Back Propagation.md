@@ -48,15 +48,45 @@ $$
 ![](https://github.com/HibernationNo1/TIL/blob/master/image/4.jpg?raw=true)
 
 x(s, t)는 z(x, y)로부터 받은 미분값에 자신이 수행한 미분값을 곱하고 다시 s와 t로 보냄으로써 propagation 동작이 이루어지고 최종적으로는 z의 s와 t에 대한 편미분을 구할 수 있게 되는 것이다.
-$$
-z의\ s에\ 대한\ 편미분: \frac {\partial z(x, y)}{\partial s}= (\frac{\partial z(x, y)}{\partial x} *  \frac{\partial x(s, t)}{\partial s}) + (\frac{\partial z(x, y)}{\partial y} *  \frac{\partial y(s, t)}{\partial s})
-\\ = 2x*(1) + (-2y)*(e^s)
-$$
 
-$$
-z의\ t에\ 대한\ 편미분: \frac {\partial z(x, y)}{\partial t}= (\frac{\partial z(x, y)}{\partial x} *  \frac{\partial x(s, t)}{\partial t}) + (\frac{\partial z(x, y)}{\partial y} *  \frac{\partial y(s, t)}{\partial t})
-\\ = 2x*(-cos(t)) + (-2y)*(-sin(t))
-$$
+- z의 s에 대한 편미분
+
+  
+  $$
+  z의\ s에\ 대한\ 편미분: \frac {\partial z(x, y)}{\partial s}= (\frac{\partial z(x, y)}{\partial x} *  \frac{\partial x(s, t)}{\partial s}) + (\frac{\partial z(x, y)}{\partial y} *  \frac{\partial y(s, t)}{\partial s})
+  \\
+  이 때 \\
+  (\frac{\partial z(x, y)}{\partial x} *  \frac{\partial x(s, t)}{\partial s}) : z의\ x에\ 대한\ 편미분\ *\ x의\ s에\ 대한\ 편미분 \\
+  (\frac{\partial z(x, y)}{\partial y} *  \frac{\partial y(s, t)}{\partial s}) : z의\ y에\ 대한\ 편미분\ *\ y의\ s에\ 대한\ 편미분
+  $$
+
+  - $$
+    (\frac{\partial z(x, y)}{\partial x} *  \frac{\partial x(s, t)}{\partial s}) = 2x * 1
+    $$
+
+  - $$
+    (\frac{\partial z(x, y)}{\partial y} *  \frac{\partial y(s, t)}{\partial s}) = (-2y )* e^s
+    $$
+
+  즉 아래의 식이 성립된다.
+  $$
+  \frac {\partial z(x, y)}{\partial s}= 2x*(1) + (-2y)*(e^s)
+  $$
+  이는  곧 아래와 같다.
+  $$
+  2(s-sin(t))*(1) + (-2(e^s + cos(t)))*(e^s)
+  $$
+  
+
+  
+
+- z의 t에 대한 편미분
+  $$
+  z의\ t에\ 대한\ 편미분: \frac {\partial z(x, y)}{\partial t}= (\frac{\partial z(x, y)}{\partial x} *  \frac{\partial x(s, t)}{\partial t}) + (\frac{\partial z(x, y)}{\partial y} *  \frac{\partial y(s, t)}{\partial t})
+  \\ = 2x*(-cos(t)) + (-2y)*(-sin(t))
+  $$
+
+  
 
 
 
@@ -85,7 +115,7 @@ t^{(2)}
 t^{(n)}
 \end{pmatrix}\\ 
 이고 \\
-z(\overrightarrow{x}, \overrightarrow{y}) = \frac{1}{n}\sum_{i = 1}^{n}(x^{(i)}, y^{(i)}) \ \ \ // x,\ y의\ 평균 \\ 
+z(\overrightarrow{x}, \overrightarrow{y}) = \frac{1}{n}\sum_{i = 1}^{n}(x^{(i)}, y^{(i)}) \ \ \ \  x,\ y의\ 평균 \\ 
 \overrightarrow{x}(\overrightarrow{s}, \overrightarrow{t}) = \overrightarrow{s}\bigcirc\overrightarrow{t}\\
 \overrightarrow{y}(\overrightarrow{s}, \overrightarrow{t}) = \overrightarrow{s} - \overrightarrow{t} \\
  \\

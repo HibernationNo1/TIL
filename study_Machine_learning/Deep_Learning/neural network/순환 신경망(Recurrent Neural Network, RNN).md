@@ -1,6 +1,10 @@
-# 순환 신경망(Recurrent Neural Network, RNN)
+# Recurrent Neural Network(RNN)
 
-## 1. RNN
+**딥 러닝의 가장 기본적인 시퀀스 모델**
+
+Sequence : '순서'를 나타낸다. 순서에 따라 서로 연관된 정보를 가진 데이터(시계열 데이터)를 다루기 위해 고안된 신경망이다. 
+
+## 1. Forward-propagation
 
 자연어 처리 문제에 주로 사용되는 인공신경망 구조(시계열 데이터를 다루기에 최적화된 인공신경망)
 
@@ -20,11 +24,125 @@ RNN을 다른 관점으로 바라보면, 시간축에 따라 인공신경망을 
 
 이는 현재 시간의 결과가 다음 시간(t+1)에 영향을 미치고, 이는 다시 다음 시간에 영향을 미치는 과정이 끊임없이 반복되는 인공신경망 구조이다.
 
+해당 구조에 대한 수식을 정의해 보자.
+
+**은닉 상태값 수식**
+
+1.  `input node : output node`가 `1:1` 인 경우
+
+   현재 시점 t에서의 은닉 상태값 수식
+
+   ![](https://wikidocs.net/images/page/22886/rnn_image4_ver2.PNG)
+
+   - 은닉 상태값
+
+     
+     $$
+     시간t일때\ 은닉 상태값: h_{t} = \sigma(W_{x_t}x_t + W_{h_{t-1}}h_{t-1} + b) \\
+     W_{x}: 입력층을\ 위한\ 가중치\ \\
+     x_{t}: 입력층의\ input \\
+     W_{h}: 이전\ 시점(t-1)의\ 은닉\ 상태값h_{t-1}을\ 위한 가중치 \\
+     b: bias \\
+     \sigma: 활성 함수
+     $$
+
+     - 은닉 상태값에 사용되는 활성 함수는 보통 tanh(하이퍼볼릭 탄젠트)를 활용한다.
+
+     - 예시)  
+
+       - `t = 1` 인 경우
+         $$
+         h_{1} = \sigma(W_{x_1}x_{1} + b)
+         $$
+
+       - `t = 2` 인 경우
+         $$
+         h_{2} = \sigma(W_{x_2}x_{2} + W_{h_1}h_{1} + b) \\
+         = \sigma(W_{x_2}x_{2} + W_{h_1}\sigma(W_{x_1}x_{1} + b) + b)
+         $$
+
+   -  출력값
+     $$
+     시간\ t일때\ 출력값: y_{t}: f(W_{y}h_{t}+b) \\
+     W_{y}: 출력층을\ 위한\ 가중치 \\
+     h_{t}: 은닉\ 상태값 \\
+     f: 활성화 함수
+     $$
+
+     - 출력값에 사용된는 활성 함수는 비선형(sigmoid, tanh, ReLU 등) 함수 중 하나이다.
+
+     
+
+2. 그 외
+
+   ![](https://wikidocs.net/images/page/22886/rnn_image3_ver2.PNG)
+
+   1. one-to-many
+
+      n개의 출력 node가 있는 경우
+
+      1. 첫 번째 node의 은닉 상태값
+         $$
+         x_{t}: 입력층의\ input \\
+         1번째\ node의\ 은닉\ 상태값: h_{1t} = \sigma(W_{x_t}x_t + W_{h_{1(t-1)}}h_{1(t-1)} + b)\\
+         W_{x_t}x_t: 현\ 시점(t)의\ 입력값과\ Weight \\
+         W_{h_{1(t-1)}}h_{1(t-1)}:  이전\ 시점(t-1)의\ 은닉\ 상태값과\ Weight\\
+         $$
+
+      2. 1보다 큰 n번째 node의 은닉 상태값
+         $$
+         은닉\ 상태값: h_{nt} = \sigma(W_{h_{n(t-1)}}h_{n(t-1)} + W_{h_{(n-1)t}}h_{(n-1)t)} + b)\\
+          W_{h_{n(t-1)}}h_{n(t-1)}:  이전\ 시점(t-1)의\ 은닉\ 상태값과\ Weight\\
+         W_{h_{(n-1)t}}h_{(n-1)t)}: 현\ 시점(t)의\ 이전\ node의\ 은닉\ 상태값과\ Weight \\
+         $$
+
+   2. many-to-one, many-to-many
+
+      n개의 입력 node가 있는 경우
+
+      1. 첫 번째 node의 은닉 상태값 (one-to-many과 동일)
+         $$
+         x_{t}: 입력층의\ input \\
+         1번째\ node의\ 은닉\ 상태값: h_{1t} = \sigma(W_{x_1t}x_1t + W_{h_{1(t-1)}}h_{1(t-1)} + b)\\
+         W_{x_1t}x_1t: 첫\ 번째\ 입력의\ 현\ 시점(t)의\ 입력값과\ Weight \\
+         W_{h_{n(t-1)}}h_{n(t-1)}:  이전\ 시점(t-1)의\ 은닉\ 상태값과\ Weight\\
+         $$
+
+      2. 1보다 큰 n번째 node의 은닉 상태값
+         $$
+         n번째\ node의\ 은닉\ 상태값: h_{nt} = \sigma(W_{x_nt}x_nt + W_{h_{n(t-1)}}h_{n(t-1)} + W_{h_{(n-1)t}}h_{(n-1)t)}+ b)\\
+         W_{x_nt}x_nt: n\ 번째\ 입력의\ 현\ 시점(t)의\ 입력값과\ Weight \\
+         W_{h_{n(t-1)}}h_{n(t-1)}:  이전\ 시점(t-1)의\ 은닉\ 상태값과\ Weight\\
+         W_{h_{(n-1)t}}h_{(n-1)t)}: 현\ 시점(t)의\ 이전\ node의\ 은닉\ 상태값과\ Weight \\
+         $$
+         
+
+   
+
+**출력 수식**
+
+조건
+
+1. 길이 T를 가진 input sequence data
+2. I개의 Input Node
+3. H개의 hidden Node
+4. K개의 Output Node
+
+
+
+
+
+은닉층 연산을 벡터와 행렬 연산
+
+ ![](https://wikidocs.net/images/page/22886/rnn_images4-5.PNG)
+
+
+
 - 길이 T를 가진 입력 시퀀스 x를 I개의 인풋 노드, H개의 히든 노드, K개의 아웃풋 노드를 가진  RNN에 입력한다면 
   $$
-  a_{h}^{t} = \sum_{i=1}^{I}w_{ih}x_{i}^{t}+\sum_{h'=1}^{H}w_{h'h}b_{h'}^{t-1}
+  a_{h}^{t} = \sum_{i=1}^{I}w_{ix}x_{i}^{t}+\sum_{h'=1}^{H}w_{h'h}b_{h'}^{t-1}
   $$
-  
+
   $$
   a_{h}^{t}:\ 시간t일때\ 히든\ 레이어의\ 출력값\\
   x_{i}^{t}:\ 시간t일때\ i번째\ 입력 \ 데이터 \\
@@ -32,6 +150,7 @@ RNN을 다른 관점으로 바라보면, 시간축에 따라 인공신경망을 
   w_{h'h}:\ 히든\ 유닛에서\ 히든\ 유닛으로\ 되돌아오는\ 가중치\\
   b_{h'}^{t-1}:\ 이전\ 시간(t-1)의\ 히든\ 유닛의\ 활성값
   $$
+
   시간t일때의 히든 레이어의 출력값에 Sigmoid 또는 ReLU같은 활성 함수를 씌우면 시간 t일때의 히든 유닛의 활성값을 계산할 수 있다.
   $$
   b_{h}^{t} = \sigma_{h}(a_{h}^{t})\\
@@ -56,6 +175,108 @@ RNN을 다른 관점으로 바라보면, 시간축에 따라 인공신경망을 
      b_{out}^{t} = \sigma_{out}(a_{out}^{t})
      $$
 
+
+
+## 2. Back-propagation Through Time
+
+RNN의 forward propagation은 이전 시간에 대한 값이 포함되는데, 이를 거꾸로 올라가는 방식의 back propagation은 결국 시간을 거슬러 올라가는 방식으로 수행된다.
+
+![](https://www.goldenplanet.co.kr/data/data/2021/11/2021-11-11_16-34-59-27989-1636616099.png)
+
+아래는 예시 그림이다.
+
+![](http://i.imgur.com/TIdBDTJ.png)
+
+1. forward propagation
+
+   1. h_raw계산
+      $$
+      h_{raw} = x_{t}w_{xh} + h_{t-1}w_{hh} + b_{h}
+      $$
+
+   2. h_t 계산
+      $$
+      h_{t} = tanh(h_{raw}) \ \ = \ \ tanh(x_{t}w_{xh} + h_{t-1}w_{hh} + b_{h})
+      $$
+
+   3. y_t
+      $$
+      y_{t} = h_{t}w_{hy} + b_{y}
+      $$
+
+   
+
+2. back propagation
+
+   1. h_{t-1}에 대한 편미분
+      $$
+      \frac{\partial y_{t}}{\partial t_{t}} \\
+      = \frac{\partial y_{t}}{\partial h_{t}} \frac{\partial h_{t}}{\partial t_{t}} \\
+      = \frac{\partial y_{t}}{\partial h_{t}}  \frac{\partial h_{t}}{\partial h_{raw}}  \frac{\partial h_{raw}}{\partial t_{t}} \\
+        =  \frac{\partial y_{t}}{\partial h_{t}}  \frac{\partial h_{t}}{\partial h_{raw}} \frac{\partial h_{raw}}{\partial h_{t-1}} \frac{\partial h_{t-1}}{\partial t_{t}}
+      $$
+
+      $$
+      1.\  \frac{\partial y_{t}}{\partial h_{t}}  = w_{hy}\\ 
+      2.\  \frac{\partial h_{t}}{\partial h_{raw}}  = 1-tanh^{2}(h_{raw}) \\
+      3.\  \frac{\partial h_{raw}}{\partial h_{t-1}}  = w_{hh}\\
+      $$
+
+      즉, 
+      $$
+      \frac{\partial y_{t}}{\partial t_{t}} = w_{hy} ( 1-tanh^{2}(h_{raw}) ) w_{hh}  \frac{\partial h_{t-1}}{\partial t_{t}}
+      $$
+      
+   2. x_t에 대한 편미분
+      $$
+      \frac{\partial y_{t}}{\partial t_{t}} \\
+      = \frac{\partial y_{t}}{\partial h_{t}} \frac{\partial h_{t}}{\partial t_{t}} \\
+      = \frac{\partial y_{t}}{\partial h_{t}}  \frac{\partial h_{t}}{\partial h_{raw}}  \frac{\partial h_{raw}}{\partial t_{t}} \\
+        =
+        \frac{\partial y_{t}}{\partial h_{t}}  \frac{\partial h_{t}}{\partial h_{raw}} \frac{\partial h_{raw}}{\partial x_{t}} \frac{\partial x_{t}}{\partial t_{t}}
+      $$
+   
+      $$
+      1.\  \frac{\partial y_{t}}{\partial h_{t}}  = w_{hy}\\ 
+      2.\  \frac{\partial h_{t}}{\partial h_{raw}}  = 1-tanh^{2}(h_{raw}) \\
+      3.\  \frac{\partial h_{raw}}{\partial h_{t-1}}  = w_{hh}\\
+      $$
+   
+      즉, 
+      $$
+      \frac{\partial y_{t}}{\partial t_{t}} = w_{hy} ( 1-tanh^{2}(h_{raw}) ) w_{hh}  \frac{\partial x_{t}}{\partial t_{t}}
+      $$
+      
+
+
+
+sequence labeling에서, Loss function은 **negative log likelihood**를 사용한다. 
+
+
+
+#### negative log likelihood
+
+$$
+L(x, y) = -\sum_{t}\ y^{t}\ logz_t \\
+z_t:\ output\ vertor \\
+y_t: \ 정답 label일\ 경우만\ 1
+$$
+
+위 수식을 softmax에 들어가기 전 값으로 표현하자면 
+$$
+L(x, y) = -\sum_{t}\ y^{t}\ log(softmax(\alpha_{t}))
+$$
+
+
+
+
+
+## 3. about RNN
+
+
+
+
+
 **RNN의 장점**
 
 이전 상태에 대한 정보를 일종의 메모리 형태로 저장할 수 있다.
@@ -68,7 +289,9 @@ Vanishing Gradient Problem(경사도 사라짐 문제)가 발생할 수 있다.
 
 ![](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSsZD1lr3mkJp7ioA758ZQNIqsHz11E5njHHw&usqp=CAU)
 
-시간축 1에서 받은 영향력은 크게 남아있지만, 새로운 시간축에서 들어온 input데이터의 영향력에 의해 영향력이 반복해서 덮어씌워며 점점 약해지는 것
+시간축 1에서 input data의 영향력은 크게 남아있지만, 새로운 시간축에서 들어온 input data의 영향력이 시간축 1의 input data위에 반복해서 덮어씌워지다 보면
+
+시간축 1의 input data의 영향력은 점점 약해지는 것
 
 - RNN이 장기 기억력을 가지지 못한다.
 
@@ -78,7 +301,9 @@ Vanishing Gradient Problem(경사도 사라짐 문제)가 발생할 수 있다.
 
 
 
-#### Cher-RNN
+
+
+## 4. Cher-RNN code
 
 RNN을 처음 배울 때 가장 많이 사용되는 예제 중 하나로서 하나의 글자를 RNN의 입력값으로 받고, RNN은 다음에 올 글자를 예측하는 문제임
 
@@ -97,7 +322,6 @@ RNN을 처음 배울 때 가장 많이 사용되는 예제 중 하나로서 하�
   input data는 One-hot Encoding 데이터로 받아지고, 이 데이터를 임베딩 매트릭스를 곱하여 임베딩 된 백터로 만든 후 RNN레이어에 넘긴다. 그 후 Softmax 회귀를 수행하고  argmax를 취해서 26개 중에 input 데이터 이후에 오는 것이 가장 자연스러울지 정학 후 두 번째 input으로 넣는다.
 
   input data1(One-hot Encoding 데이터) -> Emdedding -> RNN -> Softmax -> argmax -> input data2
-
 
 **코드 구현**
 
@@ -273,30 +497,4 @@ if __name__ == '__main__':
 ```
 
 ---
-
-## 2. 장/단기 기억 네트워크(Long Short-Term Memory, LSTM)
-
-LSTM은 은닉층을 각각의 노드가 input gate, forget date, output gate로 구성된 메모리 블럭이라는 조금 복잡한 구조로 대체한다. (이를 이용해서 경사도 사라짐 문제를 완화할 수 있다.)
-
-![](https://kr.mathworks.com/help/deeplearning/ref/lstmgates.png)
-
-- 경사도 사라짐 문제 해결 동작
-
-  아래 그림에서 은닉층의 아래는 input gate, 은닉층의 왼쪽은 forget gate, 은닉층의 위쪽은 output gate를 나타낸다. 또한 o은 게이트가 열린 상태, -는 게이트가 닫힌 상태를 나타낸다.
-
-![](https://lh3.googleusercontent.com/proxy/dmo-4IzICGsIfLHVMNp_ZP_M92LBwrr0OeGNarbY2WJm4Uh0L6bmn9JQF_LFFaZawmxV344oILGFyXGc_MnbXjbyDSO9c0jEyVz73lMJhGEnD3XN3hfD02mNl512O2YY8Dp99ufhLMfOZ1qKaXOsUQ)
-
-​	그림에서는, 시간 1에서 인풋 데이트를 열어서 시간 1의 인풋 데이터의 영향력을 가져가고, 시간 6까	지 포겟 게이트를 열어서 시간 1의 영향력을 계속해서 다음 시간으로 가져간다. 그러면서 시간 2에	서부터 시간6까지는 인풋 게이트를 닫아서 해당 시간동안의 인풋 데이터의 영향력을 없앤다. 그리고	시간 1, 2, 3, 5에서는 아웃풋 게이트를 닫고 시간 4, 6에서만 아웃풋 게이트를 연다.
-
-​	이를 통해서 RNN의 출력 결과를 4, 6에서만 방출할 수 있다.
-
----
-
-## 3. Gate Recurren Unit, GRU
-
-LSTM의 간략화된 버전으로, 3개의 게이트를 2개의 게이트로 축소한 것이다.
-
-GRU는 메모리 블록으로 **리셋 게이트(r)**와 **업데이트 게이트(z)**를 가지고 있다.
-
-![](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQiYjHwgdH4fSrc7WsU-sP968fscHtRhwfhlQ&usqp=CAU)
 
