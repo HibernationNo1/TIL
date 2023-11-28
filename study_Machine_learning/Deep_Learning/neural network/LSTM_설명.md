@@ -62,13 +62,20 @@ RNN은 간단히 표현하자면 아래 1번과 같은데, 이를 시간의 흐�
 
 왜 tanh를 사용했는가? 하면 아래 두 가지 이유가 있다.
 
-> 1. sigmoid
+> 1. sigmoid									
 >    $$
 >    s(x) = \frac{1}{1 + e^{-x}}
 >    $$
 >    
+> 2. 
 >
-> ![](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FsRw8n%2FbtrcAbQ1Jvt%2FGJXPMt1FNkS1WFPdhRuXg0%2Fimg.png)![](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FcvQoHr%2FbtrcHFixoOL%2FLyV9Iph7bpLQLD4SCSIve0%2Fimg.png)
+> 2. tanh
+>    $$
+>    tanh(x) = \frac{e^{x} - e^{-x}}{e^{x} + e^{-x}}
+>    $$
+>    
+>
+> ![](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FsRw8n%2FbtrcAbQ1Jvt%2FGJXPMt1FNkS1WFPdhRuXg0%2Fimg.png) ![](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FcvQoHr%2FbtrcHFixoOL%2FLyV9Iph7bpLQLD4SCSIve0%2Fimg.png)
 
 
 
@@ -96,7 +103,11 @@ RNN은 간단히 표현하자면 아래 1번과 같은데, 이를 시간의 흐�
    > \ \frac{dz}{dw} == x\ 가\ 성립되며 \\
    > \frac{dL}{dw} = x\frac{dL}{dz}  == f'(z)\times x\ 가\ 성립된다.
    > $$
-   > 이는 x가 +부호를 가질 때 dL/dw의 부호는 dL/dz에 의해서 결정되며 이는 최적과 수식에서 항상 모든 weight가 같은 방향(+ or -)으로 update된다는 의미히다. 
+   > 이는 x가 +부호를 가질 때 dL/dw의 부호는 dL/dz에 의해서 결정되며 이는 최적과 수식에서 항상 모든 weight가 같은 방향(+ or -)으로 update된다는 의미이다.
+   >
+   > 예시: (w_1, w_2, w_3)이라는 3차원의 공간에서 세 가중치가 모두 증가하거나, 모두 감소하거나 하게 되면 지그재그 움직임을 볼 수 있다.
+   >
+   > 단, x가 -부호를 가질 때는 tanh와 같이 weight가 다양한 방향으로 update될 수 있다.
 
    
 
@@ -107,8 +118,115 @@ RNN은 간단히 표현하자면 아래 1번과 같은데, 이를 시간의 흐�
    > sigmoid함수 미분
    > $$
    > \frac{d}{dx}sigmoid(x) = \frac{d}{dx}(1 + e^{-1})^{-1} \\
-   >  = (-1)\frac{1}{(1 + e^{-x})^2}(-e^{-x}) \\
-   >   = \frac{e^{-x}}{(1 + e^{-x})^2}
+   > = (-1)\frac{1}{(1 + e^{-x})^2}(-e^{-x}) \\
+   > = \frac{e^{-x}}{(1 + e^{-x})^2}
    > $$
    > ![](https://taewanmerepo.github.io/2017/09/sigmoid/differential_sigmoid.jpg)
+   >
+   > tanh 함수 미분
+   > $$
+   > \frac{d}{dx} tanh(x) = \frac{e^{x} - e^{-x}}{e^{x} + e^{-x}}
+   > $$
+   > 
+   >
+   > ![](https://ko.d2l.ai/_images/chapter_deep-learning-basics_mlp_13_0.svg)
+
+
+
+그리고 back propagation을 수식으로 표현하며 아래와 같다.
+
+손실함수 L과 경사하강법을 사용한다고 가정
+$$
+h_{raw} = x_{t}w_{xh} + h_{t-1}w_{hh} + b_{h}
+$$
+
+$$
+h_{t} = tanh(h_{raw}) \ \ = \ \ tanh(x_{t}w_{xh} + h_{t-1}w_{hh} + b_{h})
+$$
+
+$$
+y_{t} = h_{t}w_{hy} + b_{y}
+$$
+
+
+
+손실함수 L을 weight 에 대해서 편미분 (chain rule이 적용된다.)
+$$
+\frac{\partial L}{\partial w} = \frac{\partial L }{\partial y_{t}}  \frac{\partial y_{t}}{\partial w} \\
+ =\frac{\partial L }{\partial y_{t}}\frac{\partial y_{t}}{\partial h_{t}}\frac{\partial h_{t}}{\partial w} \\
+ =\frac{\partial L }{\partial y_{t}}\frac{\partial y_{t}}{\partial h_{t}}\frac{\partial h_{t}}{\partial h_{raw}}\frac{\partial h_{raw}}{\partial w}
+$$
+이 때 weight는 w_{xh}와 w_{hh}가 있기 때문에 아래와 같이 표현할 수 있다.
+$$
+\frac{\partial L}{\partial w_{xh}} 
+=\frac{\partial L }{\partial y_{t}}\frac{\partial y_{t}}{\partial h_{t}}\frac{\partial h_{t}}{\partial h_{raw}}\frac{\partial h_{raw}}{\partial w_{xh}} \\
+\frac{\partial L}{\partial w_{hh}}
+=\frac{\partial L }{\partial y_{t}}\frac{\partial y_{t}}{\partial h_{t}}\frac{\partial h_{t}}{\partial h_{raw}}\frac{\partial h_{raw}}{\partial w_{hh}}
+$$
+이를 각각 계산해보자면
+
+
+$$
+1.\ \frac{\partial y_{t}}{\partial h_{t}} = w_{hy} \\
+2.\ \frac{\partial h_{t}}{\partial h_{raw}} = 1-tanh^{2}(h_{raw})\\
+3.\ \frac{\partial h_{raw}}{\partial w_{xh}} = x_{t}\\
+4.\ \frac{\partial h_{raw}}{\partial w_{hh}} = h_{t-1} \\
+$$
+임으로 최종 식은 아래와 같다
+$$
+\frac{\partial L}{\partial w_{xh}} 
+=\frac{\partial L }{\partial y_{t}}w_{hy}( 1-tanh^{2}(h_{raw})) x_{t} \\
+\frac{\partial L}{\partial w_{hh}}
+=\frac{\partial L }{\partial y_{t}}w_{hy}( 1-tanh^{2}(h_{raw})) h_{t-1}
+$$
+
+> $$
+> tanh(x) = \frac{e^{x} - e^{-x}}{e^{x} + e^{-x}} \\
+> 1 - tanh(x)^2 = \frac{4}{e^{2x} + 2 + e^{-2x}}
+> $$
+>
+> 
+
+이를 경사하강법에 대입해 보면 아래와 같다.
+
+- w_{xh}^{new}
+  $$
+  w_{xh}^{new} =  w_{xh} - \alpha\frac{\partial L}{\partial w_{xh}} \\
+   = w_{xh}-\alpha(\frac{\partial L }{\partial y_{t}}w_{hy}( 1-tanh^{2}(h_{raw})) h_{t-1})
+  $$
+  위 식을 풀어서 표현하면 아래와 같다
+  $$
+  w_{xh}^{new} = w_{xh}-\alpha 
+  \left (
+  \frac{\partial L }{\partial y_{t}}w_{hy}( 1-tanh^{2}(x_{t}w_{xh} + h_{t-1}w_{hh} + b_{h})) x_{t})
+  \right ) \\
+   = w_{xh}-\alpha\left (\frac{\partial L }{\partial y_{t}}w_{hy}\frac{4 x_{t}}{e^{2(x_{t}w_{xh} + h_{t-1}w_{hh} + b_{h})} + 2 + e^{-2(x_{t}w_{xh} + h_{t-1}w_{hh} + b_{h})}}\right )
+  $$
+
+- w_{hh}^{new}
+
+$$
+w_{hh}^{new} = w_{hh} - \alpha\frac{\partial L}{\partial w_{hh}} \\
+ = w_{hh}-\alpha(\frac{\partial L }{\partial y_{t}}w_{hy}( 1-tanh^{2}(h_{raw})) h_{t-1})
+$$
+
+위 식을 풀어서 표현하면 아래와 같다
+$$
+w_{hh}^{new} = w_{hh}-\alpha 
+\left (
+\frac{\partial L }{\partial y_{t}}w_{hy}( 1-tanh^{2}(x_{t}w_{xh} + h_{t-1}w_{hh} + b_{h})) h_{t-1})
+\right ) \\
+ = w_{hh}-\alpha\left (\frac{\partial L }{\partial y_{t}}w_{hy}\frac{4 h_{t-1}}{e^{2(x_{t}w_{xh} + h_{t-1}w_{hh} + b_{h})} + 2 + e^{-2(x_{t}w_{xh} + h_{t-1}w_{hh} + b_{h})}}\right )
+$$
+
+
+이러한 편미분은 시간 단계 t에서 뿐만 아니라 이전 시간 단계들에 대해서도 계산되며, 이는 역전파를 통해 시간을 거슬러 올라가면서 이루어진다.
+
+때문에 RNN 에서의 back propagationd은  Back Propagation Through Time(BPTT)라는 이름으로 불린다.
+
+
+
+이제 RNN의 연산 과정과 back propagation의 동작에 대해 이해했다면 LSTM의 연산과 back propagation에 대해서 이해를 해보자
+
+
 
