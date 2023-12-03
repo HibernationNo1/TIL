@@ -63,10 +63,19 @@ RNN은 간단히 표현하자면 아래 1번과 같은데, 이를 시간의 흐�
 값이 발산하는 문제를 방지하기 위해 normalizing 하는 것이 필요하다면 sigmoid와 tanh를 activate function으로 사용할 수 있는데
 
 왜 tanh를 사용했는가? 하면 아래 두 가지 이유가 있다.
+$$
+sigmoid(x) = \frac{1}{1 + e^{-x}}
+$$
+
+$$
+tanh(x) = \frac{e^{x} - e^{-x}}{e^{x} + e^{-x}}
+$$
+
+
 
 > 1. sigmoid									
 >    $$
->    s(x) = \frac{1}{1 + e^{-x}}
+>    sigmoid(x) = \frac{1}{1 + e^{-x}}
 >    $$
 >    
 > 2. 
@@ -99,8 +108,8 @@ RNN은 간단히 표현하자면 아래 1번과 같은데, 이를 시간의 흐�
    > $$
    > 이는 미분을 했을 때 아래와 같다.
    > $$
-   > \frac{dL}{dw} = \frac{dz}{dw}\frac{dL}{dz} \\
-   > 이\ 때 \ z는\ chain\ rule에\ 의해\ (wx)를\ 표현한\ 것이며,  \\
+   > \frac{dL}{dw} =\frac{dL}{dz}  \frac{dz}{dw}\\
+   > 이\ 때 \ z는\ (wx)를\ 표현한\ 것이며,  \\
    > \frac{dz}{dw}는\ z를\ w에\ 의해\ 미분했다는\ 의미임으로 \\
    > \ \frac{dz}{dw} == x\ 가\ 성립되며 \\
    > \frac{dL}{dw} = x\frac{dL}{dz}  == f'(z)\times x\ 가\ 성립된다.
@@ -121,14 +130,16 @@ RNN은 간단히 표현하자면 아래 1번과 같은데, 이를 시간의 흐�
    > $$
    > \frac{d}{dx}sigmoid(x) = \frac{d}{dx}(1 + e^{-x})^{-1} \\
    > = (-1)\frac{1}{(1 + e^{-x})^2}(-e^{-x}) \\
-   > = \frac{e^{-x}}{(1 + e^{-x})^2} \\
-   >  = sigmoid(x)(1-sigmoid(x))
+   > = \frac{e^{-x}}{(1 + e^{-x})^2} \\ \\
+   > = sigmoid(x)(1-sigmoid(x))
    > $$
    > ![](https://taewanmerepo.github.io/2017/09/sigmoid/differential_sigmoid.jpg)
    >
    > tanh 함수 미분
    > $$
-   > \frac{d}{dx} tanh(x) = \frac{e^{x} - e^{-x}}{e^{x} + e^{-x}}
+   > \frac{d}{dx} tanh(x) = \frac{d}{dx} \frac{e^{x} - e^{-x}}{e^{x} + e^{-x}} \\ = \frac{(e^{x} + e^{-x})(e^{x} + e^{-x}) - (e^{x} - e^{-x})(e^{x} - e^{-x})}{(e^{x} + e^{-x})^2} \\
+   > =  \frac{4}{e^{2x} + 2 + e^{-2x}} \\
+   >  = (1 - tanh^{2}(x))
    > $$
    >
    >
@@ -155,11 +166,15 @@ $$
 
 손실함수 L을 weight 에 대해서 편미분 (chain rule이 적용된다.)
 $$
+Loss : L
+$$
+
+$$
 \frac{\partial L}{\partial w} = \frac{\partial L }{\partial y_{t}}  \frac{\partial y_{t}}{\partial w} \\
  =\frac{\partial L }{\partial y_{t}}\frac{\partial y_{t}}{\partial h_{t}}\frac{\partial h_{t}}{\partial w} \\
  =\frac{\partial L }{\partial y_{t}}\frac{\partial y_{t}}{\partial h_{t}}\frac{\partial h_{t}}{\partial h_{raw}}\frac{\partial h_{raw}}{\partial w}
 $$
-이 때 weight는 w_{xh}와 w_{hh}가 있기 때문에 아래와 같이 표현할 수 있다.
+이 때 weight는 w_{xh}와 w_{hh}가 있기 때문에 아래와 같이 표현할 수 있다.b
 $$
 \frac{\partial L}{\partial w_{xh}} 
 =\frac{\partial L }{\partial y_{t}}\frac{\partial y_{t}}{\partial h_{t}}\frac{\partial h_{t}}{\partial h_{raw}}\frac{\partial h_{raw}}{\partial w_{xh}} \\
@@ -170,10 +185,10 @@ $$
 
 
 $$
-1.\ \frac{\partial y_{t}}{\partial h_{t}} = w_{hy} \\
-2.\ \frac{\partial h_{t}}{\partial h_{raw}} = 1-tanh^{2}(h_{raw})\\
-3.\ \frac{\partial h_{raw}}{\partial w_{xh}} = x_{t}\\
-4.\ \frac{\partial h_{raw}}{\partial w_{hh}} = h_{t-1} \\
+1.\ \frac{\partial y_{t}}{\partial h_{t}} = \frac{\partial (h_{t}w_{hy} + b_{y})}{\partial h_{t}} =  w_{hy} \\
+2.\ \frac{\partial h_{t}}{\partial h_{raw}} = \frac{\partial ( tanh(h_{raw}))}{\partial h_{raw}} = 1-tanh^{2}(h_{raw})\\
+3.\ \frac{\partial h_{raw}}{\partial w_{xh}} = \frac{\partial (x_{t}w_{xh} + h_{t-1}w_{hh} + b_{h})}{\partial w_{xh}} = x_{t}\\
+4.\ \frac{\partial h_{raw}}{\partial w_{hh}} =  \frac{\partial (x_{t}w_{xh} + h_{t-1}w_{hh} + b_{h})}{\partial w_{hh}} =  h_{t-1} \\
 $$
 임으로 최종 식은 아래와 같다
 $$
@@ -194,6 +209,8 @@ $$
 
 - w_{xh}^{new}
   $$
+  Optimizer: SGD \\
+  
   w_{xh}^{new} =  w_{xh} - \alpha\frac{\partial L}{\partial w_{xh}} \\
    = w_{xh}-\alpha(\frac{\partial L }{\partial y_{t}}w_{hy}( 1-tanh^{2}(h_{raw})) h_{t-1})
   $$
@@ -205,7 +222,7 @@ $$
   \right ) \\
    = w_{xh}-\alpha\left (\frac{\partial L }{\partial y_{t}}w_{hy}\frac{4 x_{t}}{e^{2(x_{t}w_{xh} + h_{t-1}w_{hh} + b_{h})} + 2 + e^{-2(x_{t}w_{xh} + h_{t-1}w_{hh} + b_{h})}}\right )
   $$
-
+  
 - w_{hh}^{new}
 
 $$
@@ -231,7 +248,22 @@ $$
 
 그럼 왜 RNN이 아니라  LSTM을 사용하는 것일까?
 
-Vanishing Gradient Problem(경사도 사라짐 문제)가 발생할 수 있다.
+
+
+**Long Term Dependency**
+
+RNN의 은닉 상태값을 보면 아래와 같다.
+$$
+h_{raw}^{t} = x_{t}w_{xh} + h_{t-1}w_{hh} + b_{h}
+$$
+
+$$
+h_{t} = tanh(h_{raw}^{t}) \ \ = \ \ tanh(x_{t}w_{xh} + h_{t-1}w_{hh} + b_{h})
+$$
+
+t가 증가할수록 범위가 (-1 ~ 1)인 tanh가 계속해서 곱해지기 때문에 forward propagation과정에서 뒷 단의 sequence로 갈 수록 정보를 잃어버리게 된다.
+
+
 
 ![](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSsZD1lr3mkJp7ioA758ZQNIqsHz11E5njHHw&usqp=CAU)
 
@@ -239,24 +271,34 @@ Vanishing Gradient Problem(경사도 사라짐 문제)가 발생할 수 있다.
 
 시간축 1의 input data의 영향력은 점점 약해지기 때문이다.
 
-이는 아래 식으로도 확인을 할 수 있는데, 
 
 
+back propagaton과정은 아래의 수식을 통해 설명한다.
+
+ h_{T}를 h\_{t}로 미분해보면 (t시점부터 T시점의 상태값 변화량) 아래와 같다
 
 
 
 
 $$
-h_{t} = x_{t}w_{xh} + h_{t-1}w_{hh} + b_{h}
-$$
-t가 증가할수록 weight가 반복해서 적용됨을 확인할 수 있다.
+\frac{d(tanh(x_{t}w_{xh} + h_{T-1}w_{hh} + b_{h}))}{dh_{T-1}} = \\
+\frac{dh_{T}}{dh_{T-1}} =  w_{hh}^{T}(1 - tanh^{2}(x_{t}w_{xh} + h_{T-1}w_{hh} + b_{h})))\\
 
-이때 h_{T}를 h\_{t}로 미분해보면 (t시점부터 T시점의 상태값 변화량) 아래와 같다.
-$$
 \frac{dh_T}{dh_{t}} = \frac{dh_{T}}{dh_{T-1}}\frac{dh_{T-1}}{dh_{T-2}}...\frac{dh_{t+1}}{dh_{t}} \\
- = w_{hh}^{T}*w_{hh}^{T-1}*w_{hh}^{T-2}...w_{hh}^{t+1}*w_{hh}^{t}
+ = w_{hh}^{T}(1 - tanh^{2}(h_{raw}^{T}))*w_{hh}^{T-1}(1 - tanh^{2}(h_{raw}^{T-1}))*w_{hh}^{T-2}(1 - tanh^{2}(h_{raw}^{T-2}))* ... * 
+ w_{hh}^{t+1}(1 - tanh^{2}(h_{raw}^{t+1}))*w_{hh}^{t}1 - tanh^{2}(h_{raw}^{t})) \\
+  =  \prod_{i = t}^{T}w_{hh}^{i} *  \prod_{i = t}^{T}(1 - tanh^{2}(h_{raw}^{i}))
 $$
-이는 t부터 T시간동안의 각각의 weight에 의해 곱 연산이 진행되며 발산할수도, 사라질수도 있다. 
+
+
+- 1- tanh^{2}는 항상 절대값 1보다 작은 값이 곱해져서 0으로 수령
+- weight또한 그대로 곱해지기 때문에 그 값이 크던 적던 영향력을 그대로 행사하기 때문에, sequence가 길어지면 초기 t의 weight의 영향력은 줄어들게 된다.
+
+이는 즉 t부터 T까지의 sequence가 지났을 경우 은닉 상태값의 변화량이 0에 수렴한다는 의미이다.  
+
+
+
+
 
 
 
@@ -399,6 +441,10 @@ $$
 
 그리고 LSTM에서 사용하는 loss를 L2이라고 가정해보자.
 $$
+L = Loss
+$$
+
+$$
 L(x) =\sum_{i=1}^{n}(y_{i} - \hat{y_{i}})^2
 $$
 
@@ -417,6 +463,14 @@ $$
 우리가 update하고자 하는 weight는 W_{xh}, W\_{hh}이다.
 
 이를 위해서는 4개의 편미분값을 구해야 한다.
+
+
+$$
+\frac{dL}{dg_{t}} \ \ \frac{dL}{df_{t}}  \ \ \frac{dL}{di_{t}} \ \ \frac{dL}{do_{t}}
+$$
+
+
+
 $$
 df_{t},\ di_{t},\ dg_{t},\ do_{t}\
 $$
@@ -521,7 +575,7 @@ $$
 
   - dL/df_{t}
     $$
-    \frac{dL}{di_{f}} = \frac{dL}{dh_{t}}\frac{dh_{t}}{dC_{t}}\frac{dC_{t}}{df_{t}} \\
+    \frac{dL}{df_{t}} = \frac{dL}{dh_{t}}\frac{dh_{t}}{dC_{t}}\frac{dC_{t}}{df_{t}} \\
     = \frac{dL}{dh_{t}}* o_{t}* (1-tanh^{2}(C_{t})) * C_{t-1}
     $$
     
@@ -534,19 +588,19 @@ $$
     - dL/dw_{xh}^{f}
       $$
       \frac{dL}{dw_{xh}^{f}} = \frac{dL}{dh_{t}}\frac{dh_{t}}{dC_{t}}\frac{dC_{t}}{df_{t}}\frac{df_{t}}{dw_{xh}^{f}} \\
-      = \frac{dL}{dh_{t}}* o_{t}* (1-tanh^{2}(C_{t})) * C_{t-1}* sigmoid(z_{t}^{i}) * (1-sigmoid(z_{t}^{i})) * x_{t}
+      = \frac{dL}{dh_{t}}* o_{t}* (1-tanh^{2}(C_{t})) * C_{t-1}* sigmoid(z_{t}^{f}) * (1-sigmoid(z_{t}^{f})) * x_{t}
       $$
 
     - dL/dw_{hh}^{f}
       $$
       \frac{dL}{dw_{hh}^{f}} = \frac{dL}{dh_{t}}\frac{dh_{t}}{dC_{t}}\frac{dC_{t}}{df_{t}}\frac{df_{t}}{dw_{hh}^{f}} \\
-      = \frac{dL}{dh_{t}}* o_{t}* (1-tanh^{2}(C_{t})) * C_{t-1}* sigmoid(z_{t}^{i}) * (1-sigmoid(z_{t}^{i})) * h_{t-1}
+      = \frac{dL}{dh_{t}}* o_{t}* (1-tanh^{2}(C_{t})) * C_{t-1}* sigmoid(z_{t}^{f}) * (1-sigmoid(z_{t}^{f})) * h_{t-1}
       $$
 
     - dL/db_{n}^{f}
       $$
       \frac{dL}{db_{n}^{f}} = \frac{dL}{dh_{t}}\frac{dh_{t}}{dC_{t}}\frac{dC_{t}}{df_{t}}\frac{df_{t}}{db_{n}^{f}} \\
-      = \frac{dL}{dh_{t}}* o_{t}* (1-tanh^{2}(C_{t})) * C_{t-1}* sigmoid(z_{t}^{i}) * (1-sigmoid(z_{t}^{i})) * x_{t}
+      = \frac{dL}{dh_{t}}* o_{t}* (1-tanh^{2}(C_{t})) * C_{t-1}* sigmoid(z_{t}^{f}) * (1-sigmoid(z_{t}^{f})) * x_{t}
       $$
       
 
@@ -620,24 +674,7 @@ LSTM은 왜 RNN보다 장기기억력이 좋은가?
 
 
 
-RNN의 은닉 상태값을 보면 아래와 같다.
 
-
-$$
-h_{t} = x_{t}w_{xh} + h_{t-1}w_{hh} + b_{h}
-$$
-t가 증가할수록 weight가 반복해서 적용됨을 확인할 수 있다.
-
-이때 h_{T}를 h\_{t}로 미분해보면 (t시점부터 T시점의 상태값 변화량) 아래와 같다.
-$$
-\frac{dh_T}{dh_{t}} = \frac{dh_{T}}{dh_{T-1}}\frac{dh_{T-1}}{dh_{T-2}}...\frac{dh_{t+1}}{dh_{t}} \\
- = w_{hh}^{T}*w_{hh}^{T-1}*w_{hh}^{T-2}* ... * w_{hh}^{t+1}*w_{hh}^{t}
-$$
-이는 t부터 T시간동안의 각각의 weight에 의해 곱 연산이 진행되는데, 시간이 지날수록 weight의 최적화가 
-
-절대값 1보다 작은 방향으로 이루어진다면 dh_{T}/dh\_{t}의 값은 계속해서 작아진다.
-
-또는 절대값 1보다 큰 방향으로 이루어진다면 dh_{T}/dh\_{t}의 값은 계속해서 커지게 되며 올바른 학습이 이루어지지 않게 된다.
 
 
 
@@ -648,7 +685,8 @@ $$
 C_{T}를 C\_{t}로 미분해보면 (t시점부터 T시점의 상태값 변화량) 아래와 같다.
 $$
 \frac{dC_{T}}{dC_{t}} = \frac{dC_T}{dC_{T-1}} \frac{dC_{T-1}}{dC_{T-2}} ...  \frac{dC_{t+1}}{dC_{t}} \\
-= f_{T} * f_{T-1} * f_{T-2} * ... * f_{t+1} * f_{t}
+= f_{T} * f_{T-1} * f_{T-2} * ... * f_{t+1} * f_{t} \\
+= \prod_{i = t}^{T}f_{i}
 $$
 여기서 f_{t}는 아래와 같다.
 $$
@@ -662,9 +700,11 @@ $$
 
   T와 t사이에 중요하지 않다고 판단되는 시간이 한 번이라도 존재한다면,  t시간대의 정보를 잃게 되기 때문에 f_{t}를 망각 게이트라고 하게 되는 것이다.
 
-- 만일 t의 시간대의 정보가 중요하다고 판단되어 장기적으로 가져가야하는 정보라면, 각각 시점 t부터 T까지의 모든 f의 weight는 f의 값이 0이 되지 않도록 학습하게 될 것이다.
+- 만일 t의 시간대의 정보가 중요하다고 판단되어 장기적으로 가져가야하는 정보라면, 각각 시점 t부터 T까지의 모든 f의 weight는 f의 값이 1에 가깝도록 학습하게 될 것이다.
 
 
 
 
+
+또한 C_{T}를 C\_{t}로 미분해보면 (t시점부터 T시점의 상태값 변화량) 아래와 같다.
 
