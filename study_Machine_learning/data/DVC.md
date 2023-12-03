@@ -219,7 +219,7 @@ remote storage는 cloud storage가 될 수도 있고, local에 특정 dir이 될
 1. SSH연결
 
    ```
-   $  dvc remote add -d remote_name ssh://teno@192.168.0.101:/var/services/homes/dvc
+   $  dvc remote add -d remote_name ssh://teno@192.168.0.101:/DATA/01.Data/dvc_test_folder
    ```
 
 2. port설정 (기본값 22이 아닌, 2323인 경우)
