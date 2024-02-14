@@ -184,18 +184,18 @@ $ sudo apt -y install typora
 
 **linux**
 
+
+
 1. `Anaconda3-2021.05-Linux-x86_64.sh` file다운로드 후, 해당 위치에서 무결성 확인
 
    ```
    $ wget https://repo.anaconda.com/archive/Anaconda3-2022.05-Linux-x86_64.sh
    ```
 
+   ```
+$ sha256sum Anaconda3-2022.05-Linux-x86_64.sh
+   ```
    
-
-   ```
-   $ sha256sum Anaconda3-2022.05-Linux-x86_64.sh
-   ```
-
    > Anaconda3-2022.05-Linux-x86_64.sh 파일 명 확인
 
 2. 설치
@@ -392,6 +392,8 @@ $ sudo apt -y install typora
   > 
   > 처럼 `sudo -H gedit`을 통해 파일 내용 확인 후 고쳐서 진행할것
   
+  nvidia-driver 설치(이미 설치했다면 건너뛰기)
+  
   ```
   $ apt-cache search nvidia
   $ sudo apt-get install -y nvidia-driver-XXX # 
@@ -410,9 +412,13 @@ $ sudo apt -y install typora
   $ sudo reboot
   ```
 
+nvidia-driver확인
+
 ```
 $ sudo cat /proc/driver/nvidia/version | nvidia-smi
 ```
+
+nvidia-docker 설치
 
 ```
 $ curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
@@ -452,6 +458,10 @@ $ sudo docker run --runtime=nvidia --rm nvidia/cuda:11.0-base nvidia-smi
 > ```
 > 
 > 의 명령어를 통해 `CUDA Version:`  을 확인 후 알맞는 version기입 (11.4 이면 `11.0-base` 기입)
+
+
+
+
 
 - **Uninstall old versions**
   
