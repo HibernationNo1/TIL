@@ -60,6 +60,16 @@
 
    `Hello from Docker!` 이 포함된 출력문이 나오면 된것
 
+6. add user to docker group
+
+   sudo 명령어 없이 docker를 실행하기 위한 조치
+
+   ```
+   $ sudo usermod -aG docker $USER
+   ```
+
+   
+
 
 
 **Uninstall old versions**
@@ -148,6 +158,29 @@ docker contianer안에서 GPU를 사용하기 위해선 필수
    $ sudo apt-get install -y nvidia-docker2
    ```
 
+   - `sudo apt-get update`과정에서 아래 error발생 시
+
+     ```
+      Conflicting values set for option Signed-By regarding source https://nvidia.github.io/libnvidia-container/stable/ubuntu18.04/amd64/ /: /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg != 
+     
+     ```
+
+     1. PT 소스 리스트(`sources.list` 또는 `/etc/apt/sources.list.d/` 디렉토리 내의 파일들)에서 NVIDIA 관련 저장소를 추가할 때 `Signed-By` 옵션에 대해 충돌하는 값을 설정했기 때문에 발생
+
+        어떤 파일에 의해 충돌했는지 확인
+
+        ```
+        $ grep -l "nvidia.github.io" /etc/apt/sources.list.d/* | grep -vE "/nvidia-container-toolkit.list\$"
+        ```
+
+        `/etc/apt/sources.list.d/nvidia-docker.list` 출력 시
+
+     2. 충돌하는 파일 삭제
+
+        ```
+        $ sudo rm -rf /etc/apt/sources.list.d/nvidia-docker.list
+        ```
+
    ```
    *** daemon.json (Y/I/N/O/D/Z) [default=N] ? y
    Installing new version of config file /etc/docker/daemon.json ...
@@ -164,8 +197,14 @@ docker contianer안에서 GPU를 사용하기 위해선 필수
    check : 기본 CUDA container 실행
 
    ```
-   $ sudo docker run --rm --gpus all nvidia/cuda:10.1-devel-ubuntu18.04 nvidia-smi
+   $ docker run -it --rm --gpus all nvidia/cuda:11.4.3-devel-ubuntu20.04  
    ```
+
+   ```
+   container(container안에서)# nvidia-smi 
+   ```
+
+   
 
    > cuda와 ubuntu version에 대한tag는 [docker hub-nvidia](https://hub.docker.com/r/nvidia/cuda/tags)에서 검색 후 결정
 
