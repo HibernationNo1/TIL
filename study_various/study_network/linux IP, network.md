@@ -152,54 +152,83 @@ $ sudo apt install net-tools
 
 #### Ubuntu
 
-ubuntu에서 network interface IP를 설정하는 파일은 `/etc/netplan` 위치에 `01-netcfg.yaml` 이름으로 있다. (없다면 만들자.)
-
-```
-cat /etc/netplan/01-netcfg.yaml
-```
-
-`01-netcfg.yaml` 파일을 통해 고정 IP를 설정하는 경우
-
-- 예시 
-
-  > 192.168.0.0 network에 속하며, 208번으로 IP를 고정시킬 경우
+- 18.04
 
   ```
-  network:
-      version: 2
-      renderer: networkd
-      ethernets:
-          enp2s0:
-              dhcp4: no
-              addresses: [192.168.0.208/24]
-              gateway4: 192.168.0.1
-              nameservers:
-                  addresses: [1.1.1.1,8.8.8.8]
-  ainsoft@nonggiwon:/etc/netplan$
+  $ sudo vi /etc/network/interfaces
   ```
-
-  `enp2s0` : interface name
-
-  > `ifconfig`를 통해 확인할 것. 
-
-  `dhcp4` : true 면 dhcp4방식, no면 static방식
-
-  `addresses` : IP주소
-
-  `gateway4` : gateway주소
-
-  `nameservers` : DNS주소
-
   
-
-  값 세팅 후
-
-  ```
-  $ systemctl restart network
-  ```
-
+  > 192.168.110.0 network에 속하며, 107번으로 IP를 고정시킬 경우
   
+  ```
+  # The primary network interface
+  # This file describes the network interfaces available on your system
+  # and how to activate them. For more information, see interfaces(5).
+  # The loopback network interface
+  auto lo
+  iface lo inet loopback
+  
+  # The primary network interface
+  auto eth0
+  iface eth0 inet static
+  address 192.168.110.107
+  netmask 255.255.255.0
+  gateway 192.168.110.1
+  dns-nameservers 8.8.8.8
+  ```
+  
+  
+  
+- 20.04
 
+  ubuntu에서 network interface IP를 설정하는 파일은 `/etc/netplan` 위치에 `01-netcfg.yaml` 이름으로 있다. (없다면 만들자.)
+
+  ```
+  $ cat /etc/netplan/01-netcfg.yaml
+  ```
+  
+  `01-netcfg.yaml` 파일을 통해 고정 IP를 설정하는 경우
+  
+  - 예시 
+  
+    > 192.168.0.0 network에 속하며, 208번으로 IP를 고정시킬 경우
+  
+    ```
+    network:
+        version: 2
+        renderer: networkd
+        ethernets:
+            enp2s0:
+                dhcp4: no
+                addresses: [192.168.0.208/24]
+                gateway4: 192.168.0.1
+                nameservers:
+                    addresses: [1.1.1.1,8.8.8.8]
+    ainsoft@nonggiwon:/etc/netplan$
+    ```
+
+    `enp2s0` : interface name
+
+    > `ifconfig`를 통해 확인할 것. 
+
+    `dhcp4` : true 면 dhcp4방식, no면 static방식
+
+    `addresses` : IP주소
+  
+    `gateway4` : gateway주소
+
+    `nameservers` : DNS주소
+
+    
+  
+    값 세팅 후
+  
+    ```
+    $ systemctl restart network
+    ```
+  
+    
+  
   
 
 #### SentOS
