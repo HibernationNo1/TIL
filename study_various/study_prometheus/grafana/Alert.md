@@ -37,7 +37,7 @@ Alert의 Contact points >> Integration 에서  Telegram선택 시
 
    `Done! Congratulations on ...` 라는 봇의 답변이 뜨면 
 
-   - `Use this token ...` 이라는 문장으로 시작하는 문단에 token이 있음 `'6818574021:AAEjZxXVUXLCST-u84Un5dYVY-XC3unpdj8'` 와 같은 형태
+   - `Use this token ...` 이라는 문장으로 시작하는 문단에 token이 있음 `'6818574021:AAEjZxXVUXLCST-xxxxxxx-XC3unpdj8'` 와 같은 형태
 
 **Chat ID**
 
