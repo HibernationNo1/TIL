@@ -186,7 +186,7 @@ $ sudo apt -y install typora
 
 
 
-1. `Anaconda3-2021.05-Linux-x86_64.sh` file다운로드 후, 해당 위치에서 무결성 확인
+1. `Anaconda3-2022-Linux-x86_64.sh` file다운로드 후, 해당 위치에서 무결성 확인
 
    ```
    $ wget https://repo.anaconda.com/archive/Anaconda3-2022.05-Linux-x86_64.sh
