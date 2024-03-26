@@ -30,6 +30,14 @@ dashboard를 저장해야만 Alert를 사용할 수 있다.
 
 원하는 PromQL 를 구성하여 data를 확인할 수 있다.
 
+- 가장 기본적은 PromQL
+
+  ```
+  node_cpu_seconds_total
+  ```
+
+  CPU 사용률
+
 
 
 **Transform**

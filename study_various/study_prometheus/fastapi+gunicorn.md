@@ -85,15 +85,16 @@ networks:
 
 
 
-## flask + gunicorn
+## fastAPI+prometheus
 
 
 
 - requirements.txt
 
   ```
-  prometheus_client==0.19.0
-  prometheus_flask_exporter==0.23.0
+  fastapi[all]==0.110.0
+  prometheus_fastapi_instrumentator==7.0.0
+  gunicorn==21.2.0
   ```
 
   
@@ -118,26 +119,14 @@ def max_workers():
 def half_workers():
     return round(cpu_count()/2)
 
-### gunicorn에서 제대로 metrics를 모으지 못한다면 아래 주석 해제. 아래 code없이도 되는것이 정상 
-# from prometheus_flask_exporter.multiprocess import GunicornPrometheusMetrics
-# def when_ready(server):
-#    # master process가 모든 설정을 완료하고 worker process를 스폰하기 직전에 호출
-#     GunicornPrometheusMetrics.start_http_server_when_ready(8080)
-
-# def child_exit(server, worker):
-#     # worker process가 종료될 때 호출. 
-#     # 해당 프로세스에 대한 메트릭 데이터를 정리해야 할 필요가 있을 수 있기 때문
-#     GunicornPrometheusMetrics.mark_process_dead_on_child_exit(worker.pid)
-###
-
-# GunicornPrometheusMetrics를 사용하기 위해 환경변수 `PROMETHEUS_MULTIPROC_DIR` 설정 필요
+# gunicorn의 여러 instance에 대한 metrix을 한곳에 모아 기록(한번에 관리)하기 위해 `PROMETHEUS_MULTIPROC_DIR` 설정 필요
 prometheus_path = '/tmp/prometheus_multiproc_dir_5'
 os.environ['PROMETHEUS_MULTIPROC_DIR'] = prometheus_path
 os.makedirs(prometheus_path, exist_ok=True)
 
 bind = '0.0.0.0:5004'
 max_requests = 1000
-worker_class = 'gevent'		# 적정한 worker class사용
+worker_class = 'uvicorn.workers.UvicornWorker'		# fastAPI의 uvicorn을 사용하기 위한 설정
 workers = half_workers()
 timeout = 60
 accesslog = osp.join(BASE_LOG_DIR, 'gunicorn.access.log')
@@ -187,21 +176,21 @@ PROMETHEUS_REGISTRY['request_latency'] = Histogram('request_latency_seconds', 'D
 
 
 
-### `flask_app.py`
+### `fastAPI_app.py`
 
 ```python
-import psutil
-from flask import Flask
-from flask import Flask, request, jsonify
+from fastapi import FastAPI
+from pydantic import BaseModel
+import uvicorn
 
-app = Flask(__name__)
+app = FastAPI()
 
-from prometheus_flask_exporter import PrometheusMetrics
-from handlers.prometheus import PROMETHEUS_REGISTRY
-PROMETHEUS_REGISTRY['metrics'] = PrometheusMetrics(app)
+from prometheus_fastapi_instrumentator import Instrumentator
+Instrumentator().instrument(app).expose(app)
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5004)
+
+if __name__ == "__main__":
+    uvicorn.run(app, host='0.0.0.0', port=5004)
 ```
 
 
@@ -211,7 +200,7 @@ from handlers.prometheus import PROMETHEUS_REGISTRY
 request_latency = PROMETHEUS_REGISTRY['request_latency']
 memory_usage = PROMETHEUS_REGISTRY['memory_usage']
 
-@app.route('/add', methods=['post'])
+@app.post('/add')
 @request_latency.time()			# prometheus를 사용해서 request latency 측정 및 기록
 def add():
     # 요청으로부터 a와 b 파라미터를 받음
