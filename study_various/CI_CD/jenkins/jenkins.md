@@ -25,6 +25,21 @@ Java로 개발되었으며, 소프트웨어 개발의 빌드, 테스트, 배포 
 
 
 
+## Configure CI/CD
+
+jenkins을 사용해서 CI/CD를 구성하는 순서
+
+1. install jenkins (== set master node)
+2. credentials 추가
+   - gitlab의 계정에 대한 API token credentials
+   - agent node에 대한 ssh credentials
+3. agent node 추가
+4. pipeline 구성 (and `git webhooks` 설정)
+
+
+
+
+
 ## install 
 
 ### install jenkins 
@@ -76,7 +91,12 @@ Java로 개발되었으며, 소프트웨어 개발의 빌드, 테스트, 배포 
    필수 설치 목록:
 
    - `ssh-agent`: ssh-Credentials를 사용하기 위해 반드시 설치 필요
+
    - `GitLab`: git-lab 사용시 반드시 필요
+
+     > Select plugins to install 단계에서 `ssh-agent` 설치 시 제대로 동작하지 않는 문제점 확인
+     >
+     > `ssh-agent` 는 jenkins login 후  jenkins관리 > Plugins > Available plugins > `ssh-agent` 검색 과정으로 설치하자
 
 4. Create First Admin User (모든 항목이 필수)
 
@@ -140,13 +160,4 @@ Pipeline Job은 `Jenkinsfile`을 통해 코드 형태로 pipeline인 로직을 �
 
 
 
-
-## Configure CI/CD
-
-1. install jenkins (== set master node)
-2. credentails 추가
-   - gitlab의 계정에 대한 API token credentials
-   - agent node에 대한 ssh credentials
-3. agent node 추가
-4. pipeline 구성
 

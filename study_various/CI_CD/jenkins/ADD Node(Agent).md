@@ -1,3 +1,11 @@
+# Node
+
+jenkins에서 빌드 또는 테스트 작업을 실행하는 물리적 또는 가상의 머신
+
+마스터-슬레이브 구조에서 슬레이브 노드로 작동하며, 분산된 환경에서 작업을 병렬로 실행할 수 있다.
+
+
+
 ## ADD Node(Agent)
 
 CI에 대한 build, test등을 수행한 agent node를 추가하는 방법
@@ -9,6 +17,8 @@ CI에 대한 build, test등을 수행한 agent node를 추가하는 방법
 **1. install java**
 
 agent로 삼고자 하는 server에 java가 설치되어 있어야 한다.
+
+master node에서 설치된 java version과, agent node에 설치된 java version이 서로 호환이 가능해야 한다.
 
 자바 설치
 
@@ -26,6 +36,23 @@ agent로 삼고자 하는 server에 java가 설치되어 있어야 한다.
   $ sudo yum install java-11-openjdk-devel
   ```
 
+만일 java가 여러 version이 설치되어있다면 `sudo update-alternatives --config java` 명령어로 기본 java version을 11로 설정
+
+> 예시
+>
+> ```
+> 2 개의 프로그램이 'java'를 제공합니다.
+> 
+>   선택    명령
+> -----------------------------------------------
+> *+ 1           java-1.8.0-openjdk.x86_64 (/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.342.b07-1.el7_9.x86_64/jre/bin/java)
+>    2           java-11-openjdk.x86_64 (/usr/lib/jvm/java-11-openjdk-11.0.16.0.8-1.el7_9.x86_64/bin/java)
+> 
+> 현재 선택[+]을 유지하려면 엔터키를 누르고, 아니면 선택 번호를 입력하십시오:
+> ```
+>
+> 여기서 2를 입력하면 기본 java version을 11로 사용
+
 
 
 ##### 2. ssh copy
@@ -34,15 +61,18 @@ master node에서 agent로 삼고자 하는 server에 공개 key를 복사해야
 
 > 예시 192.168.110.104 서버의 sirs라는 user에 공개 key를 복사하고자 할 때
 >
-> (credentials 를 생성할 때 `Username`에 sirs라고 등록했어야 함)
->
 > ```
-> $ ssh-copy-id sirs@192.168.110.104
+>$ ssh-copy-id sirs@192.168.110.104
 > ```
+> 
+> 공개 key가 제대로 복사되었다면 `ssh sirs@192.168.110.104` 명령어에 비밀번호 입력 없이 접속할 수 있게 된다.
 
-만일 jenkins를 docker container로 띄웠다면 
+만일 jenkins를 docker container로 띄웠다면 container 내부에서 copy명령어 실행할 것.
 
-build시 ssh 파일들을 전부 volume mount를 하거나, container 내부에서 copy명령어 실행할 것.
+ ssh 파일들을 volume mount하는 것은 소용이 없다.
+
+- local 과 server의 `~/.ssh` 의 권한이 `700`인지 확인
+- local 과 server의 개인 private key의 권한이 `600`이고, pubilc key의 권한이 `644`이며, authorized key의 권한이 `600`이 맞는지 확인
 
 
 
@@ -54,17 +84,17 @@ docker를 사용하는 proejct라면 permission에 의해 build과정이 중지�
    $ sudo usermod -aG docker ${USER}
    ```
 
-   docker 실행 시 sudo명령어 없이 실행하도록 설정
+   docker 실행 시 sudo명령어 없이 실행하도록 설정 (user: sirs)
 
 2. ```
-   $ sudo chown -R sirs:sirs /home/sirs/.docker
+   $ sudo chown username:username -R /home/username/.docker
    ```
 
    docker image build시 생성되는 cache path 에 대한 소유권을 설정.
 
    이 설정을 하지 않으면 root 권한으로 path(dir)가 생성되며, pipeline script에 docker 또는 docker-compose를 사용한 build가 불가능하다.
 
-   > (credentials 를 생성할 때 `Username`에 sirs라고 등록했어야 함)
+   > (credentials 를 생성할 때 `Username`에 동일한 user를 등록했어야 함)
 
 
 
@@ -90,14 +120,18 @@ docker를 사용하는 proejct라면 permission에 의해 build과정이 중지�
 
 - **Remote root directory**
 
-  stage서버에서 Jenkins 관련 파일(빌드 로그, 아티팩트 등)을 저장할 dir의 경로를 지정
+  jenkins 에이전트의 작업 dir을 지정한다.
 
-  > 예시:  `/var/jenkins/agent` 로 입력하고자 한다면
+  pipeline의 build과정에서 git clone을 수행 시 해당 `path/workspace/{pipeline_name}` 위치에 clone이 이루어진다.
+
+  > 예시: agent에서  `/service` 를 Remote root directory 로 지정하는 경우
   >
   > ```
-  > $ sudo mkdir /var/jenkins					# 경로 생성
-  > $ sudo chown username:username /var/jenkins -R		# 권한 부여
+  > $ sudo mkdir /service					# 경로 생성
+  > $ sudo chown username:username -R /service		# 소유권 부여
   > ```
+
+  해당 위치는 한 번 결정하면, 이후 node의 구성 변경에서 값을 변경해도 적용되지가 않는다. (원인 불명)
 
 - **Labels**
 
@@ -159,12 +193,14 @@ docker를 사용하는 proejct라면 permission에 의해 build과정이 중지�
 
         보안상 안전한 방법이지만, 호스트 키가 변경될 경우 Jenkins 설정도 업데이트해야 하는 번거로움이 있음
 
-        > HOST KEY를 입력해야 한다. 공개 키(public key)로 하면 연결 안됨
+        > agent의 HOST KEY를 입력해야 한다. 공개 키(public key)로 하면 연결 안됨
         >
         > - host key 확인 방법 (`ecdsa` 형식의 host key 확인. `rsa`형식의 host key는 Manually provided key Verification strategy 의 입력 알고리즘 조건에 맞지 않음)
         >
+        >   아래 명령어는 agent에서 진행
+        >
         >   ```
-        >   $ ssh-keyscan -t ecdsa 192.168.110.104
+        >   $ ssh-keyscan -t ecdsa localhost
         >   ```
         >
         >   ```
@@ -185,6 +221,12 @@ docker를 사용하는 proejct라면 permission에 의해 build과정이 중지�
         >   ```
         >   $ ssh-keygen -t ecdsa -b 256
         >   ```
+        >   
+        > - 만일 위 명령어로 host key가 출력되지 않는다면, file을 직접 추적해서 출력하기
+        >
+        >   ```
+        >   $ cat /etc/ssh/ssh_host_ecdsa_key.pub
+        >   ```
 
       - Manually trusted key verification strategy
 
@@ -199,9 +241,9 @@ docker를 사용하는 proejct라면 permission에 의해 build과정이 중지�
       - Non verifying Verification strategy
 
          SSH 접속 시 호스트 키 검증 과정을 생략
-
+    
     - **advance option**
-
+    
       - `JavaPath`
 
         java 실팽 파일의 경로를 지정
@@ -249,20 +291,19 @@ docker를 사용하는 proejct라면 permission에 의해 build과정이 중지�
       - `Use TCP_NODELAY flag on the SSH connection`
 
         SSH 연결 시 TCP_NODELAY 플래그를 사용하는 option.
-
+    
         네트워크 지연을 줄이고 데이터 패킷의 즉각적인 전송을 가능하게 하여 성능을 개선할 수 있다.
-
+    
       - `Remoting Work directory`
-
-        enkins 에이전트의 작업 dir을 지정한다.
-
-        agent가 작업을 수행하면서 사용할 임시 파일이나 캐시 등을 저장하는 위치로 사용된다.
-
-        주로 pipeline의 build를 수행하기 위해 git clone을 하여 code를 가져올때 사용한다.
-
-        > 예시  `/var/jenkins/agent/workdir`
-
-        Remote root directory 와의 차이점: Remote root directory는 빌드 아티팩트, 로그 파일, 임시 파일 등을 저장
+    
+        stage서버에서 Jenkins 관련 파일(빌드 로그, 아티팩트 등)을 저장할 dir의 경로를 지정
+    
+        > 예시:  `/var/jenkins/agent` 로 입력하고자 한다면
+        >
+        > ```
+        > $ sudo mkdir /var/jenkins/agent					# 경로 생성
+        > $ sudo chown username:username -R /var/jenkins/agent		# 소유권 부여
+        > ```
 
 - **Availability**
 
@@ -330,3 +371,6 @@ docker를 사용하는 proejct라면 permission에 의해 build과정이 중지�
 
     도구가 표준 경로가 아닌 곳에 설치된 경우에 유용하다.
 
+
+
+생성 후, 생성된 node의 설정 > 로그 를 확인했을 때 `Agent successfully connected and online` 문구가 출력되었다면 agent node연결 성공

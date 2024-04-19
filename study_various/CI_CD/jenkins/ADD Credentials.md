@@ -1,6 +1,10 @@
 # Credentials
 
-plugin  중에 `ssh-agent` 설치가 필수
+Jenkins에서 다양한 외부 시스템과의 안전한 통신을 위해 사용자 이름/비밀번호, SSH 키, API 토큰 등의 인증 정보를 관리하는 기능이다. 
+
+이를 통해 빌드, 테스트, 배포 과정에서 필요한 인증 정보를 안전하게 저장하고 사용할 수 있다.
+
+- `ssh-agent` plugin 설치가 필수
 
 
 
@@ -58,7 +62,7 @@ GitLab 프로젝트 내의 코드를 체크아웃하거나, merge request를 생
 
   > gitlab에서
   >
-  > 사용자 설정 > 좌측 탭 중 `Access Tokens` > api 선택 후 만료날짜, 이름 결정 > `Create personal access token` 클릭
+  > 사용자 설정 > 좌측 탭 중 `Access Tokens` > **api 선택** 후 만료날짜, 이름 결정 > `Create personal access token` 클릭
   >
   > **Your New Personal Access Token**  이 새로 만들어진 token이다.
 
@@ -78,7 +82,7 @@ GitLab 프로젝트 내의 코드를 체크아웃하거나, merge request를 생
 
 - ID
 
-  > 예시: `Jenkins-agent-ssh`
+  > 예시: `Master_to_Worker_SSH_sirs`  (Master에서 Worker노드로 접속할 때 sirs라는 username으로 사용되는 ssh credential)
 
   Credentials의 고유 식별자
 
@@ -88,7 +92,7 @@ GitLab 프로젝트 내의 코드를 체크아웃하거나, merge request를 생
 
 - Username
 
-  SSH 접속에 사용될 사용자 이름을 입력
+  master node에서 SSH를 사용해서 접속 하고자 하는 target(agent) server에 사용되는 사용자 이름을 입력
 
   > `ssh {username}@{IP}` 에서 username부분
 
@@ -101,6 +105,8 @@ GitLab 프로젝트 내의 코드를 체크아웃하거나, merge request를 생
   SSH 접속에 사용될 개인 키를 입력하는 부분
 
   1. master에서 slave 로 접속할 때 사용하려면, master의 개인 키를 입력해야 한다.
+
+     > jenkins container의 ssh key가 아닌, jenkins가 설치된 node의 ssh key를 넣어야 한다.
 
   2. id_rsa.pub 이 아닌, id_rsa의 내용을 사용해야 한다.
 

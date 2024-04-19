@@ -1,6 +1,10 @@
+# pipeline
+
+빌드, 테스트, 배포 등의 프로세스를 자동으로 실행할 수 있도록 정의된 job
 
 
-# pipeline 구성
+
+## pipeline 구성
 
 ### General
 
@@ -197,9 +201,15 @@
 
   이를 위해 GitLab 저장소에 Jenkins의 Webhook URL을 설정하고, 코드 변경 시 Jenkins가 자동으로 build를 시작하도록 설정
 
-  > GitLab webhook URL: `http://localhost:8081/project/{pipeline_name}`
+  > - GitLab webhook URL: `http://localhost:8081/project/{pipeline_name}`
   >
-  > 과 같이 gitLab webhook을 구성할때 입력할 URL을 제공한다
+  >   과 같이 gitLab webhook을 구성할때 입력할 URL을 제공한다
+  >
+  > - GitLab이 설치된 서버에서 jenkins가 설치된 서버로 요청을 보낼 수 있어야 한다. 
+  >
+  >   GitLab이 설치된 서버가 DMZ에 위치하고, jenkins가 설치된 서버가 내부 네트워크에 위치한다면
+  >
+  >   DMZ위치에서 내부 네트워크로 data를 전송할 수 없기에 gitlab webhooks를 사용이 불가능하다.
 
   - `Push Events`
 
@@ -437,6 +447,8 @@
     >
     >    git-lab의 개인 계정 setting > 좌측 탭 중 `SSH Keys` > ssh key 등록
 
+    만들고 나면 적용되는데 시간이 많이 소요될 수 있음.  이 시간을 단축시키려면 해당 git url을 jenkins container 내부에서 git clone을 하면 jenkins상에서 바로 적용된다.
+
   - Credentials
 
     Jenkins에서 사용할 수 있는 주요 Credentials 유형 선택 (아래 유형만 선택 가능)
@@ -493,6 +505,8 @@
   여러 브랜치를 지정한 경우, 지정된 브랜치 중 하나에서 변경사항을 감지하면 해당 브랜치에서 빌드를 실행
 
   예시로 `feature/*`를 지정하면, `feature/`로 시작하는 브랜치 중 변경사항이 있는 브랜치에 대해 빌드를 수행
+
+  - `live` branch로 실행하고, pipeline script에서 `git url: 'ssh://git@192.168.0.101:30001/fusion_research/mobicoms/yolo_api.git', branch: 'stage'` 와 같이 git branch를 명시해도  git clone은 live branch로 실행된다.
 
 - Repository browser
 
