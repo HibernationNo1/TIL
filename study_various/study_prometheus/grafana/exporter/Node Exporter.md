@@ -66,7 +66,7 @@ http://192.168.110.18:9100/metrics 접속
 
 ### Load Node Exporter dashboard
 
-Node Exporter를 dashboard에 추가하는 방법 (이미 구현된 dashboard를 가져온다.)
+Node Exporter를grafana의 dashboard에 추가하는 방법 (이미 구현된 dashboard를 가져오는 방법이다.)
 
 1. connection 추가 
 

@@ -1,6 +1,21 @@
 # Grafana
 
-grafana구성 방법
+시계열 데이터를 시각화하고 모니터링하는 데 사용되는 오픈 소스 플랫폼
+
+다양한 데이터 소스에서 데이터를 가져와 사용자 친화적인 대시보드를 만들 수 있다.
+
+Grafana는 Prometheus, InfluxDB, Elasticsearch 등 여러 데이터 소스와 호환되며, 시스템의 성능 지표를 그래픽으로 표현해 실시간으로 시스템 상태를 파악할 수 있게 여러 기능을 지원한다.
+
+
+
+기본 사용방법
+
+1. Add new connection (Data source)
+2. Dashboard구성
+
+
+
+## install grafana 
 
 
 
@@ -85,5 +100,5 @@ networks:
 
 
 
-### ssh
+
 
