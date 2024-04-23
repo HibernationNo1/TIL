@@ -2,7 +2,7 @@
 
 GPU란 무엇인가?
 
-![](https://github.com/HibernationNo1/TIL/blob/master/semina/images/CPUvsGPU.jpg?raw=true)
+![](https://github.com/HibernationNo1/TIL/blob/master/seminar/images/NVIDIA%20GPU/CPUvsGPU.jpg?raw=true)
 
 **CPU**
 
@@ -80,7 +80,7 @@ CPU와는 다르게 Instruction(명령어 전달)이나 decoding(명령어 해�
 2. cuda core로 명령어 전달, 병렬 연산 수행
 3. 완료된 연산 결과를 memory에 저장
 
-![](https://github.com/HibernationNo1/TIL/blob/master/semina/images/CUDA_core.png?raw=true)
+![](https://github.com/HibernationNo1/TIL/blob/master/seminar/images/NVIDIA%20GPU/CUDA_core.png?raw=true)
 
 
 
@@ -104,13 +104,15 @@ RT core는 Ray Tracing 관련 연산을 수행하는 하드웨어 core 장치.
 
 빛이 이리저리 날아다니다가 우리 눈의 망막에 부딪치는 순간, 우리는 색과 물체를 인식하게 된다.
 
+![](https://github.com/HibernationNo1/TIL/blob/master/seminar/images/NVIDIA%20GPU/Ray_tracing_2.png?raw=true)
+
 Ray Tracing은 이런 빛의 움직임을 흉내내는 기술이다. 
 
 현실 세계에서는 광원에서 빛이 출발하여 오브젝트에 반사된 후 우리 눈에 들어오게 되는데, 디지털적으로는 정 반대의 단계를 통해 빛의 움직임을 추적한다.
 
 이를 위해선 출발하는 빛의 벡터, 반사된 빛의 벡터를 계산하여 추적하는 연산을 수행해야 한다.
 
-![](https://github.com/HibernationNo1/TIL/blob/master/semina/images/Ray_tracing.png?raw=true)
+![](https://github.com/HibernationNo1/TIL/blob/master/seminar/images/NVIDIA%20GPU/Ray_tracing.png?raw=true)
 
 이를 통해 물, 거울 과 같이 빛을 반사하도록 결정된 오브젝트는 반사된 빛이 만나게 되는 물체를 표면에 rendering을 수행하고
 
@@ -172,7 +174,7 @@ AI 및 머신 러닝 연산에 특화된 하드웨어로, 특히 딥 러닝의 �
 - **`FP32`**(Single Precision): 32비트 부동소수점 포맷.  최소값: 1×2^(−126), 최대값: (2−2^(−23))×2^(127)
 - **`FP64`**(Double Precision): 64비트 부동소수점 포맷. 최소값: 2^(−1022),  최대값: (2-2^(-52)) × 2^(1023)
 
-![](https://github.com/HibernationNo1/TIL/blob/master/semina/images/FP32-FP16.jpeg?raw=true)
+![](https://github.com/HibernationNo1/TIL/blob/master/seminar/images/NVIDIA%20GPU/FP32-FP16.jpeg?raw=true)
 
 
 
@@ -206,7 +208,7 @@ AI 및 머신 러닝 연산에 특화된 하드웨어로, 특히 딥 러닝의 �
 
        FP32는 1비트의 부호 비트(Sign bit), 8비트의 지수부(Exponent), 23비트의 가수부(Mantissa)로 구성된다.
 
-       ![](https://github.com/HibernationNo1/TIL/blob/master/semina/images/FP32-FP16.jpeg?raw=true)
+       ![](https://github.com/HibernationNo1/TIL/blob/master/seminar/images/NVIDIA%20GPU/FP32-FP16.jpeg?raw=true)
 
        - 부호비트: 0  (양수)
 
@@ -264,23 +266,19 @@ AI 및 머신 러닝 연산에 특화된 하드웨어로, 특히 딥 러닝의 �
 - **`FP32`**(Single Precision): 32비트 부동소수점 포맷.  
 - **`FP64`**(Double Precision): 64비트 부동소수점 포맷. 
 
-![](https://github.com/HibernationNo1/TIL/blob/master/semina/images/FP32-FP16.jpeg?raw=true)
+![](https://github.com/HibernationNo1/TIL/blob/master/seminar/images/NVIDIA%20GPU/FP32-FP16.jpeg?raw=true)
 
 Nvidia는 각 제품의 white paper에서 위 정밀도 단위로 성능을 표현하며, 웹 페이지에 tensor performance 라고 명시된 값은 가장 작은 단위의 정밀도에 의한 속도를 나타낸 것이다.
-
-```
-L40s의 tensor performance
-```
 
 
 
 - L40s의 datasheet에서 성능 표
 
-  ![](https://github.com/HibernationNo1/TIL/blob/master/semina/images/L40S_1.png?raw=true)
+  ![](https://github.com/HibernationNo1/TIL/blob/master/seminar/images/NVIDIA%20GPU/L40S_1.png?raw=true)
 
 - L40s의 tensor performance 
 
-  ![](https://github.com/HibernationNo1/TIL/blob/master/semina/images/L40S_2.png?raw=true)
+  ![](https://github.com/HibernationNo1/TIL/blob/master/seminar/images/NVIDIA%20GPU/L40S_2.png?raw=true)
 
 **정밀도 조절이 왜 필요한가?**
 
@@ -300,7 +298,7 @@ pomission과 같은 경우는 연산 과정에서 정밀도가 높더라도 퍼�
 
 `FP16`으로 입력을 받고, 연산이 완료되면 `FP32`로 최종 계산이 이루어지는 기술이다.
 
-![](https://github.com/HibernationNo1/TIL/blob/master/semina/images/mixed%20presision.png?raw=true)
+![](https://github.com/HibernationNo1/TIL/blob/master/seminar/images/NVIDIA%20GPU/mixed%20presision.png?raw=true)
 
 위 그림은 mixed precision을 사용한 training 동작이다.
 
@@ -352,11 +350,11 @@ In Volta GV100, each Tensor Core performs 64 floating point FMA operations per c
 
   하나의 GPU architecture는 다수의 SM을 포함하여 구성되어 있다.
 
-  ![](https://github.com/HibernationNo1/TIL/blob/master/semina/images/SM.png?raw=true)
+  ![](https://github.com/HibernationNo1/TIL/blob/master/seminar/images/NVIDIA%20GPU/SM.png?raw=true)
 
 때문에 1 clock 당 SM에서는 64 * 8 = 512 회의 FMA 연산이 수행됨을 알 수 있지만, 위 문장에서는 `1 clock 당 512회의(또는 독립적인 1024회)` FMA의 연산이 이루어진다고 쓰여있다. FMA 횟수가 왜 2배나 뻥튀기가 될까? 이는 NVIDIA의 계산 단위에 의해 결정된다.
 
-![](https://github.com/HibernationNo1/TIL/blob/master/semina/images/FMA.png?raw=true)
+![](https://github.com/HibernationNo1/TIL/blob/master/seminar/images/NVIDIA%20GPU/FMA.png?raw=true)
 
 FMA는 하나의 연산에서 곱셈과 덧셈을 결합하는 것을 의믜한다. NVIDIA는 곱셈과 덧셈을 독립적인 계산으로 간주하고, 횟수를 2회로 결정하여 계산하는 방식을 사용한다.
 
@@ -386,7 +384,7 @@ V100 SXM2의 **GPU Boost Clock**(최대 clock) 은 **1,530** MHz 이다.
 
   아래는 Tesla V100 datasheet 첨부
 
-  ![](https://github.com/HibernationNo1/TIL/blob/master/semina/images/V100_datasheet.png?raw=true)
+  ![](https://github.com/HibernationNo1/TIL/blob/master/seminar/images/NVIDIA%20GPU/V100_datasheet.png?raw=true)
 
 
 
@@ -426,7 +424,7 @@ PCIe를 통해 Chat GPT가 동작하는 것으로 예시를 들어보겠다.
 
 GPU도 각각의 memory 가지고 있기 때문에 GPU끼리 데이터를 공유하고자 한다면 위와 같은 절차를 따랐어야 했다.
 
-![](https://github.com/HibernationNo1/TIL/blob/master/semina/images/NVlink_1.png?raw=true)
+![](https://github.com/HibernationNo1/TIL/blob/master/seminar/images/NVIDIA%20GPU/PCIe.png?raw=true)
 
 #### NVlink
 
@@ -438,7 +436,7 @@ NVlink의 특징은 아래와 같다.
 
   
 
-  ![](https://github.com/HibernationNo1/TIL/blob/master/semina/images/NVlink_2.png?raw=true)
+  ![](https://github.com/HibernationNo1/TIL/blob/master/seminar/images/NVIDIA%20GPU/NVlink_2.png?raw=true)
 
 - 더욱 빠르게 데이터를 전달할 수 있도록 신호처리적인 기술 **PAM4**(Pulse-Amplitude Modulation)를 도입했다.
 
@@ -446,13 +444,13 @@ NVlink의 특징은 아래와 같다.
 
   PAM4 는 4개의 층계에 패턴규칙까지 추가하여 적은 통신으로도 많은 정보를 통신할 수 있도록 했다. 
 
-  ![](https://github.com/HibernationNo1/TIL/blob/master/semina/images/RAM4_1.png?raw=true)
+  ![](https://github.com/HibernationNo1/TIL/blob/master/seminar/images/NVIDIA%20GPU/RAM4_1.png?raw=true)
 
   아래 그림을 보면, NRZ는 5번의 비트 전환을 수행하지만, PAM4는 4번의 적은 비트 전환을 수행한다. 
 
   
 
-  ![](https://github.com/HibernationNo1/TIL/blob/master/semina/images/PAM4_2.png?raw=true)
+  ![](https://github.com/HibernationNo1/TIL/blob/master/seminar/images/NVIDIA%20GPU/PAM4_2.png?raw=true)
 
   NVlink를 처음 공개하였을 때 
 
@@ -470,7 +468,7 @@ NVlink의 특징은 아래와 같다.
 
 - CPU와 GPU끼리도 연결이 가능하다.
 
-  ![](https://github.com/HibernationNo1/TIL/blob/master/semina/images/NVlink_3.png?raw=true)
+  ![](https://github.com/HibernationNo1/TIL/blob/master/seminar/images/NVIDIA%20GPU/NVlink_3.png?raw=true)
 
 
 
@@ -478,11 +476,7 @@ NVlink의 특징은 아래와 같다.
 
 - NVLink의 세대별 성능표
 
-![](https://github.com/HibernationNo1/TIL/blob/master/semina/images/NVLink_list.png?raw=true)
-
-
-
-
+![](https://github.com/HibernationNo1/TIL/blob/master/seminar/images/NVIDIA%20GPU/NVlink_4.png?raw=true)
 
 ## Architecture
 
@@ -553,7 +547,7 @@ NVlink의 특징은 아래와 같다.
 
     화면에 이미지를 출력하기 전에 프로그램적으로 높은 해상도의 이미지를 구성한 후, 보간법을 사용하면서 본래의 화면 크기만큼 다운샘플링을 하는 기법.
 
-    ![](https://github.com/HibernationNo1/TIL/blob/master/semina/images/Super-Sampling.png?raw=true)
+    ![](https://github.com/HibernationNo1/TIL/blob/master/seminar/images/NVIDIA%20GPU/Super-Sampling.png?raw=true)
 
     이를 통해 더욱 부드럽고 자연스러운 이미지가 생성될 수 있지만, 시간과 비용 또한 증가한다.
 
@@ -563,7 +557,7 @@ NVlink의 특징은 아래와 같다.
 
   때문에 큰 사이즈로 렌더링 후 다운샘플링 하는 과정을 모두 추론으로 진행하기 때문에, 비용과 시간은 단축시키고 성능은 더욱 높일 수 있게 된다.
 
-  ![](https://github.com/HibernationNo1/TIL/blob/master/semina/images/DLSS.jpg?raw=true)
+  ![](https://github.com/HibernationNo1/TIL/blob/master/seminar/images/NVIDIA%20GPU/DLSS.jpg?raw=true)
 
   - DLSS는 3D 그래픽을 사용하는 개임 개발 및 이용 시 사용된다
 
@@ -619,7 +613,7 @@ NVlink의 특징은 아래와 같다.
 
   TF32는 FP32와 같은 범위를 유지하면서도, mantissa(소수점) 부분을 10비트로 제한하여 계산 효율을 높인다.
 
-  ![](https://github.com/HibernationNo1/TIL/blob/master/semina/images/FP32-FP16.jpeg?raw=true)
+  ![](https://github.com/HibernationNo1/TIL/blob/master/seminar/images/NVIDIA%20GPU/FP32-FP16.jpeg?raw=true)
 
 - FP64연산 속도 2.5배 증가
 
@@ -649,7 +643,7 @@ NVlink의 특징은 아래와 같다.
 
     2. model 구조를 Sparsity를 사용하기 위한 구조로 설계를 해야 한다.
 
-       ![](https://github.com/HibernationNo1/TIL/blob/master/semina/images/Sparsity.png?raw=true)
+       ![](https://github.com/HibernationNo1/TIL/blob/master/seminar/images/NVIDIA%20GPU/Sparsity.png?raw=true)
 
        위 그림은 Pruning기법을 사용하여 4개의 tensor중에서 2개의 weight를 삭제하는(50%비율을 삭제)것을 예시로 든다.
 
@@ -722,7 +716,7 @@ NVlink의 특징은 아래와 같다.
 
     image의 흐름을 파악하여 다음 image가 송출되기 전에 그 이전단계의 Frame을 생성해내는 기술
 
-    ![](https://github.com/HibernationNo1/TIL/blob/master/semina/images/Frame_generation.png?raw=true)
+    ![](https://github.com/HibernationNo1/TIL/blob/master/seminar/images/NVIDIA%20GPU/Frame_generation.png?raw=true)
 
 - 3D 그래픽 작업에 최적화된 구조 제공
 
@@ -732,7 +726,7 @@ NVlink의 특징은 아래와 같다.
 
     각 프레임 간의 픽셀 변화를 계산하여 물체가 어떻게, 얼마나 움직였는지를 파악하는 기술
 
-    ![](https://github.com/HibernationNo1/TIL/blob/master/semina/images/Optical_Flow.jpg?raw=true)
+    ![](https://github.com/HibernationNo1/TIL/blob/master/seminar/images/NVIDIA%20GPU/Optical_Flow.jpg?raw=true)
 
 - **Ada Fourth-Gen Tensor Cores** 사용
 
@@ -819,7 +813,7 @@ Grace Hopper Superchips
 
 **Grace Hopper Superchips**
 
-![](https://github.com/HibernationNo1/TIL/blob/master/semina/images/Grace_hopper.jpg?raw=true)
+![](https://github.com/HibernationNo1/TIL/blob/master/seminar/images/NVIDIA%20GPU/Grace_hopper.jpg?raw=true)
 
 Nvidia에서 개발한 Arm 기반 CPU(Grace)와 Hopper GPU를 결합하여 만든 하나의 board 
 
@@ -827,7 +821,7 @@ Nvidia에서 개발한 Arm 기반 CPU(Grace)와 Hopper GPU를 결합하여 만�
 
 - 120GB 용량, 819GB/S 의 대역폭을 가진 memory인 SK 하이닉스 사의 HBM3 (High Bandwidth Memory) 
 
-  ![](https://github.com/HibernationNo1/TIL/blob/master/semina/images/HBM3.jpg?raw=true)
+  ![](https://github.com/HibernationNo1/TIL/blob/master/seminar/images/NVIDIA%20GPU/HBM3.jpg?raw=true)
 
 - 576GB의 GPU memory 제공
 
@@ -855,7 +849,7 @@ AI학습 시 하나의 슈퍼 컴퓨터처럼 사용 가능.
 
 - Grace Hopper Superchips 256개를 NVLink로 전부 연결
 
-  ![](https://github.com/HibernationNo1/TIL/blob/master/semina/images/Grace%20hopper%20Data%20Center%20NVlink.png?raw=true)
+  ![](https://github.com/HibernationNo1/TIL/blob/master/seminar/images/NVIDIA%20GPU/Grace%20hopper%20Data%20Center%20NVlink.png?raw=true)
 
   독립적인 board를 전부 연결하여 하나의 board처럼 사용이 가능하도록 구현한 최초의 슈퍼 컴퓨터
 
@@ -863,7 +857,7 @@ AI학습 시 하나의 슈퍼 컴퓨터처럼 사용 가능.
 
 - AWS, google cloud와 같은 could 환경 제공 서비스 업체에게 그대로 양도하는것이 목적
 
-![](https://github.com/HibernationNo1/TIL/blob/master/semina/images/Grace%20hopper%20Data%20Center.png?raw=true)
+![](https://github.com/HibernationNo1/TIL/blob/master/seminar/images/NVIDIA%20GPU/Grace%20hopper%20Data%20Center.png?raw=true)
 
 
 
@@ -885,10 +879,9 @@ AI학습 시 하나의 슈퍼 컴퓨터처럼 사용 가능.
 
   - Superchips 사이의 데이터 이동 시 병목현상 최소화
 
-    
-
-  ![](https://github.com/HibernationNo1/TIL/blob/master/semina/images/NVlink_4.png?raw=true)
-
+  
+  ![](https://github.com/HibernationNo1/TIL/blob/master/seminar/images/NVIDIA%20GPU/NVlink_4.png?raw=true)
+  
 - **nvlink switch 도입**
 
   - 4개의 NV link를 내장하여 1.8 TB/sec 의 속도를 제공
@@ -910,7 +903,7 @@ AI학습 시 하나의 슈퍼 컴퓨터처럼 사용 가능.
 
 - B200: Black well GPU 2개를 연결하여 구성된 chipset
 
-  ![](https://github.com/HibernationNo1/TIL/blob/master/semina/images/B200.jpg?raw=true)
+  ![](https://github.com/HibernationNo1/TIL/blob/master/seminar/images/NVIDIA%20GPU/B200.jpg?raw=true)
 
 
 
@@ -924,7 +917,7 @@ AI학습 시 하나의 슈퍼 컴퓨터처럼 사용 가능.
 
 -  HBM3 의 다음 세대인 HBM3e 사용. (용량 192GB   대역폭 1,280GB/s)
 
-![](https://github.com/HibernationNo1/TIL/blob/master/semina/images/GB200-Grace-Blackwell-Superchip.jpg?raw=true)
+![](https://github.com/HibernationNo1/TIL/blob/master/seminar/images/NVIDIA%20GPU/GB200-Grace-Blackwell-Superchip.jpg?raw=true)
 
 
 
@@ -936,7 +929,7 @@ Grace Blackwell 200 Superchips 36개로 구성된 슈퍼 컴퓨터
 - 수냉식 지원
 - GB200 NVL72 다수를 구성하여 Grace hopper Data Center보다 더욱 높은 성능의 data center를 제공할 예정
 
-GB200 NVL72 그림 삽입
+![](https://github.com/HibernationNo1/TIL/blob/master/seminar/images/NVIDIA%20GPU/GB200%20NVL72.png?raw=true)
 
 
 
@@ -944,4 +937,4 @@ GB200 NVL72 그림 삽입
 
 **data center용 GPU의 tensor Performance 비교**
 
-![](https://github.com/HibernationNo1/TIL/blob/master/semina/images/tensor%20Performance.png?raw=true)
+![](https://github.com/HibernationNo1/TIL/blob/master/seminar/images/NVIDIA%20GPU/tensor%20Performance.png?raw=true)
