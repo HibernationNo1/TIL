@@ -8,13 +8,13 @@
 
 클러스터는 하나 이상의 서버를 묶어 구축을 하게 되는데, 이를 통해 사용자는 여러 서버를 하나의 PC환경처럼 사용할 수 있게 된다.
 
-- cubernetis node(worker node) : 쿠버네티스에서 실제 컨테이너가 가동하는 노드(host가 되는 물리 머신이나 가상 머신) 
+- kubernetis node(worker node) : 쿠버네티스에서 실제 컨테이너가 가동하는 노드(host가 되는 물리 머신이나 가상 머신) 
 
   > worker node의 구성 요소
   >
   > kubelet : control plane으로부터 명령을 받고, 자신의 상태를 control plane으로 전달하는 역할을 하는 component
 
-- cubernetis master(control plane) : cubernetis node를 관리하고 모니터링하며, Client로부터 요청이 오면 그 요청에 맞는 worker node를 scheduling해서 해당 node로 요청을 전달한다.
+- kubernetis master(control plane) : kubernetis node를 관리하고 모니터링하며, Client로부터 요청이 오면 그 요청에 맞는 worker node를 scheduling해서 해당 node로 요청을 전달한다.
 
   > control plane의 구성 요소
   >
