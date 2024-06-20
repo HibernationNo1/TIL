@@ -1,0 +1,1 @@
+docker-compose -f docker/docker-compose_master.yml up -d

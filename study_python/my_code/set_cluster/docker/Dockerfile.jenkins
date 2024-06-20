@@ -1,0 +1,19 @@
+FROM jenkins/jenkins:2.448
+
+# 사용자 입력 요청화면 무시
+ARG DEBIAN_FRONTEND=noninteractive 
+
+# 기본 tool 설치를 위한 root 사용자로 전환
+USER root
+
+# 기본 tool 설치
+RUN apt-get update && apt-get install -y git wget vim sudo lsof libgl1-mesa-glx
+
+# # Jenkins 사용자에게 sudo 권한 부여 및 비밀번호 설정
+# RUN echo 'jenkins ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers \
+#     && echo 'jenkins:ai1234' | chpasswd
+
+# 다시 jenkins 사용자로 전환
+USER jenkins
+
+WORKDIR /workspace

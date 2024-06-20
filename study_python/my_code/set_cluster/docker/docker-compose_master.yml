@@ -1,0 +1,44 @@
+version: "3"
+services:
+  grafana:
+    image: 'grafana/grafana:10.0.10-ubuntu'
+    container_name: 'grafana'
+    ports: 
+      - '3000:3000'
+
+  prometheus:
+    image: 'prom/prometheus:v2.48.0'
+    container_name: 'prometheus'
+    ports: 
+      - '9090:9090'
+    volumes:
+      - ./prometheus_master.yml:/etc/prometheus/prometheus.yml
+    pid: host                 # host의 namespace를 사용
+    restart: unless-stopped   # container가 중단되지 않는 한 자동으로 재시작
+
+  node-exporter:
+    image: 'prom/node-exporter:v1.7.0'
+    container_name: 'node-exporter'
+    command:
+      - '--collector.hwmon'   # hwmon dashboard를 사용하기 위한 flag
+    volumes:
+      - '/sys:/host/sys:ro'   # data를 수집하기 위해 `/sys` 위치를 읽기 전용으로 mount(변경 불가능)
+    extra_hosts:            
+      - 'host.docker.internal:host-gateway'   # container에서 host의 network에 접근하기 위한 설정 (network resource나 service에 접근이 필요시)
+    ports:
+    - '9100:9100'
+    pid: host                 # host의 namespace를 사용
+    restart: unless-stopped   # container가 중단되지 않는 한 자동으로 재시작
+
+  jenkins: 
+    build :
+      context : ./
+      dockerfile: Dockerfile.jenkins
+    image: 'enliple_jenkins:0.1'
+    container_name: 'enliple_jenkins'
+    ports:
+      - '8081:8080'     # jenkins의 기본 port
+  # ssh key를 volume mount할 시 jenkins로 사용하고자 하면 권한 문제 발생. chmod, chown 모두 소용없음
+  # ssh key는 jenkins container 내부에서 만들 것 
+
+# docker-compose -f docker-compose_master.yml up -d
