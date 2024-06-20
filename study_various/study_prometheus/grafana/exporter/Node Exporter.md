@@ -70,7 +70,8 @@ Node Exporter를grafana의 dashboard에 추가하는 방법 (이미 구현된 da
 
 1. connection 추가 
 
-2. https://grafana.com/grafana/dashboards/1860-node-exporter-full/ 으로 접속 후 `Dashboard ID copy` 버튼 클릭
+2. - https://grafana.com/grafana/dashboards/1860-node-exporter-full/ (Node Exporter Full) 으로 접속 후 `Dashboard ID copy` 버튼 클릭
+   - https://grafana.com/grafana/dashboards/13734-cpu-utilization-details-cores/ (CPU Utilization Details (Cores) 으로 접속 후 `Dashboard ID copy` 버튼 클릭
 
 3. Grafana에서 `Search or jump to...` 창에 `import dashboard` 입력
 
