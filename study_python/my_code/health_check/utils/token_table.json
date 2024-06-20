@@ -1,0 +1,13 @@
+{
+    "data_collection" : 
+    {
+        "telegram_token" : "",
+        "group_chat_id" : "-"
+    },
+    "health_check" : 
+    {
+        "telegram_token" : "",
+        "group_chat_id" : "-",
+        "chat_id": ""
+    }
+}

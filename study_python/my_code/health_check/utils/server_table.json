@@ -1,0 +1,50 @@
+{
+    "health_check": 
+    {
+        "mobitv": 
+        {
+            "host" : "10.251.1.164",
+            "port" : 10001,
+            "route" : "/api/v1/get/check/status",
+            "timeout" : 10,
+            "start_time" : 1, 
+            "time_minute_in_hour" : 10
+        },
+        "kakao_1": 
+        {
+            "host" : "10.251.0.140",
+            "port" : 5004,
+            "route" : "/v1/health/check",
+            "timeout" : 10,
+            "start_time" : 1, 
+            "time_minute_in_hour" : 1
+        },
+        "kakao_2": 
+        {
+            "host" : "10.251.0.141",
+            "port" : 5004,
+            "route" : "/v1/health/check",
+            "timeout" : 10,
+            "start_time" : 1, 
+            "time_minute_in_hour" : 1
+        },
+        "pomission_1": 
+        {
+            "host" : "10.251.1.164",
+            "port" : 50000,
+            "route" : "/api/check/status",
+            "timeout" : 10,
+            "start_time" : 2, 
+            "time_minute_in_hour" : 3
+        },
+        "pomission_2": 
+        {
+            "host" : "10.251.1.164",
+            "port" : 50020,
+            "route" : "/api/check/status",
+            "timeout" : 10,
+            "start_time" : 2, 
+            "time_minute_in_hour" : 3
+        }
+    }
+}
