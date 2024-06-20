@@ -27,16 +27,67 @@ linux기준임
 1. ```
    vi ~/.bachrc
    ```
-   
+
    > bash 사용시
 
 2. ```
    export LANG=en_US.UTF-8
    ```
-   
+
    > 문구 추가 후 저장
 
 3. bash 재시작
+
+
+
+## network
+
+**netplan 사용** (**Ubuntu 20.04** 이상에서는 `/etc/netplan` 파일 설정)
+
+```
+$ sudo vi /etc/netplan/*.yaml
+```
+
+```
+# Let NetworkManager manage all devices on this system
+network:
+  version: 2
+  ethernets:
+    eno1:
+      addresses:
+        - 192.168.110.206/24
+      gateway4: 192.168.110.1
+      nameservers:
+        addresses:
+          -  8.8.8.8
+      routes:
+        - to: 192.168.110.0/24
+          via: 192.168.110.1
+          on-link: true
+
+```
+
+> - 192.168.110 대역 사용한다고 가정
+> - IP를 192.168.110.206 을 사용한다고 가정
+
+적용
+
+```
+$ sudo netplan apply
+```
+
+
+
+**ssh 설치**
+
+```
+$ sudo apt install update
+$ sudo apt install ssh 
+```
+
+
+
+
 
 ## chrom
 

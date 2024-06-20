@@ -98,6 +98,20 @@ docker를 사용하는 proejct라면 permission에 의해 build과정이 중지�
 
 
 
+##### 4. git server 사용시 known host에 추가
+
+git repository가 설치된 서버에서 worker node의 정보를 known hosts에 추가해놓아야 한다.
+
+이를 위해 worker node에서 아래 명령어 수행
+
+```
+$ ssh -p {port} git@{git repository server IP}
+```
+
+> 예를 들어, 192.168.110.101 에 git lab이 설치되어 있고, 30001 포트를 사용하고 있다면 `ssh -p 30001 git@192.168.110.101` 이게 된다.
+
+#####  
+
 
 
 ## New node

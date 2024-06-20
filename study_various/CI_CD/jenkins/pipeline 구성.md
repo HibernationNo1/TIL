@@ -423,29 +423,37 @@
 
     만일 jenkins를 docker로 설치했다면 container내부에 ssh key를 만들고 git-lab 사용자의 계정에 추가해야함.
 
-    > jenkins container에 sshkey 생성
+    > - jenkins container에 sshkey 생성
     >
-    > 1. docker 접속
+    >   1. docker 접속
     >
-    >    ```
-    >    $ docker exec -it jenkins /bin/bash 
-    >    ```
+    >      ```
+    >      $ docker exec -it jenkins /bin/bash 
+    >      ```
     >
-    > 2. ssh key 생성
+    >   2. ssh key 생성
     >
-    >    ```
-    >    $ ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
-    >    ```
+    >      ```
+    >      $ ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+    >      ```
     >
-    > 3. ssh key확인
+    >   3. ssh key확인
     >
-    >    ```
-    >    $ cat ~/.ssh/id_rsa.pub 
-    >    ```
+    >      ```
+    >      $ cat ~/.ssh/id_rsa.pub 
+    >      ```
     >
-    > 4. ssh key 등록
+    >   4. ssh key 등록
     >
-    >    git-lab의 개인 계정 setting > 좌측 탭 중 `SSH Keys` > ssh key 등록
+    >      git-lab의 개인 계정 setting > 좌측 탭 중 `SSH Keys` > ssh key 등록
+    >
+    > - host key 추가
+    >
+    >   jenkins docker 접속 후, git repository가 설치된 서버에 jenkins서버의 key추가
+    >
+    >   ```
+    >   $ ssh -p {port} {user_name}@{IP}
+    >   ```
 
     만들고 나면 적용되는데 시간이 많이 소요될 수 있음.  이 시간을 단축시키려면 해당 git url을 jenkins container 내부에서 git clone을 하면 jenkins상에서 바로 적용된다.
 

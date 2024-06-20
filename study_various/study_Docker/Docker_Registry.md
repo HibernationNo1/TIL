@@ -2,7 +2,9 @@
 
 docker registry는 Docker image를 저장하고 배포할 수 있는 server측 application이다.
 
-### install, run registry
+### install
+
+**by docker run**
 
 1. install
 
@@ -42,6 +44,32 @@ docker registry는 Docker image를 저장하고 배포할 수 있는 server측 a
    - `registry` : run할 docker images이름
 
      > `registry:2` 2.x version의 tag
+
+   
+
+   **with docker-comspose**
+
+   ```
+   version: "3"
+   services:
+     registry:
+       image: registry:2.8.3
+       container_name: 'private-docker'
+       ports: 
+         - '5000:5000'
+       environment:
+         REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY: /var/lib/registry    # Docker Registry가 image를 저장할 path를 지정(해당 path는 defualt)
+       volumes:
+         - registry-data:/var/lib/registry   # registry-data 라는 volume에 image를 저장할 path를 mount
+   
+   volumes:
+     registry-data:
+   # docker-compose -f docker-compose_master.yml up -d 
+   ```
+
+   
+
+   
 
    check container
 
@@ -159,25 +187,38 @@ regisitry가 run상태라고 가정
    >
    > - 만일 `server gave HTTP response to HTTPS client ` 가 출력되면
    >
+   >   기본적으로 Docker는 보안 연결(HTTPS)을 사용하여 레지스트리와 통신하려고 하기 때문. 
+   >   
+   >   이를 해결하기 위해서는 Docker 클라이언트가 HTTP를 사용하도록 명시적으로 설정해줘야 한다.
+   >   
+   >   `/etc/docker/daemon.json` 에 아래 내용 추가
+   >   
    >   ```
-   >   $ sudo systemctl deamon-reload
+   >   {
+   >     "insecure-registries": ["192.168.110.103:5000"]
+   >   }
+   >   ```
+   >   
+   >   이후 아래 명령어 실행
+   >   
+   >   ```
    >   $ sudo systemctl restart docker
    >   $ docker run --name private-docker -d -p 5000:5000 registry
    >   $ docker push 192.168.56.102:5000/exam:0.0.1
    >   ```
-
+   
    check
-
+   
    ```
    $ curl -X GET http://localhost:5000/v2/_catalog
    ```
-
+   
    >localhost:5000 이라는 registry에 어떤 image가 저장되어 있는지 list를 출력
-
+   
    ```
    $ curl -X GET http://localhost:5000/v2/exam/tags/list
    ```
-
+   
    > `exam`이라는 image name에 어떤 tag가 저장되어 있는지 list출력
 
 #### image pull(run) by load  from registry

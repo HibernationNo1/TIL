@@ -19,6 +19,7 @@
 1. install docker의 prerequisite packge
 
    ```
+   $ sudo apt-get update
    $ sudo apt-get install \
        ca-certificates \
        curl \
@@ -29,16 +30,20 @@
 2. GPH key추가
 
    ```
-   $ sudo mkdir -p /etc/apt/keyrings
-   $ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+   $ sudo apt-get update
+   $ sudo install -m 0755 -d /etc/apt/keyrings
+   $ sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+   $ sudo chmod a+r /etc/apt/keyrings/docker.asc
    ```
 
 3. repository를 follow하도록 설정
 
    ```
    $ echo \
-     "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-     $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+     "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+     $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+     sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+   $ sudo apt-get update
    ```
 
    > arm기반의 cpu인 경우 위 명령어 대신 다른 명령어 사용(검색하기)
@@ -46,11 +51,23 @@
 4. install Docker Engine (최신 version)
 
    ```
-   $ sudo apt-get update
    $ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
    ```
 
    > 특정 version의 docker engine을 install하고자 한다면 공식 문서 참고
+   >
+   > 1. 사용 가능한 verison확인
+   >
+   >    ```
+   >    $ apt-cache madison docker-ce | awk '{ print $3 }'
+   >    ```
+   >
+   > 2. version명시한 후 설치
+   >
+   >    ```
+   >    $ VERSION_STRING=5:26.1.0-1~ubuntu.24.04~noble
+   >    $ sudo apt-get install docker-ce=$VERSION_STRING docker-ce-cli=$VERSION_STRING containerd.io docker-buildx-plugin docker-compose-plugin
+   >    ```
 
 5. check
 
@@ -68,6 +85,12 @@
    $ sudo usermod -aG docker $USER
    ```
 
+   바로 적용
+   
+   ```
+   $ newgrp docker
+   ```
+   
    
 
 
@@ -251,10 +274,21 @@ docker contianer안에서 GPU를 사용하기 위해선 필수
    $ dpkg -l | grep -i docker
    ```
 
-   delete
-
    ```
-   $ sudo apt-get purge -y docker-engine docker docker.io docker-ce docker-ce-cli
+   ii  docker-buildx-plugin                       0.10.5-1~ubuntu.18.04~bionic                    amd64        Docker Buildx cli plugin.
+   ii  docker-ce                                  5:24.0.2-1~ubuntu.18.04~bionic                  amd64        Docker: the open-source application container engine
+   ii  docker-ce-cli                              5:24.0.2-1~ubuntu.18.04~bionic                  amd64        Docker CLI: the open-source application container engine
+   ii  docker-ce-rootless-extras                  5:24.0.2-1~ubuntu.18.04~bionic                  amd64        Rootless support for Docker.
+   ii  docker-compose-plugin                      2.18.1-1~ubuntu.18.04~bionic                    amd64        Docker Compose (V2) plugin for the Docker CLI.
+   
+   ```
+   
+   위와 같이 출력된다면 아래 명령어로 delete
+   
+   
+   
+   ```
+   $ sudo apt-get purge -y docker-engine docker docker.io docker-ce docker-ce-cli docker-ce-rootless-extras 
    $ sudo apt-get autoremove -y --purge docker-engine docker docker.io docker-ce  
    ```
 
@@ -264,14 +298,14 @@ docker contianer안에서 GPU를 사용하기 위해선 필수
    $ sudo groupdel docker
    $ sudo rm -rf /var/run/docker.sock
    ```
-
+   
+   
+   
+   
+   
    
 
-   
-
-   
-
-### linux setting
+## linux setting
 
 **계정에 docker 권한 부여**
 
@@ -479,8 +513,6 @@ repository 에 image를 push할 때는 `docker tag` 명령어를 통해 tag를 �
    $ docker tag ubuntu localhost:5000/ubuntu
    ```
    
-   port number : 위에서 5000을 사용했다고 기재되어있음
-
 4. push 해준다.
    
    ```
