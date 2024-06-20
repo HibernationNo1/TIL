@@ -38,7 +38,7 @@
 
 - **Merge**
 
-  Test 동작이 문제 없이 완료되었다면, branch 끼리 merge하는 과정이 이루어진다.
+  Test 동작이 문제 없이 완료되었다면, branch를 merge하는 과정이 이루어진다.
 
   **`stage`** branch에 대해 build와 test가 문제 없이 완료된다면, **`live`** branch 에 자동으로 merge되도록 구성할 수 있다.
 
@@ -56,25 +56,33 @@
 
   이 과정에서 live server에서 **Build**와 **Test**를 한 번에 수행한다.
 
-  이를 통해 아래와 같은 장점을 가지게 된다.
+일반적으로 CI과정은 stage server에서 수행하고, CD과정은 live server에서 수행한다.
 
-  - server에 code가 유실되었을 경우 빠르게 복구할 수 있다.
-  - 이미 동작하는 code를 배포하기 때문에 안정적이고 빠르게 배포를 완료할 수 있다.
 
-보통 CI과정은 stage server에서 수행하고, CD과정은 live server에서 수행한다.
 
 **CI/CD의 장점**
 
 - 무중단 배포를 구성해놓았다면 Build - Test - Merge - Deploy 과정을 commit 이 이루어질때마다 자동적으로 수행할 수 있게 구성할 수 있다.
+
 - 커다란 프로젝트(다수의 사람이 개발에 참여하는)인 경우, 여러 branch에 의해 merge되는 과정에서도 꼬임 없이 안정적인 개발이 가능하다.
+
 - 설정된 Git 리포지토리의 변경 사항을 감지하고 자동으로 CI/CD가 수행되도록 적용하여 지속적으로 동기화를 유지할 수 있다.
+
+- 검증된 code를 배포하기 때문에 안정적이고 빠르게 배포를 완료할 수 있다.
+
+- 문제가 발생했을 때 이전 버전으로 쉽게 롤백할 수 있다.    
+
+  CI/CD 파이프라인은 모든 변경 사항을 기록하므로, 어느 지점에서 문제가 시작되었는지 파악하고 빠르게 원상태로 복구할 수 있다.
+
 - CI 에 강력한 도구 따로, CD에 강력한 도구 따로 구성할 수 있다.
 
-## **가장 많이 쓰이는 CI/CD 도구 5가지**
+
+
+## **많이 쓰이는 CI/CD 도구 5가지**
 
 ### **1. Buddy**
 
-- 사용자 친화적인 UI를 제공하며, 설정이 쉬워 개발자들도 접근하기 편하다.
+- 사용자 친화적인 UI를 제공하며, 설정이 쉬워 비개발자들도 접근하기 편하다.
 - 실행 속도가 다른 CI/CD 도구보다 빠르다.
 - AWS, Google, DigitalOcean, Azure, Shopify, WordPress 과 같은 여러 cloud 서비스와 통합이 가능하다.
 - 간단한 프로젝트에 용이하며, 대규모 개발이 필요한 프로젝트에는 제한적.
@@ -94,10 +102,20 @@
 ### **3. Gitlab CI**
 
 - GitLab 리포지토리 관리 시스템에 내장된 CI/CD 도구.
+
 - worker node로 Docker의 container, kubernetes의 pod 와 같은 환경을 지정할 수 있다.
+
 - pipeline구성 파일 외의 다른 동작(pipeline의 동시 실행 방지)을 제어할 수 없다.
+
 - GitLab 외의 다른 코드 저장소와의 통합이 제한적임.
+
 - custom 구성에 제한적인 부분이 많다.
+
+  ```
+  Github Action
+  ```
+
+  
 
 ![](https://github.com/HibernationNo1/TIL/blob/master/seminar/images/CI_CD/gitlab_CICD.png?raw=true)
 
@@ -114,10 +132,26 @@
 ### **5. ArgoCD**
 
 - Kubernetes를 위한 CI/CD 도구
+
 - 여러 Kubernetes 클러스터를 중앙에서 관리할 수 있다. (jenkins와 비슷)
+
 - CLI 를 제공하여 ArgoCD의 다양한 기능과 설정을 직접 조작하고 관리할 수 있어 구성 방법에 제한이 없다. (나만의 자동화, 모니터링 가능)
+
 - 디테일한 작업을 제어할 수 있기 때문에 거의 모든 종류의 프로젝트에 맞게 조정할 수 있다.
+
 - 현재 클러스터에 배포된 애플리케이션의 목록, 각 애플리케이션의 상태, 최근 동기화 정보 등을 한 눈에 볼 수 있는 web UI를 제공한다.
+
 - grafana와 연동되어 cluster 모니터링이 가능하다.
 
+  
+
 ![](https://github.com/HibernationNo1/TIL/blob/master/seminar/images/CI_CD/argoCD.png?raw=true)
+
+
+
+
+
+```
+jenkins에서 빌드 또는 테스트 작업을 실행하는 물리적 또는 가상의 머신
+```
+
