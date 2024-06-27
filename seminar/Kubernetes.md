@@ -130,9 +130,9 @@ $ vi depolyment-example.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: yolo-api-1
+  name: deployment-name		# Deployment의 이름 정의
   labels:
-    app: yolo-api
+    app: app-name-example	# Deployment의 label정의. 일반적으로 matchLabels와 같은 값
 spec:
   replicas: 1
   selector:
