@@ -1,16 +1,20 @@
 import os, os.path as osp
 import logging
-from logging.handlers import TimedRotatingFileHandler
+from logging.handlers import RotatingFileHandler
+from tqdm import tqdm
+import io
 
+# log파일을 저장할 dir 
 DEAULT_LOG_DIR = 'logs'
+
+# 여러 logger를 담을 registry.
+LOGGER_REGISTRY = dict()
+
+# Default Logger Config
 DEFAULT_LOG_NAME = 'log'
 DEFAULT_FILENAME = 'logs/api.log'
 FORMATTER = logging.Formatter("[%(asctime)s]|[%(filename)s line: %(lineno)d] %(levelname)s :%(message)s") # log의 format결정. 모든 handler에 적용할 format이다.
 DEFAULT_LEVEL = logging.INFO
-
-
-# 여러 logger를 담을 registry.
-LOGGER_REGISTRY = dict()
 
 class Logger:
     """
@@ -128,3 +132,4 @@ class Logger:
             return LOGGER_REGISTRY[logger_name]
         else:
             raise KeyError(f"The logger `{logger_name}` dose no exist!")
+
