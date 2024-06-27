@@ -446,8 +446,8 @@ $ sha256sum Anaconda3-2022.05-Linux-x86_64.sh
   nvidia-driver 설치(이미 설치했다면 건너뛰기)
   
   ```
-  $ apt-cache search nvidia
-  $ sudo apt-get install -y nvidia-driver-XXX # 
+  $ ubuntu-drivers devices
+  $ sudo apt-get install -y nvidia-driver-555-open # 
   $ sudo apt-get install -y dkms nvidia-modprobe
   ```
   
@@ -526,10 +526,10 @@ $ sudo docker run --runtime=nvidia --rm nvidia/cuda:11.0-base nvidia-smi
   root:~# usermod -a -G docker $USER
   ```
   
-  재부팅 후 확인
+  바로 적용
   
   ```
-  $ id
+  $ newgrp docker
   ```
   
   `997(docker)` 가 포함되어 있다면 권한 부여된 것
