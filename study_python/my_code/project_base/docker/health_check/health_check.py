@@ -21,8 +21,8 @@ logging.basicConfig(filename = 'health_check.log',
 
 
 CONFIM_COUNT = 3   # 한 번 제대로 응답이 안왔을 시 재확인 횟수
-telegram_token = "6818574021:AAEjZxXVUXLCST-u84Un5dYVY-XC3unznj8"
-chat_id = "-1002116316211"     # group chat id 사용.   
+telegram_token = "681857xxxxxxxxxxxxxxxxST-u84Un5dYVY-XC3unznj8"
+chat_id = "-100xxxxxx6211"     # group chat id 사용.   
 # teno의 개인 chat id: "6317154266"
 
 server_dict = dict(
