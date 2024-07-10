@@ -1,0 +1,127 @@
+pipeline {
+	agent { label 'stage_server' }		// pipeline을 실행할 node 지정.
+
+    stages {
+    	stage('Checkout Code') { 		// checkout code
+    	    // work_space에 해당 project가 없는 경우: work_space/{pipeline_name}/ 의 위치에 clone.
+    		// 이미 work_space에 해당 project가 있는 경우: 명시된 branch로 checkout
+            steps {
+                git url: 'ssh://git@192.168.110.101:30001/example.git', branch: 'live'
+            }
+        }
+
+        // Non-disruptive deployment를 위해 1 번째 service 배포 및 테스트 
+        stage('project_1 build and test') { 
+            steps {
+                // docker network가 이미 존재하는 경우를 고려하여 오류 무시.
+                // docker network의 생성으로 인해 route가 덮어씌워지는것을 방지하기 위해 IP 범위 지정
+                sh 'docker network create --subnet=172.200.0.0/20 network_name || true'		
+
+                sh 'docker rm -f project_1 || true'      
+                sh "docker-compose -f docker/docker-compose_stage.yml up -d project_1"
+                sh 'sleep 5'    // service의 완전한 동작을 위해 5초 대기 
+
+                // curl로 request test진행
+                sh 'sh test_code/test.sh 20001'             
+            }
+        }
+
+        // Non-disruptive deployment를 위해 2 번째 service 배포 및 테스트 
+        stage('project_2 build and test') { 
+            steps {
+                sh 'docker rm -f project_2 || true'      
+                sh "docker-compose -f docker/docker-compose_stage.yml up -d project_2"
+                sh 'sleep 5'    // service의 완전한 동작을 위해 5초 대기 
+
+                // curl로 request test진행
+                sh 'sh test_code/test.sh 20002'             
+            }
+        }
+
+        // Non-disruptive deployment를 위해 3 번째 service 배포 및 테스트 
+        stage('project_3 build and test') { 
+            steps {
+                sh 'docker rm -f project_3 || true'      
+                sh "docker-compose -f docker/docker-compose_stage.yml up -d project_3"
+                sh 'sleep 5'    // service의 완전한 동작을 위해 5초 대기 
+
+                // curl로 request test진행
+                sh 'sh test_code/test.sh 20003'             
+            }
+        }
+
+        // Non-disruptive deployment를 위해 4 번째 service 배포 및 테스트 
+        stage('project_4 build and test') { 
+            steps {
+                sh 'docker rm -f project_4 || true'      
+                sh "docker-compose -f docker/docker-compose_stage.yml up -d project_4"
+                sh 'sleep 5'    // service의 완전한 동작을 위해 5초 대기 
+
+                // curl로 request test진행
+                sh 'sh test_code/test.sh 20004'             
+            }
+        }
+
+
+        stage('Utils test build') { 
+            steps {
+                // utils을 위한 container까지 build and start
+                // 1, 3번째 API로 test
+                sh "docker-compose -f docker/docker-compose_stage.yml up -d health_check_project nginx_project prometheus_project"
+            }
+        }
+        
+        stage('Test with request') { 
+            steps {
+				// test cript 실행
+                sh 'sh test_code/health_check.sh'
+                sh 'sh test_code/test.sh 20000'  
+                sh 'sh test_code/test.sh 20020'  
+            }
+        }       
+
+        
+        stage('Deploy') { 
+        	agent { label 'live_10_251_1_164' }
+            steps {
+                
+                git url: 'ssh://git@192.168.110.101:30001/example.git', branch: 'live'
+
+                sh 'docker network create project || true'		// docker network가 이미 존재하는 경우를 고려하여 오류 무시.
+
+                // Non-disruptive deployment를 위해 1, 3 번째 서비스 배포 후 이상 없을 시 2, 4번째 서비스 배포
+                sh 'docker stop project_1 project_3 || true'      
+                sh "docker-compose -f docker/docker-compose_live.yml up -d project_1 project_3"
+                sh 'sleep 5'    // service의 완전한 동작을 위해 5초 대기 
+
+                // curl을 보내어 test진행
+                sh 'sh test_code/test.sh 20001' 
+                sh 'sh test_code/test.sh 20003'     
+            
+                sh 'docker stop project_2 project_4 || true'      
+                sh "docker-compose -f docker/docker-compose_live.yml up -d project_2 project_4"
+                sh 'sleep 5'    // service의 완전한 동작을 위해 5초 대기 
+
+                // curl을 보내어 test진행
+                sh 'sh test_code/test.sh 20002' 
+                sh 'sh test_code/test.sh 20004'     
+  
+
+                sh 'docker-compose -f docker/docker-compose_live.yml up -d'       // 나머지 모든 container를 build and start
+
+                // test cript 실행
+                sh 'sh test_code/health_check.sh'
+                sh 'sh test_code/test.sh 20000'  
+                sh 'sh test_code/test.sh 20020'  
+            }
+        }
+    }
+    
+    post {
+        always {
+        	// worker node의 Docker container, nerwork, image 자원을 정리
+            sh 'docker-compose -f docker/docker-compose_stage.yml down --remove-orphans --rmi all' 
+        }
+    }
+    
+}

@@ -1,0 +1,36 @@
+version: '3'
+services:
+  project_dev:          
+    build :
+      context : ./../service
+      dockerfile: Dockerfile
+    image: 'project:0.1'
+    container_name: 'project_dev'    
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=0      # device number 확인 필요
+      - DEBUG_METRICS=true                    # 해당 env를 설정하지 않으면 prometheus에서 metrics route를 추적하지 못함
+      - CONTAINER_NAME=project_dev    # 내부 python cript에서 container를 구분하기 위해 사용할 env      
+      - PORT=20010
+    ports:
+      - '20010:20010'
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./../service:/workspace   
+      - ./../sample/:/sample     
+    command: /bin/bash
+    shm_size: 8G
+    ipc : "host"
+    runtime: "nvidia"
+    stdin_open: true # docker 유지
+    tty: true # docker 유지
+    networks:
+      - network_name
+
+networks:
+  project:
+    name: network_name
+    driver: bridge
+    external: true
+# docker network create project_test
+
+# docker-compose -f docker-compose_dev.yml up -d

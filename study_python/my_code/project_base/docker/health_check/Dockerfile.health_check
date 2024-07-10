@@ -1,0 +1,16 @@
+FROM python:3.8
+
+# 사용자 입력 요청화면 무시
+ARG DEBIAN_FRONTEND=noninteractive 
+
+# 기본 tool 설치
+RUN apt-get update && apt-get install -y git wget vim sudo \
+    libgl1-mesa-glx
+
+WORKDIR /workspace
+
+# requirements.txt위치 확인 후 build하기
+COPY requirements.txt requirements.txt      
+RUN pip install -r requirements.txt
+
+# docker build . --no-cache -t kakao:0.1

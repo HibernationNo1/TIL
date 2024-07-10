@@ -1,0 +1,9 @@
+addict==2.4.0
+gunicorn==21.2.0
+Flask==2.2.3
+gevent==21.1.2
+prometheus_flask_exporter==0.23.0
+fastapi==0.103.2
+uvicorn==0.22.0
+prometheus_fastapi_instrumentator==6.1.0
+

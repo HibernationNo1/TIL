@@ -1,0 +1,160 @@
+version: '3'
+services:
+  project_1:          
+    build :
+      context : ./../service
+      dockerfile: Dockerfile
+    image: 'project:0.1'
+    container_name: 'project_1'    
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=0      # device number 확인 필요
+      - DEBUG_METRICS=true                    # 해당 env를 설정하지 않으면 prometheus에서 metrics route를 추적하지 못함
+      - CONTAINER_NAME=project_1    # 내부 python cript에서 container를 구분하기 위해 사용할 env      
+      - PORT=20001
+    ports:
+      - '20001:20001'
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./../service:/workspace  
+      - ./../sample/:/sample     
+    command: sh start.sh
+    shm_size: 8G
+    ipc : "host"
+    runtime: "nvidia"
+    stdin_open: true # docker 유지
+    tty: true # docker 유지
+    networks:
+      - network_name
+
+  project_2:          
+    build :
+      context : ./../service
+      dockerfile: Dockerfile
+    image: 'project:0.1'
+    container_name: 'project_2'    
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=1      # device number 확인 필요
+      - DEBUG_METRICS=true                    # 해당 env를 설정하지 않으면 prometheus에서 metrics route를 추적하지 못함
+      - CONTAINER_NAME=project_2    # 내부 python cript에서 container를 구분하기 위해 사용할 env      
+      - PORT=20002
+    ports:
+      - '20002:20002'
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./../service:/workspace  
+      - ./../sample/:/sample     
+    command: sh start.sh
+    shm_size: 8G
+    ipc : "host"
+    runtime: "nvidia"
+    stdin_open: true # docker 유지
+    tty: true # docker 유지
+    networks:
+      - network_name
+
+  project_3:          
+    build :
+      context : ./../service
+      dockerfile: Dockerfile
+    image: 'project:0.1'
+    container_name: 'project_3'    
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=2      # device number 확인 필요
+      - DEBUG_METRICS=true                    # 해당 env를 설정하지 않으면 prometheus에서 metrics route를 추적하지 못함
+      - CONTAINER_NAME=project_3    # 내부 python cript에서 container를 구분하기 위해 사용할 env      
+      - PORT=20003
+    ports:
+      - '20003:20003'
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./../service:/workspace  
+      - ./../sample/:/sample     
+    command: sh start.sh
+    shm_size: 8G
+    ipc : "host"
+    runtime: "nvidia"
+    stdin_open: true # docker 유지
+    tty: true # docker 유지
+    networks:
+      - network_name
+
+  project_4:          
+    build :
+      context : ./../service
+      dockerfile: Dockerfile
+    image: 'project:0.1'
+    container_name: 'project_4'    
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=3      # device number 확인 필요
+      - DEBUG_METRICS=true                    # 해당 env를 설정하지 않으면 prometheus에서 metrics route를 추적하지 못함
+      - CONTAINER_NAME=project_4    # 내부 python cript에서 container를 구분하기 위해 사용할 env      
+      - PORT=20004
+    ports:
+      - '20004:20004'
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./../service:/workspace  
+      - ./../sample/:/sample     
+    command: sh start.sh
+    shm_size: 8G
+    ipc : "host"
+    runtime: "nvidia"
+    stdin_open: true # docker 유지
+    tty: true # docker 유지
+    networks:
+      - network_name
+
+
+  health_check_project:
+    build :
+      context : ./health_check
+      dockerfile: Dockerfile.health_check
+    image: 'health_check_project:0.1'
+    container_name: 'health_check_project'
+    volumes:
+      - /etc/localtime:/etc/localtime:ro    # docker외부와 내부의 시간을 동일하게 맞추기 위한 설정
+      - ./health_check:/workspace
+    ipc: 'host'                             # container 내부의 process가 host의 process와 통신하기 위해 설정.
+    shm_size: 8G
+    command: python health_check.py
+    stdin_open: true                        # container가 실행 중일 때 외부에서 user가 container와 상호 작용하기 위해 설정.
+    tty: true                               # container 내부에서 terminal을 사용하기 위해 설정.
+    networks:
+      - network_name
+
+  nginx_project:
+    image: 'nginx:stable-bullseye-perl'
+    container_name: 'nginx_project'
+    ports: 
+      - '8089:8089'     # nginx의 default port
+      - '20000:20000'   # service로 전달하기 위해 listen 상태로 열어둘 port
+    volumes:
+      - /etc/localtime:/etc/localtime:ro      # docker외부와 내부의 시간을 동일하게 맞추기 위한 설정
+      # default 먼저 mount해야 sites-enabled dir mount가 정상적으로 이루어짐 (원인 불명)
+      - ./nginx/sites-enabled/default:/etc/nginx/sites-enabled/default     
+      - ./nginx/sites-enabled/:/etc/nginx/sites-enabled/
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/log:/var/log/nginx    # nginx container 내부의 log파일을 mount
+    networks:
+      - network_name
+
+  prometheus_project:
+    image: 'prom/prometheus:v2.48.0'
+    container_name: 'prometheus_project'
+    ports: 
+      - '9092:9090'
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - network_name    
+
+
+networks:
+  network_name:
+    name: network_name
+    driver: bridge
+    external: true
+# docker network create network_name
+
+# docker-compose -f docker-compose_live.yml up -d
