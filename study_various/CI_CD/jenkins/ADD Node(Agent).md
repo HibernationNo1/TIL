@@ -78,7 +78,7 @@ master node에서 agent로 삼고자 하는 server에 공개 key를 복사해야
 
 ##### 3. docker 사용시 permission 부여
 
-docker를 사용하는 proejct라면 permission에 의해 build과정이 중지될 수 있기 때문에, 미리 권한 추가할 것.
+docker를 사용하는 project라면 permission에 의해 build과정이 중지될 수 있기 때문에, 미리 권한 추가할 것.
 
 1. ```
    $ sudo usermod -aG docker ${USER}

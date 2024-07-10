@@ -185,27 +185,24 @@ pipeline {
             }
         }
         
-        stage('Build') { 
+        stage('Build and test') { 
             steps {
-                sh 'docker network create test_network || true'		// 이미 존재하는 경우를 고려하여 오류 무시.
-                sh 'docker-compose -f docker/docker-compose.yml up -d'
+                // docker network가 이미 존재하는 경우를 고려하여 오류 무시.
+                // docker network의 생성으로 인해 route가 덮어씌워지는것을 방지하기 위해 IP 범위 지정
+                sh 'docker network create --subnet=172.200.10.0/20 test_network || true'
+                
+                sh 'docker stop -f test_container || true'  
+                sh 'docker-compose -f docker/docker-compose.yml up -d' test_container
+                sh 'sh test_code/test.sh'
             }
         }
-        
-        stage('Test') { 
-            steps {
-				// test cript 실행
-                sh 'sh sh/test_health_check.sh'
-                sh 'sh sh/test_curl_1.sh'
-                sh 'sh sh/test_curl_raise_error.sh'
-            }
-        }       
+            
         
         stage('Deploy') { 
         	agent { label 'live' }
             steps {
                 git url: 'ssh://git@192.168.0.101:30001/fusion_research/utils/teno_test.git', branch: 'live'
-				sh 'docker network create test_network || true'	
+				sh 'docker network create --subnet=172.200.10.0/20 test_network || true'
 				sh 'docker-compose -f docker/docker-compose.yml up -d'
 				
                 sh 'sh sh/test_health_check.sh'
@@ -217,8 +214,8 @@ pipeline {
     
     post {
         always {
-        	// Docker container, nerwork, image 자원을 정리
-            sh 'docker-compose -f docker/docker-compose.yml down --rmi all' 
+        	// Docker container, network, image 자원을 정리
+            sh 'docker-compose -f docker/docker-compose.yml down --remove-orphans --rmi all' 
         }
     }
     
