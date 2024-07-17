@@ -20,15 +20,15 @@ AI 모델 서비스는 일반적으로 아래의 동작이 순서대로 이루�
 
 - 위 과정 중 3번을 제외한 1, 2, 4, 5 과정은 Controller에서 수행한다.
 
-  이미지 삽입
+  ![](https://github.com/HibernationNo1/TIL/blob/master/image/pattern/AI_API_1.png?raw=true)
 
   이 때, Controller와 Model inference API는 독립적인 환경(Node or pod or container)에 배포된다.
 
 - 위 과정 중 3번은 Model inference API라는 독립적은 환경에서 진행되기 때문에 Controller와 HTTP/HTTPS를 통한 RESTful API 또는 메시지 큐를 통해 데이터를 주고받는다.
 
-- 위 과정의 앞, 뒤에는 송출을 담당하는 서비스가 있다.(web service)
+- 위 과정의 앞, 뒤에는 송출을 담당하는 서비스가 있다.(Web service)
 
   웹 서비스에서 다수의 AI 서비스를 제공한다면 아래와 같은 구조가 된다.
 
-  이미지 삽입
+  ![](https://github.com/HibernationNo1/TIL/blob/master/image/pattern/AI_API_2.png?raw=true)
 
