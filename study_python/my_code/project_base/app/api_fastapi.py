@@ -1,23 +1,36 @@
 import os, os.path as osp
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, APIRouter, HTTPException
 from pydantic import BaseModel
 import uvicorn
 from prometheus_fastapi_instrumentator import Instrumentator
 
 app = FastAPI()
-Instrumentator().instrument(app).expose(app)
+Instrumentator().instrument(app).expose(app)            # prometheus 적용
+
+from handlers.config import Config
+cfg = Config.fromfile(f'configs/main.py')
+
+
+# application의 모든 중간과정을 제어하기 위해 middleware 추가
+from api_utils.middleware import APPMiddleWare
+app.add_middleware(APPMiddleWare, 
+                   allowed_ips=cfg.server.middleware.allowed_ips, 
+                   content_type=cfg.server.middleware.content_type, 
+                   logger = Logger(logger_name = cfg.logger.middleware.name, 
+                                   file_name = cfg.logger.middleware.file, 
+                                   middleware = True)
+                   )
 
 from handlers.logger import Logger
-logger = Logger(logger_name = 'logger_name', file_name = f'file_name.log', print_log=True)
+logger = Logger(logger_name = cfg.logger.service.name, file_name = cfg.logger.service.file, print_log=True)
 
 
 from handlers.prometheus import PROMETHEUS_REGISTRY
-Prom_request = PROMETHEUS_REGISTRY['request']
+Prom_request = PROMETHEUS_REGISTRY['function']
 count = PROMETHEUS_REGISTRY['count'] 
 
 
-from handlers.config import Config
-cfg = Config.fromfile(f'configs/api.py')
+
 
 
 
@@ -49,7 +62,7 @@ def name_predict(item: Item):
     except Exception as e:
         message = f"Cannot access to '{file_path}'. Error: {e}"
         logger.error(message)
-        HTTPException(status_code = 430, detail=message)
+        raise HTTPException(status_code = 430, detail=message)
          
 
     result_dict[file_name] = dict()

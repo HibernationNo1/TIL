@@ -15,7 +15,7 @@ cfg = Config.fromfile(f'configs/api.py')
 from prometheus_flask_exporter import PrometheusMetrics
 from handlers.prometheus import PROMETHEUS_REGISTRY
 PROMETHEUS_REGISTRY['metrics'] = PrometheusMetrics(app)
-Prom_request = PROMETHEUS_REGISTRY['request']
+Prom_request = PROMETHEUS_REGISTRY['function']
 count = PROMETHEUS_REGISTRY['count'] 
 
 

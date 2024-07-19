@@ -30,15 +30,47 @@ class Logger:
                 logger_name: str = None, 
                    file_name: str = None, 
                    file_format = 'log',
-                   print_log = False,
-                   level = None):
+                   print_log = False,       # log를 출력할지 여부
+                   level = None,
+                   **kwargs):    
         
         if logger_name is None:
             logger_name = DEFAULT_LOG_NAME
-        return cls.add_logger(logger_name, file_name, file_format, print_log, level)
+        return cls.add_logger(logger_name, file_name, file_format, print_log, level, **kwargs)
 
     @staticmethod
-    def set_logger(log_name=None, file_path=None, level=None, print_log = False):
+    def add_logger(logger_name: str, 
+                   file_name: str = None, 
+                   file_format = 'log',
+                   print_log = False,
+                   level = None,
+                   **kwargs):
+        
+        # logger추가.
+        if logger_name in LOGGER_REGISTRY.keys():
+            print(f"{logger_name} already exists in logger registry")
+            return LOGGER_REGISTRY[logger_name]['logger']
+
+        if file_name is not None:
+            if os.path.splitext(file_name)[-1] == '':   # file format 지정이 안된경우
+                file_path = osp.join(BASE_LOG_DIR, f'{file_name}.{file_format}')
+            else:
+                file_path = osp.join(BASE_LOG_DIR, file_name)
+        else:
+            file_path = osp.join(BASE_LOG_DIR, f'{logger_name}.{file_format}')
+
+        os.makedirs(osp.dirname(file_path), exist_ok=True)
+  
+        LOGGER_REGISTRY[logger_name] = Logger.set_logger(log_name=logger_name, 
+                                                            file_path = file_path,
+                                                            print_log = print_log,
+                                                            level = level,
+                                                            **kwargs
+                                                            )
+        return LOGGER_REGISTRY[logger_name]['logger']
+    
+    @staticmethod
+    def set_logger(log_name=None, file_path=None, level=None, print_log = False, **kwargs):
         if log_name is None:
             log_name = DEFAULT_LOG_NAME
         if level is None:
@@ -46,21 +78,20 @@ class Logger:
 
         # root logger
         logger = logging.getLogger(log_name)
-
+        
+        if kwargs.get('middleware', None) is not None:
+            # app server의 middleware로 사용할 logger인 경우
+            formatter = logging.Formatter("[%(asctime)s]:%(message)s")  # log의 format결정. 
+        else:
+            formatter = FORMATTER
 
         if level >= logging.WARN or print_log:
             streamHandler = logging.StreamHandler()
-            streamHandler.setFormatter(FORMATTER)
+            streamHandler.setFormatter(formatter)
             logger.addHandler(streamHandler)
 
         if file_path is None:
             file_path = DEFAULT_FILENAME
-
-
-        # # FileHandler 설정
-        # fileHandler = logging.FileHandler(filename=file_path)
-        # fileHandler.setFormatter(FORMATTER)
-        # logger.addHandler(fileHandler)
 
         # RotatingFileHandler 설정
         # 최대 크기 1GB, backup 개수 5개
@@ -75,33 +106,7 @@ class Logger:
                     file_path = file_path,
                     name = log_name)
             
-    @staticmethod
-    def add_logger(logger_name: str, 
-                   file_name: str = None, 
-                   file_format = 'log',
-                   print_log = False,
-                   level = None):
-        
-        # logger추가.
-        if logger_name in LOGGER_REGISTRY.keys():
-            print(f"{logger_name} already exists in logger registry")
-            return LOGGER_REGISTRY[logger_name]['logger']
-
-        if file_name is not None:
-            if os.path.splitext(file_name)[-1] == '':
-                file_path = osp.join(BASE_LOG_DIR, f'{file_name}.{file_format}')
-            else:
-                file_path = osp.join(BASE_LOG_DIR, file_name)
-        else:
-            file_path = osp.join(BASE_LOG_DIR, f'{logger_name}.{file_format}')
-
-        os.makedirs(osp.dirname(file_path), exist_ok=True)
-  
-        LOGGER_REGISTRY[logger_name] = Logger.set_logger(log_name=logger_name, 
-                                                                file_path= file_path,
-                                                                print_log = print_log,
-                                                                level = level)
-        return LOGGER_REGISTRY[logger_name]['logger']
+    
 
     @staticmethod
     def show_logger_list():
