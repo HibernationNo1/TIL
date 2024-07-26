@@ -1,6 +1,6 @@
 import os, os.path as osp
 import logging
-from logging.handlers import RotatingFileHandler
+from logging.handlers import TimedRotatingFileHandler
 
 from configs.default import BASE_LOG_DIR
 
@@ -24,6 +24,10 @@ class Logger:
 
     - 어떤 logger가 있는지 확인하는 경우
         Logger.check_logger_list()
+        
+    - registry 사용
+        from ... import LOGGER_REGISTRY
+        logger = LOGGER_REGISTRY['log_name']['logger']        
     
     """
     def __new__(cls, 
@@ -93,9 +97,9 @@ class Logger:
         if file_path is None:
             file_path = DEFAULT_FILENAME
 
-        # RotatingFileHandler 설정
-        # 최대 크기 1GB, backup 개수 5개
-        rotatingHandler = RotatingFileHandler(file_path, maxBytes=1024**3, backupCount=5)
+        # TimedRotatingFileHandler 설정
+        # 자정에 로그 파일 회전, backup 개수 50개
+        rotatingHandler = TimedRotatingFileHandler(file_path, when='midnight', backupCount=50)
         rotatingHandler.setFormatter(FORMATTER)
         logger.addHandler(rotatingHandler)
 
