@@ -1,5 +1,51 @@
 # Initial setting
 
+
+
+## ADD user
+
+**add user**
+
+1. 사용자 추가
+
+   ```
+   $ sudo adduser 새로운_사용자이름
+   ```
+
+2. sudo 권한 추가
+
+   ```
+   $ sudo usermod -aG sudo 새로운_사용자이름
+   ```
+
+   
+
+
+
+**delete user**
+
+1. user삭제
+
+   ```
+   $ sudo userdel -r 새로운_사용자이름
+   ```
+
+2. home dir과 관련된 file 삭제
+
+   ```
+   $ sudo rm -rf /home/새로운_사용자이름
+   ```
+
+3. 사용자가 속한 그룹 삭제
+
+   ```
+   $ sudo groupdel 새로운_사용자이름
+   ```
+
+   
+
+
+
 linux기준임
 
 **야간 모드**
@@ -423,26 +469,6 @@ $ sha256sum Anaconda3-2022.05-Linux-x86_64.sh
    tesk image를 다운로드
 - **nvidia-dorker**
   
-  GPU resource사용을 위해 필요
-  
-  ```
-  $ release="ubuntu"$(lsb_release -sr | sed -e "s/\.//g")
-  $ sudo apt install sudo gnupg
-  $ sudo apt-key adv --fetch-keys "http://developer.download.nvidia.com/compute/cuda/repos/"$release"/x86_64/7fa2af80.pub"
-  $ sudo sh -c 'echo "deb http://developer.download.nvidia.com/compute/cuda/repos/'$release'/x86_64 /" > /etc/apt/sources.list.d/nvidia-cuda.list'
-  $ sudo sh -c 'echo "deb http://developer.download.nvidia.com/compute/machine-learning/repos/'$release'/x86_64 /" > /etc/apt/sources.list.d/nvidia-machine-learning.list'
-  
-  $ sudo apt update
-  ```
-  
-  > 설치과정 중 sudo apt update에서 특정 file의 내용에 대한 에러가 나오면 
-  > 
-  > ```
-  > sudo -H gedit /etc/apt/sources.list.d/nvidia-cuda.list
-  > ```
-  > 
-  > 처럼 `sudo -H gedit`을 통해 파일 내용 확인 후 고쳐서 진행할것
-  
   nvidia-driver 설치(이미 설치했다면 건너뛰기)
   
   ```
@@ -453,15 +479,7 @@ $ sha256sum Anaconda3-2022.05-Linux-x86_64.sh
   
   > nvidia-XXX 는 알맞는 버전 확인 후 설치하면 된다. [여기](https://laondev12.tistory.com/11) 확인
   > 
-  > > ```
-  > > $ sudo apt-get install -y nvidia-driver-470
-  > > ```
-  > > 
-  > > 리눅스 GeForce GTX 1650 SUPER 기준
   
-  ```
-  $ sudo reboot
-  ```
 
 nvidia-driver확인
 
@@ -473,7 +491,7 @@ nvidia-docker 설치
 
 ```
 $ curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
-$ distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
+$ istribution=$(. /etc/os-release;echo $ID$VERSION_ID)
 $ curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
 $ sudo apt-get update
 $ sudo apt-get install -y nvidia-docker2
@@ -482,16 +500,22 @@ $ sudo apt-get install -y nvidia-docker2
   demon.json에 추가
 
 ```
-$ sudo vi /etc/docker/deamon.json
-    "default-runtime" :"nvidia",
+$ sudo vi /etc/docker/daemon.json
+```
+
+```
+{
+"default-runtime" :"nvidia",
     "runtimes" :{
         "nvidia" :{
-            "path:" "/usr/bin/nvidia-container-runtime",
+            "path": "/usr/bin/nvidia-container-runtime",
             "runtimeArgs" : []
         }
     }
-:wq
+}
 ```
+
+
 
   **동작 확인**
 
@@ -499,10 +523,10 @@ $ sudo vi /etc/docker/deamon.json
 
 ```
 $ sudo systemctl restart docker
-$ sudo docker run --runtime=nvidia --rm nvidia/cuda:11.0-base nvidia-smi
+$ sudo docker run --rm --gpus all nvidia/cuda:11.8.0-base-ubuntu20.04 nvidia-smi
 ```
 
-> 11.0-base 부분은 
+> 11.8.0-base-ubuntu20.04 
 > 
 > ```
 > $ nvidia-smi
@@ -706,7 +730,51 @@ print(scipy.__version__)
 
 ### Ubuntu
 
-#### graphic driver
+#### Nvidia toolkit
+
+google에 `cuda toolkit {Version}` 검색 후 NVIDIA Developer 페이지에 접속, 옵션 선택하여 나오는 명령어대로 진행
+
+설치 후 version확인
+
+```
+$ nvcc -V
+```
+
+Nvidia graphic driver 설치 전에 Nvidia toolkit 부터 설치해야함
+
+- Nvidia toolkit 설치 후 nvidia-driver가 자동으로 설치됨
+
+- nvcc가 제대로 설치되지 않았다면 삭제
+
+  1. CUDA 패키지 삭제
+
+     ```
+     $ sudo apt-get remove --purge -y cuda
+     ```
+
+  2. CUDA 관련 잔여 패키지 삭제
+
+     ```
+     $ sudo apt-get autoremove --purge -y
+     ```
+
+  3. CUDA 저장소 키링 삭제
+
+     ```
+     $ sudo dpkg -r cuda-keyring
+     ```
+
+  4. 패키지 목록 업데이트
+
+     ```
+     $ sudo apt-get update
+     ```
+
+  
+
+
+
+#### Nvidia graphic driver
 
 1. GPU확인
 
@@ -722,6 +790,13 @@ print(scipy.__version__)
 
 3. graphic driver 설치
 
+   >  NVIDIA 드라이버를 제거(필요시)
+   >
+   > ```
+   > sudo apt-get purge nvidia*
+   > sudo apt-get autoremove
+   > ```
+
    1. 사용 가능한 graphic driver확인
 
       ```
@@ -731,7 +806,7 @@ print(scipy.__version__)
    2. 사용 가능한 driver중 하나 설치
 
       ```
-      $ sudo apt install nvidia-driver-460		# 예시임
+      $ sudo apt install nvidia-driver-535		# 예시임
       ```
 
    3. 확인
@@ -740,7 +815,22 @@ print(scipy.__version__)
       nvidia-smi
       ```
 
-      `Diver Version`: 확인. 적용 안되어있으면 `sudo reboot`
+      `Diver Version`: 확인.
+      
+      ```
+      Failed to initialize NVML: Driver/library version mismatch
+      NVML library version: 535.183
+      ```
+      
+      위 출력이 뜨며 적용 안되어있으면 `sudo reboot`
+      
+      
+
+
+
+
+
+
 
 
 
