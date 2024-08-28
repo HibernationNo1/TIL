@@ -34,14 +34,27 @@ scrape_configs:
 ```
 version: '3'
 services:
-  prometheus:
+  # 사전 준비 (Prometheus는 일반적으로 컨테이너 내부에서 nobody 사용자(UID 65534)로 실행되므로, 이 사용자가 이 디렉터리에 대한 쓰기 권한을 가지고 있어야 한다.)
+    # mkdir -p ./prometheus_data
+    # sudo chown 65534:65534 ./prometheus_data  
     image: 'prom/prometheus:v2.48.0'
-    container_name: 'prometheus'
+    container_name: 'prometheus_pomission'
     ports: 
-      - '9090:9090'
+      - '9091:9090'   # pomission 만을 위한 prometheus
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml		# prometheus.yml 파일 mount
-
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/prometheus_data:/prometheus/data                    # metrix 데이터를 저장할 DIR을 mount
+      # sudo chown -R 65534:65534 prometheus_data
+    command:  
+      # retention.time 옵션 사용 시 --config.file 의 기본값이 /prometheus/prometheus.yml 로 변경됨
+      # 때문에 다시 경로를 바로잡아준다.
+      - '--config.file=/etc/prometheus/prometheus.yml'                    
+      - '--storage.tsdb.retention.time=365d'			# 데이터 유지 기간
+      
 # docker-compose -f docker_compose.yml up -d
 ```
+
+
+
+
 
