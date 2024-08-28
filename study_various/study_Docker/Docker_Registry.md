@@ -26,7 +26,15 @@ docker registry는 Docker image를 저장하고 배포할 수 있는 server측 a
 2. run
 
    ```
-   $ docker run --name private-docker -dit -t -p 5000:5000 registry:2
+   background로 실행
+   TTY mode사용 (bash를 사용하려면 설정)
+   표준 입력(STDIN)을 활성화하고, container와 연결되어 있지 않더라도 표준입력 유지
+   ```
+
+   
+
+   ```
+   $ docker run --name private-docker -dit -p 5000:5000 registry:latest
    ```
 
    - `--name private-docker` : private-docker 이라는 이름으로 run
