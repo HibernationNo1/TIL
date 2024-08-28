@@ -487,15 +487,17 @@ nvidia-driver확인
 $ sudo cat /proc/driver/nvidia/version | nvidia-smi
 ```
 
-nvidia-docker 설치
+**nvidia-docker 설치**
 
 ```
 $ curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
-$ istribution=$(. /etc/os-release;echo $ID$VERSION_ID)
+$ distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
 $ curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
 $ sudo apt-get update
 $ sudo apt-get install -y nvidia-docker2
 ```
+
+
 
   demon.json에 추가
 
@@ -734,6 +736,12 @@ print(scipy.__version__)
 
 google에 `cuda toolkit {Version}` 검색 후 NVIDIA Developer 페이지에 접속, 옵션 선택하여 나오는 명령어대로 진행
 
+> 왠만한 version이 설치가 안된다면 아래 명령어 실행
+>
+> ```
+> $ sudo apt-get install nvidia-cuda-toolkit
+> ```
+
 설치 후 version확인
 
 ```
@@ -817,14 +825,14 @@ Nvidia graphic driver 설치 전에 Nvidia toolkit 부터 설치해야함
 
       `Diver Version`: 확인.
       
-      ```
-      Failed to initialize NVML: Driver/library version mismatch
-      NVML library version: 535.183
-      ```
+      - ```
+        Failed to initialize NVML: Driver/library version mismatch
+        NVML library version: 535.183
+        ```
       
-      위 출력이 뜨며 적용 안되어있으면 `sudo reboot`
+        위 출력이 뜨며 적용 안되어있으면 `sudo reboot`
       
-      
+        
 
 
 
