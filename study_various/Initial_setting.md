@@ -133,9 +133,70 @@ $ sudo apt install ssh
 
 
 
+## Mount
+
+**Disk mount**
+
+1. 설치된 device가 있는지 확인
+
+   ```
+   $ sudo parted -l
+   ```
+
+2. `/dev/sda` 을 경로로 잡혀있는 device가 있고, 해당 경로를 `~/workspace/HDD` 로 mount하고 싶다면 아래 명령어
+
+   ```
+   $ sudo mount /dev/sda ~/workspace/HDD
+   ```
+
+   > 해당 경로 mount를 끊고 싶다면 `sudo umount ~/workspace/HDD`
 
 
-## chrom
+
+**Server mount**
+
+1. nfs-common 설치 (**NFS**를 마운트하기 위해 필요)
+
+   ```
+   $ sudo apt-get install nfs-common
+   ```
+
+2. `/etc/fstap` 변경
+
+   ```
+   $ sudo vi /etc/fstap
+   ```
+
+   아래 내용 추가
+
+   ```
+   $ {serIP}:{server의 mount하고자 하는 PATH} {local에 mount하고자 하는 PATH} nfs defaults 0 0
+   ```
+
+3. mount
+
+   ```
+   $ sudo mount -a
+   ```
+
+   
+
+
+
+## Utils
+
+### terminator
+
+```
+$ sudo apt update
+$ sudo apt install terminator
+```
+
+
+
+
+
+### chrom
 
 1. 크롬 브라우저 패키지 설치용 인증 키 
    
@@ -166,10 +227,10 @@ $ sudo apt install ssh
    $ sudo rm -rf /etc/apt/sources.list.d/google.list
    ```
 
-## git
+### git
 
 ```
-$ apt-get install git
+$ apt-get install git curl vim wget dpkg
 ```
 
 또는 
@@ -226,13 +287,113 @@ install후
     - `git clone Url` 은 남이 하는 프로젝트를 이어받거나 내가 잠시 사용할때(또는 다른 PC에서 내 URL을 사용할때) 사용
   - vscode사용
 
-## Typora
+### Typora
 
 ```
 $ wget -qO - https://typora.io/linux/public-key.asc | sudo apt-key add -
 $ sudo add-apt-repository 'deb https://typora.io/linux ./'
 $ sudo apt -y install typora
 ```
+
+
+
+### vscode
+
+1. curl을 설치
+
+   ```
+   $ sudo apt-get install curl
+   ```
+
+2. 마이크로소프트 GPG 키를 다운로드하여 /etc/apt/trusted.gpg.d/ 경로에 복사
+
+   ```
+   $ sudo sh -c 'curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/trusted.gpg.d/microsoft.gpg'
+   ```
+
+3. Visual Studio Code를 다운로드 받기 위한 저장소를 추가
+
+   ```
+   $ sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
+   ```
+
+4. package가져오기
+
+   ```
+   $ sudo apt update
+   ```
+
+5. vscode설치
+
+   ```
+   $ sudo apt install code
+   ```
+
+   ```
+   $ code
+   ```
+
+   실행되는지 확인
+
+**Extnesion**
+
+- python
+- Remote - SSH
+- Dev Containers
+
+
+
+###  Dbeaver
+
+1. https://dbeaver.io/download/ 에서 파일 직접 download
+
+2. ```
+   $ sudo dpkg -i dbeaver-ce_24.1.5_amd64.deb
+   ```
+
+   > download한 파일 version확인하여 실행
+
+
+
+### kakao
+
+**1. Wine 설치**
+
+1. 우분투 환경이 64비트인 경우, 32비트 아키텍처를 활성화
+
+   ```
+   $ sudo dpkg --add-architecture i386
+   ```
+
+2. 설치 및 key 추가
+
+   ```
+   $ sudo apt update
+   $ sudo apt install wine64 wine32
+   ```
+
+   확인: `wine --version`
+
+   ```
+   $ wget -nc https://dl.winehq.org/wine-builds/winehq.key
+   $ sudo apt-key add winehq.key
+   ```
+
+   `OK` 출력돼야함
+
+
+
+**2. kakao 설치**
+
+1.  https://www.kakaocorp.com/page/service/service/KakaoTalk 에서 file download (Window 10) 다운로드
+
+2. kakao 설치 (설치 파일이 있는 위치에서)
+
+   ```
+   $ LANG="ko_KR.UTF-8" wine KakaoTalk_Setup.exe
+   ```
+
+3. 모두 default로  설치
 
 
 
@@ -373,45 +534,11 @@ $ sha256sum Anaconda3-2022.05-Linux-x86_64.sh
 
 
 
-## vscode
 
-1. curl을 설치
-   
-   ```
-   $ sudo apt-get install curl
-   ```
-
-2. 마이크로소프트 GPG 키를 다운로드하여 /etc/apt/trusted.gpg.d/ 경로에 복사
-   
-   ```
-   $ sudo sh -c 'curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/trusted.gpg.d/microsoft.gpg'
-   ```
-
-3. Visual Studio Code를 다운로드 받기 위한 저장소를 추가
-   
-   ```
-   $ sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
-   ```
-
-4. package가져오기
-   
-   ```
-   $ sudo apt update
-   ```
-
-5. vscode설치
-   
-   ```
-   $ sudo apt install code
-   ```
-   
-   ```
-   $ code
-   ```
-   
-   실행되는지 확인
 
 ## Docker
+
+### Docker
 
 ['Docker for linux'](https://docs.docker.com/engine/install/ubuntu/)
 
@@ -467,25 +594,29 @@ $ sha256sum Anaconda3-2022.05-Linux-x86_64.sh
    ```
    
    tesk image를 다운로드
-- **nvidia-dorker**
-  
-  nvidia-driver 설치(이미 설치했다면 건너뛰기)
-  
+
+
+
+### **nvidia-dorker**
+
+- nvidia-driver 설치(이미 설치했다면 건너뛰기)
+
   ```
   $ ubuntu-drivers devices
   $ sudo apt-get install -y nvidia-driver-555-open # 
   $ sudo apt-get install -y dkms nvidia-modprobe
   ```
-  
+
   > nvidia-XXX 는 알맞는 버전 확인 후 설치하면 된다. [여기](https://laondev12.tistory.com/11) 확인
-  > 
-  
 
-nvidia-driver확인
+  nvidia-driver확인
 
-```
-$ sudo cat /proc/driver/nvidia/version | nvidia-smi
-```
+  ```
+  $ sudo cat /proc/driver/nvidia/version | nvidia-smi
+  ```
+
+
+
 
 **nvidia-docker 설치**
 
@@ -538,7 +669,17 @@ $ sudo docker run --rm --gpus all nvidia/cuda:11.8.0-base-ubuntu20.04 nvidia-smi
 
 
 
+### docker compose
 
+```
+$ sudo curl -L "https://github.com/docker/compose/releases/download/v2.22.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+$ sudo chmod +x /usr/local/bin/docker-compose
+$ docker-compose --version
+```
+
+
+
+### Options
 
 - **Uninstall old versions**
   
@@ -595,6 +736,12 @@ $ sudo docker run --rm --gpus all nvidia/cuda:11.8.0-base-ubuntu20.04 nvidia-smi
        $ sudo systemctl daemon-reload
        $ sudo systemctl restart docker
        ```
+
+
+
+
+
+
 
 ## Kubernetes
 
@@ -784,55 +931,43 @@ Nvidia graphic driver 설치 전에 Nvidia toolkit 부터 설치해야함
 
 #### Nvidia graphic driver
 
-1. GPU확인
+graphic driver 설치
+
+>  NVIDIA 드라이버를 제거(필요시)
+>
+> ```
+> sudo apt-get purge nvidia*
+> sudo apt-get autoremove
+> ```
+
+1. 사용 가능한 graphic driver확인
 
    ```
-   $ nvidia-smi -L
+   $ ubuntu-drivers devices
    ```
 
-   [여기](https://www.studio1productions.com/Articles/NVidia-GPU-Chart.htm)서 CUDA core 수 확인  (4352)
+2. 사용 가능한 driver중 하나 설치
 
-2. CUDA Compute Capability확인
+   ```
+   $ sudo apt install nvidia-driver-535		# 예시임
+   ```
 
-   [여기](https://www.wikiwand.com/en/CUDA) (7.5)
+3. 확인
 
-3. graphic driver 설치
+   ```
+   nvidia-smi
+   ```
 
-   >  NVIDIA 드라이버를 제거(필요시)
-   >
-   > ```
-   > sudo apt-get purge nvidia*
-   > sudo apt-get autoremove
-   > ```
-
-   1. 사용 가능한 graphic driver확인
-
-      ```
-      $ ubuntu-drivers devices
-      ```
-
-   2. 사용 가능한 driver중 하나 설치
-
-      ```
-      $ sudo apt install nvidia-driver-535		# 예시임
-      ```
-
-   3. 확인
-
-      ```
-      nvidia-smi
-      ```
-
-      `Diver Version`: 확인.
-      
-      - ```
-        Failed to initialize NVML: Driver/library version mismatch
-        NVML library version: 535.183
-        ```
-      
-        위 출력이 뜨며 적용 안되어있으면 `sudo reboot`
-      
-        
+   `Diver Version`: 확인.
+   
+   - ```
+     Failed to initialize NVML: Driver/library version mismatch
+     NVML library version: 535.183
+     ```
+   
+     위 출력이 뜨며 적용 안되어있으면 `sudo reboot`
+   
+     
 
 
 

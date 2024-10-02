@@ -7,7 +7,6 @@ CONFIG_REGISTRY = dict()
 
 CONFIGDICT_NAME = 'class_config'
 BASE_KEY = '_base_'
-NAME_KEY = '_name_'
 
 
 def pretty_text(_cfg_dict, print_str = '', depth = 0):
@@ -137,9 +136,8 @@ class Config:
             if key.startswith("__"):
                 raise TypeError(f"Key name cannot start with '__'. \ncheck key name: {key} in {file_path} ")    
 
-            
+            # 하위 config file을 포함하여 dict구성
             if key == BASE_KEY:
-                # 하위 config file을 포함하여 dict구성
                 base_path_list = getattr(module, key, None)
                 if not isinstance(base_path_list, list):
                     raise TypeError(f"Only list type are supported for {BASE_KEY} key ")
@@ -147,19 +145,7 @@ class Config:
                 for base_path in base_path_list:
                     # 하위 config file의 path
                     sub_file_path = osp.join(osp.dirname(file_path), base_path)    
-                    base_file_dict_dict[sub_file_path] = Config._file2dict(sub_file_path) 
-            elif key == NAME_KEY:
-                cfg_name = getattr(module, key, None)
-                if not isinstance(cfg_name, str):
-                    raise TypeError(f"Only string type are supported for {NAME_KEY} key ")           
-                
-                
-                if cfg_name in CONFIG_REGISTRY.keys():
-                    # 같은 이름의 config registry는 허용하지 않음
-                    raise KeyError(f"'{cfg_name}' config already exists in config registry. ")
-                else:
-                    # config registry에 cfg_name의 key값을 만들어놓는다.
-                    CONFIG_REGISTRY[cfg_name] = None
+                    base_file_dict_dict[sub_file_path] = Config._file2dict(sub_file_path)                       
             else:
                 file_dict[key] = getattr(module, key, None)
 
@@ -176,17 +162,17 @@ class Config:
                                f"'{osp.basename(sub_file_path)}' have common keys: {common_keys}")
     
             file_dict = {**file_dict, **sub_file_dict}
-        
-        try:
-            # registry에 config 추가
-            CONFIG_REGISTRY[cfg_name] = file_dict
-        except:
-            # 모든 config파일에는 _name_ key값으로 config의 이름을 명시해야 한다.
-            raise KeyError(f"{file_path} must have a '_name_' key as a string.")
         return file_dict
     
 
-
+def save2registry(cfg, name):
+    if not isinstance(cfg, dict):
+        raise TypeError(f"Input of `save2registry` method must be of type `dict`!") 
+    
+    if name in CONFIG_REGISTRY.keys():
+        print(f"Run `save2registry`, but {name} already exists in config registry. ")
+    else:
+        CONFIG_REGISTRY[name] = cfg
 
 def show_cfg_registry_list(name): 
     if len(CONFIG_REGISTRY.keys()) == 0:

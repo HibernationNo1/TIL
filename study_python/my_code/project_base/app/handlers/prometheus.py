@@ -3,7 +3,7 @@ from prometheus_client import Histogram, Counter
 PROMETHEUS_REGISTRY = dict()
 
 
-PROMETHEUS_REGISTRY['function'] = Histogram('function', 'Latency of run function (unit: seconds)')
+PROMETHEUS_REGISTRY['Histogram'] = Histogram('function', 'Latency of run function (unit: seconds)')
 PROMETHEUS_REGISTRY['latency_time'] = Histogram('latency_time', 'Latency in specific parts of code (unit: seconds)')
 """
 PROMETHEUS_REGISTRY['key_name'] = Histogram('{metrics_이름}', '{metrics 설명}')

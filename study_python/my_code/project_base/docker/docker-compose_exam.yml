@@ -1,0 +1,442 @@
+version: '3'
+services:
+  subscribe_api_1:          
+    build :
+      context : ./../${SUBSCRIBE_CONTAINER_NAME}
+      dockerfile: Dockerfile
+    image: ${SUBSCRIBE_IMAGE}
+    container_name: ${SUBSCRIBE_CONTAINER_NAME}_1    
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=0      # device number 확인 필요
+      - DEBUG_METRICS=true                    # 해당 env를 설정하지 않으면 prometheus에서 metrics route를 추적하지 못함
+      - CONTAINER_NAME=${SUBSCRIBE_CONTAINER_NAME}_1    # 내부 python cript에서 container를 구분하기 위해 사용할 env     
+      - PORT=${SUBSCRIBE_PORT_1}
+      - OCR_CONTAINER=${OCR_CONTAINER_NAME}_1    #  통신할 ocr api container의 name 지정
+      - OCR_PORT=${OCR_PORT_1} 
+    ports:
+      - ${SUBSCRIBE_PORT_1}:${SUBSCRIBE_PORT_1}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./../${SUBSCRIBE_CONTAINER_NAME}:/workspace
+      - ${INPUT_DATA_PATH}:${INPUT_DATA_PATH}:ro    # input data path
+      - ${OCR_DATA_SAVE_PATH}:${OCR_DATA_SAVE_PATH}     # crop image path (for ocr)
+      - ./../${SAMPLE_DIR_NAME}/:/sample         
+    command: sh start.sh
+    shm_size: 8G
+    ipc : "host"
+    runtime: "nvidia"
+    stdin_open: true # docker 유지
+    tty: true # docker 유지
+    networks:
+      - ${LIVE_NETWORK}
+
+  subscribe_api_2:          
+    build :
+      context : ./../${SUBSCRIBE_CONTAINER_NAME}
+      dockerfile: Dockerfile
+    image: ${SUBSCRIBE_IMAGE}
+    container_name: ${SUBSCRIBE_CONTAINER_NAME}_2    
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=1      # device number 확인 필요
+      - DEBUG_METRICS=true                    # 해당 env를 설정하지 않으면 prometheus에서 metrics route를 추적하지 못함
+      - CONTAINER_NAME=${SUBSCRIBE_CONTAINER_NAME}_2    # 내부 python cript에서 container를 구분하기 위해 사용할 env     
+      - PORT=${SUBSCRIBE_PORT_2}
+      - OCR_CONTAINER=${OCR_CONTAINER_NAME}_2    #  통신할 ocr api container의 name 지정
+      - OCR_PORT=${OCR_PORT_2} 
+    ports:
+      - ${SUBSCRIBE_PORT_2}:${SUBSCRIBE_PORT_2}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./../${SUBSCRIBE_CONTAINER_NAME}:/workspace
+      - ${INPUT_DATA_PATH}:${INPUT_DATA_PATH}:ro    # input data path
+      - ${OCR_DATA_SAVE_PATH}:${OCR_DATA_SAVE_PATH}     # crop image path (for ocr)      
+      - ./../${SAMPLE_DIR_NAME}/:/sample         
+    command: sh start.sh
+    shm_size: 8G
+    ipc : "host"
+    runtime: "nvidia"
+    stdin_open: true # docker 유지
+    tty: true # docker 유지
+    networks:
+      - ${LIVE_NETWORK}
+
+  subscribe_api_3:          
+    build :
+      context : ./../${SUBSCRIBE_CONTAINER_NAME}
+      dockerfile: Dockerfile
+    image: ${SUBSCRIBE_IMAGE}
+    container_name: ${SUBSCRIBE_CONTAINER_NAME}_3    
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=2      # device number 확인 필요
+      - DEBUG_METRICS=true                    # 해당 env를 설정하지 않으면 prometheus에서 metrics route를 추적하지 못함
+      - CONTAINER_NAME=${SUBSCRIBE_CONTAINER_NAME}_3    # 내부 python cript에서 container를 구분하기 위해 사용할 env     
+      - PORT=${SUBSCRIBE_PORT_3}
+      - OCR_CONTAINER=${OCR_CONTAINER_NAME}_3    #  통신할 ocr api container의 name 지정
+      - OCR_PORT=${OCR_PORT_3} 
+    ports:
+      - ${SUBSCRIBE_PORT_3}:${SUBSCRIBE_PORT_3}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./../${SUBSCRIBE_CONTAINER_NAME}:/workspace
+      - ${INPUT_DATA_PATH}:${INPUT_DATA_PATH}:ro    # input data path
+      - ${OCR_DATA_SAVE_PATH}:${OCR_DATA_SAVE_PATH}     # crop image path (for ocr)      
+      - ./../${SAMPLE_DIR_NAME}/:/sample         
+    command: sh start.sh
+    shm_size: 8G
+    ipc : "host"
+    runtime: "nvidia"
+    stdin_open: true # docker 유지
+    tty: true # docker 유지
+    networks:
+      - ${LIVE_NETWORK}
+
+  subscribe_api_4:          
+    build :
+      context : ./../${SUBSCRIBE_CONTAINER_NAME}
+      dockerfile: Dockerfile
+    image: ${SUBSCRIBE_IMAGE}
+    container_name: ${SUBSCRIBE_CONTAINER_NAME}_4    
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=3      # device number 확인 필요
+      - DEBUG_METRICS=true                    # 해당 env를 설정하지 않으면 prometheus에서 metrics route를 추적하지 못함
+      - CONTAINER_NAME=${SUBSCRIBE_CONTAINER_NAME}_4    # 내부 python cript에서 container를 구분하기 위해 사용할 env     
+      - PORT=${SUBSCRIBE_PORT_4}
+      - OCR_CONTAINER=${OCR_CONTAINER_NAME}_4    #  통신할 ocr api container의 name 지정
+      - OCR_PORT=${OCR_PORT_4} 
+    ports:
+      - ${SUBSCRIBE_PORT_4}:${SUBSCRIBE_PORT_4}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./../${SUBSCRIBE_CONTAINER_NAME}:/workspace
+      - ${INPUT_DATA_PATH}:${INPUT_DATA_PATH}:ro    # input data path
+      - ${OCR_DATA_SAVE_PATH}:${OCR_DATA_SAVE_PATH}     # crop image path (for ocr)        
+      - ./../${SAMPLE_DIR_NAME}/:/sample         
+    command: sh start.sh
+    shm_size: 8G
+    ipc : "host"
+    runtime: "nvidia"
+    stdin_open: true # docker 유지
+    tty: true # docker 유지
+    networks:
+      - ${LIVE_NETWORK}
+
+  ocr_api_1:          
+    build :
+      context : ./../${OCR_CONTAINER_NAME}
+      dockerfile: Dockerfile.ocr
+    image: ${OCR_IMAGE}
+    container_name: ${OCR_CONTAINER_NAME}_1    
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=0      # device number 확인 필요
+      - DEBUG_METRICS=true                    # 해당 env를 설정하지 않으면 prometheus에서 metrics route를 추적하지 못함
+      - CONTAINER_NAME=${OCR_CONTAINER_NAME}_1    # 내부 python cript에서 container를 구분하기 위해 사용할 env  
+      - PORT=${OCR_PORT_1}
+    ports:
+      - ${OCR_PORT_1}:${OCR_PORT_1}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./../${OCR_CONTAINER_NAME}:/workspace
+      - ${OCR_DATA_SAVE_PATH}:${OCR_DATA_SAVE_PATH}     # crop image path (for ocr)          
+      - ./../${SAMPLE_DIR_NAME}/:/sample     
+    command: sh start.sh
+    shm_size: 8G
+    ipc : "host"
+    runtime: "nvidia"
+    stdin_open: true # docker 유지
+    tty: true # docker 유지
+    networks:
+      - ${LIVE_NETWORK}
+
+  ocr_api_2:          
+    build :
+      context : ./../${OCR_CONTAINER_NAME}
+      dockerfile: Dockerfile.ocr
+    image: ${OCR_IMAGE}
+    container_name: ${OCR_CONTAINER_NAME}_2    
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=1      # device number 확인 필요
+      - DEBUG_METRICS=true                    # 해당 env를 설정하지 않으면 prometheus에서 metrics route를 추적하지 못함
+      - CONTAINER_NAME=${OCR_CONTAINER_NAME}_2    # 내부 python cript에서 container를 구분하기 위해 사용할 env   
+      - PORT=${OCR_PORT_2}   
+    ports:
+      - ${OCR_PORT_2}:${OCR_PORT_2}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./../${OCR_CONTAINER_NAME}:/workspace
+      - ${OCR_DATA_SAVE_PATH}:${OCR_DATA_SAVE_PATH}     # crop image path (for ocr)                 
+      - ./../${SAMPLE_DIR_NAME}/:/sample     
+    command: sh start.sh
+    shm_size: 8G
+    ipc : "host"
+    runtime: "nvidia"
+    stdin_open: true # docker 유지
+    tty: true # docker 유지
+    networks:
+      - ${LIVE_NETWORK}
+
+  ocr_api_3:          
+    build :
+      context : ./../${OCR_CONTAINER_NAME}
+      dockerfile: Dockerfile.ocr
+    image: ${OCR_IMAGE}
+    container_name: ${OCR_CONTAINER_NAME}_3    
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=2      # device number 확인 필요
+      - DEBUG_METRICS=true                    # 해당 env를 설정하지 않으면 prometheus에서 metrics route를 추적하지 못함
+      - CONTAINER_NAME=${OCR_CONTAINER_NAME}_3    # 내부 python cript에서 container를 구분하기 위해 사용할 env    
+      - PORT=${OCR_PORT_3}     
+    ports:
+      - ${OCR_PORT_3}:${OCR_PORT_3}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./../${OCR_CONTAINER_NAME}:/workspace
+      - ${OCR_DATA_SAVE_PATH}:${OCR_DATA_SAVE_PATH}     # crop image path (for ocr)                  
+      - ./../${SAMPLE_DIR_NAME}/:/sample  
+    command: sh start.sh
+    shm_size: 8G
+    ipc : "host"
+    runtime: "nvidia"
+    stdin_open: true # docker 유지
+    tty: true # docker 유지
+    networks:
+      - ${LIVE_NETWORK}
+
+  ocr_api_4:          
+    build :
+      context : ./../${OCR_CONTAINER_NAME}
+      dockerfile: Dockerfile.ocr
+    image: ${OCR_IMAGE}
+    container_name: ${OCR_CONTAINER_NAME}_4   
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=3      # device number 확인 필요
+      - DEBUG_METRICS=true                    # 해당 env를 설정하지 않으면 prometheus에서 metrics route를 추적하지 못함
+      - CONTAINER_NAME=${OCR_CONTAINER_NAME}_4    # 내부 python cript에서 container를 구분하기 위해 사용할 env     
+      - PORT=${OCR_PORT_4}    
+    ports:
+      - ${OCR_PORT_4}:${OCR_PORT_4}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./../${OCR_CONTAINER_NAME}:/workspace
+      - ${OCR_DATA_SAVE_PATH}:${OCR_DATA_SAVE_PATH}     # crop image path (for ocr)                
+      - ./../${SAMPLE_DIR_NAME}/:/sample     
+    command: sh start.sh
+    shm_size: 8G
+    ipc : "host"
+    runtime: "nvidia"
+    stdin_open: true # docker 유지
+    tty: true # docker 유지
+    networks:
+      - ${LIVE_NETWORK}
+
+  baedal_api_1:          
+    build :
+      context : ./../${BAEDAL_CONTAINER_NAME}
+      dockerfile: Dockerfile.baedal
+    image: ${BAEDAL_IMAGE}
+    container_name: ${BAEDAL_CONTAINER_NAME}_1    
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=0      # device number 확인 필요
+      - DEBUG_METRICS=true                    # 해당 env를 설정하지 않으면 prometheus에서 metrics route를 추적하지 못함         
+      - CONTAINER_NAME=${BAEDAL_CONTAINER_NAME}_1    # 내부 python cript에서 container를 구분하기 위해 사용할 env    
+      - OCR_CONTAINER=${OCR_CONTAINER_NAME}_1 
+      - OCR_PORT=${OCR_PORT_1}           
+      - PORT=${BAEDAL_PORT_1}
+      - DEBUG=True      
+    ports:
+      - ${BAEDAL_PORT_1}:${BAEDAL_PORT_1}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./../${BAEDAL_CONTAINER_NAME}:/workspace
+      - ${INPUT_DATA_PATH}:${INPUT_DATA_PATH}:ro     
+      - ${OCR_DATA_SAVE_PATH}:${OCR_DATA_SAVE_PATH}     # crop image path (for ocr)               
+      - ./../${SAMPLE_DIR_NAME}/:/sample     
+    command: sh start.sh
+    shm_size: 8G
+    ipc : "host"
+    runtime: "nvidia"
+    stdin_open: true # docker 유지
+    tty: true # docker 유지
+    networks:
+      - ${LIVE_NETWORK}      
+
+  baedal_api_2:          
+    build :
+      context : ./../${BAEDAL_CONTAINER_NAME}
+      dockerfile: Dockerfile.baedal
+    image: ${BAEDAL_IMAGE}
+    container_name: ${BAEDAL_CONTAINER_NAME}_2    
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=1      # device number 확인 필요
+      - DEBUG_METRICS=true                    # 해당 env를 설정하지 않으면 prometheus에서 metrics route를 추적하지 못함         
+      - CONTAINER_NAME=${BAEDAL_CONTAINER_NAME}_2    # 내부 python cript에서 container를 구분하기 위해 사용할 env    
+      - OCR_CONTAINER=${OCR_CONTAINER_NAME}_2 
+      - OCR_PORT=${OCR_PORT_2}           
+      - PORT=${BAEDAL_PORT_2}
+      - DEBUG=True      
+    ports:
+      - ${BAEDAL_PORT_2}:${BAEDAL_PORT_2}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./../${BAEDAL_CONTAINER_NAME}:/workspace
+      - ${INPUT_DATA_PATH}:${INPUT_DATA_PATH}:ro     
+      - ${OCR_DATA_SAVE_PATH}:${OCR_DATA_SAVE_PATH}     # crop image path (for ocr)               
+      - ./../${SAMPLE_DIR_NAME}/:/sample     
+    command: sh start.sh
+    shm_size: 8G
+    ipc : "host"
+    runtime: "nvidia"
+    stdin_open: true # docker 유지
+    tty: true # docker 유지
+    networks:
+      - ${LIVE_NETWORK}      
+
+
+  baedal_api_3:          
+    build :
+      context : ./../${BAEDAL_CONTAINER_NAME}
+      dockerfile: Dockerfile.baedal
+    image: ${BAEDAL_IMAGE}
+    container_name: ${BAEDAL_CONTAINER_NAME}_3
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=0      # device number 확인 필요
+      - DEBUG_METRICS=true                    # 해당 env를 설정하지 않으면 prometheus에서 metrics route를 추적하지 못함         
+      - CONTAINER_NAME=${BAEDAL_CONTAINER_NAME}_3    # 내부 python cript에서 container를 구분하기 위해 사용할 env    
+      - OCR_CONTAINER=${OCR_CONTAINER_NAME}_3 
+      - OCR_PORT=${OCR_PORT_3}           
+      - PORT=${BAEDAL_PORT_3}
+      - DEBUG=True      
+    ports:
+      - ${BAEDAL_PORT_3}:${BAEDAL_PORT_3}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./../${BAEDAL_CONTAINER_NAME}:/workspace
+      - ${INPUT_DATA_PATH}:${INPUT_DATA_PATH}:ro     
+      - ${OCR_DATA_SAVE_PATH}:${OCR_DATA_SAVE_PATH}     # crop image path (for ocr)               
+      - ./../${SAMPLE_DIR_NAME}/:/sample     
+    command: sh start.sh
+    shm_size: 8G
+    ipc : "host"
+    runtime: "nvidia"
+    stdin_open: true # docker 유지
+    tty: true # docker 유지
+    networks:
+      - ${LIVE_NETWORK}      
+
+
+  baedal_api_4:          
+    build :
+      context : ./../${BAEDAL_CONTAINER_NAME}
+      dockerfile: Dockerfile.baedal
+    image: ${BAEDAL_IMAGE}
+    container_name: ${BAEDAL_CONTAINER_NAME}_4    
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=3      # device number 확인 필요
+      - DEBUG_METRICS=true                    # 해당 env를 설정하지 않으면 prometheus에서 metrics route를 추적하지 못함         
+      - CONTAINER_NAME=${BAEDAL_CONTAINER_NAME}_4    # 내부 python cript에서 container를 구분하기 위해 사용할 env    
+      - OCR_CONTAINER=${OCR_CONTAINER_NAME}_4 
+      - OCR_PORT=${OCR_PORT_4}           
+      - PORT=${BAEDAL_PORT_4}
+      - DEBUG=True      
+    ports:
+      - ${BAEDAL_PORT_4}:${BAEDAL_PORT_4}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./../${BAEDAL_CONTAINER_NAME}:/workspace
+      - ${INPUT_DATA_PATH}:${INPUT_DATA_PATH}:ro     
+      - ${OCR_DATA_SAVE_PATH}:${OCR_DATA_SAVE_PATH}     # crop image path (for ocr)               
+      - ./../${SAMPLE_DIR_NAME}/:/sample     
+    command: sh start.sh
+    shm_size: 8G
+    ipc : "host"
+    runtime: "nvidia"
+    stdin_open: true # docker 유지
+    tty: true # docker 유지
+    networks:
+      - ${LIVE_NETWORK}      
+
+
+
+  health_check_pomission:
+    build :
+      context : ./health_check
+      dockerfile: Dockerfile.health_check
+    image: ${HEALTHCHECK_IMAGE}
+    container_name: ${HEALTHCHECK_CONTAINER_NAME}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro    # docker외부와 내부의 시간을 동일하게 맞추기 위한 설정
+      - ./health_check:/workspace
+    ipc: 'host'                             # container 내부의 process가 host의 process와 통신하기 위해 설정.
+    shm_size: 4G
+    command: python health_check.py
+    # 개발 중이거나 디버깅을 이유로 container 내부와 상호작용할 경우 필요
+    stdin_open: true                        # container가 실행 중일 때 외부에서 user가 container와 상호 작용하기 위해 설정.
+    tty: true                               # container 내부에서 terminal을 사용하기 위해 설정.
+    networks:
+      - ${LIVE_NETWORK}
+
+
+  nginx_subscribe:
+    image: ${NGINX_IMAGE}
+    container_name: ${NGINX_CONTAINER_SUBSCRIBE}
+    ports: 
+      - ${NGINX_PORT_SUBSCRIBE}:8088
+      - ${NGINX_SUBSCRIBE_1}:${NGINX_SUBSCRIBE_1}
+      - ${NGINX_SUBSCRIBE_2}:${NGINX_SUBSCRIBE_2}   
+    volumes:
+      - /etc/localtime:/etc/localtime:ro      # docker외부와 내부의 시간을 동일하게 맞추기 위한 설정
+      # default 먼저 mount해야 sites-enabled dir mount가 정상적으로 이루어짐
+      - ./nginx/sites-enabled/default:/etc/nginx/sites-enabled/default     
+      # ./nginx/sites-enabled/ dir path 자체를 mount해도 되지만, stage와 live의 GPU resource차이가 심해 stage용 nginx를 따로 정의하고 단일 file만 mount
+      - ./nginx/sites-enabled/subscribe_live.conf:/etc/nginx/sites-enabled/subscribe_live.conf
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/log/subscribe:/var/log/nginx    # nginx container 내부의 log파일을 mount
+    networks:
+      - ${LIVE_NETWORK}
+  
+  nginx_baedal:
+    image: ${NGINX_IMAGE}
+    container_name: ${NGINX_CONTAINER_BAEDAL}
+    ports: 
+      - ${NGINX_PORT_BAEDAL}:8088
+      - ${NGINX_BAEDAL_1}:${NGINX_BAEDAL_1}
+      - ${NGINX_BAEDAL_2}:${NGINX_BAEDAL_2}      
+    volumes:
+      - /etc/localtime:/etc/localtime:ro      # docker외부와 내부의 시간을 동일하게 맞추기 위한 설정
+      # default 먼저 mount해야 sites-enabled dir mount가 정상적으로 이루어짐
+      - ./nginx/sites-enabled/default:/etc/nginx/sites-enabled/default     
+      # ./nginx/sites-enabled/ dir path 자체를 mount해도 되지만, stage와 live의 GPU resource차이가 심해 stage용 nginx를 따로 정의하고 단일 file만 mount
+      - ./nginx/sites-enabled/baedal_live.conf:/etc/nginx/sites-enabled/baedal_live.conf
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/log/baedal:/var/log/nginx    # nginx container 내부의 log파일을 mount
+    networks:
+      - ${LIVE_NETWORK}
+
+  # 사전 준비 (Prometheus는 일반적으로 컨테이너 내부에서 nobody 사용자(UID 65534)로 실행되므로, 이 사용자가 이 디렉터리에 대한 쓰기 권한을 가지고 있어야 한다.)
+    # mkdir -p ./prometheus_data
+    # sudo chown 65534:65534 ./prometheus_data  
+  prometheus_pomission:
+    image: ${PROMETHEUS_IMAGE}
+    container_name: ${PROMETHEUS_CONTAINER_NAME}
+    ports: 
+      - ${PROMETHEUS_PORT}:9090   # pomission 만을 위한 prometheus
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/prometheus_data:/prometheus/data                    # metrix 데이터를 저장할 DIR을 mount
+    command:  
+      # retention.time 옵션 사용 시 --config.file 의 기본값이 /prometheus/prometheus.yml 로 변경됨
+      # 때문에 다시 경로를 바로잡아준다.
+      - '--config.file=/etc/prometheus/prometheus.yml'                    
+      - '--storage.tsdb.retention.time=365d'
+    networks:
+      - ${LIVE_NETWORK}
+
+networks:
+  pomission:
+    name: pomission
+    driver: bridge
+    external: true
+
+# docker-compose -f docker-compose_live.yml up -d nginx_baedal
+# docker-compose -f docker-compose_live.yml up -d ${OCR_CONTAINER_NAME}_1 ${OCR_CONTAINER_NAME}_2 ${OCR_CONTAINER_NAME}_3 ${OCR_CONTAINER_NAME}_4
