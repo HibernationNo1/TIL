@@ -17,7 +17,7 @@ services:
     #   - ./mongo/log:/var/log/mongodb    # MongoDB 로그 디렉토리 마운트
 ```
 
-
+- 데이터 보존을 위해 Dir mount
 
 
 

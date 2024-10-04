@@ -54,7 +54,7 @@ services:
 # docker-compose -f docker_compose.yml up -d
 ```
 
-
+- 위 사전준비는 프로메테우스의 수집 데이터를 mount해서 container 삭제 시에도 사라지지 않게 하기 위함임
 
 
 
