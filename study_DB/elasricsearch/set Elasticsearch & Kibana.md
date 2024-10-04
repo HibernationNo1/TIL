@@ -254,6 +254,32 @@ docker-compose -f ./docker/docker-compose.yml up -d
 
 ### Kibana
 
+`docker-compose.yml`
+
+```
+services:  
+  kibana:
+    image: 'kibana:8.15.0'
+    container_name: 'kibana'
+    ports: 
+      - '5602:5601'
+    environment:
+      - XPACK_SECURITY_ENABLED=true
+    volumes:
+      - ./kibana/config:/usr/share/kibana/config        # Kibana 설정 
+      - ./kibana/data:/usr/share/kibana/data            # Kibana 데이터
+      - ./kibana/logs:/logs                             # Kibana 로그
+      - ./kibana/optimize:/usr/share/kibana/optimize    # Kibana 최적화 파일
+    networks:
+      - ShppingLens_DataCollector
+      
+# docker-compose -f docker-compose.yml up -d
+```
+
+
+
+
+
 ES와 연결
 
 1. Kibana 배포 후 웹으로 접근하면 Enrollment token 를 요구한다.
