@@ -67,7 +67,7 @@ master node에서 agent로 삼고자 하는 server에 공개 key를 복사해야
 > 
 > 공개 key가 제대로 복사되었다면 `ssh sirs@192.168.110.104` 명령어에 비밀번호 입력 없이 접속할 수 있게 된다.
 
-만일 jenkins를 docker container로 띄웠다면 container 내부에서 copy명령어 실행할 것.
+만일 jenkins를 docker container로 띄웠다면 container 내부에서 copy명령어 실행할 것. (이런 경우 안된 case가 발생. container 밖에서 copy명령어 실행해볼것)
 
  ssh 파일들을 volume mount하는 것은 소용이 없다.
 
