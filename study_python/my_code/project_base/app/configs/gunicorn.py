@@ -41,6 +41,18 @@ reload = cfg.gunicorn.reload
 
 
 # post_fork 훅 추가
+# post_fork: worker가 시작된 후 추가 설정이나 초기화를 수행할 수 있도록 지원
 def post_fork(server, worker):
     with open(worker_pidfile, 'a') as f:
-        f.write(f"{worker.pid}\n")
+        f.write(f"{worker.pid}\n")      # worker_pidfile 파일에 worker의 PID 기록
+                                        # worker의 프로세스 동작 간 master가 kill되는 동작 발생 시 좀비프로세스가 되는 경우가 있음 
+                                        # 이를 예방하기 위해 기록
+                                        
+# on_exit 훅 추가
+# on_exit: Gunicorn 서버가 종료될 때 실행되는 함수
+def on_exit(server):
+    if osp.exists(worker_pidfile):
+        os.remove(worker_pidfile)
+
+# Gunicorn 설정 파일 끝에 추가
+on_exit = on_exit
